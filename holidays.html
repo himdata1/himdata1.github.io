@@ -61,7 +61,7 @@ table {
 }
 
 th, td {
-    border: 1px solid #ddd;
+    border: 0.5px solid black;
     padding: 9px;
     vertical-align: top;
 }
@@ -99,19 +99,36 @@ th {
     #content-to-print { 
         max-width: 100%; 
         margin: 0; 
-        padding: 10px 10px 10px 10px; /* Padding kam kar di (Cramped na lage isliye 5px) */
+        padding: 10px; 
     }
 
-    table { font-size: 14px; }
+    /* Header ko white rakhne ke liye */
+    th {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        -webkit-print-color-adjust: exact;
+    }
+
+    table { 
+        font-size: 14px; 
+        border-collapse: collapse; /* Taaki lines double na dikhen */
+        width: 100%;
+    }
+
+    /* --- YE WALI LINE ADD KI HAI BORDERS KE LIYE --- */
+    table, th, td {
+        border: 0.1pt solid #888888 !important;
+    }
 
     @page { 
         size: A4; 
-        margin: 10mm 15mm 1mm 15mm; /* Page Margin badha di (Lagbhag 56px) */
+        margin: 10mm 15mm 1mm 15mm; 
     }
-}
+} /* Media print yahan khatam */
 
-}
+/* Yahan extra bracket nahi hona chahiye */
 </style>
+
 </head>
 
 <body>
@@ -195,7 +212,7 @@ function downloadVectorPDF() {
         styles: { 
             fontSize: 14, 
             cellPadding: [1.8, 1, 1.8, 2.5],
-            lineColor: [221, 221, 221],
+            lineColor: [0, 0, 0],
             lineWidth: 0.1,
             textColor: [0, 0, 0] // Default Black
         },
@@ -255,4 +272,3 @@ function downloadVectorPDF() {
 
 </body>
 </html>
-
