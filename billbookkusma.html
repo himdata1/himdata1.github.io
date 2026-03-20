@@ -500,9 +500,23 @@
     }
 
     async function shareBackup() { 
-        const f = new File([getUpdatedHTML()], getFileName(), {type: 'text/html'}); 
-        if (navigator.share) await navigator.share({files:[f], title:'Backup'}); 
+    const fileName = getFileName(); // फ़ाइल का नाम यहाँ जनरेट होगा
+    const f = new File([getUpdatedHTML()], fileName, {type: 'text/html'}); 
+    
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                files: [f], 
+                title: fileName // यहाँ 'Backup' की जगह अब dynamic नाम जाएगा
+            }); 
+        } catch (err) {
+            console.error("Sharing failed:", err);
+        }
+    } else {
+        alert("Sharing is not supported on this browser.");
     }
+}
+
 
     function navigationHandler(e) {
         if (e.keyCode === 13) { 
