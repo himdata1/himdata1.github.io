@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Annual Result | GPS Sukrehar</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2275%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>R</text></svg>">
-
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2275%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>R</text></svg>">
     <style>
         :root {
             --primary: #4f46e5;
@@ -57,9 +55,8 @@
             text-transform: uppercase;
         }
 
-        /* School Name - Bada Font */
         h2 {
-            font-size: 1.6rem; /* Size badha diya hai */
+            font-size: 1.6rem;
             margin-bottom: 10px;
             font-weight: 800;
             line-height: 1.2;
@@ -165,7 +162,7 @@
     <span class="address-line">Education Block Nagrota Bagwan, Distt. Kangra (HP)</span>
     
     <div class="form-group">
-        <label>   Please Select Class<labell>
+        <label>कृपया कक्षा चुनें | Please Select Class</label>
         <select id="classSelect" onchange="updateNames()">
             <option value="">-- Choose Class --</option>
             <option value="1">Class 1</option>
@@ -176,7 +173,7 @@
     </div>
 
     <div class="form-group">
-        <label>   Please Select Name</label>
+        <label>कृपया नाम चुनें | Please Select Name</label>
         <select id="nameSelect" onchange="autoShowResult()">
             <option value="">-- Select Class First --</option>
         </select>
@@ -244,7 +241,7 @@
             resArea.style.display = "block";
             resArea.innerHTML = `
                 <span class="result-text">Result ready for: <br>${student.name}, Class ${student.class}</span>
-                <a href="${dLink}" class="download-btn" target="_blank"> Download Report Card</a>
+                <a href="${dLink}" class="download-btn" target="_blank">⬇ Download Report Card</a>
             `;
         }
     }
