@@ -10,22 +10,9 @@
         .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
         h2 { color: #2c3e50; margin-bottom: 25px; font-size: 1.4rem; }
         input { width: 90%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; outline: none; margin-bottom: 5px; }
-        
         #errorMsg { color: #e74c3c; font-size: 14px; margin-top: 10px; font-weight: bold; display: none; text-align: center; }
-        
         #result { display: none; margin-top: 25px; background: #fafafa; padding: 15px; border-radius: 10px; border-top: 4px solid #3498db; }
-        
-        .age-header { 
-            background: #e67e22; 
-            color: white; 
-            padding: 10px; 
-            border-radius: 8px; 
-            font-size: 1.3rem; 
-            font-weight: bold; 
-            margin-bottom: 15px;
-            display: block;
-        }
-
+        .age-header { background: #e67e22; color: white; padding: 10px; border-radius: 8px; font-size: 1.3rem; font-weight: bold; margin-bottom: 15px; display: block; }
         .row { display: flex; padding: 10px 0; border-bottom: 1px solid #eee; text-align: left; }
         .label { font-weight: bold; color: #7f8c8d; width: 130px; flex-shrink: 0; font-size: 0.9rem; }
         .val { color: #2c3e50; font-weight: 500; flex-grow: 1; text-align: left; font-size: 0.95rem; }
@@ -52,15 +39,13 @@
     const sheetLink = "https://docs.google.com/spreadsheets/d/1EdPnAbPHI8GD5-28u2mbb-OnsYZN5O2-guBSGljBRHQ/gviz/tq?tqx=out:csv&sheet=Sheet2";
     let cachedData = null;
 
-    // Data Load Function
     async function loadSheetData() {
         try {
             const resp = await fetch(sheetLink);
             const csvData = await resp.text();
-            // CSV parsing logic
             cachedData = csvData.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, '').trim()));
         } catch (err) {
-            console.error("Data load error", err);
+            console.error("Data load error");
         }
     }
     loadSheetData();
@@ -70,23 +55,25 @@
         const resDiv = document.getElementById('result');
         const errorDiv = document.getElementById('errorMsg');
 
-        // Input empty hai toh result chhupao
         if (!rawInput) {
             resDiv.style.display = "none";
             errorDiv.style.display = "none";
             return;
         }
 
-        // Convert input (like 001 to 1) for matching
-        const searchInput = parseInt(rawInput, 10).toString();
+        if (!cachedData) return;
 
-        if (!cachedData || searchInput === "NaN") return;
+        // User input se zeros hatana
+        const cleanInput = parseInt(rawInput, 10).toString();
 
-        // Sheet data mein search karein (Column 0 is Roll No)
-        const student = cachedData.find(row => row[0] === searchInput);
+        // Sheet data mein search karte waqt bhi zeros hatana
+        const student = cachedData.find(row => {
+            if (!row[0]) return false;
+            // Sheet ke roll no (row[0]) ko bhi integer mein convert karke match karein
+            return parseInt(row[0], 10).toString() === cleanInput;
+        });
 
         if (student) {
-            // Data fill karein
             document.getElementById('rAge').innerText    = student[5] ? "आयु वर्ग: " + student[5] : "---"; 
             document.getElementById('rName').innerText   = student[1] || "---"; 
             document.getElementById('rFather').innerText = student[2] || "---"; 
@@ -96,7 +83,6 @@
             errorDiv.style.display = "none";
             resDiv.style.display = "block";
         } else {
-            // Agar match nahi mila
             resDiv.style.display = "none";
             errorDiv.style.display = "block";
         }
