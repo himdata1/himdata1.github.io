@@ -41,7 +41,7 @@
 
         .form-card { 
             max-width: 600px; 
-            margin: 10px auto 40px; /* Reduced to 10px to pull it right under the banner */
+            margin: 10px auto 40px; 
             background: white; 
             border-radius: 15px; 
             box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
@@ -66,12 +66,16 @@
 
 <div class="container main-content">
     <div class="form-card">
-        <div class="form-header">NEW CONTRIBUTION ENTRY</div>
-        <div class="form-body">
-            
-            <a href="https://docs.google.com/spreadsheets/d/1__Y5j0iXnJe6-auN7dnOE4wccrHik8nloFel6cmDN6g/export?format=pdf&size=A4&top_margin=0.5&bottom_margin=0.5&left_margin=0.5&right_margin=0.5&gridlines=false&fitw=true&portrait=true" target="_blank" class="btn-view">
+        <div class="form-header" style="padding: 0;">
+            <a href="https://docs.google.com/spreadsheets/d/1__Y5j0iXnJe6-auN7dnOE4wccrHik8nloFel6cmDN6g/export?format=pdf&size=A4&top_margin=0.5&bottom_margin=0.5&left_margin=0.5&right_margin=0.5&gridlines=false&fitw=true&portrait=true" target="_blank" class="btn-view" style="margin-bottom: 0; border-radius: 15px 15px 0 0;">
                 <i class="fas fa-download me-2"></i>VIEW/ DOWNLOAD RECORDS
             </a>
+        </div>
+        
+        <div class="form-body">
+            <div style="font-weight: bold; color: #1a237e; text-align: center; margin-bottom: 20px; font-size: 1.25rem;">
+                NEW CONTRIBUTION ENTRY
+            </div>
 
             <form id="entryForm">
                 <div class="row">
