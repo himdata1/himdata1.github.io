@@ -13,6 +13,7 @@
         .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
         button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
         .btn-search { background-color: #3498db; color: white; }
+        .btn-search:disabled { background-color: #a5c6e1; cursor: not-allowed; }
         .btn-clear { background-color: #bdc3c7; color: #2c3e50; }
         
         /* Animated Spinner */
@@ -71,7 +72,7 @@
     const scriptURL = "https://script.google.com/macros/s/AKfycbzSvBziSqdZMb1n1VXwVNtL97h5XxRSlhPmXKpBVCrWgHVwex4DL_Ux-59iYB74pRTUyQ/exec";
 
     async function getResult() {
-        const rollInput = document.getElementById('rollNo').value.trim();
+        let rollInput = document.getElementById('rollNo').value.trim();
         const resDiv = document.getElementById('result');
         const errorDiv = document.getElementById('errorMsg');
         const btn = document.getElementById('searchBtn');
@@ -79,6 +80,12 @@
         const btnText = document.getElementById('btnText');
 
         if (!rollInput) return;
+
+        // Clean leading zeros: Convert "001" to "1"
+        // Only does this if the input is purely numeric
+        if (!isNaN(rollInput) && rollInput !== "") {
+            rollInput = parseInt(rollInput, 10).toString();
+        }
 
         // UI Loading State
         btn.disabled = true;
@@ -143,6 +150,13 @@
         document.getElementById('errorMsg').style.display = "none";
         document.getElementById('rollNo').focus();
     }
+
+    // Allow search on "Enter" key press
+    document.getElementById('rollNo').addEventListener('keypress', function (e) {
+        if (e.key === 'Enter') {
+            getResult();
+        }
+    });
 </script>
 </body>
 </html>
