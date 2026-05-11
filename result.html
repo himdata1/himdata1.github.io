@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -10,10 +10,8 @@
         .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
         h2 { color: #2c3e50; margin-bottom: 25px; font-size: 1.4rem; line-height: 1.4; }
         input { width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; outline: none; margin-bottom: 15px; box-sizing: border-box; }
-        input:disabled { background-color: #f0f0f0; color: #999; }
         .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
         button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; }
-        button:disabled { background-color: #bdc3c7 !important; cursor: not-allowed; }
         .btn-search { background-color: #3498db; color: white; }
         .btn-clear { background-color: #bdc3c7; color: #2c3e50; }
         #errorMsg { color: #e74c3c; font-size: 14px; margin-top: 10px; font-weight: bold; display: none; }
@@ -31,97 +29,83 @@
 
 <div class="card">
     <h2>Dr. B.R. Ambedkar Annual Scholarship Examination Result-2026</h2>
-    <input type="text" id="rollNo" placeholder="लोड हो रहा है..." disabled oninput="enableButton()">
+    <input type="text" id="rollNo" placeholder="Enter Roll Number...">
     <div class="btn-group">
         <button id="searchBtn" class="btn-search" onclick="getResult()">Get Result</button>
         <button class="btn-clear" onclick="clearResult()">Clear</button>
     </div>
-    <div id="errorMsg">रिकॉर्ड नहीं मिला। कृपया सही रोल नंबर डालें।</div>
+    <div id="errorMsg">Record not found. Please enter a valid roll number.</div>
     <div id="result">
         <div id="rAge" class="age-header"></div>
-        <div class="row"><span class="label">रोल नंबर:</span> <span id="rRoll" class="val"></span></div>
-        <div class="row"><span class="label">नाम:</span> <span id="rName" class="val"></span></div>
-        <div class="row"><span class="label">पिता का नाम:</span> <span id="rFather" class="val"></span></div>
-        <div class="row"><span class="label">प्राप्तांक:</span> <span id="rMarks" class="val"></span></div>
+        <div class="row"><span class="label">Roll Number:</span> <span id="rRoll" class="val"></span></div>
+        <div class="row"><span class="label">Name:</span> <span id="rName" class="val"></span></div>
+        <div class="row"><span class="label">Father's Name:</span> <span id="rFather" class="val"></span></div>
+        <div class="row"><span class="label">Marks Obtained:</span> <span id="rMarks" class="val"></span></div>
         <div class="row">
-            <span class="label">स्थान (Rank):</span> 
+            <span class="label">Rank:</span> 
             <span class="val"><span id="rPos" class="rank-highlight"></span></span>
         </div>
     </div>
 </div>
 
 <script>
-    // आपका अपडेटेड App Script URL
-    const scriptURL = "https://script.google.com/macros/s/AKfycbxt5OwDWFDjIkrUNVB1TPRLkqVrW_gn_Fd3Fbfjh_YtlJv5iduAZhqeGwwUf2Ogd4ekKw/exec";
-    let cachedData = null;
+    const scriptURL = "https://script.google.com/macros/s/AKfycbwlm0WmDPHLAPLWiVtIYMqpd6sKU1DFfhHpsff1s3WSlkQFdCJnSg06n33CFNVzkJhM2g/exec";
 
-    async function loadSheetData() {
-        try {
-            const resp = await fetch(scriptURL);
-            const jsonData = await resp.json();
-            // डेटा को पुराने लॉजिक के हिसाब से प्रोसेस करना
-            cachedData = jsonData.map(row => row.map(c => c.toString().trim()));
-            
-            const input = document.getElementById('rollNo');
-            input.disabled = false;
-            input.placeholder = "रोल नंबर दर्ज करें...";
-        } catch (err) {
-            console.error(err);
-            document.getElementById('rollNo').placeholder = "एरर!";
-        }
-    }
-
-    function enableButton() {
-        document.getElementById('searchBtn').disabled = false;
-    }
-
-    function getResult() {
-        const btn = document.getElementById('searchBtn');
-        const rawInput = document.getElementById('rollNo').value.trim();
+    async function getResult() {
+        const rollInput = document.getElementById('rollNo').value.trim();
         const resDiv = document.getElementById('result');
         const errorDiv = document.getElementById('errorMsg');
+        const btn = document.getElementById('searchBtn');
 
-        if (!rawInput || !cachedData) return;
+        if (!rollInput) return;
 
         btn.disabled = true;
+        btn.innerText = "Searching...";
+        resDiv.style.display = "none";
+        errorDiv.style.display = "none";
 
-        const inputNum = parseInt(rawInput, 10);
-        const student = cachedData.find(row => parseInt(row[0], 10) === inputNum);
+        try {
+            const resp = await fetch(`${scriptURL}?roll=${encodeURIComponent(rollInput)}`, { redirect: 'follow' });
+            const result = await resp.json();
 
-        if (student) {
-            const currentAgeGroup = student[5] ? student[5].trim() : "";
-            let marksVal = student[6] ? student[6].toString().trim() : "";
-            let rankVal = student[7] ? student[7].toString().trim() : "";
-            
-            const totalInGroup = cachedData.filter(row => {
-                const roll = parseInt(row[0], 10);
-                const ageGroup = row[5] ? row[5].trim() : "";
-                return !isNaN(roll) && roll > 0 && ageGroup === currentAgeGroup && row[1] && row[1].trim() !== "";
-            }).length;
+            if (result.success) {
+                const student = result.data;
+                const totalInGroup = result.totalInGroup;
+                
+                const currentAgeGroup = student[5] ? student[5].toString().trim() : "";
+                let marksVal = student[6] ? student[6].toString().trim() : "";
+                let rankVal = student[7] ? student[7].toString().trim() : "";
 
-            document.getElementById('rRoll').innerText   = student[0]; 
-            document.getElementById('rName').innerText   = student[1]; 
-            document.getElementById('rFather').innerText = student[2];
-            document.getElementById('rAge').innerText    = "आयु वर्ग: " + (currentAgeGroup || "---");
+                document.getElementById('rRoll').innerText   = student[0]; 
+                document.getElementById('rName').innerText   = student[1]; 
+                document.getElementById('rFather').innerText = student[2];
+                document.getElementById('rAge').innerText    = "Age Group: " + (currentAgeGroup || "---");
 
-            if (marksVal.toLowerCase() === "absent" || marksVal === "") {
-                document.getElementById('rMarks').innerText = "Absent";
-                document.getElementById('rMarks').className = "val absent-text";
-                document.getElementById('rPos').innerText = "Not Applicable";
-            } else {
-                document.getElementById('rMarks').innerText = marksVal;
-                document.getElementById('rMarks').className = "val";
-                if (rankVal && !isNaN(parseInt(rankVal, 10))) {
-                    document.getElementById('rPos').innerHTML = `${rankVal} <span class="out-of-text">out of ${totalInGroup}</span>`;
+                if (marksVal.toLowerCase() === "absent" || marksVal === "") {
+                    document.getElementById('rMarks').innerText = "Absent";
+                    document.getElementById('rMarks').className = "val absent-text";
+                    document.getElementById('rPos').innerText = "Not Applicable";
                 } else {
-                    document.getElementById('rPos').innerText = rankVal || "---";
+                    document.getElementById('rMarks').innerText = marksVal;
+                    document.getElementById('rMarks').className = "val";
+                    if (rankVal && !isNaN(parseInt(rankVal, 10))) {
+                        document.getElementById('rPos').innerHTML = `${rankVal} <span class="out-of-text">out of ${totalInGroup}</span>`;
+                    } else {
+                        document.getElementById('rPos').innerText = rankVal || "---";
+                    }
                 }
+                errorDiv.style.display = "none";
+                resDiv.style.display = "block";
+            } else {
+                resDiv.style.display = "none";
+                errorDiv.style.display = "block";
             }
-            errorDiv.style.display = "none";
-            resDiv.style.display = "block";
-        } else {
-            resDiv.style.display = "none";
-            errorDiv.style.display = "block";
+        } catch (err) {
+            console.error(err);
+            alert("Failed to connect to the server.");
+        } finally {
+            btn.disabled = false;
+            btn.innerText = "Get Result";
         }
     }
 
@@ -129,11 +113,8 @@
         document.getElementById('rollNo').value = "";
         document.getElementById('result').style.display = "none";
         document.getElementById('errorMsg').style.display = "none";
-        document.getElementById('searchBtn').disabled = false;
         document.getElementById('rollNo').focus();
     }
-
-    loadSheetData();
 </script>
 </body>
 </html>
