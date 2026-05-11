@@ -51,18 +51,22 @@
 </div>
 
 <script>
-    const baseSheetLink = "https://docs.google.com/spreadsheets/d/1EdPnAbPHI8GD5-28u2mbb-OnsYZN5O2-guBSGljBRHQ/gviz/tq?tqx=out:csv&sheet=Sheet2";
+    // आपका अपडेटेड App Script URL
+    const scriptURL = "https://script.google.com/macros/s/AKfycbxt5OwDWFDjIkrUNVB1TPRLkqVrW_gn_Fd3Fbfjh_YtlJv5iduAZhqeGwwUf2Ogd4ekKw/exec";
     let cachedData = null;
 
     async function loadSheetData() {
         try {
-            const resp = await fetch(baseSheetLink + "&cb=" + new Date().getTime());
-            const csvData = await resp.text();
-            cachedData = csvData.split('\n').map(r => r.split(',').map(c => c.replace(/"/g, '').trim()));
+            const resp = await fetch(scriptURL);
+            const jsonData = await resp.json();
+            // डेटा को पुराने लॉजिक के हिसाब से प्रोसेस करना
+            cachedData = jsonData.map(row => row.map(c => c.toString().trim()));
+            
             const input = document.getElementById('rollNo');
             input.disabled = false;
             input.placeholder = "रोल नंबर दर्ज करें...";
         } catch (err) {
+            console.error(err);
             document.getElementById('rollNo').placeholder = "एरर!";
         }
     }
@@ -79,7 +83,7 @@
 
         if (!rawInput || !cachedData) return;
 
-        btn.disabled = true; // सर्च दबाते ही ग्रे
+        btn.disabled = true;
 
         const inputNum = parseInt(rawInput, 10);
         const student = cachedData.find(row => parseInt(row[0], 10) === inputNum);
