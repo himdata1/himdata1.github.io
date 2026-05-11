@@ -1,162 +1,550 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Result Portal 2026</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2275%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>R</text></svg>">
+
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%236c5ce7%22/><text x=%2250%22 y=%2255%22 font-size=%2275%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>R</text></svg>">
+
     <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f9; display: flex; justify-content: center; padding: 20px; margin: 0; }
-        .card { background: white; padding: 30px; border-radius: 15px; box-shadow: 0 8px 20px rgba(0,0,0,0.1); width: 100%; max-width: 400px; text-align: center; }
-        h2 { color: #2c3e50; margin-bottom: 25px; font-size: 1.4rem; line-height: 1.4; }
-        input { width: 100%; padding: 12px; border: 2px solid #3498db; border-radius: 8px; font-size: 16px; outline: none; margin-bottom: 15px; box-sizing: border-box; }
-        .btn-group { display: flex; gap: 10px; margin-bottom: 20px; }
-        button { flex: 1; padding: 12px; border: none; border-radius: 8px; font-size: 15px; font-weight: bold; cursor: pointer; transition: 0.3s; display: flex; align-items: center; justify-content: center; gap: 8px; }
-        .btn-search { background-color: #3498db; color: white; }
-        .btn-search:disabled { background-color: #a5c6e1; cursor: not-allowed; }
-        .btn-clear { background-color: #bdc3c7; color: #2c3e50; }
-        
-        /* Animated Spinner */
-        .spinner {
-            width: 16px;
-            height: 16px;
-            border: 2px solid rgba(255,255,255,0.3);
-            border-top: 2px solid white;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            display: none;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
+
+        *{
+            margin:0;
+            padding:0;
+            box-sizing:border-box;
         }
 
-        #errorMsg { color: #e74c3c; font-size: 14px; margin-top: 10px; font-weight: bold; display: none; }
-        #result { display: none; margin-top: 10px; background: #fafafa; padding: 15px; border-radius: 10px; border-top: 4px solid #3498db; }
-        .age-header { background: #e67e22; color: white; padding: 10px; border-radius: 8px; font-size: 1.2rem; font-weight: bold; margin-bottom: 15px; }
-        .row { display: flex; padding: 10px 0; border-bottom: 1px solid #eee; text-align: left; align-items: baseline; }
-        .label { font-weight: bold; color: #7f8c8d; width: 110px; flex-shrink: 0; font-size: 0.9rem; }
-        .val { color: #2c3e50; font-weight: 500; flex-grow: 1; font-size: 0.95rem; }
-        .rank-highlight { color: #2980b9; font-weight: bold; font-size: 1.1rem; }
-        .out-of-text { color: #7f8c8d; font-size: 0.9rem; font-weight: normal; }
-        .absent-text { color: #e74c3c !important; font-weight: bold; }
+        body{
+            font-family:'Segoe UI',Tahoma,Geneva,Verdana,sans-serif;
+            min-height:100vh;
+            display:flex;
+            justify-content:center;
+            align-items:flex-start;
+            padding:40px 20px 20px;
+            overflow-x:hidden;
+
+            background:
+                radial-gradient(circle at top left,#ff9ff3 0%,transparent 25%),
+                radial-gradient(circle at top right,#48dbfb 0%,transparent 30%),
+                radial-gradient(circle at bottom left,#1dd1a1 0%,transparent 30%),
+                radial-gradient(circle at bottom right,#feca57 0%,transparent 30%),
+                linear-gradient(135deg,#5f27cd,#341f97);
+        }
+
+        .card{
+            width:100%;
+            max-width:440px;
+            background:rgba(255,255,255,0.15);
+            backdrop-filter:blur(18px);
+            border-radius:28px;
+            padding:35px 28px;
+            border:1px solid rgba(255,255,255,0.25);
+
+            box-shadow:
+                0 10px 30px rgba(0,0,0,0.2),
+                0 0 40px rgba(255,255,255,0.08);
+
+            animation:cardShow 0.6s ease;
+        }
+
+        @keyframes cardShow{
+            from{
+                opacity:0;
+                transform:translateY(25px) scale(0.96);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0) scale(1);
+            }
+        }
+
+        h2{
+            color:white;
+            text-align:center;
+            line-height:1.5;
+            font-size:1.45rem;
+            margin-bottom:28px;
+            font-weight:700;
+            text-shadow:0 2px 8px rgba(0,0,0,0.25);
+        }
+
+        input{
+            width:100%;
+            padding:15px 18px;
+            border:none;
+            border-radius:16px;
+            outline:none;
+            font-size:16px;
+            background:rgba(255,255,255,0.92);
+            color:#2c3e50;
+            margin-bottom:18px;
+
+            transition:0.3s;
+        }
+
+        input:focus{
+            transform:scale(1.02);
+            box-shadow:0 0 0 5px rgba(255,255,255,0.25);
+        }
+
+        .btn-group{
+            display:flex;
+            gap:12px;
+            margin-bottom:20px;
+        }
+
+        button{
+            flex:1;
+            padding:14px;
+            border:none;
+            border-radius:16px;
+            cursor:pointer;
+            font-size:15px;
+            font-weight:700;
+            transition:0.25s ease;
+
+            display:flex;
+            align-items:center;
+            justify-content:center;
+            gap:8px;
+        }
+
+        button:hover{
+            transform:translateY(-2px);
+        }
+
+        button:active{
+            transform:scale(0.97);
+        }
+
+        .btn-search{
+            background:linear-gradient(135deg,#ff6b6b,#ff9f43);
+            color:white;
+
+            box-shadow:
+                0 10px 18px rgba(255,107,107,0.35);
+        }
+
+        .btn-search:hover{
+            box-shadow:
+                0 14px 25px rgba(255,107,107,0.45);
+        }
+
+        .btn-search:disabled{
+            opacity:0.7;
+            cursor:not-allowed;
+        }
+
+        .btn-clear{
+            background:linear-gradient(135deg,#54a0ff,#5f27cd);
+            color:white;
+
+            box-shadow:
+                0 10px 18px rgba(84,160,255,0.35);
+        }
+
+        .btn-clear:hover{
+            box-shadow:
+                0 14px 25px rgba(84,160,255,0.45);
+        }
+
+        .spinner{
+            width:16px;
+            height:16px;
+            border:2px solid rgba(255,255,255,0.3);
+            border-top:2px solid white;
+            border-radius:50%;
+            animation:spin 0.8s linear infinite;
+            display:none;
+        }
+
+        @keyframes spin{
+            100%{
+                transform:rotate(360deg);
+            }
+        }
+
+        #errorMsg{
+            display:none;
+            padding:14px;
+            border-radius:16px;
+            background:rgba(255,255,255,0.18);
+            color:#fff;
+            font-size:14px;
+            font-weight:700;
+            text-align:center;
+            border:1px solid rgba(255,255,255,0.2);
+
+            backdrop-filter:blur(8px);
+        }
+
+        #result{
+            display:none;
+            margin-top:5px;
+
+            background:rgba(255,255,255,0.95);
+            border-radius:22px;
+            padding:20px;
+
+            animation:resultFade 0.4s ease;
+        }
+
+        @keyframes resultFade{
+            from{
+                opacity:0;
+                transform:translateY(10px);
+            }
+            to{
+                opacity:1;
+                transform:translateY(0);
+            }
+        }
+
+        .age-header{
+            background:linear-gradient(135deg,#ff9f43,#ee5253);
+            color:white;
+            text-align:center;
+            padding:14px;
+            border-radius:16px;
+            font-size:1.08rem;
+            font-weight:800;
+            margin-bottom:18px;
+
+            box-shadow:
+                0 10px 20px rgba(238,82,83,0.25);
+        }
+
+        .row{
+            display:flex;
+            align-items:flex-start;
+            gap:12px;
+            padding:12px 0;
+            border-bottom:1px solid #eef2f7;
+        }
+
+        .row:last-child{
+            border-bottom:none;
+        }
+
+        .label{
+            min-width:120px;
+            font-size:0.92rem;
+            color:#576574;
+            font-weight:700;
+        }
+
+        .val{
+            flex:1;
+            color:#222f3e;
+            font-size:0.96rem;
+            font-weight:600;
+            word-break:break-word;
+        }
+
+        .rank-highlight{
+            color:#5f27cd;
+            font-size:1.15rem;
+            font-weight:800;
+        }
+
+        .out-of-text{
+            color:#8395a7;
+            font-size:0.9rem;
+            font-weight:600;
+        }
+
+        .absent-text{
+            color:#ee5253 !important;
+            font-weight:800;
+        }
+
+        @media(max-width:480px){
+
+            .card{
+                padding:28px 20px;
+            }
+
+            h2{
+                font-size:1.25rem;
+            }
+
+            .row{
+                flex-direction:row;
+                align-items:flex-start;
+                gap:10px;
+            }
+
+            .label{
+                min-width:105px;
+                font-size:0.88rem;
+            }
+
+            .val{
+                font-size:0.92rem;
+            }
+        }
+
     </style>
 </head>
+
 <body>
 
 <div class="card">
-    <h2>Dr. B.R. Ambedkar Annual Scholarship Examination Result-2026</h2>
-    <input type="text" id="rollNo" placeholder="Enter Roll Number...">
+
+    <h2>
+        Dr. B.R. Ambedkar Annual Scholarship Examination Result-2026
+    </h2>
+
+    <input
+        type="text"
+        id="rollNo"
+        placeholder="Enter Roll Number..."
+    >
+
     <div class="btn-group">
-        <button id="searchBtn" class="btn-search" onclick="getResult()">
+
+        <button
+            id="searchBtn"
+            class="btn-search"
+            onclick="getResult()"
+        >
+
             <div id="loader" class="spinner"></div>
-            <span id="btnText">Get Result</span>
+
+            <span id="btnText">
+                Get Result
+            </span>
+
         </button>
-        <button class="btn-clear" onclick="clearResult()">Clear</button>
+
+        <button
+            class="btn-clear"
+            onclick="clearResult()"
+        >
+            Clear
+        </button>
+
     </div>
-    <div id="errorMsg">Record not found. Please enter a valid roll number.</div>
+
+    <div id="errorMsg">
+        Record not found. Please enter a valid roll number.
+    </div>
+
     <div id="result">
+
         <div id="rAge" class="age-header"></div>
-        <div class="row"><span class="label">Roll Number:</span> <span id="rRoll" class="val"></span></div>
-        <div class="row"><span class="label">Name:</span> <span id="rName" class="val"></span></div>
-        <div class="row"><span class="label">Father's Name:</span> <span id="rFather" class="val"></span></div>
-        <div class="row"><span class="label">Marks Obtained:</span> <span id="rMarks" class="val"></span></div>
+
         <div class="row">
-            <span class="label">Rank:</span> 
-            <span class="val"><span id="rPos" class="rank-highlight"></span></span>
+            <span class="label">Roll Number:</span>
+            <span id="rRoll" class="val"></span>
         </div>
+
+        <div class="row">
+            <span class="label">Name:</span>
+            <span id="rName" class="val"></span>
+        </div>
+
+        <div class="row">
+            <span class="label">Father's Name:</span>
+            <span id="rFather" class="val"></span>
+        </div>
+
+        <div class="row">
+            <span class="label">Marks Obtained:</span>
+            <span id="rMarks" class="val"></span>
+        </div>
+
+        <div class="row">
+            <span class="label">Rank:</span>
+
+            <span class="val">
+                <span id="rPos" class="rank-highlight"></span>
+            </span>
+        </div>
+
     </div>
+
 </div>
 
 <script>
-    const scriptURL = "https://script.google.com/macros/s/AKfycbzSvBziSqdZMb1n1VXwVNtL97h5XxRSlhPmXKpBVCrWgHVwex4DL_Ux-59iYB74pRTUyQ/exec";
 
-    async function getResult() {
-        let rollInput = document.getElementById('rollNo').value.trim();
-        const resDiv = document.getElementById('result');
-        const errorDiv = document.getElementById('errorMsg');
-        const btn = document.getElementById('searchBtn');
-        const loader = document.getElementById('loader');
-        const btnText = document.getElementById('btnText');
+const scriptURL =
+"https://script.google.com/macros/s/AKfycbzSvBziSqdZMb1n1VXwVNtL97h5XxRSlhPmXKpBVCrWgHVwex4DL_Ux-59iYB74pRTUyQ/exec";
 
-        if (!rollInput) return;
+async function getResult(){
 
-        // Clean leading zeros: Convert "001" to "1"
-        // Only does this if the input is purely numeric
-        if (!isNaN(rollInput) && rollInput !== "") {
-            rollInput = parseInt(rollInput, 10).toString();
-        }
+    let rollInput =
+    document.getElementById('rollNo').value.trim();
 
-        // UI Loading State
-        btn.disabled = true;
-        loader.style.display = "block";
-        btnText.innerText = "Searching...";
-        resDiv.style.display = "none";
-        errorDiv.style.display = "none";
+    const resDiv =
+    document.getElementById('result');
 
-        try {
-            const resp = await fetch(`${scriptURL}?roll=${encodeURIComponent(rollInput)}`, { 
-                method: 'GET',
-                redirect: 'follow',
-                priority: 'high'
-            });
-            const result = await resp.json();
+    const errorDiv =
+    document.getElementById('errorMsg');
 
-            if (result.success) {
-                const student = result.data;
-                const totalInGroup = result.totalInGroup;
-                
-                const currentAgeGroup = student[5] ? student[5].toString().trim() : "";
-                let marksVal = student[6] ? student[6].toString().trim() : "";
-                let rankVal = student[7] ? student[7].toString().trim() : "";
+    const btn =
+    document.getElementById('searchBtn');
 
-                document.getElementById('rRoll').innerText   = student[0]; 
-                document.getElementById('rName').innerText   = student[1]; 
-                document.getElementById('rFather').innerText = student[2];
-                document.getElementById('rAge').innerText    = "Age Group: " + (currentAgeGroup || "---");
+    const loader =
+    document.getElementById('loader');
 
-                if (marksVal.toLowerCase() === "absent" || marksVal === "") {
-                    document.getElementById('rMarks').innerText = "Absent";
-                    document.getElementById('rMarks').className = "val absent-text";
-                    document.getElementById('rPos').innerText = "Not Applicable";
-                } else {
-                    document.getElementById('rMarks').innerText = marksVal;
-                    document.getElementById('rMarks').className = "val";
-                    if (rankVal && !isNaN(parseInt(rankVal, 10))) {
-                        document.getElementById('rPos').innerHTML = `${rankVal} <span class="out-of-text">out of ${totalInGroup}</span>`;
-                    } else {
-                        document.getElementById('rPos').innerText = rankVal || "---";
-                    }
-                }
-                errorDiv.style.display = "none";
-                resDiv.style.display = "block";
-            } else {
-                resDiv.style.display = "none";
-                errorDiv.style.display = "block";
+    const btnText =
+    document.getElementById('btnText');
+
+    if(!rollInput) return;
+
+    if(!isNaN(rollInput) && rollInput !== ""){
+        rollInput =
+        parseInt(rollInput,10).toString();
+    }
+
+    btn.disabled = true;
+
+    loader.style.display = "block";
+
+    btnText.innerText = "Searching...";
+
+    resDiv.style.display = "none";
+
+    errorDiv.style.display = "none";
+
+    try{
+
+        const resp = await fetch(
+            `${scriptURL}?roll=${encodeURIComponent(rollInput)}`,
+            {
+                method:'GET',
+                redirect:'follow',
+                priority:'high'
             }
-        } catch (err) {
-            console.error(err);
-            alert("Error connecting to server. Please try again.");
-        } finally {
-            btn.disabled = false;
-            loader.style.display = "none";
-            btnText.innerText = "Get Result";
-        }
-    }
+        );
 
-    function clearResult() {
-        document.getElementById('rollNo').value = "";
-        document.getElementById('result').style.display = "none";
-        document.getElementById('errorMsg').style.display = "none";
-        document.getElementById('rollNo').focus();
-    }
+        const result = await resp.json();
 
-    // Allow search on "Enter" key press
-    document.getElementById('rollNo').addEventListener('keypress', function (e) {
-        if (e.key === 'Enter') {
-            getResult();
+        if(result.success){
+
+            const student = result.data;
+
+            const totalInGroup =
+            result.totalInGroup;
+
+            const currentAgeGroup =
+            student[5]
+            ? student[5].toString().trim()
+            : "";
+
+            let marksVal =
+            student[6]
+            ? student[6].toString().trim()
+            : "";
+
+            let rankVal =
+            student[7]
+            ? student[7].toString().trim()
+            : "";
+
+            document.getElementById('rRoll').innerText =
+            student[0];
+
+            document.getElementById('rName').innerText =
+            student[1];
+
+            document.getElementById('rFather').innerText =
+            student[2];
+
+            document.getElementById('rAge').innerText =
+            "Age Group: " + (currentAgeGroup || "---");
+
+            if(
+                marksVal.toLowerCase() === "absent"
+                || marksVal === ""
+            ){
+
+                document.getElementById('rMarks').innerText =
+                "Absent";
+
+                document.getElementById('rMarks').className =
+                "val absent-text";
+
+                document.getElementById('rPos').innerText =
+                "Not Applicable";
+
+            }else{
+
+                document.getElementById('rMarks').innerText =
+                marksVal;
+
+                document.getElementById('rMarks').className =
+                "val";
+
+                if(
+                    rankVal
+                    &&
+                    !isNaN(parseInt(rankVal,10))
+                ){
+
+                    document.getElementById('rPos').innerHTML =
+                    `${rankVal} <span class="out-of-text">out of ${totalInGroup}</span>`;
+
+                }else{
+
+                    document.getElementById('rPos').innerText =
+                    rankVal || "---";
+                }
+            }
+
+            errorDiv.style.display = "none";
+
+            resDiv.style.display = "block";
+
+        }else{
+
+            resDiv.style.display = "none";
+
+            errorDiv.style.display = "block";
         }
-    });
+
+    }catch(err){
+
+        console.error(err);
+
+        alert(
+            "Error connecting to server. Please try again."
+        );
+
+    }finally{
+
+        btn.disabled = false;
+
+        loader.style.display = "none";
+
+        btnText.innerText = "Get Result";
+    }
+}
+
+function clearResult(){
+
+    document.getElementById('rollNo').value = "";
+
+    document.getElementById('result').style.display =
+    "none";
+
+    document.getElementById('errorMsg').style.display =
+    "none";
+
+    document.getElementById('rollNo').focus();
+}
+
+document.getElementById('rollNo')
+.addEventListener('keypress',function(e){
+
+    if(e.key === 'Enter'){
+        getResult();
+    }
+});
+
 </script>
+
 </body>
 </html>
