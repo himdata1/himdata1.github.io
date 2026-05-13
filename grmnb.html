@@ -13,63 +13,22 @@
     <style>
         /* CSS Reset */
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        
         body { background-color: #f4f7f9; font-family: 'Segoe UI', sans-serif; }
         
-        /* Banner - Added padding for side borders and centered max-width */
-        .banner-outer-wrapper {
-            width: 100%;
-            padding: 10px 15px 0; /* Creates the left/right "border" effect from edges */
-            background-color: #f4f7f9;
-        }
-        .banner-container {
-            max-width: 800px; 
-            margin: 0 auto;
-            line-height: 0; 
-            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-            background-color: #fff;
-            border-radius: 8px; /* Slight rounding for a cleaner look */
-            overflow: hidden;
-        }
-        .banner-img {
-            width: 100%;
-            height: auto;
-            display: block;
-        }
+        .banner-outer-wrapper { width: 100%; padding: 10px 15px 0; background-color: #f4f7f9; }
+        .banner-container { max-width: 800px; margin: 0 auto; line-height: 0; box-shadow: 0 4px 10px rgba(0,0,0,0.1); background-color: #fff; border-radius: 8px; overflow: hidden; }
+        .banner-img { width: 100%; height: auto; display: block; }
 
-        /* Container adjustment for width */
-        .custom-container {
-            width: 95%;
-            max-width: 800px;
-            margin: 0 auto;
-        }
+        .custom-container { width: 95%; max-width: 800px; margin: 0 auto; }
+        .main-content { padding-top: 0 !important; }
 
-        .main-content {
-            padding-top: 0 !important; 
-        }
-
-        .form-card { 
-            width: 100%;
-            margin: 10px auto 40px; 
-            background: white; 
-            border-radius: 15px; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
-            border-top: 5px solid #1a237e; 
-        }
+        .form-card { width: 100%; margin: 10px auto 40px; background: white; border-radius: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); border-top: 5px solid #1a237e; }
         .form-header { background: #f8f9fa; padding: 15px 20px; border-bottom: 1px solid #eee; font-weight: bold; color: #1a237e; text-align: center; border-radius: 15px 15px 0 0; }
         .form-body { padding: 25px; }
         .btn-view { background: #c62828; color: white; font-weight: bold; width: 100%; padding: 12px; border-radius: 10px; text-decoration: none; display: block; text-align: center; margin-bottom: 20px; border: none; transition: 0.3s; }
         .btn-view:hover { background: #b71c1c; color: white; transform: translateY(-1px); }
         
-        .month-grid { 
-            display: grid; 
-            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); 
-            gap: 12px; 
-            background: #fff; 
-            padding: 15px; 
-            border: 1px solid #dee2e6; 
-            border-radius: 8px; 
-        }
+        .month-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px; background: #fff; padding: 15px; border: 1px solid #dee2e6; border-radius: 8px; }
         .month-item { display: flex; align-items: center; font-size: 1.15rem; font-weight: 600; cursor: pointer; color: #333; }
         .month-item input[type="checkbox"] { width: 22px; height: 22px; margin-right: 10px; cursor: pointer; }
         
@@ -100,7 +59,7 @@
                         <small class="text-muted d-block" style="font-size: 0.7rem;">ACCOUNT NUMBER</small>
                         <span class="fw-bold" id="accNum">1989000100109244</span>
                     </div>
-                    <button class="copy-btn" onclick="copyText('accNum')" title="Copy Account Number">
+                    <button class="copy-btn" onclick="copyText('accNum')">
                         <i class="far fa-copy"></i>
                     </button>
                 </div>
@@ -111,7 +70,7 @@
                         <small class="text-muted d-block" style="font-size: 0.7rem;">IFSC</small>
                         <span class="fw-bold" id="ifscCode">PUNB0198900</span>
                     </div>
-                    <button class="copy-btn" onclick="copyText('ifscCode')" title="Copy IFSC">
+                    <button class="copy-btn" onclick="copyText('ifscCode')">
                         <i class="far fa-copy"></i>
                     </button>
                 </div>
@@ -138,18 +97,18 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Name <span class="text-danger">*</span></label>
-                        <input type="text" name="name" class="form-control" placeholder="Full Name" required>
+                        <input type="text" name="name" class="form-control" required>
                     </div>
                     <div class="col-md-6 mb-3">
-                        <label class="form-label fw-bold">Village <span class="text-danger">*</span></label>
-                        <input type="text" name="village" class="form-control" placeholder="Village" required>
+                        <label class="form-label fw-bold">Village</label>
+                        <input type="text" name="village" class="form-control">
                     </div>
                 </div>
 
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Amount (₹) <span class="text-danger">*</span></label>
-                        <input type="number" name="amount" class="form-control" placeholder="000" required>
+                        <input type="number" name="amount" class="form-control" required>
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label fw-bold">Date of transaction</label>
@@ -158,7 +117,7 @@
                 </div>
 
                 <div class="mb-4">
-                    <label class="form-label fw-bold" style="font-size: 1.1rem; color: #1a237e;">Select Month(s): <span class="text-danger">*</span></label>
+                    <label class="form-label fw-bold" style="font-size: 1.1rem; color: #1a237e;">Select Month(s):</label>
                     <div class="month-grid" id="monthGrid">
                         <label class="month-item"><input type="checkbox" name="month" value="Jan 2026"> Jan 2026</label>
                         <label class="month-item"><input type="checkbox" name="month" value="Feb 2026"> Feb 2026</label>
@@ -174,19 +133,19 @@
                         <label class="month-item"><input type="checkbox" name="month" value="Dec 2026"> Dec 2026</label>
                         <div class="d-flex align-items-center mt-2" style="grid-column: 1 / -1;">
                             <input type="checkbox" id="otherCheck" style="width: 20px; height: 20px; margin-right: 10px;">
-                            <input type="text" id="otherMonth" class="form-control form-control-sm" placeholder="Other (e.g. Jan 2027)">
+                            <input type="text" id="otherMonth" class="form-control form-control-sm" placeholder="e.g. Jan 2027">
                         </div>
                     </div>
                 </div>
 
                 <div class="mb-3">
-                    <label class="form-label fw-bold">Mobile no. <span class="text-danger">*</span></label>
-                    <input type="tel" name="mobile" class="form-control" placeholder="10 digit mobile number" pattern="[0-9]{10}" required>
+                    <label class="form-label fw-bold">Mobile no.</label>
+                    <input type="tel" name="mobile" class="form-control" pattern="[0-9]*">
                 </div>
 
                 <div class="mb-3">
                     <label class="form-label fw-bold">Remarks (if any)</label>
-                    <input type="text" name="remarks" class="form-control" placeholder="Optional notes">
+                    <input type="text" name="remarks" class="form-control">
                 </div>
 
                 <button type="submit" id="submitBtn" class="btn btn-primary w-100 fw-bold py-2 mb-2">
@@ -208,17 +167,12 @@
     
     function copyText(id) {
         const text = document.getElementById(id).innerText;
-        navigator.clipboard.writeText(text).catch(err => {
-            console.error('Failed to copy: ', err);
-        });
+        navigator.clipboard.writeText(text);
     }
 
     function setDefaults() {
         const now = new Date();
         document.getElementById('todayDate').valueAsDate = now;
-        document.querySelectorAll('input[name="month"]').forEach(cb => { cb.checked = false; });
-        document.getElementById('otherCheck').checked = false;
-        document.getElementById('otherMonth').value = '';
     }
 
     window.onload = setDefaults;
@@ -229,8 +183,8 @@
         let selectedMonths = Array.from(document.querySelectorAll('input[name="month"]:checked')).map(el => el.value);
         const otherCheck = document.getElementById('otherCheck');
         const otherValue = document.getElementById('otherMonth').value.trim();
+        
         if (otherCheck.checked && otherValue) { selectedMonths.push(otherValue); }
-        if (selectedMonths.length === 0) { alert("Please select at least one month."); return; }
         const monthsString = selectedMonths.join(", ");
 
         btn.disabled = true; 
