@@ -134,7 +134,7 @@
         margin: 0;
         padding: 0;
         width: 100%;
-        font-size: 14px; /* Kisi bhi paper size (A3, A4, A5, A6) par clear dikhega */
+        font-size: 14px;
       }
       h2 {
         font-size: 20px;
@@ -152,11 +152,11 @@
       table {
         width: auto !important;
         min-width: 100% !important;
-        table-layout: auto !important; /* Content ke size ke mutabik column width automatic set hogi */
+        table-layout: auto !important;
         border: 1px solid #333;
       }
       th, td {
-        padding: 6px 12px !important; /* Columns ke beech ke faltu wide space ko kam karne ke liye */
+        padding: 6px 12px !important;
         border: 1px solid #dddddd !important;
         word-wrap: break-word;
         overflow-wrap: break-word;
@@ -186,9 +186,9 @@
     </button>
     
     <div class="stats-container">
-      <div class="stat-box total">Total Voters <span>264</span></div>
-      <div class="stat-box male">Male <span>136</span></div>
-      <div class="stat-box female">Female <span>128</span></div>
+      <div class="stat-box total">Total Voters <span>0</span></div>
+      <div class="stat-box male">Male <span>0</span></div>
+      <div class="stat-box female">Female <span>0</span></div>
     </div>
   </div>
 
@@ -477,7 +477,41 @@
   </div>
 
   <script>
-    // JavaScript code to search via Voter's Name or Father/Husband's name
+    // Function to calculate and update dashboard stats
+    function updateStats() {
+      var table = document.getElementById("voterTable");
+      var tr = table.getElementsByTagName("tr");
+      
+      var totalVisible = 0;
+      var maleCount = 0;
+      var femaleCount = 0;
+
+      // Start loop from index 1 to skip table header
+      for (var i = 1; i < tr.length; i++) {
+        // Sirf unhi rows ko count karein jo visible hain (display none nahi hain)
+        if (tr[i].style.display !== "none") {
+          totalVisible++;
+          
+          // Gender Column index 4 par hai
+          var genderTd = tr[i].getElementsByTagName("td")[4];
+          if (genderTd) {
+            var gender = genderTd.textContent || genderTd.innerText;
+            if (gender.trim().toLowerCase() === "male") {
+              maleCount++;
+            } else if (gender.trim().toLowerCase() === "female") {
+              femaleCount++;
+            }
+          }
+        }
+      }
+
+      // Live changes updates on dashboard UI
+      document.querySelector(".stat-box.total span").innerText = totalVisible;
+      document.querySelector(".stat-box.male span").innerText = maleCount;
+      document.querySelector(".stat-box.female span").innerText = femaleCount;
+    }
+
+    // Filter Function based on Name or Father/Husband Name
     function filterVoters() {
       var input = document.getElementById("searchInput");
       var filter = input.value.toUpperCase();
@@ -499,7 +533,15 @@
           }
         }       
       }
+      
+      // Filter hone ke turant baad stats function trigger karein
+      updateStats();
     }
+
+    // Page initial load par counts accurately run karne ke liye
+    window.onload = function() {
+      updateStats();
+    };
   </script>
 
 </body>
