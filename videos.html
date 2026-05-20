@@ -25,6 +25,12 @@ body{
     padding:20px;
     border-radius:12px;
     box-shadow:0 4px 15px rgba(0,0,0,.3);
+    position:relative;
+}
+
+.video-wrapper{
+    position:relative;
+    width:100%;
 }
 
 video{
@@ -32,6 +38,37 @@ video{
     border-radius:8px;
     background:black;
     display:block;
+}
+
+/* Custom progress bar */
+.progress-container{
+    width:100%;
+    height:6px;
+    background:#333;
+    border-radius:3px;
+    margin-top:8px;
+    cursor:pointer;
+    position:relative;
+}
+
+.progress-bar{
+    height:100%;
+    background:#38bdf8;
+    border-radius:3px;
+    width:0%;
+    transition:width 0.1s linear;
+}
+
+.progress-container:hover{
+    height:8px;
+}
+
+.time-display{
+    display:flex;
+    justify-content:space-between;
+    font-size:12px;
+    color:#aaa;
+    margin-top:4px;
 }
 
 .controls{
@@ -48,144 +85,466 @@ video{
     font-weight:bold;
 }
 
-select{
+select,.btn{
     background:#2d2d2d;
     color:white;
     padding:8px 12px;
     border:1px solid #444;
     border-radius:6px;
+    cursor:pointer;
+    font-size:14px;
+}
+
+.btn:hover{
+    background:#3a3a3a;
+}
+
+/* Custom checkbox list */
+.select-list{
+    display:none;
+    flex-direction:column;
+    gap:8px;
+    max-height:200px;
+    overflow-y:auto;
+    background:#2d2d2d;
+    padding:10px;
+    border-radius:8px;
+    border:1px solid #444;
+    width:100%;
+    max-width:300px;
+}
+
+.select-list.show{
+    display:flex;
+}
+
+.select-item{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding:6px;
+    border-radius:6px;
+    cursor:pointer;
+    user-select:none;
+}
+
+.select-item:hover{
+    background:#3a3a3a;
+}
+
+.select-item input[type="checkbox"]{
+    display:none;
+}
+
+.checkmark{
+    width:20px;
+    height:20px;
+    border:2px solid #777;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    flex-shrink:0;
+    transition:all 0.2s;
+}
+
+.select-item input[type="checkbox"]:checked +.checkmark{
+    background:#38bdf8;
+    border-color:#38bdf8;
+}
+
+.select-item input[type="checkbox"]:checked +.checkmark::after{
+    content:"✓";
+    color:#121212;
+    font-weight:bold;
+    font-size:14px;
+}
+
+.select-footer{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:5px;
+}
+
+.select-footer.btn{
+    padding:6px 14px;
+    background:#38bdf8;
+    color:#121212;
+    font-weight:bold;
+    border:none;
+}
+
+/* Overlay controls */
+.overlay-controls{
+    position:absolute;
+    inset:0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    pointer-events:none;
+    opacity:0;
+    transition:opacity 0.2s ease;
+    z-index:10;
+}
+
+.overlay-controls.show{
+    opacity:1;
+    pointer-events:auto;
+}
+
+.center-play{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform:translate(-50%,-50%);
+    pointer-events:auto;
+}
+
+.play-btn{
+    background:rgba(0,0,0,0.6);
+    border:none;
+    color:white;
+    font-size:40px;
+    width:80px;
+    height:80px;
+    border-radius:50%;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    backdrop-filter:blur(4px);
+    user-select:none;
+}
+
+.nav-btn{
+    background:rgba(0,0,0,0.5);
+    border:none;
+    color:white;
+    font-size:32px;
+    width:60px;
+    height:60px;
+    border-radius:50%;
+    cursor:pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 20px;
+    backdrop-filter:blur(4px);
+    user-select:none;
+    pointer-events:auto;
+}
+
+.player-container:fullscreen,
+.player-container:-webkit-full-screen{
+    width:100%;
+    height:100%;
+    max-width:none;
+    padding:0;
+    border-radius:0;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
 }
 </style>
 </head>
 
 <body>
 
-<div class="player-container">
+<div class="player-container" id="playerContainer">
+  <div class="video-wrapper" id="videoWrapper">
+    <video id="videoPlayer" playsinline></video>
 
-<video id="videoPlayer" controls playsinline></video>
+    <div class="overlay-controls" id="overlayControls">
+      <button class="nav-btn" id="prevBtn">‹</button>
 
-<div class="controls">
-<div>
-Playing:
-<span id="videoName" class="highlight">
-Loading...
-</span>
-</div>
+      <div class="center-play">
+        <button class="play-btn" id="playBtn">▶</button>
+      </div>
 
-<select id="loopMode">
-<option value="repeat-all" selected>Repeat All</option>
-<option value="repeat-one">Repeat One</option>
-<option value="none">None</option>
-</select>
+      <button class="nav-btn" id="nextBtn">›</button>
+    </div>
+  </div>
 
-</div>
+  <div class="progress-container" id="progressContainer">
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+  <div class="time-display">
+    <span id="currentTime">0:00</span>
+    <span id="duration">0:00</span>
+  </div>
+
+  <div class="controls">
+    <div>
+      Playing:
+      <span id="videoName" class="highlight">
+        Loading...
+      </span>
+    </div>
+
+    <div style="display:flex; gap:10px; align-items:flex-start; flex-wrap:wrap;">
+      <select id="loopMode">
+        <option value="repeat-all" selected>Repeat All</option>
+        <option value="repeat-one">Repeat One</option>
+        <option value="repeat-selected">Repeat Selected</option>
+        <option value="none">None</option>
+      </select>
+
+      <button class="btn" id="fullscreenBtn">⛶ Fullscreen</button>
+
+      <div id="selectList" class="select-list">
+        <div id="selectItems"></div>
+        <div class="select-footer">
+          <button class="btn" id="okBtn">OK</button>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 <script>
-
-// Generate a.mp4 → o.mp4 automatically
 const playlist=[];
-
 for(let i=97;i<=111;i++){
-playlist.push(
-`https://himdata1.github.io/${String.fromCharCode(i)}.mp4`
-);
+  playlist.push(`https://himdata1.github.io/${String.fromCharCode(i)}.mp4`);
 }
 
 let currentIndex=0;
+let selectedIndices=[];
 let started=false;
+let hideTimeout;
 
 const player=document.getElementById("videoPlayer");
 const videoName=document.getElementById("videoName");
 const loopMode=document.getElementById("loopMode");
+const selectList=document.getElementById("selectList");
+const selectItems=document.getElementById("selectItems");
+const wrapper=document.getElementById("videoWrapper");
+const overlay=document.getElementById("overlayControls");
+const prevBtn=document.getElementById("prevBtn");
+const nextBtn=document.getElementById("nextBtn");
+const playBtn=document.getElementById("playBtn");
+const okBtn=document.getElementById("okBtn");
+const fullscreenBtn=document.getElementById("fullscreenBtn");
+const container=document.getElementById("playerContainer");
+const progressContainer=document.getElementById("progressContainer");
+const progressBar=document.getElementById("progressBar");
+const currentTimeEl=document.getElementById("currentTime");
+const durationEl=document.getElementById("duration");
+
+// Build checkbox list - NOT checked by default
+playlist.forEach((url, idx)=>{
+  let name = url.split("/").pop();
+  let item = document.createElement("label");
+  item.className="select-item";
+  item.innerHTML=`
+    <input type="checkbox" value="${idx}">
+    <span class="checkmark"></span>
+    <span>${name}</span>
+  `;
+  item.addEventListener("click",()=>{
+    let checkbox=item.querySelector("input");
+    checkbox.checked=!checkbox.checked;
+    updateSelectedIndices();
+  });
+  selectItems.appendChild(item);
+});
+
+function updateSelectedIndices(){
+  selectedIndices=Array.from(selectItems.querySelectorAll("input:checked"))
+                .map(inp=>parseInt(inp.value));
+}
+
+function formatTime(sec){
+  if(isNaN(sec)) return "0:00";
+  let m=Math.floor(sec/60);
+  let s=Math.floor(sec%60);
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
 
 function loadVideo(index){
-
-if(index>=playlist.length){
-index=0;
+  if(index>=playlist.length) index=0;
+  if(index<0) index=playlist.length-1;
+  currentIndex=index;
+  player.src=playlist[currentIndex];
+  videoName.textContent=playlist[currentIndex].split("/").pop();
+  player.load();
 }
 
-currentIndex=index;
-
-player.src=playlist[currentIndex];
-
-videoName.textContent=
-playlist[currentIndex]
-.split("/")
-.pop();
-
-player.load();
-
-if(started){
-player.play()
-.catch(err=>console.log(err));
-}
+function togglePlay(){
+  if(player.paused){
+    player.play().catch(err=>console.log(err));
+  }else{
+    player.pause();
+  }
 }
 
+function updatePlayIcon(){
+  playBtn.textContent=player.paused? "▶" : "⏸";
+}
+
+function getNextSelectedIndex(){
+  if(selectedIndices.length===0) return currentIndex;
+  let pos=selectedIndices.indexOf(currentIndex);
+  if(pos===-1 || pos===selectedIndices.length-1){
+    return selectedIndices[0];
+  }
+  return selectedIndices[pos+1];
+}
+
+function getPrevSelectedIndex(){
+  if(selectedIndices.length===0) return currentIndex;
+  let pos=selectedIndices.indexOf(currentIndex);
+  if(pos<=0){
+    return selectedIndices[selectedIndices.length-1];
+  }
+  return selectedIndices[pos-1];
+}
+
+function showControls(){
+  overlay.classList.add("show");
+  clearTimeout(hideTimeout);
+  hideTimeout=setTimeout(()=>{
+    if(!player.paused){
+      overlay.classList.remove("show");
+    }
+  },3000);
+}
+
+function toggleSelectList(){
+  selectList.classList.toggle("show");
+}
+
+function prevVideo(){
+  if(loopMode.value==="repeat-selected"){
+    loadVideo(getPrevSelectedIndex());
+  }else{
+    loadVideo(currentIndex-1);
+  }
+  showControls();
+}
+
+function nextVideo(){
+  if(loopMode.value==="repeat-selected"){
+    loadVideo(getNextSelectedIndex());
+  }else{
+    loadVideo(currentIndex+1);
+  }
+  showControls();
+}
+
+function toggleFullscreen(){
+  if(!document.fullscreenElement){
+    container.requestFullscreen().catch(err=>console.log(err));
+  }else{
+    document.exitFullscreen();
+  }
+}
+
+// Progress bar update
+player.addEventListener("timeupdate",()=>{
+  if(player.duration){
+    let percent=(player.currentTime/player.duration)*100;
+    progressBar.style.width=percent+"%";
+    currentTimeEl.textContent=formatTime(player.currentTime);
+  }
+});
+
+player.addEventListener("loadedmetadata",()=>{
+  durationEl.textContent=formatTime(player.duration);
+});
+
+// Seek on click
+progressContainer.addEventListener("click",(e)=>{
+  let rect=progressContainer.getBoundingClientRect();
+  let percent=(e.clientX-rect.left)/rect.width;
+  player.currentTime=percent*player.duration;
+});
+
+// Play/pause events
 player.addEventListener("play",()=>{
-started=true;
+  started=true;
+  updatePlayIcon();
+  showControls();
+});
+
+player.addEventListener("pause",()=>{
+  updatePlayIcon();
+  overlay.classList.add("show");
+  clearTimeout(hideTimeout);
 });
 
 player.addEventListener("ended",()=>{
-
-const mode=loopMode.value;
-
-if(mode==="repeat-one"){
-
-player.currentTime=0;
-player.play();
-
-}
-
-else if(mode==="repeat-all"){
-
-currentIndex=
-(currentIndex+1)%playlist.length;
-
-loadVideo(currentIndex);
-
-}
-
-else{
-
-if(currentIndex<playlist.length-1){
-
-loadVideo(currentIndex+1);
-
-}
-else{
-
-videoName.textContent=
-"Playlist Finished";
-
-}
-
-}
-
+  const mode=loopMode.value;
+  if(mode==="repeat-one"){
+    player.currentTime=0;
+    player.play();
+  }
+  else if(mode==="repeat-selected"){
+    if(selectedIndices.length===0) return;
+    loadVideo(getNextSelectedIndex());
+  }
+  else if(mode==="repeat-all"){
+    currentIndex=(currentIndex+1)%playlist.length;
+    loadVideo(currentIndex);
+  }
+  else{
+    if(currentIndex<playlist.length-1){
+      loadVideo(currentIndex+1);
+    }
+    else{
+      videoName.textContent="Playlist Finished";
+    }
+  }
 });
 
-// Skip broken videos automatically
 player.onerror=()=>{
-
-console.log(
-"Skipping broken video:",
-playlist[currentIndex]
-);
-
-currentIndex=
-(currentIndex+1)%playlist.length;
-
-setTimeout(()=>{
-
-loadVideo(currentIndex);
-
-},500);
-
+  console.log("Skipping broken video:",playlist[currentIndex]);
+  if(loopMode.value==="repeat-selected"){
+    loadVideo(getNextSelectedIndex());
+  }else{
+    currentIndex=(currentIndex+1)%playlist.length;
+    loadVideo(currentIndex);
+  }
 };
 
-// Start
-loadVideo(0);
+// Controls
+wrapper.addEventListener("click",()=>{
+  togglePlay();
+  showControls();
+});
 
+prevBtn.addEventListener("click",(e)=>{ e.stopPropagation(); prevVideo(); });
+nextBtn.addEventListener("click",(e)=>{ e.stopPropagation(); nextVideo(); });
+playBtn.addEventListener("click",(e)=>{ e.stopPropagation(); togglePlay(); });
+okBtn.addEventListener("click",(e)=>{ e.stopPropagation(); selectList.classList.remove("show"); showControls(); });
+fullscreenBtn.addEventListener("click",toggleFullscreen);
+
+loopMode.addEventListener("mousedown",()=>{
+  if(loopMode.value==="repeat-selected"){
+    toggleSelectList();
+  }
+});
+
+loopMode.addEventListener("change",()=>{
+  if(loopMode.value==="repeat-selected"){
+    selectList.classList.add("show");
+    // Don't auto-select anything anymore
+  }else{
+    selectList.classList.remove("show");
+  }
+});
+
+wrapper.addEventListener("mouseleave",()=>{
+  if(!player.paused){
+    overlay.classList.remove("show");
+  }
+});
+
+document.addEventListener("fullscreenchange",()=>{
+  fullscreenBtn.textContent=document.fullscreenElement? "⛶ Exit" : "⛶ Fullscreen";
+});
+
+loadVideo(0);
+showControls();
 </script>
 
 </body>
