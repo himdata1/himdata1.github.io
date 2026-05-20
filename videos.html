@@ -123,6 +123,31 @@ select,.btn{
     display:flex;
 }
 
+.select-header{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:5px;
+    position:sticky;
+    top:0;
+    background:#2d2d2d;
+    padding-bottom:5px;
+    z-index:1;
+}
+
+.select-header.btn{
+    padding:6px 14px;
+    background:#38bdf8;
+    color:#121212;
+    font-weight:bold;
+    border:none;
+}
+
+.select-items{
+    display:flex;
+    flex-direction:column;
+    gap:8px;
+}
+
 .select-item{
     display:flex;
     align-items:center;
@@ -163,20 +188,6 @@ select,.btn{
     color:#121212;
     font-weight:bold;
     font-size:14px;
-}
-
-.select-footer{
-    display:flex;
-    justify-content:flex-end;
-    margin-top:5px;
-}
-
-.select-footer.btn{
-    padding:6px 14px;
-    background:#38bdf8;
-    color:#121212;
-    font-weight:bold;
-    border:none;
 }
 
 /* Overlay controls */
@@ -240,18 +251,18 @@ select,.btn{
 }
 
 @media (max-width:600px){
-  .nav-btn{
+ .nav-btn{
         width:50px;
         height:50px;
         font-size:28px;
         margin:0 10px;
     }
-  .play-btn{
+ .play-btn{
         width:70px;
         height:70px;
         font-size:35px;
     }
-  .player-container{
+ .player-container{
         padding:12px;
     }
 }
@@ -323,10 +334,10 @@ select,.btn{
       <button class="btn" id="fullscreenBtn">⛶ Fullscreen</button>
 
       <div id="selectList" class="select-list">
-        <div id="selectItems"></div>
-        <div class="select-footer">
+        <div class="select-header">
           <button class="btn" id="okBtn">OK</button>
         </div>
+        <div id="selectItems" class="select-items"></div>
       </div>
     </div>
   </div>
@@ -383,7 +394,7 @@ playlist.forEach((url, idx)=>{
 
 function updateSelectedIndices(){
   selectedIndices=Array.from(selectItems.querySelectorAll("input:checked"))
-            .map(inp=>parseInt(inp.value));
+           .map(inp=>parseInt(inp.value));
 }
 
 function formatTime(sec){
