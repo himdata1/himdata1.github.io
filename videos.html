@@ -138,6 +138,8 @@ select,.btn{
     color:#121212;
     font-weight:bold;
     border:none;
+    width:auto;
+    align-self:flex-end;
 }
 
 .select-items{
@@ -400,7 +402,7 @@ playlist.forEach((url, idx)=>{
 
 function updateSelectedIndices(){
   selectedIndices=Array.from(selectItems.querySelectorAll("input:checked"))
-        .map(inp=>parseInt(inp.value));
+     .map(inp=>parseInt(inp.value));
 }
 
 function formatTime(sec){
