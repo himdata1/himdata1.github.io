@@ -26,6 +26,7 @@ body{
     border-radius:12px;
     box-shadow:0 4px 15px rgba(0,0,0,.3);
     position:relative;
+    box-sizing:border-box;
 }
 
 .video-wrapper{
@@ -40,7 +41,7 @@ video{
     display:block;
 }
 
-/* Custom progress bar */
+/* Responsive progress bar */
 .progress-container{
     width:100%;
     height:6px;
@@ -49,6 +50,7 @@ video{
     margin-top:8px;
     cursor:pointer;
     position:relative;
+    touch-action:none;
 }
 
 .progress-bar{
@@ -57,9 +59,11 @@ video{
     border-radius:3px;
     width:0%;
     transition:width 0.1s linear;
+    pointer-events:none;
 }
 
-.progress-container:hover{
+.progress-container:hover,
+.progress-container:active{
     height:8px;
 }
 
@@ -112,6 +116,7 @@ select,.btn{
     border:1px solid #444;
     width:100%;
     max-width:300px;
+    box-sizing:border-box;
 }
 
 .select-list.show{
@@ -234,6 +239,23 @@ select,.btn{
     pointer-events:auto;
 }
 
+@media (max-width:600px){
+   .nav-btn{
+        width:50px;
+        height:50px;
+        font-size:28px;
+        margin:0 10px;
+    }
+   .play-btn{
+        width:70px;
+        height:70px;
+        font-size:35px;
+    }
+   .player-container{
+        padding:12px;
+    }
+}
+
 .player-container:fullscreen,
 .player-container:-webkit-full-screen{
     width:100%;
@@ -289,6 +311,15 @@ select,.btn{
         <option value="none">None</option>
       </select>
 
+      <select id="playbackSpeed">
+        <option value="0.5">0.5x</option>
+        <option value="0.75">0.75x</option>
+        <option value="1" selected>1x</option>
+        <option value="1.25">1.25x</option>
+        <option value="1.5">1.5x</option>
+        <option value="2">2x</option>
+      </select>
+
       <button class="btn" id="fullscreenBtn">⛶ Fullscreen</button>
 
       <div id="selectList" class="select-list">
@@ -311,10 +342,12 @@ let currentIndex=0;
 let selectedIndices=[];
 let started=false;
 let hideTimeout;
+let isSeeking=false;
 
 const player=document.getElementById("videoPlayer");
 const videoName=document.getElementById("videoName");
 const loopMode=document.getElementById("loopMode");
+const playbackSpeed=document.getElementById("playbackSpeed");
 const selectList=document.getElementById("selectList");
 const selectItems=document.getElementById("selectItems");
 const wrapper=document.getElementById("videoWrapper");
@@ -330,7 +363,7 @@ const progressBar=document.getElementById("progressBar");
 const currentTimeEl=document.getElementById("currentTime");
 const durationEl=document.getElementById("duration");
 
-// Build checkbox list - NOT checked by default
+// Build checkbox list
 playlist.forEach((url, idx)=>{
   let name = url.split("/").pop();
   let item = document.createElement("label");
@@ -350,7 +383,7 @@ playlist.forEach((url, idx)=>{
 
 function updateSelectedIndices(){
   selectedIndices=Array.from(selectItems.querySelectorAll("input:checked"))
-                .map(inp=>parseInt(inp.value));
+              .map(inp=>parseInt(inp.value));
 }
 
 function formatTime(sec){
@@ -365,6 +398,7 @@ function loadVideo(index){
   if(index<0) index=playlist.length-1;
   currentIndex=index;
   player.src=playlist[currentIndex];
+  player.playbackRate=parseFloat(playbackSpeed.value);
   videoName.textContent=playlist[currentIndex].split("/").pop();
   player.load();
 }
@@ -439,9 +473,16 @@ function toggleFullscreen(){
   }
 }
 
+function seekToPosition(clientX){
+  let rect=progressContainer.getBoundingClientRect();
+  let percent=Math.max(0,Math.min(1,(clientX-rect.left)/rect.width));
+  player.currentTime=percent*player.duration;
+  progressBar.style.width=(percent*100)+"%";
+}
+
 // Progress bar update
 player.addEventListener("timeupdate",()=>{
-  if(player.duration){
+  if(player.duration &&!isSeeking){
     let percent=(player.currentTime/player.duration)*100;
     progressBar.style.width=percent+"%";
     currentTimeEl.textContent=formatTime(player.currentTime);
@@ -452,11 +493,48 @@ player.addEventListener("loadedmetadata",()=>{
   durationEl.textContent=formatTime(player.duration);
 });
 
-// Seek on click
+// Mouse and touch seeking
+progressContainer.addEventListener("mousedown",()=>{
+  isSeeking=true;
+});
+
 progressContainer.addEventListener("click",(e)=>{
-  let rect=progressContainer.getBoundingClientRect();
-  let percent=(e.clientX-rect.left)/rect.width;
-  player.currentTime=percent*player.duration;
+  seekToPosition(e.clientX);
+});
+
+progressContainer.addEventListener("mousemove",(e)=>{
+  if(isSeeking){
+    seekToPosition(e.clientX);
+  }
+});
+
+progressContainer.addEventListener("mouseup",()=>{
+  isSeeking=false;
+});
+
+progressContainer.addEventListener("mouseleave",()=>{
+  isSeeking=false;
+});
+
+// Touch events for mobile
+progressContainer.addEventListener("touchstart",(e)=>{
+  isSeeking=true;
+  seekToPosition(e.touches[0].clientX);
+});
+
+progressContainer.addEventListener("touchmove",(e)=>{
+  if(isSeeking){
+    seekToPosition(e.touches[0].clientX);
+  }
+});
+
+progressContainer.addEventListener("touchend",()=>{
+  isSeeking=false;
+});
+
+// Playback speed change
+playbackSpeed.addEventListener("change",()=>{
+  player.playbackRate=parseFloat(playbackSpeed.value);
 });
 
 // Play/pause events
@@ -527,7 +605,6 @@ loopMode.addEventListener("mousedown",()=>{
 loopMode.addEventListener("change",()=>{
   if(loopMode.value==="repeat-selected"){
     selectList.classList.add("show");
-    // Don't auto-select anything anymore
   }else{
     selectList.classList.remove("show");
   }
