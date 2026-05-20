@@ -240,18 +240,18 @@ select,.btn{
 }
 
 @media (max-width:600px){
-   .nav-btn{
+  .nav-btn{
         width:50px;
         height:50px;
         font-size:28px;
         margin:0 10px;
     }
-   .play-btn{
+  .play-btn{
         width:70px;
         height:70px;
         font-size:35px;
     }
-   .player-container{
+  .player-container{
         padding:12px;
     }
 }
@@ -383,7 +383,7 @@ playlist.forEach((url, idx)=>{
 
 function updateSelectedIndices(){
   selectedIndices=Array.from(selectItems.querySelectorAll("input:checked"))
-              .map(inp=>parseInt(inp.value));
+            .map(inp=>parseInt(inp.value));
 }
 
 function formatTime(sec){
@@ -393,7 +393,7 @@ function formatTime(sec){
   return `${m}:${s.toString().padStart(2,'0')}`;
 }
 
-function loadVideo(index){
+function loadVideo(index, autoplay=true){
   if(index>=playlist.length) index=0;
   if(index<0) index=playlist.length-1;
   currentIndex=index;
@@ -401,6 +401,10 @@ function loadVideo(index){
   player.playbackRate=parseFloat(playbackSpeed.value);
   videoName.textContent=playlist[currentIndex].split("/").pop();
   player.load();
+
+  if(autoplay && started){
+    player.play().catch(err=>console.log("Autoplay blocked:", err));
+  }
 }
 
 function togglePlay(){
@@ -558,15 +562,15 @@ player.addEventListener("ended",()=>{
   }
   else if(mode==="repeat-selected"){
     if(selectedIndices.length===0) return;
-    loadVideo(getNextSelectedIndex());
+    loadVideo(getNextSelectedIndex(), true);
   }
   else if(mode==="repeat-all"){
     currentIndex=(currentIndex+1)%playlist.length;
-    loadVideo(currentIndex);
+    loadVideo(currentIndex, true);
   }
   else{
     if(currentIndex<playlist.length-1){
-      loadVideo(currentIndex+1);
+      loadVideo(currentIndex+1, true);
     }
     else{
       videoName.textContent="Playlist Finished";
@@ -577,10 +581,10 @@ player.addEventListener("ended",()=>{
 player.onerror=()=>{
   console.log("Skipping broken video:",playlist[currentIndex]);
   if(loopMode.value==="repeat-selected"){
-    loadVideo(getNextSelectedIndex());
+    loadVideo(getNextSelectedIndex(), true);
   }else{
     currentIndex=(currentIndex+1)%playlist.length;
-    loadVideo(currentIndex);
+    loadVideo(currentIndex, true);
   }
 };
 
@@ -620,7 +624,7 @@ document.addEventListener("fullscreenchange",()=>{
   fullscreenBtn.textContent=document.fullscreenElement? "⛶ Exit" : "⛶ Fullscreen";
 });
 
-loadVideo(0);
+loadVideo(0, false);
 showControls();
 </script>
 
