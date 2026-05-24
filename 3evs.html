@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Environmental Studies (EVS) Lessons</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        h2 {
+            color: #2e7d32;
+            text-align: center;
+            border-bottom: 2px solid #2e7d32;
+            padding-bottom: 15px;
+            margin-top: 0;
+            margin-bottom: 30px;
+        }
+        
+        /* Menu View Styles */
+        .lesson-list {
+            list-style: none;
+            padding: 0;
+        }
+        .lesson-item {
+            margin-bottom: 15px;
+        }
+        .lesson-link {
+            display: block;
+            padding: 15px 20px;
+            background-color: #f1f8e9;
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            border-radius: 6px;
+            border-left: 5px solid #558b2f;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .lesson-link:hover {
+            background-color: #e8f5e9;
+            transform: translateX(5px);
+        }
+        .disabled-link {
+            background-color: #eaeaea;
+            color: #888888;
+            border-left: 5px solid #cccccc;
+            cursor: not-allowed;
+        }
+
+        /* Lesson Content View Styles */
+        .lesson-page {
+            display: none; /* Hidden by default */
+        }
+        .back-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #2e7d32;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.95em;
+            cursor: pointer;
+        }
+        .back-btn:hover {
+            text-underline-offset: 4px;
+            text-decoration: underline;
+        }
+        .qa-block {
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 1px dashed #e0e0e0;
+        }
+        .question {
+            color: #d32f2f; /* Red font for questions */
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        .answer {
+            color: #333333;
+            margin-left: 5px;
+            white-space: pre-line; /* Keeps line breaks intact for multi-line answers */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- MAIN MENU PAGE -->
+    <div id="main-menu">
+        <h2>Environmental Studies (EVS) Lessons</h2>
+        <ul class="lesson-list">
+            <li class="lesson-item">
+                <a class="lesson-link disabled-link">Lesson 1 (Coming Soon)</a>
+            </li>
+            <li class="lesson-item">
+                <a class="lesson-link" onclick="showLesson('chapter-2')">Chapter 2: Going to the Mela</a>
+            </li>
+            <li class="lesson-item">
+                <a class="lesson-link" onclick="showLesson('chapter-3')">Chapter 3: Celebrating Festivals</a>
+            </li>
+            <li class="lesson-item">
+                <a class="lesson-link" onclick="showLesson('lesson-4')">Lesson 4: Getting to Know Plants</a>
+            </li>
+            <li class="lesson-item">
+                <a class="lesson-link" onclick="showLesson('lesson-5')">Lesson 5: Plants and Animals Live Together</a>
+            </li>
+        </ul>
+    </div>
+
+    <!-- CHAPTER 2 PAGE -->
+    <div id="chapter-2" class="lesson-page">
+        <span class="back-btn" onclick="showMenu()">← Back to Lessons Menu</span>
+        <h2>Chapter 2: Going to the Mela</h2>
+
+        <div class="qa-block">
+            <div class="question">Q1. What transport do you take to travel within your city/town/village?</div>
+            <div class="answer"><strong>Answer:</strong> I take the bus, car, bike etc. to travel within my village.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q2. How do you prepare yourself for a trip?</div>
+            <div class="answer"><strong>Answer:</strong> 
+            1. I put clothes, slippers, water bottles etc. into the bag neatly.
+            2. I check my tickets and keep some food to eat. 
+            3. I get ready on time.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q3. What do you think was in the special bag that Nita and Radha’s family carried?</div>
+            <div class="answer"><strong>Answer:</strong> The special bag that Nita and Radha’s family carried may contain a water bottle, sanitizer, umbrella, and few edible items like fruits, biscuits etc.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q4. Why should safety measures be followed when traveling by bus, car, or while riding a bicycle?</div>
+            <div class="answer"><strong>Answer:</strong> We must follow safety measures to be safe and to avoid any kind of accident.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q5. What is the purpose of the ‘Lost and Found’ booth?</div>
+            <div class="answer"><strong>Answer:</strong> The ‘Lost and Found’ booth helps to report lost items or missing persons.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q6. What is the role of the police dog?</div>
+            <div class="answer"><strong>Answer:</strong> A police dog helps in searching and tracking missing persons. It also detects suspicious objects like explosives.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q7. Why are fire engines and ambulances present in a mela?</div>
+            <div class="answer"><strong>Answer:</strong> Fire engines and ambulances are present to keep people safe in a mela. They help in emergencies by putting out fires and giving medical help.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q8. How can we care for our elders?</div>
+            <div class="answer"><strong>Answer:</strong> We can care for our elders by:
+            Respecting them
+            Spending time with them
+            Helping in daily work
+            Eating and playing with them.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q9. What kinds of vehicles do we see around us?</div>
+            <div class="answer"><strong>Answer:</strong> We see many vehicles around us, such as bikes, cars, auto-rickshaws, buses, trains, and airplanes.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q10. How can we ensure safety during travel?</div>
+            <div class="answer"><strong>Answer:</strong> We can ensure safety during travel by:
+            Looking both sides before crossing the road.
+            Crossing at the zebra crossing.
+            Not playing on the road.
+            Following traffic rules and signals.
+            Wearing a seat belt and helmet.
+            Not putting hands or head out of vehicles.</div>
+        </div>
+    </div>
+
+    <!-- CHAPTER 3 PAGE -->
+    <div id="chapter-3" class="lesson-page">
+        <span class="back-btn" onclick="showMenu()">← Back to Lessons Menu</span>
+        <h2>Chapter 3: Celebrating Festivals</h2>
+
+        <div class="qa-block">
+            <div class="question">Q1. Have you ever traveled on a bus?</div>
+            <div class="answer"><strong>Answer:</strong> Yes, once I traveled from Pathiar to Kangra by bus with my parents.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q2. What type of trees and flowers did you see during your trip?</div>
+            <div class="answer"><strong>Answer:</strong> On my trip from Pathiar to Kangra, I saw a variety of beautiful trees and colorful flowers along the way.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q3. What safety measures should you take while traveling?</div>
+            <div class="answer"><strong>Answer:</strong> While traveling, we should follow these safety rules:
+            Sit properly facing forward.
+            Keep bags under the seat.
+            Keep head, hands, and arms inside.
+            Talk quietly and follow the driver’s instructions.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q4. What safety measures should you take while riding a bicycle and while walking on the road?</div>
+            <div class="answer"><strong>Answer:</strong> 
+            We should wear a helmet while riding a bicycle.
+            We should follow traffic rules and signals.
+            We should walk on the footpath.
+            We should cross the road at a zebra crossing.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q5. What special dresses do you wear during festivals?</div>
+            <div class="answer"><strong>Answer:</strong> I like to wear traditional dresses during festivals.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q6. What are the different modes of transport used during travel?</div>
+            <div class="answer"><strong>Answer:</strong> Trains, buses, cars, scooters, aeroplanes, etc.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q7. How can one be safe during travels?</div>
+            <div class="answer"><strong>Answer:</strong> 
+            1.) Stay close to your parents or a trusted adult.
+            2.) Carry only necessary things and keep them safe.
+            3.) Remember your name and your parents’ phone number.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q8. How do festivals and celebrations bring us together?</div>
+            <div class="answer"><strong>Answer:</strong> Festivals bring people together by sharing happiness and spending time together.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q9. How do you spend time with your cousins and relatives?</div>
+            <div class="answer"><strong>Answer:</strong> I spend time by playing games with my cousins and relatives.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q10. Fill in the Blanks.</div>
+            <div class="answer">1.) Chiya and Nonikaa live in a small village near the <strong>mountains</strong>.
+            2.) The bus went along the <strong>curved</strong> roads where the hills were covered with colourful flowers.
+            3.) Rishi and his family walked to his Mama’s house through a narrow <strong>mud</strong> road.
+            4.) The red flowers that bloom in spring are called <strong>buransh</strong>.
+            5.) <strong>Haakh</strong> is a kind of leafy vegetable eaten with hot rice.</div>
+        </div>
+    </div>
+
+    <!-- LESSON 4 PAGE -->
+    <div id="lesson-4" class="lesson-page">
+        <span class="back-btn" onclick="showMenu()">← Back to Lessons Menu</span>
+        <h2>Lesson 4: Getting to Know Plants</h2>
+
+        <div class="qa-block">
+            <div class="question">Q1. Write the names of trees that you can recognize.</div>
+            <div class="answer"><strong>Answer:</strong> I can recognize banyan, banana, mango, peepal and neem trees.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q2. Write the names of some shrubs.</div>
+            <div class="answer"><strong>Answer:</strong> Tulsi, hibiscus, curry leaf, rose, bougainvillea and henna are examples of shrubs.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q3. Write the names of some herbs that you have seen and where you have seen them.</div>
+            <div class="answer"><strong>Answer:</strong> I have seen coriander, mint, mustard and sugarcane. I have seen coriander and mint at my home and mustard and sugarcane in the fields.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q4. Write the names of some climbers or creepers that you have seen and where you have seen them.</div>
+            <div class="answer"><strong>Answer:</strong> I have seen jasmine and money plant at my home and cucumber, bitter gourd, muskmelon and pumpkin in the fields.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q5. What statements can we make about leaves?</div>
+            <div class="answer"><strong>Answer:</strong> Plants have different types of leaves that differ in colour, shape, size, texture and smell.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q6. What are the parts of a plant?</div>
+            <div class="answer"><strong>Answer:</strong> The root, stem, leaf, flower, fruit and seed are the different parts of a plant.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q7. Did you notice any other animals, birds and insects on the plant?</div>
+            <div class="answer"><strong>Answer:</strong> I saw squirrels, crows and beetles on the tree.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q8. What were they doing?</div>
+            <div class="answer"><strong>Answer:</strong> The squirrel was eating a fruit from the tree, the crow was making strange noises and the beetles were sitting on the leaves.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q9. What would happen if there were no plants?</div>
+            <div class="answer"><strong>Answer:</strong> Plants give us food, oxygen, clothes, wood, medicines and shelter for many animals and birds. Without plants, life on Earth would not be possible.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q10. How does the root help a plant to grow?</div>
+            <div class="answer"><strong>Answer:</strong> Roots help a plant grow by holding it firmly in the soil and absorbing water and minerals needed for its growth.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q11. What is the role of the stem?</div>
+            <div class="answer"><strong>Answer:</strong> The stem transports water and minerals from the roots to other parts of the plant. It also provides support to leaves and branches.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q12. Describe your favorite plant. Why is it your favorite?</div>
+            <div class="answer"><strong>Answer:</strong> Rose is my favorite plant because it has beautiful flowers of many colours.</div>
+        </div>
+    </div>
+
+    <!-- LESSON 5 PAGE -->
+    <div id="lesson-5" class="lesson-page">
+        <span class="back-btn" onclick="showMenu()">← Back to Lessons Menu</span>
+        <h2>Lesson 5: Plants and Animals Live Together</h2>
+
+        <div class="qa-block">
+            <div class="question">Q1. Why do animals choose to live near plants?</div>
+            <div class="answer"><strong>Answer:</strong> Animals live near plants because they get food, shelter and protection from them.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q2. What small things can you see in the soil?</div>
+            <div class="answer"><strong>Answer:</strong> We can see small stones, grass, leaves, insects and twigs in the soil.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q3. Where do new plants and animals come from during monsoons?</div>
+            <div class="answer"><strong>Answer:</strong> New plants and animals come from seeds, eggs and dormant stages because rain helps them grow.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q4. Which animals can be seen around plants?</div>
+            <div class="answer"><strong>Answer:</strong> Squirrels, monkeys, rabbits, butterflies and insects can be seen around plants.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q5. Which birds can be seen around plants?</div>
+            <div class="answer"><strong>Answer:</strong> Sparrows, parrots and cuckoos can be seen around plants.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q6. How do animals, birds and insects depend on plants?</div>
+            <div class="answer"><strong>Answer:</strong> Animals, birds and insects depend on plants for food, shelter and protection.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q7. What is soil made of?</div>
+            <div class="answer"><strong>Answer:</strong> Soil is made of small rock pieces, old leaves, roots, stems and dead insects.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q8. Name two animals you observed near plants.</div>
+            <div class="answer"><strong>Answer:</strong> Butterfly and monkey.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q9. Why do butterflies stay near plants?</div>
+            <div class="answer"><strong>Answer:</strong> Butterflies stay near plants to collect nectar.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q10. Why do monkeys stay near plants?</div>
+            <div class="answer"><strong>Answer:</strong> Monkeys stay near plants to eat fruits.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q11. When do birds make more sounds?</div>
+            <div class="answer"><strong>Answer:</strong> Birds make more sounds in the early morning and evening.</div>
+        </div>
+
+        <div class="qa-block">
+            <div class="question">Q12. Write the life cycle of a butterfly in order.</div>
+            <div class="answer"><strong>Answer:</strong> Caterpillar stopped eating → Caterpillar formed a cocoon → It came out of the cocoon → It became a butterfly → It flew away gently.</div>
+        </div>
+    </div>
+
+</div>
+
+<!-- Simple Script to Switch Views -->
+<script>
+    function showLesson(lessonId) {
+        document.getElementById('main-menu').style.display = 'none';
+        document.getElementById(lessonId).style.display = 'block';
+        window.scrollTo(0, 0); // Scroll back to top
+    }
+
+    function showMenu() {
+        // Hide all lesson pages
+        var pages = document.getElementsByClassName('lesson-page');
+        for (var i = 0; i < pages.length; i++) {
+            pages[i].style.display = 'none';
+        }
+        // Show main menu
+        document.getElementById('main-menu').style.display = 'block';
+    }
+</script>
+
+</body>
+</html>
