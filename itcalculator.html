@@ -2,7 +2,7 @@
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Income Tax Calculation, FY 2025-26</title>  
+    <title>Income Tax Calculation, FY 2026-27</title>  
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>IT</text></svg>">
 
@@ -201,7 +201,7 @@
 </div>  
 
 <div class="sheet" id="printContent">  
-    <h2>Income Tax Calculation for the Financial Year 2025-26 (AY 2026-27)</h2>  
+    <h2>Income Tax Calculation for the Financial Year 2026-27 (AY 2027-28)</h2>  
     <h3>Tax Regime Opted: New Regime</h3>  
 
     <table class="info-table">  
@@ -419,7 +419,7 @@
             input.value = "";  
             if (input.tagName === "TEXTAREA") input.style.height = "auto";  
         });  
-        document.title = "Income Tax Calculation, FY 2025-26";  
+        document.title = "Income Tax Calculation, FY 2026-27";  
         calculateTax();  
         checkInputs();   
     }  
@@ -439,7 +439,7 @@
         let title = "";  
         if (nameVal) title += toTitleCase(nameVal);  
         if (desigVal) title += (title ? ", " : "") + toTitleCase(desigVal);  
-        document.title = title || "Income Tax Calculation, FY 2025-26";  
+        document.title = title || "Income Tax Calculation, FY 2026-27";  
     }  
   
     function getFileName() {  
@@ -498,7 +498,7 @@
     document.getElementById('headSalaries').innerText = format(headSalaries);  
     document.getElementById('taxableIncome').innerText = format(taxable);  
 
-    // 2. Slab Calculation Logic (New Regime FY 2025-26)
+    // 2. Slab Calculation Logic (New Regime FY 2026-27)
     let slabs = [  
         { start: 0, limit: 400000, rate: 0, id: 1 },  
         { start: 400000, limit: 800000, rate: 0.05, id: 2 },  
