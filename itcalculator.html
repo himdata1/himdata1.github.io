@@ -127,7 +127,7 @@
         /* Page Tab Panels */
         .tab-content {
             display: none;
-            padding: 12px 10px;
+            padding: 10px 8px;
             width: 100%;
         }
 
@@ -137,44 +137,44 @@
 
         /* Modern Mobile-Optimized Form Container (Page 1) */
         .form-container {
-            max-width: 500px;
             width: 100%;
+            max-width: 100%;
             margin: 0 auto;
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 20px 15px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            padding: 16px 12px;
+            box-shadow: 0 2px 12px rgba(0, 0, 0, 0.04);
             border: 1px solid #e2e8f0;
         }
 
         .form-header {
             text-align: center;
-            margin-bottom: 22px;
+            margin-bottom: 20px;
             border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
 
         .form-header h2 {
             margin: 0 0 6px 0;
-            font-size: 19px;
+            font-size: 18px;
             color: var(--text-main);
         }
 
         .form-header p {
             margin: 0;
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 12.5px;
         }
 
         .form-section {
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 15px;
+            font-size: 14.5px;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -185,26 +185,26 @@
         .form-grid {
             display: flex;
             flex-direction: column;
-            gap: 14px;
+            gap: 12px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
-            gap: 6px;
+            gap: 5px;
             width: 100%;
         }
 
         .form-group label {
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 600;
             color: #334155;
         }
 
         .form-control {
             width: 100%;
-            padding: 11px 14px;
-            font-size: 16px;
+            padding: 10px 12px;
+            font-size: 15px;
             border: 1.5px solid var(--border-color);
             border-radius: 8px;
             background-color: #f8fafc;
@@ -230,11 +230,11 @@
             transform: translateY(-50%);
             color: var(--text-muted);
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
         }
 
         .currency-input .form-control {
-            padding-left: 30px;
+            padding-left: 28px;
             text-align: right;
             font-weight: 600;
         }
@@ -242,10 +242,10 @@
         .btn-view-sheet {
             display: block;
             width: 100%;
-            padding: 14px;
+            padding: 13px;
             background-color: var(--primary);
             color: white;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             border: none;
             border-radius: 8px;
@@ -257,6 +257,29 @@
 
         .btn-view-sheet:hover {
             background-color: var(--primary-hover);
+        }
+
+        /* Printable Sheet Layout (Page 2) */
+        .sheet-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            text-align: center;
+        }
+
+        .sheet {
+            background-color: white;
+            width: 100%;
+            max-width: 100%;
+            min-height: auto;
+            padding: 8px;
+            box-sizing: border-box;
+            display: block;
+            text-align: left;
+            margin: 0 auto;
+            position: relative;
+            box-shadow: 0 0 15px rgba(0,0,0,0.06);
+            border-radius: 4px;
         }
 
         /* Desktop Layout Overrides (> 768px) */
@@ -285,44 +308,20 @@
                 font-size: 15px;
                 flex: initial;
             }
-        }
-
-        /* Printable Sheet Layout (Page 2) */
-        .sheet-wrapper {
-            width: 100%;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-            text-align: center;
-        }
-
-        .sheet {
-            background-color: white;
-            width: 100%;
-            max-width: 210mm;
-            min-height: auto;
-            padding: 10px;
-            box-sizing: border-box;
-            display: inline-block;
-            text-align: left;
-            margin: 0 auto;
-            position: relative;
-            box-shadow: 0 0 20px rgba(0,0,0,0.08);
-            border-radius: 4px;
-        }
-
-        @media screen and (min-width: 769px) {
             .sheet {
+                max-width: 210mm;
                 padding: 12mm 12mm;
+                display: inline-block;
             }
         }
 
-        .sheet h2 { font-size: 14pt; font-weight: bold; text-align: center; margin: 0 0 5px 0; }
-        .sheet h3 { font-size: 13pt; font-weight: normal; color: #2563eb; text-align: center; margin: 0 0 15px 0; }
+        .sheet h2 { font-size: 13pt; font-weight: bold; text-align: center; margin: 0 0 5px 0; }
+        .sheet h3 { font-size: 12pt; font-weight: normal; color: #2563eb; text-align: center; margin: 0 0 12px 0; }
 
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 12.5pt;
+            font-size: 11.5pt;
             table-layout: fixed;
         }
 
@@ -336,7 +335,7 @@
             border: 1px solid black;
             padding: 1.7px 4px;
             vertical-align: middle;
-            line-height: 1.5;
+            line-height: 1.4;
             overflow: hidden;
             white-space: nowrap;
         }
@@ -356,13 +355,13 @@
             padding: 0;
             margin: 0;
             color: #000;
-            line-height: 1.5;
+            line-height: 1.4;
         }
 
         .sheet textarea {
             resize: none;
             overflow: hidden;
-            min-height: 25px;
+            min-height: 22px;
             display: block;
         }
 
@@ -373,16 +372,16 @@
         .col-idx { text-align: center; font-weight: bold; width: 5%; }
 
         .footer {
-            margin-top: 35px;
+            margin-top: 30px;
             display: flex;
             justify-content: space-between;
-            font-size: 12.5pt;
+            font-size: 11.5pt;
             width: 100%;
         }
         .footer > div:first-child { margin-top: -15px; }
         .signature-line {
             border-top: 1px dashed black;
-            width: 180px;
+            width: 160px;
             text-align: center;
             padding-top: 5px;
         }
@@ -397,7 +396,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            font-size: 20px;
+            font-size: 18px;
         }
 
         @media print {
@@ -411,7 +410,6 @@
             input, textarea { background-color: transparent !important; }
         }
 
-        /* Placeholder text transform fix */
         .form-control::placeholder,
         input::placeholder,
         textarea::placeholder {
@@ -430,20 +428,20 @@
 <header class="app-header">
     <nav class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('tab-input', this)">
-            📝 1. Basic Details & Income Input
+            📝 1. Basic Details
         </button>
         <button class="tab-btn" onclick="switchTab('tab-sheet', this)">
-            📊 2. Go to Calculation Sheet
+            📊 2. Calculation Sheet
         </button>
     </nav>
 </header>
 
 <!-- Action Toolbar (Shown ONLY on Calculation Sheet Tab) -->
 <div class="no-print-bar" id="actionToolbar">
-    <button class="action-btn btn-print" onclick="printPage()">🖨️ Print / Save as PDF</button>
-    <button class="action-btn btn-share" onclick="sharePDF()">📱 Share as PDF</button>
+    <button class="action-btn btn-print" onclick="printPage()">🖨️ Print / Save PDF</button>
+    <button class="action-btn btn-share" onclick="sharePDF()">📱 Share PDF</button>
     <button class="action-btn btn-download" onclick="downloadVectorPDF()">📄 Download PDF</button>
-    <button id="resetBtn" class="action-btn btn-reset" onclick="resetForm()">🔄 Reset All Fields</button>
+    <button id="resetBtn" class="action-btn btn-reset" onclick="resetForm()">🔄 Reset All</button>
 </div>
 
 <!-- PAGE 1: BASIC DETAILS & DATA ENTRY FORM -->
@@ -543,7 +541,6 @@
         <div class="sheet" id="printContent">  
             <h2>Income Tax Calculation for the Financial Year 2026-27 (AY 2027-28)</h2>  
             <h3 style="text-align: left;">Tax Regime Opted: New Regime</h3>
-  
 
             <table class="info-table">  
                 <colgroup>  
@@ -609,11 +606,11 @@
                     <td rowspan="9" class="wrap-text" id="slab-title-cell" style="vertical-align: middle; text-align: center; font-weight:bold;">  
                         Income Tax Liability  
                     </td>  
-                    <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">from Rs.</td>  
-                    <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">to Rs.</td>  
-                    <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">Income</td>  
-                    <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">Rate</td>  
-                    <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">Income Tax</td>  
+                    <td class="center bold" style="background:#f9f9f9; font-size:11pt;">from Rs.</td>  
+                    <td class="center bold" style="background:#f9f9f9; font-size:11pt;">to Rs.</td>  
+                    <td class="center bold" style="background:#f9f9f9; font-size:11pt;">Income</td>  
+                    <td class="center bold" style="background:#f9f9f9; font-size:11pt;">Rate</td>  
+                    <td class="center bold" style="background:#f9f9f9; font-size:11pt;">Income Tax</td>  
                 </tr>  
 
                 <tr id="row-slab-1"><td class="right">0</td><td class="right" id="to-slab-1">0</td><td class="right" id="inc-slab-1">0</td><td class="center">0 %</td><td class="right" id="tax-slab-1">0</td></tr>  
@@ -726,7 +723,6 @@
         document.getElementById(tabId).classList.add('active');
         btn.classList.add('active');
 
-        // Show action toolbar ONLY on the calculation sheet tab
         const toolbar = document.getElementById('actionToolbar');
         if (toolbar) {
             toolbar.style.display = (tabId === 'tab-sheet') ? 'flex' : 'none';
@@ -836,7 +832,7 @@
         let elem = (typeof idOrElem === 'string') ? document.getElementById(idOrElem) : idOrElem;  
         if (!elem) return;  
         let text = (elem.tagName === 'INPUT') ? elem.value : elem.innerText;  
-        if (text.length > 12) elem.style.fontSize = Math.max(6.5, 12.5 * (12 / text.length)) + "pt";  
+        if (text.length > 12) elem.style.fontSize = Math.max(6.5, 11.5 * (12 / text.length)) + "pt";  
         else elem.style.fontSize = "inherit";  
     }  
 
@@ -1000,15 +996,18 @@
 
     calculateTax();  
     
-    // PDF Generation
+    // PDF Generation Logic with Dynamic A4 Width Switcher
     async function buildVectorPDF() {  
         const { jsPDF } = window.jspdf;  
         const element = document.getElementById('printContent');  
         
-        // Temporarily lock width to fixed 210mm for PDF snapshot
+        // Dynamically lock element to fixed 210mm ONLY during PDF capture
         const origWidth = element.style.width;
+        const origMaxWidth = element.style.maxWidth;
         const origPadding = element.style.padding;
+        
         element.style.width = "210mm";
+        element.style.maxWidth = "210mm";
         element.style.padding = "12mm";
 
         const inputs = element.querySelectorAll("input, textarea");  
@@ -1140,6 +1139,7 @@
       
         // Restore screen width and padding
         element.style.width = origWidth;
+        element.style.maxWidth = origMaxWidth;
         element.style.padding = origPadding;
 
         return doc;  
