@@ -127,14 +127,15 @@
 
         /* Modern Form Container (Page 1) */
         .form-container {
-            max-width: 860px;
-            margin: 0 auto;
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 30px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-            border: 1px solid #e2e8f0;
-        }
+    max-width: 100% !important; /* Android App WebView me zoom-out nahi hone dega */
+    margin: 0 auto;
+    background: var(--card-bg);
+    border-radius: 12px;
+    padding: 20px 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    border: 1px solid #e2e8f0;
+}
+
 
         .form-header {
             text-align: center;
@@ -171,11 +172,12 @@
             padding-bottom: 8px;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
-        }
+        ..form-grid {
+    display: grid;
+    grid-template-columns: 1fr !important; /* Force-fully hamesha single column rakhega */
+    gap: 16px;
+}
+
 
         .form-group {
             display: flex;
@@ -368,38 +370,6 @@
 input::placeholder,
 textarea::placeholder {
     text-transform: none !important;
-}
-/* ==========================================
-   FIX FOR MOBILE APP & PAGE 2 SHEET
-   ========================================== */
-
-/* 1. Page 1 (Form): Mobile par single column inputs */
-.form-grid {
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
-}
-
-/* Desktop/Badi Screen par 2-Columns */
-@media screen and (min-width: 768px) {
-    .form-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-        gap: 20px;
-    }
-}
-
-/* 2. Page 2 (Calculation Sheet): Original A4 Table Layout Fix */
-.sheet-wrapper {
-    width: 100%;
-    overflow-x: auto; /* Mobile par sheet horizontally scroll hogi */
-    -webkit-overflow-scrolling: touch;
-}
-
-.sheet {
-    width: 210mm !important; /* A4 Table Layout bilkul intact rahega */
-    max-width: none !important;
-    margin: 0 auto;
 }
 
     </style>
