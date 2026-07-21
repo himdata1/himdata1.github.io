@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, shrink-to-fit=no">
     <title>Income Tax Calculation FY 2026-27</title>
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232563eb%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>IT</text></svg>">
@@ -124,53 +124,53 @@
         /* Page Tab Panels */
         .tab-content {
             display: none;
-            padding: 15px 10px;
+            padding: 12px 10px;
         }
 
         .tab-content.active {
             display: block;
         }
 
-        /* Modern Mobile-Optimized Form Container (Page 1) */
+        /* STRICT SINGLE COLUMN FORM CONTAINER (Page 1) */
         .form-container {
-            max-width: 500px; /* Mobile par compact rahega, fields lambi nahi hongi */
+            max-width: 520px;
             width: 100%;
             margin: 0 auto;
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 20px 15px;
+            padding: 18px 14px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             border: 1px solid #e2e8f0;
         }
 
         .form-header {
             text-align: center;
-            margin-bottom: 22px;
+            margin-bottom: 18px;
             border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 12px;
+            padding-bottom: 10px;
         }
 
         .form-header h2 {
-            margin: 0 0 6px 0;
-            font-size: 19px;
+            margin: 0 0 4px 0;
+            font-size: 18px;
             color: var(--text-main);
         }
 
         .form-header p {
             margin: 0;
             color: var(--text-muted);
-            font-size: 13px;
+            font-size: 12.5px;
         }
 
         .form-section {
-            margin-bottom: 22px;
+            margin-bottom: 20px;
         }
 
         .section-title {
-            font-size: 15px;
+            font-size: 14.5px;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 14px;
+            margin-bottom: 12px;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -178,37 +178,39 @@
             padding-bottom: 6px;
         }
 
-        /* Default: Single Column for Mobile & Android App */
+        /* Forced Single Column Structure */
         .form-grid {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 12px !important;
+            width: 100% !important;
         }
 
         .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 6px;
-            width: 100%;
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 5px !important;
+            width: 100% !important;
         }
 
         .form-group label {
-            font-size: 13.5px;
+            font-size: 13px;
             font-weight: 600;
             color: #334155;
         }
 
-        /* Large Font Size (16px) for perfect readability without zooming */
+        /* Large 16px font size to stop Android WebView auto-zoom */
         .form-control {
-            width: 100%;
-            padding: 11px 14px;
-            font-size: 16px;
+            width: 100% !important;
+            padding: 11px 12px;
+            font-size: 16px !important;
             border: 1.5px solid var(--border-color);
             border-radius: 8px;
             background-color: #f8fafc;
             color: var(--text-main);
             transition: all 0.2s ease;
             outline: none;
+            box-sizing: border-box;
         }
 
         .form-control:focus {
@@ -219,6 +221,7 @@
 
         .currency-input {
             position: relative;
+            width: 100%;
         }
 
         .currency-symbol {
@@ -240,10 +243,10 @@
         .btn-view-sheet {
             display: block;
             width: 100%;
-            padding: 14px;
+            padding: 13px;
             background-color: var(--primary);
             color: white;
-            font-size: 16px;
+            font-size: 15.5px;
             font-weight: 700;
             border: none;
             border-radius: 8px;
@@ -255,34 +258,6 @@
 
         .btn-view-sheet:hover {
             background-color: var(--primary-hover);
-        }
-
-        /* Desktop Layout Overrides (> 768px) */
-        @media screen and (min-width: 769px) {
-            .tab-content {
-                padding: 25px 15px;
-            }
-            .form-container {
-                max-width: 860px;
-                padding: 30px;
-            }
-            .form-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-                gap: 20px;
-            }
-            .form-group.full-width {
-                grid-column: 1 / -1;
-            }
-            .form-control {
-                font-size: 14.5px;
-                padding: 10px 14px;
-            }
-            .tab-btn {
-                padding: 10px 22px;
-                font-size: 15px;
-                flex: initial;
-            }
         }
 
         /* Printable Sheet Layout (Page 2) */
@@ -402,7 +377,6 @@
             input, textarea { background-color: transparent !important; }
         }
 
-        /* Placeholder text transform fix */
         .form-control::placeholder,
         input::placeholder,
         textarea::placeholder {
@@ -437,7 +411,7 @@
     <button id="resetBtn" class="action-btn btn-reset" onclick="resetForm()">🔄 Reset All Fields</button>
 </div>
 
-<!-- PAGE 1: BASIC DETAILS & DATA ENTRY FORM -->
+<!-- PAGE 1: BASIC DETAILS & DATA ENTRY FORM (STRICT SINGLE COLUMN) -->
 <div id="tab-input" class="tab-content active">
     <div class="form-container">
         <div class="form-header">
@@ -469,7 +443,7 @@
                     <label for="form_mobile_no">Mobile Number</label>
                     <input type="text" id="form_mobile_no" class="form-control" maxlength="10" placeholder="e.g. 9876543210" oninput="validateMobile(this); syncField('mobile_no', this.value); checkInputs();">
                 </div>
-                <div class="form-group full-width">
+                <div class="form-group">
                     <label for="form_office_addr">Office Address</label>
                     <input type="text" id="form_office_addr" class="form-control capitalize" placeholder="e.g. GPS, Abc" oninput="syncField('office_addr', this.value); checkInputs();">
                 </div>
@@ -480,7 +454,7 @@
         <div class="form-section">
             <div class="section-title">💰 Salary & Income Tax Details</div>
             <div class="form-grid">
-                <div class="form-group full-width">
+                <div class="form-group">
                     <label for="form_grossIncome">Income from salary (including Employer Share to NPS)</label>
                     <div class="currency-input">
                         <span class="currency-symbol">₹</span>
@@ -488,7 +462,7 @@
                     </div>
                 </div>
 
-                <div class="form-group full-width">
+                <div class="form-group">
                     <label for="form_npsDeduction">Deduction u/s 80CCD(2) (Employer Share to NPS @ 14%)</label>
                     <div class="currency-input">
                         <span class="currency-symbol">₹</span>
@@ -496,7 +470,7 @@
                     </div>
                 </div>
 
-                <div class="form-group full-width">
+                <div class="form-group">
                     <label for="form_relief89">Relief under section 89(1) (if any)</label>
                     <div class="currency-input">
                         <span class="currency-symbol">₹</span>
@@ -717,7 +691,6 @@
         document.getElementById(tabId).classList.add('active');
         btn.classList.add('active');
 
-        // Show action toolbar ONLY on the calculation sheet tab
         const toolbar = document.getElementById('actionToolbar');
         if (toolbar) {
             toolbar.style.display = (tabId === 'tab-sheet') ? 'flex' : 'none';
@@ -726,7 +699,7 @@
         window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
-    // Two-Way Synchronization Functions
+    // Synchronize Form Input to Sheet Inputs
     function syncField(targetId, value) {
         let elem = document.getElementById(targetId);
         if (elem) {
@@ -742,9 +715,7 @@
     }
 
     function formatFormInput(elem, sheetTargetId) {
-        let cursor = elem.selectionStart;
-        let valueBefore = elem.value;
-        let digits = valueBefore.replace(/,/g, '');
+        let digits = elem.value.replace(/,/g, '');
         if (digits === "") {
             elem.value = "";
             syncField(sheetTargetId, "");
@@ -900,7 +871,6 @@
         document.getElementById('slab-title-cell').rowSpan = visibleCount + 2;  
         document.getElementById('totalSlabTax').innerText = format(slabTaxTotal);  
 
-        // Relief u/s 87A
         let reb87 = (taxable <= 1200000) ? slabTaxTotal : 0;  
         let marg87 = (taxable > 1200000 && slabTaxTotal > (taxable - 1200000)) ? (slabTaxTotal - (taxable - 1200000)) : 0;  
         let taxRel = Math.max(0, slabTaxTotal - reb87 - marg87);  
@@ -909,7 +879,6 @@
         document.getElementById('marginalRelief87A').innerText = format(marg87);  
         document.getElementById('taxAfterRelief').innerText = format(taxRel);  
 
-        // Surcharge
         let surchargeAmount = 0, surchargeRate = 0, mReliefSurcharge = 0;  
 
         if (taxable > 20000000) surchargeRate = 0.25;   
@@ -944,13 +913,11 @@
         let taxAfterSurchargeRelief = Math.max(0, taxRel + surchargeAmount - mReliefSurcharge);  
         document.getElementById('taxAfterSurchargeRelief').innerText = format(taxAfterSurchargeRelief);  
 
-        // Cess & Total Liability  
         let cess = Math.round(taxAfterSurchargeRelief * 0.04);  
         let totalLiab = taxAfterSurchargeRelief + cess;  
         document.getElementById('cess').innerText = format(cess);  
         document.getElementById('totalTaxLiability').innerText = format(totalLiab);  
 
-        // Relief u/s 89  
         let relief89 = getVal('relief89');  
         let finalTaxComp = taxAfterSurchargeRelief;  
         let finalCessComp = cess;   
@@ -970,7 +937,6 @@
         document.getElementById('balanceCessComp').innerText = format(finalCessComp);  
         document.getElementById('balanceTotalComp').innerText = format(balTotal);  
 
-        // Net Payable/Refundable  
         let paidTax = getVal('paidTax'), paidCess = getVal('paidCess');  
         let paidTotal = paidTax + paidCess;  
         document.getElementById('paidTotal').innerText = format(paidTotal);  
@@ -983,7 +949,6 @@
         document.getElementById('netCess').innerText = format(netCess);  
         document.getElementById('netTotal').innerText = format(netTotal);  
 
-        // Status Update  
         let status = document.getElementById('taxStatus');  
         status.value = netTotal > 0 ? "Payable" : (netTotal < 0 ? "Refundable" : "Nil");  
         status.style.color = netTotal > 0 ? "#dc3545" : (netTotal < 0 ? "#28a745" : "black");  
@@ -991,7 +956,7 @@
 
     calculateTax();  
     
-    // PDF Generation
+    // PDF Generation Logic
     async function buildVectorPDF() {  
         const { jsPDF } = window.jspdf;  
         const element = document.getElementById('printContent');  
