@@ -53,6 +53,7 @@
             gap: 6px;
             padding: 8px 10px;
             width: 100%;
+            max-width: 500px;
             margin: 0 auto;
         }
 
@@ -124,19 +125,19 @@
             display: block !important;
         }
 
-        /* STRICT MOBILE FIT-TO-WIDTH LAYOUT (PAGE 1) */
+        /* COMPACT MOBILE FORM CONTAINER (PAGE 1) */
         #tab-input {
-            padding: 10px 8px !important;
+            padding: 12px 10px !important;
             width: 100% !important;
         }
 
         .form-container {
             width: 100% !important;
-            max-width: 100% !important; /* Fixes zoom out floating card */
-            margin: 0 !important;
+            max-width: 480px !important; /* Prevents overly long/stretched input rows */
+            margin: 0 auto !important;
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 16px 12px !important;
+            padding: 18px 14px !important;
             box-shadow: 0 2px 12px rgba(0, 0, 0, 0.06);
             border: 1px solid #e2e8f0;
         }
@@ -161,20 +162,20 @@
         }
 
         .form-section {
-            margin-bottom: 18px;
+            margin-bottom: 16px;
             width: 100% !important;
         }
 
         .section-title {
-            font-size: 14px;
+            font-size: 13.5px;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
             display: flex;
             align-items: center;
             gap: 6px;
             border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 6px;
+            padding-bottom: 5px;
         }
 
         .form-grid {
@@ -191,18 +192,19 @@
         .form-group label {
             display: block !important;
             width: 100% !important;
-            font-size: 13px !important;
+            font-size: 12.5px !important;
             font-weight: 600;
             color: #334155;
-            margin-bottom: 5px !important;
+            margin-bottom: 4px !important;
         }
 
+        /* Font-size 16px PREVENTS iOS/Android from auto-zooming when tapping inputs */
         .form-control {
             display: block !important;
             width: 100% !important;
-            height: 44px;
-            padding: 10px 12px !important;
-            font-size: 16px !important;
+            height: 42px;
+            padding: 8px 12px !important;
+            font-size: 16px !important; 
             border: 1.5px solid var(--border-color);
             border-radius: 8px;
             background-color: #f8fafc;
@@ -229,12 +231,12 @@
             transform: translateY(-50%);
             color: var(--text-muted);
             font-weight: 600;
-            font-size: 16px;
+            font-size: 15px;
             z-index: 2;
         }
 
         .currency-input .form-control {
-            padding-left: 30px !important;
+            padding-left: 28px !important;
             text-align: right;
             font-weight: 600;
         }
@@ -242,7 +244,7 @@
         .btn-view-sheet {
             display: block !important;
             width: 100% !important;
-            padding: 14px !important;
+            padding: 13px !important;
             background-color: var(--primary);
             color: white;
             font-size: 15px;
@@ -254,7 +256,7 @@
             margin-top: 15px;
         }
 
-        /* Printable Sheet Layout (Page 2) - FIT TO SCREEN */
+        /* Printable Sheet Layout (Page 2) */
         .sheet-wrapper {
             width: 100% !important;
             overflow-x: auto;
@@ -283,7 +285,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 10pt;
+            font-size: 9.5pt;
             table-layout: fixed;
         }
 
@@ -311,7 +313,7 @@
             width: 100%;
             border: none;
             font-family: inherit;
-            font-size: inherit;
+            font-size: 16px !important; /* Prevents auto zoom in sheet inputs */
             background: transparent;
             outline: none;
             padding: 0;
@@ -370,7 +372,7 @@
             #tab-input { display: none !important; }
             .sheet { box-shadow: none; width: 210mm !important; margin: 0; padding: 10mm 15mm 0 15mm !important; border: none; }
             .input-bg { background-color: transparent !important; }
-            input, textarea { background-color: transparent !important; }
+            input, textarea { background-color: transparent !important; font-size: 10pt !important; }
             table { font-size: 12pt !important; }
             .sheet h2 { font-size: 14pt !important; }
             .sheet h3 { font-size: 13pt !important; }
@@ -394,10 +396,10 @@
 <header class="app-header">
     <nav class="nav-tabs">
         <button class="tab-btn active" onclick="switchTab('tab-input', this)">
-            📝 1. Basic Details & Income Input
+            📝 1. Basic Details
         </button>
         <button class="tab-btn" onclick="switchTab('tab-sheet', this)">
-            📊 2. Go to Calculation Sheet
+            📊 2. Calculation Sheet
         </button>
     </nav>
 </header>
@@ -957,7 +959,6 @@
         const tables = element.querySelectorAll("table");  
         const allCells = element.querySelectorAll("th, td");  
       
-        // Temporarily force exact A4 width for vector rendering
         const origWidth = element.style.width;
         const origPadding = element.style.padding;
         element.style.width = "210mm";
@@ -1032,7 +1033,7 @@
       
             box.innerText = val || " ";  
             box.style.fontFamily = "Calibri, Arial, sans-serif";  
-            box.style.fontSize = window.getComputedStyle(input).fontSize;  
+            box.style.fontSize = "10pt";  
             box.style.fontWeight = "normal";  
             box.style.whiteSpace = "normal";   
             box.style.wordBreak = "break-word";  
@@ -1086,7 +1087,6 @@
             cell.style.lineHeight = originalLineHeight[i];  
         });  
 
-        // Restore original screen styling
         element.style.width = origWidth;
         element.style.padding = origPadding;
       
