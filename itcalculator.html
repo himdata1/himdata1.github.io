@@ -2,7 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
     <title>Income Tax Calculation FY 2026-27</title>
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232563eb%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>IT</text></svg>">
@@ -127,15 +128,14 @@
 
         /* Modern Form Container (Page 1) */
         .form-container {
-    max-width: 100% !important; /* Android App WebView me zoom-out nahi hone dega */
-    margin: 0 auto;
-    background: var(--card-bg);
-    border-radius: 12px;
-    padding: 20px 15px;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
-    border: 1px solid #e2e8f0;
-}
-
+            max-width: 860px;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
 
         .form-header {
             text-align: center;
@@ -172,12 +172,11 @@
             padding-bottom: 8px;
         }
 
-        ..form-grid {
-    display: grid;
-    grid-template-columns: 1fr !important; /* Force-fully hamesha single column rakhega */
-    gap: 16px;
-}
-
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 20px;
+        }
 
         .form-group {
             display: flex;
