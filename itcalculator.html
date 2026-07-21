@@ -141,7 +141,7 @@
             display: block;
         }
 
-        /* Modern Mobile-Optimized Form Container (Page 1) */
+        /* Strict Single Column Mobile-Optimized Form Container (Page 1) */
         .form-container {
             max-width: 500px; 
             width: 100%;
@@ -191,6 +191,7 @@
             padding-bottom: 6px;
         }
 
+        /* Always Single Column Flex Direction */
         .form-grid {
             display: flex;
             flex-direction: column;
@@ -272,7 +273,7 @@
             background-color: var(--primary-hover);
         }
 
-        /* Desktop Layout Overrides (> 768px) */
+        /* Desktop Layout Overrides (> 768px) - Form Grid removed to keep single column everywhere */
         @media screen and (min-width: 769px) {
             .tab-content {
                 padding: 25px 15px;
@@ -280,14 +281,6 @@
             .form-container {
                 max-width: 860px;
                 padding: 30px;
-            }
-            .form-grid {
-                display: grid;
-                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-                gap: 20px;
-            }
-            .form-group.full-width {
-                grid-column: 1 / -1;
             }
             .form-control {
                 font-size: 14.5px;
