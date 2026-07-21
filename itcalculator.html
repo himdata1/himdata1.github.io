@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Income Tax Calculation FY 2026-27</title>
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232563eb%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>IT</text></svg>">
@@ -23,7 +23,10 @@
 
         * { box-sizing: border-box; }
 
-        body {
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
             font-family: 'Segoe UI', Calibri, Arial, sans-serif;
             background-color: var(--bg-body);
             margin: 0;
@@ -43,8 +46,8 @@
         .nav-tabs {
             display: flex;
             justify-content: center;
-            gap: 12px;
-            padding: 10px 15px;
+            gap: 8px;
+            padding: 8px 10px;
             max-width: 1000px;
             margin: 0 auto;
         }
@@ -53,15 +56,18 @@
             background: transparent;
             color: #94a3b8;
             border: 1px solid transparent;
-            padding: 10px 22px;
-            font-size: 15px;
+            padding: 8px 12px;
+            font-size: 13px;
             font-weight: 600;
             cursor: pointer;
             border-radius: 8px;
             transition: all 0.25s ease;
             display: inline-flex;
             align-items: center;
-            gap: 8px;
+            justify-content: center;
+            gap: 6px;
+            flex: 1;
+            text-align: center;
         }
 
         .tab-btn:hover {
@@ -76,25 +82,25 @@
             box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
         }
 
-        /* Action Toolbar for Print/Share (Hidden by default on Page 1) */
+        /* Action Toolbar for Print/Share */
         .no-print-bar {
             background-color: #ffffff;
-            padding: 10px 20px;
+            padding: 10px 15px;
             text-align: center;
             box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
-            display: none; /* Controlled via JavaScript */
+            display: none;
             justify-content: center;
             flex-wrap: wrap;
-            gap: 10px;
+            gap: 8px;
             border-bottom: 1px solid var(--border-color);
         }
 
         .action-btn {
-            padding: 8px 18px;
+            padding: 8px 14px;
             color: white;
             border: none;
             cursor: pointer;
-            font-size: 14px;
+            font-size: 13px;
             font-weight: 600;
             border-radius: 6px;
             display: inline-flex;
@@ -118,73 +124,72 @@
         /* Page Tab Panels */
         .tab-content {
             display: none;
-            padding: 25px 15px;
+            padding: 15px 10px;
         }
 
         .tab-content.active {
             display: block;
         }
 
-        /* Modern Form Container (Page 1) */
+        /* Modern Mobile-Optimized Form Container (Page 1) */
         .form-container {
-            max-width: 860px;
+            max-width: 500px; /* Mobile par compact rahega, fields lambi nahi hongi */
+            width: 100%;
             margin: 0 auto;
             background: var(--card-bg);
             border-radius: 12px;
-            padding: 30px;
+            padding: 20px 15px;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
             border: 1px solid #e2e8f0;
         }
 
         .form-header {
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 22px;
             border-bottom: 2px solid #f1f5f9;
-            padding-bottom: 15px;
+            padding-bottom: 12px;
         }
 
         .form-header h2 {
             margin: 0 0 6px 0;
-            font-size: 22px;
+            font-size: 19px;
             color: var(--text-main);
         }
 
         .form-header p {
             margin: 0;
             color: var(--text-muted);
-            font-size: 14px;
+            font-size: 13px;
         }
 
         .form-section {
-            margin-bottom: 28px;
+            margin-bottom: 22px;
         }
 
         .section-title {
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 700;
             color: var(--primary);
-            margin-bottom: 16px;
+            margin-bottom: 14px;
             display: flex;
             align-items: center;
             gap: 8px;
             border-bottom: 1px solid #e2e8f0;
-            padding-bottom: 8px;
+            padding-bottom: 6px;
         }
 
+        /* Default: Single Column for Mobile & Android App */
         .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
         }
 
         .form-group {
             display: flex;
             flex-direction: column;
             gap: 6px;
-        }
-
-        .form-group.full-width {
-            grid-column: 1 / -1;
+            width: 100%;
         }
 
         .form-group label {
@@ -193,10 +198,11 @@
             color: #334155;
         }
 
+        /* Large Font Size (16px) for perfect readability without zooming */
         .form-control {
             width: 100%;
-            padding: 10px 14px;
-            font-size: 14.5px;
+            padding: 11px 14px;
+            font-size: 16px;
             border: 1.5px solid var(--border-color);
             border-radius: 8px;
             background-color: #f8fafc;
@@ -222,10 +228,11 @@
             transform: translateY(-50%);
             color: var(--text-muted);
             font-weight: 600;
+            font-size: 16px;
         }
 
         .currency-input .form-control {
-            padding-left: 28px;
+            padding-left: 30px;
             text-align: right;
             font-weight: 600;
         }
@@ -250,8 +257,39 @@
             background-color: var(--primary-hover);
         }
 
+        /* Desktop Layout Overrides (> 768px) */
+        @media screen and (min-width: 769px) {
+            .tab-content {
+                padding: 25px 15px;
+            }
+            .form-container {
+                max-width: 860px;
+                padding: 30px;
+            }
+            .form-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 20px;
+            }
+            .form-group.full-width {
+                grid-column: 1 / -1;
+            }
+            .form-control {
+                font-size: 14.5px;
+                padding: 10px 14px;
+            }
+            .tab-btn {
+                padding: 10px 22px;
+                font-size: 15px;
+                flex: initial;
+            }
+        }
+
         /* Printable Sheet Layout (Page 2) */
         .sheet-wrapper {
+            width: 100%;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
             text-align: center;
         }
 
@@ -363,13 +401,13 @@
             .input-bg { background-color: transparent !important; }
             input, textarea { background-color: transparent !important; }
         }
-        /* Placeholder text transform fix */
-.form-control::placeholder,
-input::placeholder,
-textarea::placeholder {
-    text-transform: none !important;
-}
 
+        /* Placeholder text transform fix */
+        .form-control::placeholder,
+        input::placeholder,
+        textarea::placeholder {
+            text-transform: none !important;
+        }
     </style>
 </head>
 <body>
@@ -408,36 +446,35 @@ textarea::placeholder {
         </div>
 
         <!-- Personal Info -->
-<div class="form-section">
-    <div class="section-title">👤 Personal & Employment Information</div>
-    <div class="form-grid">
-        <div class="form-group">
-            <label for="form_user_name">Full Name</label>
-            <input type="text" id="form_user_name" class="form-control capitalize" placeholder="e.g. Rajesh Kumar" oninput="syncField('user_name', this.value); updateTitle(); checkInputs();">
+        <div class="form-section">
+            <div class="section-title">👤 Personal & Employment Information</div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="form_user_name">Full Name</label>
+                    <input type="text" id="form_user_name" class="form-control capitalize" placeholder="e.g. Rajesh Kumar" oninput="syncField('user_name', this.value); updateTitle(); checkInputs();">
+                </div>
+                <div class="form-group">
+                    <label for="form_user_desig">Designation</label>
+                    <input type="text" id="form_user_desig" class="form-control capitalize" placeholder="e.g. JBT" oninput="syncField('user_desig', this.value); updateTitle(); checkInputs();">
+                </div>
+                <div class="form-group">
+                    <label for="form_salary_code">eSalary Code</label>
+                    <input type="text" id="form_salary_code" class="form-control upper" placeholder="e.g. IP15-12345" oninput="this.value = this.value.toUpperCase(); syncField('salary_code', this.value); checkInputs();">
+                </div>
+                <div class="form-group">
+                    <label for="form_pan_no">PAN Number</label>
+                    <input type="text" id="form_pan_no" class="form-control upper" maxlength="10" placeholder="e.g. ABCDE1234F" oninput="validatePAN(this); syncField('pan_no', this.value); checkInputs();">
+                </div>
+                <div class="form-group">
+                    <label for="form_mobile_no">Mobile Number</label>
+                    <input type="text" id="form_mobile_no" class="form-control" maxlength="10" placeholder="e.g. 9876543210" oninput="validateMobile(this); syncField('mobile_no', this.value); checkInputs();">
+                </div>
+                <div class="form-group full-width">
+                    <label for="form_office_addr">Office Address</label>
+                    <input type="text" id="form_office_addr" class="form-control capitalize" placeholder="e.g. GPS, Abc" oninput="syncField('office_addr', this.value); checkInputs();">
+                </div>
+            </div>
         </div>
-        <div class="form-group">
-            <label for="form_user_desig">Designation</label>
-            <input type="text" id="form_user_desig" class="form-control capitalize" placeholder="e.g. JBT" oninput="syncField('user_desig', this.value); updateTitle(); checkInputs();">
-        </div>
-        <div class="form-group">
-            <label for="form_salary_code">eSalary Code</label>
-            <input type="text" id="form_salary_code" class="form-control upper" placeholder="e.g. IP15-12345" oninput="this.value = this.value.toUpperCase(); syncField('salary_code', this.value); checkInputs();">
-        </div>
-        <div class="form-group">
-            <label for="form_pan_no">PAN Number</label>
-            <input type="text" id="form_pan_no" class="form-control upper" maxlength="10" placeholder="e.g. ABCDE1234F" oninput="validatePAN(this); syncField('pan_no', this.value); checkInputs();">
-        </div>
-        <div class="form-group">
-            <label for="form_mobile_no">Mobile Number</label>
-            <input type="text" id="form_mobile_no" class="form-control" maxlength="10" placeholder="e.g. 9876543210" oninput="validateMobile(this); syncField('mobile_no', this.value); checkInputs();">
-        </div>
-        <div class="form-group full-width">
-            <label for="form_office_addr">Office Address</label>
-            <input type="text" id="form_office_addr" class="form-control capitalize" placeholder="e.g. GPS, Abc" oninput="syncField('office_addr', this.value); checkInputs();">
-        </div>
-    </div>
-</div>
-
 
         <!-- Income & Deductions -->
         <div class="form-section">
@@ -636,7 +673,7 @@ textarea::placeholder {
                     <td colspan="3" style="border-left: none; border-top: none;"></td>   
                     <td class="center bold" style="background-color: #f0fff0;">Tax</td>  
                     <td class="center bold" style="background-color: #f0fff0;">Cess</td>  
-                    <td class="center bold" style="background-color: #f0fff0;">Total</td>
+                    <td class="center bold" style="background-color: #f0fff0;">Total</td>  
                 </tr>  
                 <tr>  
                     <td class="col-idx">16.</td>  
@@ -667,7 +704,7 @@ textarea::placeholder {
             <div class="footer">  
                 <div>Dated: <span id="currentDate"></span></div>  
                 <div class="signature-line">Signature</div>  
-            </div>
+            </div>  
         </div>  
     </div>
 </div>
@@ -955,7 +992,7 @@ textarea::placeholder {
     calculateTax();  
     
     // PDF Generation
-        async function buildVectorPDF() {  
+    async function buildVectorPDF() {  
         const { jsPDF } = window.jspdf;  
         const element = document.getElementById('printContent');  
         const inputs = element.querySelectorAll("input, textarea");  
@@ -1047,7 +1084,7 @@ textarea::placeholder {
                 box.style.color = "green"; 
             } else {
                 box.style.color = "black"; 
-            }
+            }  
      
             box.style.lineHeight = "1.5";
             box.style.letterSpacing = "0.5px";
@@ -1064,7 +1101,6 @@ textarea::placeholder {
             orientation: 'p', unit: 'mm', format: 'a4', precision: 16  
         });  
       
-        /* y: 0 karne se .sheet ki 12mm padding PDF me top margin ka kaam karegi */
         await doc.html(element, {  
             x: 0, y: 0, margin: [0, 0, 0, 0], autoPaging: 'slice', width: 210, windowWidth: 794,  
             html2canvas: {   
@@ -1089,7 +1125,6 @@ textarea::placeholder {
         return doc;  
     }
 
-  
     async function downloadVectorPDF() {  
         document.getElementById('loadingOverlay').style.display = 'flex';  
         try { const doc = await buildVectorPDF(); doc.save(getFileName()); } catch (e) { alert("PDF generation failed"); }  
