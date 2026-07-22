@@ -1,798 +1,1276 @@
-<!DOCTYPE html>  <html lang="en">  
-<head>  
-    <meta charset="UTF-8">  
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">  
-    <title>Income Tax Calculation, FY 2026-27</title>  
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Income Tax Calculation FY 2026-27</title>
 
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>IT</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%232563eb%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>IT</text></svg>">
 
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>IT</text></svg>">  
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>  
-<style>  
-    body {  
-        font-family: "Calibri", "Arial", sans-serif;  
-        background-color: #ffffff;  
-        margin: 0;  
-        padding-top: 10px;  
-        padding-bottom: 10px;  
-        display: block;   
-        text-align: center;  
-    }  
-
-    .no-print {  
-        position: fixed;  
-        top: 0;  
-        left: 0;  
-        width: 100%;  
-        background-color: #ffffff;  
-        color: black;  
-        padding: 10px 0;  
-        text-align: center;  
-        z-index: 10000;  
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);  
-        display: flex;  
-        justify-content: center;  
-        gap: 10px;  
-    }  
-
-    button {  
-        padding: 8px 15px;  
-        color: white;  
-        border: none;  
-        cursor: pointer;  
-        font-size: 14px;  
-        font-weight: bold;  
-        border-radius: 4px;  
-        display: inline-flex;  
-        align-items: center;  
-        gap: 5px;  
-    }  
-
-    .btn-print { background-color: #28a745; }  
-    .btn-print:hover { background-color: #218838; }  
-
-    .btn-share { background-color: #007bff; }  
-    .btn-share:hover { background-color: #0069d9; }  
-
-    .btn-download { background-color: #17a2b8; }  
-    .btn-download:hover { background-color: #138496; }  
-
-    .btn-reset { background-color: #dc3545; display: none; }  
-    .btn-reset:hover { background-color: #c82333; }  
-
-    .sheet {  
-        background-color: white;  
-        width: 210mm;  
-        min-height: auto;  
-        padding: 12mm 12mm;   
-        box-shadow: 0 0 15px rgba(0,0,0,0);  
-        box-sizing: border-box;  
-        display: inline-block;   
-        text-align: left;  
-        margin: 0 auto;  
-        position: relative;  
-        margin-top: 40px;   
-    }  
-
-    h2 { font-size: 14pt; font-weight: bold; text-align: center; margin: 0 0 5px 0; }  
-    h3 { font-size: 13pt; font-weight: normal; color: blue; margin: 0 0 15px 0; }  
-
-    table {  
-        width: 100%;  
-        border-collapse: collapse;  
-        font-size: 12.5pt;   
-        table-layout: fixed;  
-    }  
-
-    .info-table { margin-bottom: 5px; }    
-    .info-table td:nth-child(1), .info-table td:nth-child(3) { font-weight: bold; }
- 
-    .calc-table { margin-bottom: 0; }  
-    .summary-table { margin-top: -1px; }  
-
-    th, td {  
-        border: 1px solid black;  
-        padding: 1.7px 4px;   
-        vertical-align: middle;  
-        line-height: 1.5;   
-        overflow: hidden;  
-        white-space: nowrap;   
-    }  
-      
-    td.wrap-text { white-space: normal; }  
-    .center { text-align: center; }  
-    .right { text-align: right; white-space: nowrap; }  
-    .bold { font-weight: bold; }  
-
-    input {  
-        width: 100%;  
-        border: none;  
-        font-family: inherit;  
-        font-size: inherit;  
-        background: transparent;  
-        outline: none;  
-        padding: 0;  
-        margin: 0;  
-        color: #000;  
-        line-height: 1.5;  
-        font-weight: normal;  
-    }  
-
-    textarea {  
-        width: 100%;  
-        border: none;  
-        font-family: inherit;  
-        font-size: inherit;  
-        background: transparent;  
-        outline: none;  
-        padding: 0;  
-        margin: 0;  
-        color: #000;  
-        resize: none;   
-        overflow: hidden;   
-        min-height: 25px;  
-        display: block;  
-        line-height: 1.5;  
-        font-weight: normal;  
-    }  
-
-    input[type=number]::-webkit-inner-spin-button,   
-    input[type=number]::-webkit-outer-spin-button {   
-        -webkit-appearance: none; margin: 0;   
-    }  
-    input[type=number] { -moz-appearance: textfield; }  
-
-    .upper { text-transform: uppercase; }  
-    .capitalize { text-transform: capitalize; }  
-    .input-bg { background-color: #ffffe6; }  
-
-    .col-idx { text-align: center; font-weight: bold; width: 5%; }  
-      
-    .footer {  
-        margin-top: 35px;   
-        display: flex;  
-        justify-content: space-between;  
-        font-size: 12.5pt;  
-        width: 100%;  
-    }  
-    .footer > div:first-child { margin-top: -15px; }  
-    .signature-line {  
-        border-top: 1px dashed black;  
-        width: 180px;  
-        text-align: center;  
-        padding-top: 5px;  
-    }  
-
-    #loadingOverlay {  
-        display: none;  
-        position: fixed;  
-        top: 0; left: 0; width: 100%; height: 100%;  
-        background: rgba(0,0,0,0.7);  
-        z-index: 20000;  
-        color: white;  
-        flex-direction: column;  
-        align-items: center;  
-        justify-content: center;  
-        font-size: 20px;  
-    }  
-
-    @media print {  
-        @page { size: A4; margin: 0; }  
-        body { background: none; padding: 0; margin: 0; }  
-        .no-print { display: none; }  
-        .sheet { box-shadow: none; width: 100%; min-height: auto; margin: 0; padding: 10mm 15mm 0 15mm; border: none; }  
-        .input-bg { background-color: transparent !important; }  
-        input, textarea { background-color: transparent !important; font-weight: normal; }  
-    }  
-</style>
-</head>  
-<body oninput="checkInputs()">  
-<div id="loadingOverlay">  
-    <div style="margin-bottom: 10px;">Generating PDF...</div>  
-    <div>Please wait</div>  
-</div>  
-<div class="no-print">  
-    <button class="btn-print" onclick="printPage()">🖨️ Print / Save as PDF</button>  
-    <button class="btn-share" onclick="sharePDF()">📱 Share as PDF</button>  
-    <button class="btn-download" onclick="downloadVectorPDF()">📄 Download PDF</button>  
-    <button id="resetBtn" class="btn-reset" onclick="resetForm()">🔄 Reset</button>  
-</div>  
-
-<div class="sheet" id="printContent">  
-    <h2>Income Tax Calculation for the Financial Year 2026-27 (AY 2027-28)</h2>  
-    <h3>Tax Regime Opted: New Regime</h3>  
-
-    <table class="info-table">  
-    <colgroup>  
-        <col style="width: 20%;"> <col style="width: 40%;"> <col style="width: 16%;"> <col style="width: 24%;">  
-    </colgroup>  
-    <tr>  
-        <td>Name</td>  
-        <td><textarea id="user_name" class="capitalize nav-field" rows="1" oninput="autoResize(this); updateTitle()"></textarea></td>  
-        <td>eSalary Code</td>  
-        <td><textarea id="salary_code" class="upper nav-field" rows="1" oninput="autoResize(this); this.value = this.value.toUpperCase()"></textarea></td>  
-    </tr>  
-    <tr>  
-        <td>Designation</td>  
-        <td><textarea id="user_desig" class="capitalize nav-field" rows="1" oninput="autoResize(this); updateTitle()"></textarea></td>  
-        <td>PAN</td>  
-        <td><input type="text" id="pan_no" class="upper nav-field" maxlength="10" oninput="validatePAN(this)"></td>  
-    </tr>  
-    <tr>  
-        <td>Office Address</td>  
-        <td><textarea id="office_addr" class="capitalize nav-field" rows="1" oninput="autoResize(this)"></textarea></td>  
-        <td>Mobile No.</td>  
-        <td><input type="text" id="mobile_no" class="nav-field" maxlength="10" inputmode="numeric" oninput="validateMobile(this)"></td>  
-    </tr>  
-    </table>  
-
-    <table class="calc-table">  
-    <colgroup>  
-        <col style="width: 5%;"> <col style="width: 22%;"> <col style="width: 15%;"> <col style="width: 15%;"> <col style="width: 15%;"> <col style="width: 11%;"> <col style="width: 17%;">  
-    </colgroup>  
-
-    <tr>  
-        <td class="col-idx">1.</td>  
-        <td colspan="5" class="wrap-text">Income from salary including Employer Share to NPS</td>  
-        <td class="right input-bg">  
-            <input type="text" inputmode="numeric" id="grossIncome" class="right input-bg nav-field" placeholder="0" oninput="formatInput(this)">  
-        </td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">2.</td>  
-        <td colspan="5" class="wrap-text">Standard deduction u/s 16(ia)</td>  
-        <td class="right">75,000</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">3.</td>  
-        <td colspan="5" class="wrap-text">Income under the head Salaries (1 - 2)</td>  
-        <td class="right" id="headSalaries">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">4.</td>  
-        <td colspan="5" class="wrap-text">Deduction u/s 80CCD(2) (Employer Share to NPS @ 14%)</td>  
-        <td class="right input-bg">  
-            <input type="text" inputmode="numeric" id="npsDeduction" class="right input-bg nav-field" placeholder="0" oninput="formatInput(this)">  
-        </td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">5.</td>  
-        <td colspan="5" class="wrap-text">Taxable Income (3 - 4)</td>  
-        <td class="right bold" id="taxableIncome">0</td>  
-    </tr>  
-      
-    <tr>  
-        <td rowspan="9" class="col-idx" id="slab-idx-cell" style="vertical-align: middle;">6.</td>  
-        <td rowspan="9" class="wrap-text" id="slab-title-cell" style="vertical-align: middle; text-align: center; font-weight:bold;">  
-            Income Tax Liability  
-        </td>  
-        <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">from Rs.</td>  
-        <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">to Rs.</td>  
-        <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">Income</td>  
-        <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">Rate</td>  
-        <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">Income Tax</td>  
-    </tr>  
-
-    <tr id="row-slab-1"><td class="right">0</td><td class="right" id="to-slab-1">0</td><td class="right" id="inc-slab-1">0</td><td class="center">0 %</td><td class="right" id="tax-slab-1">0</td></tr>  
-    <tr id="row-slab-2"><td class="right">4,00,001</td><td class="right" id="to-slab-2">0</td><td class="right" id="inc-slab-2">0</td><td class="center">5 %</td><td class="right" id="tax-slab-2">0</td></tr>  
-    <tr id="row-slab-3"><td class="right">8,00,001</td><td class="right" id="to-slab-3">0</td><td class="right" id="inc-slab-3">0</td><td class="center">10 %</td><td class="right" id="tax-slab-3">0</td></tr>  
-    <tr id="row-slab-4"><td class="right">12,00,001</td><td class="right" id="to-slab-4">0</td><td class="right" id="inc-slab-4">0</td><td class="center">15 %</td><td class="right" id="tax-slab-4">0</td></tr>  
-    <tr id="row-slab-5"><td class="right">16,00,001</td><td class="right" id="to-slab-5">0</td><td class="right" id="inc-slab-5">0</td><td class="center">20 %</td><td class="right" id="tax-slab-5">0</td></tr>  
-    <tr id="row-slab-6"><td class="right">20,00,001</td><td class="right" id="to-slab-6">0</td><td class="right" id="inc-slab-6">0</td><td class="center">25 %</td><td class="right" id="tax-slab-6">0</td></tr>  
-    <tr id="row-slab-7"><td class="right">24,00,001</td><td class="right" id="to-slab-7">Above</td><td class="right" id="inc-slab-7">0</td><td class="center">30 %</td><td class="right" id="tax-slab-7">0</td></tr>  
-    <tr><td colspan="4" class="right bold">Total Income Tax</td><td class="right bold" id="totalSlabTax">0</td></tr>  
-
-    <tr>  
-        <td class="col-idx">7.</td>  
-        <td colspan="5" class="wrap-text">Relief under section 87A (Subject to maximum Rs.60000)</td>  
-        <td class="right" id="rebate87A">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">8.</td>  
-        <td colspan="5" class="wrap-text">Marginal relief (u/s 87A for income slightly above 12L)</td>  
-        <td class="right" id="marginalRelief87A">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">9.</td>  
-        <td colspan="5" class="wrap-text">Income Tax after relief u/s 87A (6 - 7 - 8)</td>  
-        <td class="right bold" id="taxAfterRelief">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">10.</td>  
-        <td colspan="5" class="wrap-text">Add: Surcharge (if applicable)</td>  
-        <td class="right" id="surcharge">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">11.</td>  
-        <td colspan="5" class="wrap-text">Less: Marginal relief on Surcharge</td>  
-        <td class="right" id="marginalReliefSurcharge">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">12.</td>  
-        <td colspan="5" class="wrap-text">Income Tax after Marginal relief on Surcharge (9+10-11)</td>  
-        <td class="right bold" id="taxAfterSurchargeRelief">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">13.</td>  
-        <td colspan="5" class="wrap-text">Education cess and Health cess @ 4%</td>  
-        <td class="right" id="cess">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">14.</td>  
-        <td colspan="5" class="bold wrap-text">Total Income Tax (12+13)</td>  
-        <td class="right bold" id="totalTaxLiability">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">15.</td>  
-        <td colspan="5" class="wrap-text">Relief under section 89(1) if any (attach form 10E)</td>  
-        <td class="right input-bg">  
-            <input type="text" inputmode="numeric" id="relief89" class="right input-bg" placeholder="0" oninput="formatInput(this)">  
-        </td>  
-    </tr>  
-</table>  
-
-<table class="summary-table">  
-    <colgroup>  
-        <col style="width: 5%;"> <col style="width: 32%;"> <col style="width: 14.5%;"> <col style="width: 16%;"> <col style="width: 15.5%;"> <col style="width: 17%;">  
-    </colgroup>  
-    <tr>  
-        <td colspan="3" style="border-left: none; border-top: none;"></td>   
-        <td class="center bold" style="background-color: #f0fff0;">Tax</td>  
-        <td class="center bold" style="background-color: #f0fff0;">Cess</td>  
-        <td class="center bold" style="background-color: #f0fff0;">Total</td>
-    </tr>  
-    <tr>  
-        <td class="col-idx">16.</td>  
-        <td colspan="2" class="wrap-text">Balance Income Tax payable after relief</td>  
-        <td class="right" id="balanceTaxComp">0</td>  
-        <td class="right" id="balanceCessComp">0</td>  
-        <td class="right" id="balanceTotalComp">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">17.</td>  
-        <td colspan="2" class="wrap-text">Income Tax already paid</td>  
-        <td class="right input-bg"><input type="text" inputmode="numeric" id="paidTax" class="right input-bg" placeholder="0" oninput="formatInput(this)"></td>  
-        <td class="right input-bg"><input type="text" inputmode="numeric" id="paidCess" class="right input-bg" placeholder="0" oninput="formatInput(this)"></td>  
-        <td class="right" id="paidTotal">0</td>  
-    </tr>  
-    <tr>  
-        <td class="col-idx">18.</td>  
-        <td class="bold wrap-text">Net Income Tax</td>  
-        <td style="background-color: #fafafa;">  
-            <input type="text" id="taxStatus" class="center" readonly value="Nil" style="width: 100%;">  
-        </td>  
-        <td class="right bold" id="netTax">0</td>  
-        <td class="right bold" id="netCess">0</td>  
-        <td class="right bold" id="netTotal">0</td>  
-    </tr>  
-</table>  
-
-<div class="footer">  
-    <div>Dated: <span id="currentDate"></span></div>  
-    <div class="signature-line">Signature</div>  
-</div>
-</div>  
-
-<script>  
-    function validatePAN(input) {  
-        let val = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');  
-        let result = '';  
-        for (let i = 0; i < val.length; i++) {  
-            if (i < 5) { if (/[A-Z]/.test(val[i])) result += val[i]; }  
-            else if (i < 9) { if (/[0-9]/.test(val[i])) result += val[i]; }  
-            else if (i === 9) { if (/[A-Z]/.test(val[i])) result += val[i]; }  
-        }  
-        input.value = result;  
-    }  
-  
-    function validateMobile(input) {  
-        let val = input.value.replace(/[^0-9]/g, '');  
-        if (val.startsWith('0')) val = val.substring(1);  
-        input.value = val.substring(0, 10);  
-    }  
-  
-    document.addEventListener('keydown', function(e) {  
-        if (e.key === 'Enter') {  
-            const fields = Array.from(document.querySelectorAll('.nav-field'));  
-            const currentIndex = fields.indexOf(e.target);  
-            if (currentIndex !== -1 && currentIndex < fields.length - 1) {  
-                e.preventDefault();  
-                fields[currentIndex + 1].focus();  
-            }  
-        }  
-    });  
-  
-    function checkInputs() {  
-        let inputs = document.querySelectorAll("input, textarea");  
-        let hasValue = false;  
-        for (let input of inputs) {  
-            if (!input.readOnly && input.value.trim() !== "") { hasValue = true; break; }  
-        }  
-        document.getElementById("resetBtn").style.display = hasValue ? "inline-flex" : "none";  
-    }  
-  
-    function resetForm() {  
-        let inputs = document.querySelectorAll("input, textarea");  
-        inputs.forEach(input => {  
-            input.value = "";  
-            if (input.tagName === "TEXTAREA") input.style.height = "auto";  
-        });  
-        document.title = "Income Tax Calculation, FY 2026-27";  
-        calculateTax();  
-        checkInputs();   
-    }  
-  
-    function toTitleCase(str) {  
-        const whitelist = new Set(["JBT", "GPS", "GMS", "GHS", "GSSS", "CHT", "BEEO", "BPEO", "DEO", "DDEEO", "VPO", "TEH", "DISTT", "PIN", "PO", "HT", "GMSSS", "MO", "C/O", "S/O", "D/O", "W/O"]);  
-        return str.toLowerCase().split(' ').map(function(word) {  
-            let cleanWord = word.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();  
-            if (whitelist.has(cleanWord)) return word.toUpperCase();  
-            return (word.charAt(0).toUpperCase() + word.slice(1));  
-        }).join(' ');  
-    }  
-  
-    function updateTitle() {  
-        let nameVal = document.getElementById("user_name").value.trim();  
-        let desigVal = document.getElementById("user_desig").value.trim();  
-        let title = "";  
-        if (nameVal) title += toTitleCase(nameVal);  
-        if (desigVal) title += (title ? ", " : "") + toTitleCase(desigVal);  
-        document.title = title || "Income Tax Calculation, FY 2026-27";  
-    }  
-  
-    function getFileName() {  
-        return document.title.replace(/[\\/:"*?<>|]/g, "_") + ".pdf";  
-    }  
-  
-    function printPage() { window.print(); }  
-    function autoResize(elem) { elem.style.height = 'auto'; elem.style.height = elem.scrollHeight + 'px'; }  
-  
-    function adjustFontSize(idOrElem) {  
-        let elem = (typeof idOrElem === 'string') ? document.getElementById(idOrElem) : idOrElem;  
-        if (!elem) return;  
-        let text = (elem.tagName === 'INPUT') ? elem.value : elem.innerText;  
-        if (text.length > 12) elem.style.fontSize = Math.max(6.5, 12.5 * (12 / text.length)) + "pt";  
-        else elem.style.fontSize = "inherit";  
-    }  
-  
-    function formatInput(elem) {  
-        let cursor = elem.selectionStart;  
-        let valueBefore = elem.value;  
-        let digits = valueBefore.replace(/,/g, '');  
-        if (digits === "") {  
-            elem.value = "";  
-            calculateTax();  
-            return;  
-        }  
-        let formatted = /^0+$/.test(digits) ? digits : Number(digits).toLocaleString('en-IN');  
-        let commasBefore = (valueBefore.substring(0, cursor).match(/,/g) || []).length;  
-        let digitsBefore = cursor - commasBefore;  
-        elem.value = formatted;  
-        let newCommasBefore = 0, currentDigits = 0, i = 0;  
-        while (i < formatted.length && currentDigits < digitsBefore) {  
-            if (formatted[i] !== ',') currentDigits++;  
-            else newCommasBefore++;  
-            i++;  
-        }  
-        let newCursorPos = digitsBefore + newCommasBefore;  
-        requestAnimationFrame(() => { elem.setSelectionRange(newCursorPos, newCursorPos); });  
-        adjustFontSize(elem);  
-        calculateTax();  
-    }  
-  
-    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-GB');  
-  
-    function format(num) { return Math.round(num).toLocaleString('en-IN'); }  
-  
-                    function calculateTax() {  
-    const getVal = (id) => parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;  
-    
-    // 1. Basic Income Calculation
-    let gross = getVal('grossIncome'), stdDed = 75000;
-    let headSalaries = Math.max(0, gross - stdDed);
-    let npsDed = getVal('npsDeduction');
-    let taxable = Math.max(0, headSalaries - npsDed);
-      
-    document.getElementById('headSalaries').innerText = format(headSalaries);  
-    document.getElementById('taxableIncome').innerText = format(taxable);  
-
-    // 2. Slab Calculation Logic (New Regime FY 2026-27)
-    let slabs = [  
-        { start: 0, limit: 400000, rate: 0, id: 1 },  
-        { start: 400000, limit: 800000, rate: 0.05, id: 2 },  
-        { start: 800000, limit: 1200000, rate: 0.10, id: 3 },  
-        { start: 1200000, limit: 1600000, rate: 0.15, id: 4 },  
-        { start: 1600000, limit: 2000000, rate: 0.20, id: 5 },  
-        { start: 2000000, limit: 2400000, rate: 0.25, id: 6 },  
-        { start: 2400000, limit: Infinity, rate: 0.30, id: 7 }  
-    ];  
-
-    let slabTaxTotal = 0, visibleCount = 0;  
-    slabs.forEach((s, i) => {  
-        let row = document.getElementById(`row-slab-${s.id}`), rel = (taxable > s.start || i === 0);  
-        if(rel) {  
-            row.style.display = 'table-row'; visibleCount++;  
-            let upperLimitText = (s.limit === Infinity) ? ((taxable > s.start) ? format(taxable) : "Above") : format(Math.min(taxable, s.limit));  
-            document.getElementById(`to-slab-${s.id}`).innerText = upperLimitText;  
-            let inc = Math.max(0, (s.limit !== Infinity ? Math.min(taxable, s.limit) : taxable) - s.start);  
-            let tax = inc * s.rate; slabTaxTotal += tax;  
-            document.getElementById(`inc-slab-${s.id}`).innerText = format(inc);  
-            document.getElementById(`tax-slab-${s.id}`).innerText = format(tax);  
-        } else row.style.display = 'none';  
-    });  
-
-    document.getElementById('slab-idx-cell').rowSpan = visibleCount + 2;  
-    document.getElementById('slab-title-cell').rowSpan = visibleCount + 2;  
-    document.getElementById('totalSlabTax').innerText = format(slabTaxTotal);  
-
-    // 3. Relief u/s 87A (Income up to 12L)
-    let reb87 = (taxable <= 1200000) ? slabTaxTotal : 0;  
-    let marg87 = (taxable > 1200000 && slabTaxTotal > (taxable - 1200000)) ? (slabTaxTotal - (taxable - 1200000)) : 0;  
-    let taxRel = Math.max(0, slabTaxTotal - reb87 - marg87);  
-
-    document.getElementById('rebate87A').innerText = format(reb87);  
-    document.getElementById('marginalRelief87A').innerText = format(marg87);  
-    document.getElementById('taxAfterRelief').innerText = format(taxRel);  
-
-    // 4. Surcharge & Marginal Relief on Surcharge (Income > 50L)
-    let surchargeAmount = 0;
-    let surchargeRate = 0;
-    let mReliefSurcharge = 0;
-
-    if (taxable > 20000000) surchargeRate = 0.25; 
-    else if (taxable > 10000000) surchargeRate = 0.15;
-    else if (taxable > 5000000) surchargeRate = 0.10;
-
-    surchargeAmount = Math.round(taxRel * surchargeRate);
-
-    if (taxable > 5000000) {
-        let limit, taxAtLimit, prevSurchargeRate;
-        if (taxable > 20000000) {
-            limit = 20000000; taxAtLimit = 5580000; prevSurchargeRate = 0.15;
-        } else if (taxable > 10000000) {
-            limit = 10000000; taxAtLimit = 2580000; prevSurchargeRate = 0.10;
-        } else {
-            limit = 5000000; taxAtLimit = 1080000; prevSurchargeRate = 0;
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-hover: #1d4ed8;
+            --bg-body: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border-color: #cbd5e1;
         }
 
-        let taxAtLimitWithSurcharge = taxAtLimit * (1 + prevSurchargeRate);
-        let currentTaxWithSurcharge = taxRel + surchargeAmount;
-        let increaseInTax = currentTaxWithSurcharge - taxAtLimitWithSurcharge;
-        let increaseInIncome = taxable - limit;
+        * { box-sizing: border-box; }
 
-        if (increaseInTax > increaseInIncome) {
-            mReliefSurcharge = Math.round(increaseInTax - increaseInIncome);
+        html, body {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            font-family: 'Segoe UI', Calibri, Arial, sans-serif;
+            background-color: var(--bg-body);
+            margin: 0;
+            padding: 0;
+            color: var(--text-main);
+        }
+
+        /* Navigation Bar Tabs */
+        .app-header {
+            background-color: #0f172a;
+            position: sticky;
+            top: 0;
+            z-index: 10000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            width: 100%;
+        }
+
+        .nav-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            padding: 6px 8px;
+            max-width: 1000px;
+            margin: 0 auto;
+            width: 100%;
+        }
+
+        .tab-btn {
+            background: transparent;
+            color: #94a3b8;
+            border: 1px solid transparent;
+            padding: 8px 10px;
+            font-size: 13.5px;
+            font-weight: 600;
+            cursor: pointer;
+            border-radius: 6px;
+            transition: all 0.25s ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            flex: 1;
+            text-align: center;
+            white-space: normal;
+            line-height: 1.25;
+            word-break: break-word;
+        }
+
+        .tab-btn:hover {
+            color: #ffffff;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary);
+            color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+        }
+
+        /* Action Toolbar for Print/Share */
+        .no-print-bar {
+            background-color: #ffffff;
+            padding: 8px 12px;
+            text-align: center;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+            display: none;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 6px;
+            border-bottom: 1px solid var(--border-color);
+            width: 100%;
+        }
+
+        .action-btn {
+            padding: 6px 10px;
+            color: white;
+            border: none;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            border-radius: 5px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            transition: background 0.2s ease;
+            white-space: normal;
+            text-align: center;
+            line-height: 1.2;
+            word-break: break-word;
+        }
+
+        .btn-print { background-color: #10b981; }
+        .btn-print:hover { background-color: #059669; }
+
+        .btn-share { background-color: #2563eb; }
+        .btn-share:hover { background-color: #1d4ed8; }
+
+        .btn-download { background-color: #0891b2; }
+        .btn-download:hover { background-color: #0e7490; }
+
+        /* Page Tab Panels */
+        .tab-content {
+            display: none;
+            padding: 15px 10px;
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Modern Mobile-Optimized Form Container (Page 1) */
+        .form-container {
+            max-width: 500px;
+            width: 100%;
+            margin: 0 auto;
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 20px 15px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+        }
+
+        .form-header {
+            text-align: center;
+            margin-bottom: 22px;
+            border-bottom: 2px solid #f1f5f9;
+            padding-bottom: 12px;
+        }
+
+        .form-header h2 {
+            margin: 0 0 6px 0;
+            font-size: 19px;
+            color: var(--text-main);
+        }
+
+        .form-header p {
+            margin: 0;
+            color: var(--text-muted);
+            font-size: 13px;
+        }
+
+        .form-section {
+            margin-bottom: 22px;
+        }
+
+        .section-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 14px;
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 6px;
+        }
+
+        .section-title-text {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+        }
+
+        .section-title-icon {
+            flex-shrink: 0;
+            font-size: 18px;
+            line-height: 1;
+        }
+
+        .btn-clear-section {
+            background-color: #fecaca;
+            color: #dc2626;
+            border: 1px solid #fca5a5;
+            padding: 3px 8px;
+            font-size: 10.5px;
+            font-weight: 700;
+            border-radius: 5px;
+            cursor: pointer;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+            white-space: normal;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        .btn-clear-section:active {
+            opacity: 0.3;
+        }
+
+        .form-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .form-group label {
+            font-size: 13.5px;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 11px 14px;
+            font-size: 16px;
+            border: 1.5px solid var(--border-color);
+            border-radius: 8px;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            transition: all 0.2s ease;
+            outline: none;
+            display: block;
+            resize: none;
+            overflow: hidden;
+        }
+
+        .form-control:focus {
+            background-color: #ffffff;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
+        }
+
+        .currency-input {
+            position: relative;
+        }
+
+        .currency-symbol {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-weight: 600;
+            font-size: 16px;
+        }
+
+        .currency-input .form-control {
+            padding-left: 30px;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .btn-view-sheet {
+            display: block;
+            width: 100%;
+            padding: 11px 14px;
+            background-color: var(--primary);
+            color: white;
+            font-size: 14px;
+            font-weight: 700;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            margin-top: 10px;
+            transition: background 0.2s ease;
+            white-space: normal;
+            line-height: 1.3;
+            word-break: break-word;
+        }
+
+        .btn-view-sheet:hover {
+            background-color: var(--primary-hover);
+        }
+
+        @media screen and (min-width: 769px) {
+            .tab-content {
+                padding: 25px 15px;
+            }
+            .form-container {
+                max-width: 860px;
+                padding: 30px;
+            }
+            .form-grid {
+                display: grid;
+                grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+                gap: 20px;
+            }
+            .form-group.full-width {
+                grid-column: 1 / -1;
+            }
+            .form-control {
+                font-size: 14.5px;
+                padding: 10px 14px;
+            }
+            .tab-btn {
+                padding: 10px 16px;
+                font-size: 14px;
+                flex: initial;
+            }
+        }
+
+        /* Page 2 Sheet Strict Fit Container */
+        .sheet-wrapper {
+            width: 100%;
+            max-width: 100vw;
+            overflow-x: hidden;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            padding-bottom: 20px;
+        }
+
+        .sheet {
+            background-color: white;
+            width: 210mm;
+            min-width: 210mm;
+            min-height: auto;
+            padding: 6mm 10mm;
+            box-sizing: border-box;
+            text-align: left;
+            position: relative;
+            box-shadow: 0 0 20px rgba(0,0,0,0.08);
+            border-radius: 4px;
+            transform-origin: top center;
+            margin: 0 auto;
+        }
+
+        .sheet h2 { font-size: 12.5pt; font-weight: bold; text-align: center; margin: 0 0 3px 0; }
+        .sheet h3 { font-size: 11.5pt; font-weight: normal; color: #2563eb; text-align: center; margin: 0 0 8px 0; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 11pt;
+            table-layout: fixed;
+        }
+
+        .info-table { margin-bottom: 5px; }
+        .info-table td:nth-child(1), .info-table td:nth-child(3) { font-weight: bold; }
+
+        .calc-table { margin-bottom: 0; }
+        .summary-table { margin-top: -1px; }
+
+        th, td {
+            border: 1px solid black;
+            padding: 2px 4px 4px 4px;
+            vertical-align: middle;
+            line-height: 1.5;
+            overflow: hidden;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        td.wrap-text { white-space: normal; }
+        .center { text-align: center; }
+        .right { text-align: right; white-space: nowrap; }
+        .bold { font-weight: bold; }
+
+        .sheet input, .sheet textarea {
+            width: 100%;
+            border: none;
+            font-family: inherit;
+            font-size: inherit;
+            background: transparent;
+            outline: none;
+            padding: 0;
+            margin: 0;
+            color: #000;
+            line-height: 1.5;
+            white-space: normal;
+            word-break: break-word;
+            overflow-wrap: break-word;
+        }
+
+        .sheet textarea {
+            resize: none;
+            overflow: hidden;
+            min-height: 25px;
+            display: block;
+        }
+
+        .upper { text-transform: uppercase; }
+        .capitalize { text-transform: capitalize; }
+        .input-bg { background-color: #ffffe6; }
+
+        .col-idx { text-align: center; font-weight: bold; width: 5%; }
+
+        .footer {
+            margin-top: 50px;
+            display: flex;
+            justify-content: space-between;
+            font-size: 11pt;
+            width: 100%;
+        }
+        .footer > div:first-child { margin-top: -15px; }
+        .signature-line {
+            border-top: 1px dashed black;
+            width: 180px;
+            text-align: center;
+            padding-top: 5px;
+        }
+
+        #loadingOverlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.75);
+            z-index: 20000;
+            color: white;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        @media print {
+            @page { size: A4; margin: 0; }
+            body { background: none; padding: 0; margin: 0; overflow: visible !important; }
+            .app-header, .no-print-bar { display: none !important; }
+            .tab-content { display: block !important; padding: 0; overflow: visible !important; }
+            #tab-input { display: none !important; }
+            .sheet-wrapper { overflow: visible !important; height: auto !important; }
+            th,
+td {
+    line-height: 1.4 !important;
+}
+
+input,
+textarea {
+    line-height: 1.4 !important;
+}
+            .sheet { box-shadow: none; width: 100%; min-width: 100%; margin: 0; padding: 15mm 15mm 0 15mm; border: none; transform: none !important; }
+            .input-bg { background-color: transparent !important; }
+            input, textarea { background-color: transparent !important; }
+        }
+
+        .form-control::placeholder,
+        input::placeholder,
+        textarea::placeholder {
+            text-transform: none !important;
+        }
+    </style>
+</head>
+<body>
+
+<div id="loadingOverlay">
+    <div style="margin-bottom: 10px;">Generating PDF...</div>
+    <div>Please wait</div>
+</div>
+
+<header class="app-header">
+    <nav class="nav-tabs">
+        <button class="tab-btn active" onclick="switchTab('tab-input', this)">
+            📝 Basic Details & Income Input
+        </button>
+        <button class="tab-btn" onclick="switchTab('tab-sheet', this)">
+            📊 Go to Calculation Sheet
+        </button>
+    </nav>
+</header>
+
+<div class="no-print-bar" id="actionToolbar">
+    <button class="action-btn btn-print" onclick="printPage()">🖨️ Print / Save as PDF</button>
+    <button class="action-btn btn-share" onclick="sharePDF()">📱 Share as PDF</button>
+    <button class="action-btn btn-download" onclick="downloadVectorPDF()">📄 Download PDF</button>
+</div>
+
+<div id="tab-input" class="tab-content active">
+    <div class="form-container">
+        <div class="form-header">
+            <h2>Income Tax Details Form<br>(FY 2026-27)</h2>
+            <p>Enter details below. They will automatically fill the calculation sheet in real-time.</p>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title">
+                <div class="section-title-text">
+                    <span class="section-title-icon">👤</span>
+                    <span>Personal & Employment Information</span>
+                </div>
+                <button class="btn-clear-section" onclick="clearPersonalDetails()">Clear Section</button>
+            </div>
+            <div class="form-grid">
+                <div class="form-group">
+                    <label for="form_user_name">Full Name</label>
+                    <textarea id="form_user_name" class="form-control capitalize" rows="1" placeholder="e.g. Rajesh Kumar" oninput="autoResize(this); syncField('user_name', this.value); updateTitle();"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="form_user_desig">Designation</label>
+                    <textarea id="form_user_desig" class="form-control capitalize" rows="1" placeholder="e.g. JBT" oninput="autoResize(this); syncField('user_desig', this.value); updateTitle();"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="form_salary_code">eSalary Code</label>
+                    <textarea id="form_salary_code" class="form-control upper" rows="1" placeholder="e.g. IP15-12345" oninput="this.value = this.value.toUpperCase(); autoResize(this); syncField('salary_code', this.value);"></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="form_pan_no">PAN Number</label>
+                    <input type="text" id="form_pan_no" class="form-control upper" maxlength="10" placeholder="e.g. ABCDE1234F" oninput="validatePAN(this); syncField('pan_no', this.value);">
+                </div>
+                <div class="form-group">
+                    <label for="form_mobile_no">Mobile Number</label>
+                    <input type="text" id="form_mobile_no" class="form-control" maxlength="10" placeholder="e.g. 9876543210" oninput="validateMobile(this); syncField('mobile_no', this.value);">
+                </div>
+                <div class="form-group full-width">
+                    <label for="form_office_addr">Office Address</label>
+                    <textarea id="form_office_addr" class="form-control capitalize" rows="1" placeholder="e.g. GPS, Abc" oninput="autoResize(this); syncField('office_addr', this.value);"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="form-section">
+            <div class="section-title">
+                <div class="section-title-text">
+                    <span class="section-title-icon">💰</span>
+                    <span>Salary & Income Tax Details</span>
+                </div>
+                <button class="btn-clear-section" onclick="clearSalaryDetails()">Clear Section</button>
+            </div>
+            <div class="form-grid">
+                <div class="form-group full-width">
+                    <label for="form_grossIncome">Income from salary (including Employer Share to NPS)</label>
+                    <div class="currency-input">
+                        <span class="currency-symbol">₹</span>
+                        <input type="text" inputmode="numeric" id="form_grossIncome" class="form-control" placeholder="0" oninput="formatFormInput(this, 'grossIncome')">
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="form_npsDeduction">Deduction u/s 80CCD(2) (Employer Share to NPS @ 14%)</label>
+                    <div class="currency-input">
+                        <span class="currency-symbol">₹</span>
+                        <input type="text" inputmode="numeric" id="form_npsDeduction" class="form-control" placeholder="0" oninput="formatFormInput(this, 'npsDeduction')">
+                    </div>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="form_relief89">Relief under section 89(1) (if any)</label>
+                    <div class="currency-input">
+                        <span class="currency-symbol">₹</span>
+                        <input type="text" inputmode="numeric" id="form_relief89" class="form-control" placeholder="0" oninput="formatFormInput(this, 'relief89')">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="form_paidTax">Income Tax Already Paid</label>
+                    <div class="currency-input">
+                        <span class="currency-symbol">₹</span>
+                        <input type="text" inputmode="numeric" id="form_paidTax" class="form-control" placeholder="0" oninput="formatFormInput(this, 'paidTax')">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="form_paidCess">Cess Already Paid</label>
+                    <div class="currency-input">
+                        <span class="currency-symbol">₹</span>
+                        <input type="text" inputmode="numeric" id="form_paidCess" class="form-control" placeholder="0" oninput="formatFormInput(this, 'paidCess')">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <button class="btn-view-sheet" onclick="switchTab('tab-sheet', document.querySelectorAll('.tab-btn')[1])">
+            Calculate Tax & View Final Sheet ➔
+        </button>
+    </div>
+</div>
+
+<div id="tab-sheet" class="tab-content">
+    <div class="sheet-wrapper" id="sheetWrapper">
+        <div class="sheet" id="printContent">
+            <h2>Income Tax Calculation for the Financial Year 2026-27 (AY 2027-28)</h2>
+            <h3 style="text-align: left;">Tax Regime Opted: New Regime</h3>
+
+            <table class="info-table">
+                <colgroup>
+                    <col style="width: 20%;"> <col style="width: 40%;"> <col style="width: 16%;"> <col style="width: 24%;">
+                </colgroup>
+                <tr>
+                    <td>Name</td>
+                    <td><textarea id="user_name" class="capitalize" rows="1" readonly></textarea></td>
+                    <td>eSalary Code</td>
+                    <td><textarea id="salary_code" class="upper" rows="1" readonly></textarea></td>
+                </tr>
+                <tr>
+                    <td>Designation</td>
+                    <td><textarea id="user_desig" class="capitalize" rows="1" readonly></textarea></td>
+                    <td>PAN</td>
+                    <td><input type="text" id="pan_no" class="upper" maxlength="10" readonly></td>
+                </tr>
+                <tr>
+                    <td>Office Address</td>
+                    <td><textarea id="office_addr" class="capitalize" rows="1" readonly></textarea></td>
+                    <td>Mobile No.</td>
+                    <td><input type="text" id="mobile_no" maxlength="10" inputmode="numeric" readonly></td>
+                </tr>
+            </table>
+
+            <table class="calc-table">
+                <colgroup>
+                    <col style="width: 5%;"> <col style="width: 22%;"> <col style="width: 15%;"> <col style="width: 15%;"> <col style="width: 15%;"> <col style="width: 11%;"> <col style="width: 17%;">
+                </colgroup>
+
+                <tr>
+                    <td class="col-idx">1.</td>
+                    <td colspan="5" class="wrap-text">Income from salary including Employer Share to NPS</td>
+                    <td class="right">
+                        <input type="text" inputmode="numeric" id="grossIncome" class="right" placeholder="0" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-idx">2.</td>
+                    <td colspan="5" class="wrap-text">Standard deduction u/s 16(ia)</td>
+                    <td class="right">75,000</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">3.</td>
+                    <td colspan="5" class="wrap-text">Income under the head Salaries (1 - 2)</td>
+                    <td class="right" id="headSalaries">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">4.</td>
+                    <td colspan="5" class="wrap-text">Deduction u/s 80CCD(2) (Employer Share to NPS @ 14%)</td>
+                    <td class="right">
+                        <input type="text" inputmode="numeric" id="npsDeduction" class="right" placeholder="0" readonly>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-idx">5.</td>
+                    <td colspan="5" class="wrap-text">Taxable Income (3 - 4)</td>
+                    <td class="right bold" id="taxableIncome">0</td>
+                </tr>
+
+                <tr>
+                    <td rowspan="9" class="col-idx" id="slab-idx-cell" style="vertical-align: middle;">6.</td>
+                    <td rowspan="9" class="wrap-text" id="slab-title-cell" style="vertical-align: middle; text-align: center; font-weight:bold;">
+                        Income Tax Liability
+                    </td>
+                    <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">from Rs.</td>
+                    <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">to Rs.</td>
+                    <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">Income</td>
+                    <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">Rate</td>
+                    <td class="center bold" style="background:#f9f9f9; font-size:11.5pt;">Income Tax</td>
+                </tr>
+
+                <tr id="row-slab-1"><td class="right">0</td><td class="right" id="to-slab-1">0</td><td class="right" id="inc-slab-1">0</td><td class="center">0 %</td><td class="right" id="tax-slab-1">0</td></tr>
+                <tr id="row-slab-2"><td class="right">4,00,001</td><td class="right" id="to-slab-2">0</td><td class="right" id="inc-slab-2">0</td><td class="center">5 %</td><td class="right" id="tax-slab-2">0</td></tr>
+                <tr id="row-slab-3"><td class="right">8,00,001</td><td class="right" id="to-slab-3">0</td><td class="right" id="inc-slab-3">0</td><td class="center">10 %</td><td class="right" id="tax-slab-3">0</td></tr>
+                <tr id="row-slab-4"><td class="right">12,00,001</td><td class="right" id="to-slab-4">0</td><td class="right" id="inc-slab-4">0</td><td class="center">15 %</td><td class="right" id="tax-slab-4">0</td></tr>
+                <tr id="row-slab-5"><td class="right">16,00,001</td><td class="right" id="to-slab-5">0</td><td class="right" id="inc-slab-5">0</td><td class="center">20 %</td><td class="right" id="tax-slab-5">0</td></tr>
+                <tr id="row-slab-6"><td class="right">20,00,001</td><td class="right" id="to-slab-6">0</td><td class="right" id="inc-slab-6">0</td><td class="center">25 %</td><td class="right" id="tax-slab-6">0</td></tr>
+                <tr id="row-slab-7"><td class="right">24,00,001</td><td class="right" id="to-slab-7">Above</td><td class="right" id="inc-slab-7">0</td><td class="center">30 %</td><td class="right" id="tax-slab-7">0</td></tr>
+                <tr><td colspan="4" class="right bold">Total Income Tax</td><td class="right bold" id="totalSlabTax">0</td></tr>
+
+                <tr>
+                    <td class="col-idx">7.</td>
+                    <td colspan="5" class="wrap-text">Relief under section 87A (Subject to maximum Rs.60000)</td>
+                    <td class="right" id="rebate87A">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">8.</td>
+                    <td colspan="5" class="wrap-text">Marginal relief (u/s 87A for income slightly above 12L)</td>
+                    <td class="right" id="marginalRelief87A">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">9.</td>
+                    <td colspan="5" class="wrap-text">Income Tax after relief u/s 87A (6 - 7 - 8)</td>
+                    <td class="right bold" id="taxAfterRelief">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">10.</td>
+                    <td colspan="5" class="wrap-text">Add: Surcharge (if applicable)</td>
+                    <td class="right" id="surcharge">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">11.</td>
+                    <td colspan="5" class="wrap-text">Less: Marginal relief on Surcharge</td>
+                    <td class="right" id="marginalReliefSurcharge">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">12.</td>
+                    <td colspan="5" class="wrap-text">Income Tax after Marginal relief on Surcharge (9+10-11)</td>
+                    <td class="right bold" id="taxAfterSurchargeRelief">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">13.</td>
+                    <td colspan="5" class="wrap-text">Education cess and Health cess @ 4%</td>
+                    <td class="right" id="cess">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">14.</td>
+                    <td colspan="5" class="bold wrap-text">Total Income Tax (12+13)</td>
+                    <td class="right bold" id="totalTaxLiability">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">15.</td>
+                    <td colspan="5" class="wrap-text">Relief under section 89(1) if any (attach form 10E)</td>
+                    <td class="right">
+                        <input type="text" inputmode="numeric" id="relief89" class="right" placeholder="0" readonly>
+                    </td>
+                </tr>
+            </table>
+
+            <table class="summary-table">
+                <colgroup>
+                    <col style="width: 5%;"> <col style="width: 32%;"> <col style="width: 14.5%;"> <col style="width: 16%;"> <col style="width: 15.5%;"> <col style="width: 17%;">
+                </colgroup>
+                <tr>
+                    <td colspan="3" style="border-left: none; border-top: none;"></td>
+                    <td class="center bold" style="background-color: #f0fff0;">Tax</td>
+                    <td class="center bold" style="background-color: #f0fff0;">Cess</td>
+                    <td class="center bold" style="background-color: #f0fff0;">Total</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">16.</td>
+                    <td colspan="2" class="wrap-text">Balance Income Tax payable after relief</td>
+                    <td class="right" id="balanceTaxComp">0</td>
+                    <td class="right" id="balanceCessComp">0</td>
+                    <td class="right" id="balanceTotalComp">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">17.</td>
+                    <td colspan="2" class="wrap-text">Income Tax already paid</td>
+                    <td class="right"><input type="text" inputmode="numeric" id="paidTax" class="right" placeholder="0" readonly></td>
+                    <td class="right"><input type="text" inputmode="numeric" id="paidCess" class="right" placeholder="0" readonly></td>
+                    <td class="right" id="paidTotal">0</td>
+                </tr>
+                <tr>
+                    <td class="col-idx">18.</td>
+                    <td class="bold wrap-text">Net Income Tax</td>
+                    <td style="background-color: #fafafa;">
+                        <input type="text" id="taxStatus" class="center" readonly value="Nil" style="width: 100%;">
+                    </td>
+                    <td class="right bold" id="netTax">0</td>
+                    <td class="right bold" id="netCess">0</td>
+                    <td class="right bold" id="netTotal">0</td>
+                </tr>
+            </table>
+
+            <div class="footer">
+                <div>Dated: <span id="currentDate"></span></div>
+                <div class="signature-line">Signature</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Scale Sheet precisely for mobile fit-to-width without horizontal scrolling
+    function fitSheetToWidth() {
+        const tabSheet = document.getElementById('tab-sheet');
+        if (!tabSheet || !tabSheet.classList.contains('active')) return;
+
+        const sheet = document.getElementById('printContent');
+        const wrapper = document.getElementById('sheetWrapper');
+        if (!sheet || !wrapper) return;
+
+        sheet.style.transform = 'none';
+        wrapper.style.height = 'auto';
+
+        const availableWidth = document.documentElement.clientWidth - 16;
+        const sheetWidth = sheet.offsetWidth;
+
+        if (availableWidth < sheetWidth && availableWidth > 0) {
+            const scale = availableWidth / sheetWidth;
+            sheet.style.transform = `scale(${scale})`;
+            wrapper.style.height = `${sheet.offsetHeight * scale}px`;
+        } else {
+            sheet.style.transform = 'none';
+            wrapper.style.height = 'auto';
         }
     }
 
-    document.getElementById('surcharge').innerText = format(surchargeAmount);  
-    document.getElementById('marginalReliefSurcharge').innerText = format(mReliefSurcharge);  
-    
-    let taxAfterSurchargeRelief = Math.max(0, taxRel + surchargeAmount - mReliefSurcharge);  
-    document.getElementById('taxAfterSurchargeRelief').innerText = format(taxAfterSurchargeRelief);  
+    window.addEventListener('resize', fitSheetToWidth);
+    window.addEventListener('orientationchange', () => setTimeout(fitSheetToWidth, 150));
 
-    // 5. Cess & Total Liability
-    let cess = Math.round(taxAfterSurchargeRelief * 0.04);
-    let totalLiab = taxAfterSurchargeRelief + cess;  
-    document.getElementById('cess').innerText = format(cess);  
-    document.getElementById('totalTaxLiability').innerText = format(totalLiab);  
+    function switchTab(tabId, btn) {
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        document.getElementById(tabId).classList.add('active');
+        btn.classList.add('active');
 
-    // 6. Relief u/s 89 & Balance Calculation (Summary Table)
-    let relief89 = getVal('relief89');  
-    let finalTaxComp = taxAfterSurchargeRelief;
-    let finalCessComp = cess; 
+        if (tabId === 'tab-sheet') {
+            document.querySelectorAll('#tab-sheet textarea').forEach(autoResize);
+            setTimeout(fitSheetToWidth, 50);
+        }
 
-    if (relief89 > 0) {  
-        if (relief89 <= finalTaxComp) { 
-            finalTaxComp -= relief89; 
-        } else { 
-            let rem = relief89 - finalTaxComp; 
-            finalTaxComp = 0; 
-            finalCessComp = Math.max(0, finalCessComp - rem); 
-        }  
-    }  
-      
-    let balTotal = finalTaxComp + finalCessComp;
-    document.getElementById('balanceTaxComp').innerText = format(finalTaxComp);  
-    document.getElementById('balanceCessComp').innerText = format(finalCessComp);  
-    document.getElementById('balanceTotalComp').innerText = format(balTotal);  
+        const toolbar = document.getElementById('actionToolbar');
+        if (toolbar) {
+            toolbar.style.display = (tabId === 'tab-sheet') ? 'flex' : 'none';
+        }
 
-    // 7. Net Payable/Refundable
-    let paidTax = getVal('paidTax'), paidCess = getVal('paidCess');
-    let paidTotal = paidTax + paidCess;  
-    document.getElementById('paidTotal').innerText = format(paidTotal);  
-      
-    let netTax = finalTaxComp - paidTax;
-    let netCess = finalCessComp - paidCess;
-    let netTotal = balTotal - paidTotal;  
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
 
-    document.getElementById('netTax').innerText = format(netTax);  
-    document.getElementById('netCess').innerText = format(netCess);  
-    document.getElementById('netTotal').innerText = format(netTotal);  
+    function syncField(targetId, value) {
+        let elem = document.getElementById(targetId);
+        if (elem) {
+            elem.value = value;
+            if (elem.tagName === "TEXTAREA") autoResize(elem);
+        }
+    }
 
-    // 8. Status Update
-    let status = document.getElementById('taxStatus');  
-    status.value = netTotal > 0 ? "Payable" : (netTotal < 0 ? "Refundable" : "Nil");  
-    status.style.color = netTotal > 0 ? "#dc3545" : (netTotal < 0 ? "#28a745" : "black");  
-}
+    function syncFormField(targetId, value) {
+        let elem = document.getElementById(targetId);
+        if (elem) elem.value = value;
+    }
 
+    function formatFormInput(elem, sheetTargetId) {
+        let cursor = elem.selectionStart;
+        let valueBefore = elem.value;
+        let digits = valueBefore.replace(/,/g, '');
+        if (digits === "") {
+            elem.value = "";
+            syncField(sheetTargetId, "");
+            calculateTax();
+            return;
+        }
+        let formatted = /^0+$/.test(digits) ? digits : Number(digits).toLocaleString('en-IN');
+        elem.value = formatted;
 
+        syncField(sheetTargetId, formatted);
+        calculateTax();
+    }
 
+    function validatePAN(input) {
+        let val = input.value.toUpperCase().replace(/[^A-Z0-9]/g, '');
+        let result = '';
+        for (let i = 0; i < val.length; i++) {
+            if (i < 5) { if (/[A-Z]/.test(val[i])) result += val[i]; }
+            else if (i < 9) { if (/[0-9]/.test(val[i])) result += val[i]; }
+            else if (i === 9) { if (/[A-Z]/.test(val[i])) result += val[i]; }
+        }
+        input.value = result;
+    }
 
+    function validateMobile(input) {
+        let val = input.value.replace(/[^0-9]/g, '');
+        if (val.startsWith('0')) val = val.substring(1);
+        input.value = val.substring(0, 10);
+    }
 
-    calculateTax();  
-    
-    async function buildVectorPDF() {  
-    const { jsPDF } = window.jspdf;  
-    const element = document.getElementById('printContent');  
-    const inputs = element.querySelectorAll("input, textarea");  
-    const tables = element.querySelectorAll("table");  
-    const allCells = element.querySelectorAll("th, td");  
-  
-    const replacements = [];  
-  
-    // 1️⃣ STORE ORIGINAL STYLES  
-    const originalBg = [];  
-    const originalLineHeight = [];  
-    const originalBorders = [];  
-  
-    allCells.forEach((cell, i) => {  
-        originalBg[i] = cell.style.backgroundColor;  
-        originalLineHeight[i] = cell.style.lineHeight;  
-        originalBorders[i] = cell.style.cssText;  
-    });  
-  
-    // 2️⃣ PREPARE FOR PDF  
-    allCells.forEach(cell => {  
-        cell.style.backgroundColor = "white";  
-        cell.style.lineHeight = "1.5"; 
-cell.style.letterSpacing = "0.5px"; // Words ke beech space ke liye
- // Line height kam rakhi hai taaki wrap hone par text dikhe  
-        cell.style.overflow = "visible"; // Text ko chhupne se rokne ke liye  
-    });  
-        // --- Title और Sub-title के लिए भी वही 0.5px स्पेसिंग ---
-    element.querySelectorAll("h2, h3").forEach(title => {
-        title.style.letterSpacing = "0.5px"; 
-        title.style.wordSpacing = "0.5px"; // शब्दों के बीच मामूली गैप ताकि वे चिपके नहीं
-    });
+    function clearPersonalDetails() {
+        const fields = ['form_user_name', 'form_user_desig', 'form_salary_code', 'form_pan_no', 'form_mobile_no', 'form_office_addr'];
+        const sheetFields = ['user_name', 'user_desig', 'salary_code', 'pan_no', 'mobile_no', 'office_addr'];
 
-  
-    element.querySelectorAll(".input-bg").forEach(el => {  
-        el.style.backgroundColor = "white";  
-    });  
-  
-    // 3️⃣ FIX BORDERS  
-    allCells.forEach(cell => {  
-        cell.style.border = "none";  
-        cell.style.borderTop = "1px solid black";  
-        cell.style.borderLeft = "1px solid black";  
-    });  
-  
-    const calcTable = element.querySelector(".calc-table");  
-    if (calcTable) {  
-        const lastRowCells = calcTable.querySelectorAll("tr:last-child td");  
-        lastRowCells.forEach(cell => {  
-            cell.style.borderBottom = "1.3px solid black";   
-        });  
-    }  
-  
-    const summaryTable = element.querySelector(".summary-table");  
-    if (summaryTable) {  
-        const firstRowCells = summaryTable.querySelectorAll("tr:first-child td, tr:first-child th");  
-        firstRowCells.forEach(cell => { cell.style.borderTop = "none"; });  
-        const emptyBox = summaryTable.querySelector("tr:first-child td:first-child");  
-        if (emptyBox) { emptyBox.style.borderLeft = "none"; }  
-    }  
-  
-    element.querySelectorAll("tr").forEach(row => {  
-        const lastCell = row.querySelector("th:last-child, td:last-child");  
-        if (lastCell) { lastCell.style.borderRight = "1px solid black"; }  
-    });  
-  
-    tables.forEach(tbl => {  
-        if (!tbl.classList.contains('calc-table')) {   
-            const lastRow = tbl.querySelector("tr:last-child");  
-            if (lastRow) {  
-                lastRow.querySelectorAll("th, td").forEach(cell => {  
-                    cell.style.borderBottom = "1px solid black";  
-                });  
-            }  
-        }  
-    });  
-  
-    // 4️⃣ REPLACE INPUTS WITH DIVS (FIXED FOR TEXT VISIBILITY)  
-    inputs.forEach(input => {  
-        const box = document.createElement("div");  
-        let val = input.value;  
-        if (input.classList.contains('upper')) val = val.toUpperCase();  
-        if (input.classList.contains('capitalize')) val = toTitleCase(val);  
-  
-        box.innerText = val || " ";  
-        box.style.fontFamily = "Calibri, Arial, sans-serif";  
-        box.style.fontSize = window.getComputedStyle(input).fontSize;  
-        box.style.fontWeight = "normal";  
-          
-        // --- CRITICAL WRAPPING & VISIBILITY FIX ---  
-        box.style.whiteSpace = "normal";   
-        box.style.wordBreak = "break-word";  
-        box.style.display = "block"; // Block ensure karta hai ki row expand ho  
-        box.style.width = "100%";  
-        box.style.height = "auto";   
-        box.style.overflow = "visible"; // Isse text cut-out nahi hoga  
-        let content = box.innerText.trim();
+        fields.forEach((id, index) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = "";
+                if (el.tagName === "TEXTAREA") el.style.height = "auto";
+                syncField(sheetFields[index], "");
+            }
+        });
+        updateTitle();
+    }
 
-// --- DYNAMIC COLOR LOGIC ---
-if (/payable/i.test(content)) {
-    box.style.color = "red";   // Payable ke liye Red
-} else if (/refundable/i.test(content) || /refund/i.test(content)) {
-    box.style.color = "green"; // Refundable ke liye Green
-} else {
-    box.style.color = "black"; // Baaki sab ke liye Black (Nil isme aa jayega)
-}
- 
-        box.style.lineHeight = "1.5";
-box.style.letterSpacing = "0.5px"; // Bold text ko chipalne se rokne ke liye
-   
-        // ------------------------------------------  
-  
-        if (input.classList.contains('right')) box.style.textAlign = 'right';  
-        if (input.classList.contains('center')) box.style.textAlign = 'center';  
-  
-        input.style.display = "none";  
-        input.parentNode.insertBefore(box, input);  
-        replacements.push({ box, input });  
-    });  
-  
-    // 5️⃣ GENERATE PDF  
-    const doc = new jsPDF({  
-        orientation: 'p', unit: 'mm', format: 'a4', precision: 16  
-    });  
-  
-    await doc.html(element, {  
-        x: 0, y: -12, margin: [0, 0, 0, 0], autoPaging: 'slice', width: 210, windowWidth: 794,  
-        html2canvas: {   
-            scale: 0.2645833333,   
-            useCORS: true,   
-            letterRendering: false, // Behtar text rendering ke liye  
-            logging: false   
-        }  
-    });  
-  
-    // 6️⃣ RESTORE ORIGINAL  
-    replacements.forEach(item => {  
-        item.box.remove();  
-        item.input.style.display = "";  
-    });  
-  
-    allCells.forEach((cell, i) => {  
-        cell.style.cssText = originalBorders[i];  
-        cell.style.backgroundColor = originalBg[i];  
-        cell.style.lineHeight = originalLineHeight[i];  
-    });  
-  
-    return doc;  
-}  
-  
-    async function downloadVectorPDF() {  
-        document.getElementById('loadingOverlay').style.display = 'flex';  
-        try { const doc = await buildVectorPDF(); doc.save(getFileName()); } catch (e) { alert("Error"); }  
-        document.getElementById('loadingOverlay').style.display = 'none';  
-    }  
-  
-    async function sharePDF() {  
-        document.getElementById('loadingOverlay').style.display = 'flex';  
-        try {  
-            const doc = await buildVectorPDF();  
-            const blob = doc.output("blob");  
-            const file = new File([blob], getFileName(), { type: "application/pdf" });  
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {  
-                await navigator.share({ files: [file], title: 'Tax Calculation' });  
-            } else { doc.save(getFileName()); }  
-        } catch (e) { alert("Sharing failed"); }  
-        document.getElementById('loadingOverlay').style.display = 'none';  
-    }  
-</script>  
-</body>  
+    function clearSalaryDetails() {
+        const fields = ['form_grossIncome', 'form_npsDeduction', 'form_relief89', 'form_paidTax', 'form_paidCess'];
+        const sheetFields = ['grossIncome', 'npsDeduction', 'relief89', 'paidTax', 'paidCess'];
+
+        fields.forEach((id, index) => {
+            const el = document.getElementById(id);
+            if (el) {
+                el.value = "";
+                syncField(sheetFields[index], "");
+            }
+        });
+        calculateTax();
+    }
+
+    function toTitleCase(str) {
+        const whitelist = new Set(["JBT", "GPS", "GMS", "GHS", "GSSS", "CHT", "BEEO", "BPEO", "DEO", "DDEEO", "VPO", "TEH", "DISTT", "PIN", "PO", "HT", "GMSSS", "MO", "C/O", "S/O", "D/O", "W/O"]);
+        return str.toLowerCase().split(' ').map(function(word) {
+            let cleanWord = word.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            if (whitelist.has(cleanWord)) return word.toUpperCase();
+            return (word.charAt(0).toUpperCase() + word.slice(1));
+        }).join(' ');
+    }
+
+    function updateTitle() {
+        let nameVal = document.getElementById("user_name").value.trim();
+        let desigVal = document.getElementById("user_desig").value.trim();
+        let title = "";
+        if (nameVal) title += toTitleCase(nameVal);
+        if (desigVal) title += (title ? ", " : "") + toTitleCase(desigVal);
+        document.title = title || "Income Tax Calculation, FY 2026-27";
+    }
+
+    function getFileName() {
+        return document.title.replace(/[\\/:"*?<>|]/g, "_") + ".pdf";
+    }
+
+    async function printPage() {
+        if (window.AndroidInterface) {
+            document.getElementById('loadingOverlay').style.display = 'flex';
+            try {
+                const doc = await buildVectorPDF();
+                const base64 = doc.output('datauristring').split(',')[1];
+                window.AndroidInterface.printPDF(base64, getFileName());
+            } catch (e) { alert("Print failed: " + e); }
+            document.getElementById('loadingOverlay').style.display = 'none';
+        } else {
+            window.print();
+        }
+    }
+
+    function autoResize(elem) { elem.style.height = 'auto'; elem.style.height = elem.scrollHeight + 'px'; }
+
+    function adjustFontSize(idOrElem) {
+        let elem = (typeof idOrElem === 'string') ? document.getElementById(idOrElem) : idOrElem;
+        if (!elem) return;
+        let text = (elem.tagName === 'INPUT') ? elem.value : elem.innerText;
+        if (text.length > 12) elem.style.fontSize = Math.max(6.5, 11 * (12 / text.length)) + "pt";
+        else elem.style.fontSize = "inherit";
+    }
+
+    function formatInput(elem) {
+        let cursor = elem.selectionStart;
+        let valueBefore = elem.value;
+        let digits = valueBefore.replace(/,/g, '');
+        if (digits === "") {
+            elem.value = "";
+            calculateTax();
+            return;
+        }
+        let formatted = /^0+$/.test(digits) ? digits : Number(digits).toLocaleString('en-IN');
+        let commasBefore = (valueBefore.substring(0, cursor).match(/,/g) || []).length;
+        let digitsBefore = cursor - commasBefore;
+        elem.value = formatted;
+        let newCommasBefore = 0, currentDigits = 0, i = 0;
+        while (i < formatted.length && currentDigits < digitsBefore) {
+            if (formatted[i] !== ',') currentDigits++;
+            else newCommasBefore++;
+            i++;
+        }
+        let newCursorPos = digitsBefore + newCommasBefore;
+        requestAnimationFrame(() => { elem.setSelectionRange(newCursorPos, newCursorPos); });
+        adjustFontSize(elem);
+        calculateTax();
+    }
+
+    document.getElementById('currentDate').innerText = new Date().toLocaleDateString('en-GB');
+
+    function format(num) { return Math.round(num).toLocaleString('en-IN'); }
+
+    function calculateTax() {
+        const getVal = (id) => parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;
+
+        let gross = getVal('grossIncome'), stdDed = 75000;
+        let headSalaries = Math.max(0, gross - stdDed);
+        let npsDed = getVal('npsDeduction');
+        let taxable = Math.max(0, headSalaries - npsDed);
+
+        document.getElementById('headSalaries').innerText = format(headSalaries);
+        document.getElementById('taxableIncome').innerText = format(taxable);
+
+        let slabs = [
+            { start: 0, limit: 400000, rate: 0, id: 1 },
+            { start: 400000, limit: 800000, rate: 0.05, id: 2 },
+            { start: 800000, limit: 1200000, rate: 0.10, id: 3 },
+            { start: 1200000, limit: 1600000, rate: 0.15, id: 4 },
+            { start: 1600000, limit: 2000000, rate: 0.20, id: 5 },
+            { start: 2000000, limit: 2400000, rate: 0.25, id: 6 },
+            { start: 2400000, limit: Infinity, rate: 0.30, id: 7 }
+        ];
+
+        let slabTaxTotal = 0, visibleCount = 0;
+        slabs.forEach((s, i) => {
+            let row = document.getElementById(`row-slab-${s.id}`), rel = (taxable > s.start || i === 0);
+            if(rel) {
+                row.style.display = 'table-row'; visibleCount++;
+                let upperLimitText = (s.limit === Infinity) ? ((taxable > s.start) ? format(taxable) : "Above") : format(Math.min(taxable, s.limit));
+                document.getElementById(`to-slab-${s.id}`).innerText = upperLimitText;
+                let inc = Math.max(0, (s.limit !== Infinity ? Math.min(taxable, s.limit) : taxable) - s.start);
+                let tax = inc * s.rate; slabTaxTotal += tax;
+                document.getElementById(`inc-slab-${s.id}`).innerText = format(inc);
+                document.getElementById(`tax-slab-${s.id}`).innerText = format(tax);
+            } else row.style.display = 'none';
+        });
+
+        document.getElementById('slab-idx-cell').rowSpan = visibleCount + 2;
+        document.getElementById('slab-title-cell').rowSpan = visibleCount + 2;
+        document.getElementById('totalSlabTax').innerText = format(slabTaxTotal);
+
+        let reb87 = (taxable <= 1200000) ? slabTaxTotal : 0;
+        let marg87 = (taxable > 1200000 && slabTaxTotal > (taxable - 1200000)) ? (slabTaxTotal - (taxable - 1200000)) : 0;
+        let taxRel = Math.max(0, slabTaxTotal - reb87 - marg87);
+
+        document.getElementById('rebate87A').innerText = format(reb87);
+        document.getElementById('marginalRelief87A').innerText = format(marg87);
+        document.getElementById('taxAfterRelief').innerText = format(taxRel);
+
+        let surchargeAmount = 0, surchargeRate = 0, mReliefSurcharge = 0;
+
+        if (taxable > 20000000) surchargeRate = 0.25;
+        else if (taxable > 10000000) surchargeRate = 0.15;
+        else if (taxable > 5000000) surchargeRate = 0.10;
+
+        surchargeAmount = Math.round(taxRel * surchargeRate);
+
+        if (taxable > 5000000) {
+            let limit, taxAtLimit, prevSurchargeRate;
+            if (taxable > 20000000) {
+                limit = 20000000; taxAtLimit = 5580000; prevSurchargeRate = 0.15;
+            } else if (taxable > 10000000) {
+                limit = 10000000; taxAtLimit = 2580000; prevSurchargeRate = 0.10;
+            } else {
+                limit = 5000000; taxAtLimit = 1080000; prevSurchargeRate = 0;
+            }
+
+            let taxAtLimitWithSurcharge = taxAtLimit * (1 + prevSurchargeRate);
+            let currentTaxWithSurcharge = taxRel + surchargeAmount;
+            let increaseInTax = currentTaxWithSurcharge - taxAtLimitWithSurcharge;
+            let increaseInIncome = taxable - limit;
+
+            if (increaseInTax > increaseInIncome) {
+                mReliefSurcharge = Math.round(increaseInTax - increaseInIncome);
+            }
+        }
+
+        document.getElementById('surcharge').innerText = format(surchargeAmount);
+        document.getElementById('marginalReliefSurcharge').innerText = format(mReliefSurcharge);
+
+        let taxAfterSurchargeRelief = Math.max(0, taxRel + surchargeAmount - mReliefSurcharge);
+        document.getElementById('taxAfterSurchargeRelief').innerText = format(taxAfterSurchargeRelief);
+
+        let cess = Math.round(taxAfterSurchargeRelief * 0.04);
+        let totalLiab = taxAfterSurchargeRelief + cess;
+        document.getElementById('cess').innerText = format(cess);
+        document.getElementById('totalTaxLiability').innerText = format(totalLiab);
+
+        let relief89 = getVal('relief89');
+        let finalTaxComp = taxAfterSurchargeRelief;
+        let finalCessComp = cess;
+
+        if (relief89 > 0) {
+            if (relief89 <= finalTaxComp) {
+                finalTaxComp -= relief89;
+            } else {
+                let rem = relief89 - finalTaxComp;
+                finalTaxComp = 0;
+                finalCessComp = Math.max(0, finalCessComp - rem);
+            }
+        }
+
+        let balTotal = finalTaxComp + finalCessComp;
+        document.getElementById('balanceTaxComp').innerText = format(finalTaxComp);
+        document.getElementById('balanceCessComp').innerText = format(finalCessComp);
+        document.getElementById('balanceTotalComp').innerText = format(balTotal);
+
+        let paidTax = getVal('paidTax'), paidCess = getVal('paidCess');
+        let paidTotal = paidTax + paidCess;
+        document.getElementById('paidTotal').innerText = format(paidTotal);
+
+        let netTax = finalTaxComp - paidTax;
+        let netCess = finalCessComp - paidCess;
+        let netTotal = balTotal - paidTotal;
+
+        document.getElementById('netTax').innerText = format(netTax);
+        document.getElementById('netCess').innerText = format(netCess);
+        document.getElementById('netTotal').innerText = format(netTotal);
+
+        let status = document.getElementById('taxStatus');
+        status.value = netTotal > 0 ? "Payable" : (netTotal < 0 ? "Refundable" : "Nil");
+        status.style.color = netTotal > 0 ? "#dc3545" : (netTotal < 0 ? "#28a745" : "black");
+
+        setTimeout(fitSheetToWidth, 10);
+    }
+
+    calculateTax();
+
+    async function buildVectorPDF() {
+        const { jsPDF } = window.jspdf;
+        const element = document.getElementById('printContent');
+        const inputs = element.querySelectorAll("input, textarea");
+        const tables = element.querySelectorAll("table");
+        const allCells = element.querySelectorAll("th, td");
+
+        const savedTransform = element.style.transform;
+        element.style.transform = "none";
+
+        const replacements = [];
+        const originalBg = [], originalLineHeight = [], originalBorders = [];
+
+        allCells.forEach((cell, i) => {
+            originalBg[i] = cell.style.backgroundColor;
+            originalLineHeight[i] = cell.style.lineHeight;
+            originalBorders[i] = cell.style.cssText;
+        });
+
+        allCells.forEach(cell => {
+            cell.style.backgroundColor = "white";
+            cell.style.lineHeight = "1.25";
+            cell.style.letterSpacing = "0.4px";
+            cell.style.overflow = "visible";
+        });
+
+        element.querySelectorAll("h2, h3").forEach(title => {
+            title.style.letterSpacing = "0.5px";
+            title.style.wordSpacing = "0.5px";
+        });
+
+        element.querySelectorAll(".input-bg").forEach(el => {
+            el.style.backgroundColor = "white";
+        });
+
+        allCells.forEach(cell => {
+            cell.style.border = "none";
+            cell.style.borderTop = "1px solid black";
+            cell.style.borderLeft = "1px solid black";
+        });
+
+        const calcTable = element.querySelector(".calc-table");
+        if (calcTable) {
+            const lastRowCells = calcTable.querySelectorAll("tr:last-child td");
+            lastRowCells.forEach(cell => { cell.style.borderBottom = "1.3px solid black"; });
+        }
+
+        const summaryTable = element.querySelector(".summary-table");
+        if (summaryTable) {
+            const firstRowCells = summaryTable.querySelectorAll("tr:first-child td, tr:first-child th");
+            firstRowCells.forEach(cell => { cell.style.borderTop = "none"; });
+            const emptyBox = summaryTable.querySelector("tr:first-child td:first-child");
+            if (emptyBox) { emptyBox.style.borderLeft = "none"; }
+        }
+
+        element.querySelectorAll("tr").forEach(row => {
+            const lastCell = row.querySelector("th:last-child, td:last-child");
+            if (lastCell) { lastCell.style.borderRight = "1px solid black"; }
+        });
+
+        tables.forEach(tbl => {
+            if (!tbl.classList.contains('calc-table')) {
+                const lastRow = tbl.querySelector("tr:last-child");
+                if (lastRow) {
+                    lastRow.querySelectorAll("th, td").forEach(cell => {
+                        cell.style.borderBottom = "1px solid black";
+                    });
+                }
+            }
+        });
+
+        inputs.forEach(input => {
+            const box = document.createElement("div");
+            let val = input.value;
+            if (input.classList.contains('upper')) val = val.toUpperCase();
+            if (input.classList.contains('capitalize')) val = toTitleCase(val);
+
+            box.innerText = val || " ";
+            box.style.fontFamily = "Calibri, Arial, sans-serif";
+            box.style.fontSize = window.getComputedStyle(input).fontSize;
+            box.style.fontWeight = "normal";
+            box.style.whiteSpace = "normal";
+            box.style.wordBreak = "break-word";
+            box.style.display = "block";
+            box.style.width = "100%";
+            box.style.height = "auto";
+            box.style.overflow = "visible";
+            let content = box.innerText.trim();
+
+            if (/payable/i.test(content)) {
+                box.style.color = "red";
+            } else if (/refundable/i.test(content) || /refund/i.test(content)) {
+                box.style.color = "green";
+            } else {
+                box.style.color = "black";
+            }
+
+            box.style.lineHeight = "1.5";
+            box.style.letterSpacing = "0.5px";
+
+            if (input.classList.contains('right')) box.style.textAlign = 'right';
+            if (input.classList.contains('center')) box.style.textAlign = 'center';
+
+            input.style.display = "none";
+            input.parentNode.insertBefore(box, input);
+            replacements.push({ box, input });
+        });
+
+        const doc = new jsPDF({
+            orientation: 'p', unit: 'mm', format: 'a4', precision: 16
+        });
+
+        await doc.html(element, {
+            x: 0, y: 0, margin: [7, 0, 0, 0], autoPaging: 'slice', width: 210, windowWidth: 794,
+            html2canvas: {
+                scale: 0.2645833333,
+                useCORS: true,
+                letterRendering: false,
+                logging: false
+            }
+        });
+
+        replacements.forEach(item => {
+            item.box.remove();
+            item.input.style.display = "";
+        });
+
+        allCells.forEach((cell, i) => {
+            cell.style.cssText = originalBorders[i];
+            cell.style.backgroundColor = originalBg[i];
+            cell.style.lineHeight = originalLineHeight[i];
+        });
+
+        element.style.transform = savedTransform;
+
+        return doc;
+    }
+
+    async function downloadVectorPDF() {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        try {
+            const doc = await buildVectorPDF();
+            if (window.AndroidInterface) {
+                const base64 = doc.output('datauristring').split(',')[1];
+                window.AndroidInterface.downloadPDF(base64, getFileName());
+            } else {
+                doc.save(getFileName());
+            }
+        } catch (e) { alert("PDF generation failed: " + e); }
+        document.getElementById('loadingOverlay').style.display = 'none';
+    }
+
+    async function sharePDF() {
+        document.getElementById('loadingOverlay').style.display = 'flex';
+        try {
+            const doc = await buildVectorPDF();
+            const base64 = doc.output('datauristring').split(',')[1];
+            if (window.AndroidInterface) {
+                window.AndroidInterface.sharePDF(base64, getFileName());
+            } else {
+                const blob = doc.output("blob");
+                const file = new File([blob], getFileName(), { type: "application/pdf" });
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    await navigator.share({ files: [file], title: 'Tax Calculation' });
+                } else { doc.save(getFileName()); }
+            }
+        } catch (e) { alert("Sharing failed: " + e); }
+        document.getElementById('loadingOverlay').style.display = 'none';
+    }
+</script>
+</body>
 </html>
