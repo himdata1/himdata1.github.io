@@ -5,10 +5,18 @@
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2270%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>GC</text></svg>">
 
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2270%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>GC</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2270%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>GC</text></svg>">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- html2canvas library for screenshot generation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
     <style>
+        * {
+            -webkit-tap-highlight-color: transparent;
+        }
+
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
@@ -81,17 +89,50 @@
             color: white;
             font-weight: bold;
             border: none;
-            border-radius: 4px;
+            border-radius: 20px;
             padding: 10px 20px;
             width: 120px;
             margin-top: 10px;
             cursor: pointer;
             text-align: center;
             font-size: 20px;
+            outline: none;
         }
 
         .btn-clear:hover {
             background-color: #0056b3;
+        }
+
+        .btn-share {
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 2px 6px rgba(0, 123, 255, 0.3);
+            transition: background-color 0.2s;
+        }
+
+        .btn-share:hover {
+            background-color: #0056b3;
+        }
+
+        .btn-online {
+            text-decoration: none; 
+            display: inline-block; 
+            text-align: center; 
+            width: 320px; 
+            background-color: #007BFF; 
+            color: white; 
+            padding: 10px; 
+            border-radius: 20px; 
+            margin-top: 10px;
         }
 
         .result {
@@ -114,7 +155,7 @@
 </head>
 <body>
 
-<div class="calculator-container">
+<div class="calculator-container" id="calculatorCard">
     <h2>Retirement Gratuity Calculator</h2>
 
     <div class="form-group">
@@ -148,18 +189,43 @@
             <input type="text" id="gratuityAmount" name="gratuityAmount" readonly>
         </div>
 
-        <button type="button" class="btn-clear" onclick="clearFields()">Clear</button>
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+            <button id="clearBtn" type="button" class="btn-clear" onclick="clearFields()">Clear</button>
+            
+            <button id="shareBtn" type="button" class="btn-share" onclick="shareScreenshot()" aria-label="Share">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="18" cy="5" r="3"></circle>
+                    <circle cx="6" cy="12" r="3"></circle>
+                    <circle cx="18" cy="19" r="3"></circle>
+                    <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+                    <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+                </svg>
+            </button>
+        </div>
 
-        <a href="https://pensionersportal.gov.in/PensionCalculators/RevisedPensionCalculator_2016/GratuityCalculator_7pc.aspx" 
+        <a id="onlineBtn" 
+           href="https://pensionersportal.gov.in/PensionCalculators/RevisedPensionCalculator_2016/GratuityCalculator_7pc.aspx" 
            target="_blank" 
-           class="btn-clear" 
-           style="text-decoration: none; display: inline-block; text-align: center; width: 320px;">
+           class="btn-online" 
+           style="width: 100%; box-sizing: border-box;">
             Click here to calculate online
         </a>
     </div>
 </div>
 
 <script>
+    document.getElementById('retirementDate').addEventListener('focus', function() {
+        if (!this.value) {
+            const now = new Date();
+            const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0);
+            const year = lastDay.getFullYear();
+            const month = String(lastDay.getMonth() + 1).padStart(2, '0');
+            const day = String(lastDay.getDate()).padStart(2, '0');
+            this.value = `${year}-${month}-${day}`;
+            setLastDateOfMonth();
+        }
+    });
+
     function setLastDateOfMonth() {
         const retirementDateInput = document.getElementById('retirementDate');
         if (retirementDateInput.value) {
@@ -291,11 +357,105 @@
     function clearFields() {
         document.getElementById('basicPayDA').value = '';
         document.getElementById('joiningDate').value = '';
-        document.getElementById('retirementDate').value = '';
+        document.getElementById('retirementDate').value = ''; 
         document.getElementById('durationService').value = '';
         document.getElementById('qualifyingService').value = '';
         document.getElementById('gratuityAmount').value = '';
         document.getElementById('result-boxes').classList.add('hidden');
+    }
+
+    // SCREENSHOT SHARE (DD/MM/YYYY FORMAT, NO TEXT, NO BUTTONS)
+    async function shareScreenshot() {
+        const amount = document.getElementById('gratuityAmount').value;
+
+        if (!amount) {
+            alert("Pehle sabhi details bhar kar calculation karein!");
+            return;
+        }
+
+        const clearBtn = document.getElementById('clearBtn');
+        const shareBtn = document.getElementById('shareBtn');
+        const onlineBtn = document.getElementById('onlineBtn');
+
+        const joiningDateInput = document.getElementById('joiningDate');
+        const retirementDateInput = document.getElementById('retirementDate');
+
+        // Store original values (YYYY-MM-DD)
+        const originalJoiningVal = joiningDateInput.value;
+        const originalRetirementVal = retirementDateInput.value;
+
+        // Convert YYYY-MM-DD to DD/MM/YYYY
+        const formatDateToDDMMYYYY = (dateStr) => {
+            if (!dateStr) return '';
+            const parts = dateStr.split('-');
+            return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateStr;
+        };
+
+        // Hide buttons from screenshot
+        if (clearBtn) clearBtn.style.visibility = 'hidden';
+        if (shareBtn) shareBtn.style.visibility = 'hidden';
+        if (onlineBtn) onlineBtn.style.visibility = 'hidden';
+
+        // Temporarily change inputs to text type with DD/MM/YYYY format for screenshot
+        if (originalJoiningVal) {
+            joiningDateInput.type = 'text';
+            joiningDateInput.value = formatDateToDDMMYYYY(originalJoiningVal);
+        }
+        if (originalRetirementVal) {
+            retirementDateInput.type = 'text';
+            retirementDateInput.value = formatDateToDDMMYYYY(originalRetirementVal);
+        }
+
+        const restoreUI = () => {
+            if (clearBtn) clearBtn.style.visibility = 'visible';
+            if (shareBtn) shareBtn.style.visibility = 'visible';
+            if (onlineBtn) onlineBtn.style.visibility = 'visible';
+
+            // Restore inputs back to date picker type and original values
+            joiningDateInput.type = 'date';
+            joiningDateInput.value = originalJoiningVal;
+
+            retirementDateInput.type = 'date';
+            retirementDateInput.value = originalRetirementVal;
+        };
+
+        try {
+            if (typeof html2canvas !== 'undefined') {
+                const container = document.getElementById('calculatorCard');
+                const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff' });
+                
+                restoreUI();
+
+                canvas.toBlob(async (blob) => {
+                    const file = new File([blob], 'Gratuity_Calculation.png', { type: 'image/png' });
+
+                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                        try {
+                            await navigator.share({
+                                files: [file]
+                            });
+                        } catch (err) {
+                            if (err.name !== 'AbortError') {
+                                console.log("Share cancelled or failed", err);
+                            }
+                        }
+                    } else if (typeof Android !== 'undefined' && typeof Android.share === 'function') {
+                        Android.share();
+                    } else {
+                        const link = document.createElement('a');
+                        link.href = URL.createObjectURL(blob);
+                        link.download = 'Gratuity_Calculation.png';
+                        link.click();
+                    }
+                }, 'image/png');
+            } else {
+                restoreUI();
+                alert("Screenshot tool load nahi ho saka.");
+            }
+        } catch (err) {
+            restoreUI();
+            console.log(err);
+        }
     }
 </script>
 
