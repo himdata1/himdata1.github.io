@@ -7,7 +7,7 @@
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">
 
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">
-    <style>
+<style>
         :root {
             --primary-color: #1e3a8a;
             --primary-hover: #1e40af;
@@ -52,6 +52,11 @@
         header p {
             color: #64748b;
             font-size: 0.95rem;
+        }
+
+        /* Title Control for Web / Print */
+        .title-print {
+            display: none;
         }
 
         .card {
@@ -261,9 +266,17 @@
                 text-align: center !important;
             }
 
+            /* Print Header Changes */
+            .title-web {
+                display: none !important;
+            }
+
+            .title-print {
+                display: inline !important;
+            }
+
             header p {
-                font-size: 0.85rem !important;
-                text-align: center !important;
+                display: none !important; /* Tagline removed from Print */
             }
 
             .card {
@@ -408,10 +421,6 @@
                 font-size: 1.1rem !important;
             }
 
-            header p {
-                font-size: 0.75rem !important;
-            }
-
             .card {
                 padding: 4px !important;
                 margin-bottom: 5px !important;
@@ -461,7 +470,10 @@
 
 <div class="container">
     <header>
-        <h1>DA Arrear Calculator</h1>
+        <h1>
+            <span class="title-web">DA Arrear Calculator</span>
+            <span class="title-print">DA Arrear Calculation</span>
+        </h1>
         <p>Real-time month-wise Dearness Allowance arrears & deduction calculation</p>
     </header>
 
