@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DA Arrear Calculator</title>
+    <style>
+        :root {
+            --primary-color: #1e3a8a;
+            --primary-hover: #1e40af;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-color: #1e293b;
+            --border-color: #e2e8f0;
+            --accent-green: #059669;
+            --accent-red: #dc2626;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            padding: 20px;
+            line-height: 1.5;
+        }
+
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        header h1 {
+            color: var(--primary-color);
+            font-size: 1.8rem;
+            margin-bottom: 6px;
+        }
+
+        header p {
+            color: #64748b;
+            font-size: 0.95rem;
+        }
+
+        .card {
+            background: var(--card-bg);
+            border-radius: 12px;
+            padding: 24px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 16px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            font-size: 0.875rem;
+            margin-bottom: 6px;
+            color: #334155;
+        }
+
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            outline: none;
+            transition: border-color 0.2s;
+            background-color: #fff;
+        }
+
+        .form-group input[type="month"] {
+            min-height: 42px;
+            padding: 8px 12px;
+            font-size: 0.95rem;
+        }
+
+        .form-group input[readonly] {
+            background-color: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            cursor: not-allowed;
+        }
+
+        .form-group input:focus, .form-group select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .btn-container {
+            margin-top: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .btn-reset {
+            background-color: #ef4444;
+            color: white;
+        }
+
+        .btn-reset:hover {
+            background-color: #dc2626;
+        }
+
+        .btn-secondary {
+            background-color: #e2e8f0;
+            color: #334155;
+        }
+
+        .btn-secondary:hover {
+            background-color: #cbd5e1;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 16px;
+            margin-bottom: 24px;
+        }
+
+        .summary-card {
+            background: var(--card-bg);
+            border-radius: 10px;
+            padding: 18px;
+            border: 1px solid var(--border-color);
+            text-align: center;
+        }
+
+        .summary-card.highlight {
+            border-left: 5px solid var(--accent-green);
+        }
+
+        .summary-card h3 {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            color: #64748b;
+            margin-bottom: 8px;
+        }
+
+        .summary-card .value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+
+        .summary-card.highlight .value {
+            color: var(--accent-green);
+        }
+
+        .table-responsive {
+            overflow-x: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.95rem;
+            text-align: center;
+        }
+
+        th, td {
+            padding: 10px 6px;
+            border-bottom: 1px solid var(--border-color);
+            vertical-align: middle;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 600;
+            white-space: normal;
+            line-height: 1.3;
+        }
+
+        tfoot tr {
+            background-color: #f8fafc;
+            font-weight: bold;
+        }
+
+        td input {
+            width: 90px;
+            padding: 4px 6px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        /* Month Display Control for Web View */
+        .month-long {
+            display: none;
+        }
+        .month-short {
+            display: inline;
+        }
+
+        /* =========================================================
+           GENERAL PRINT STYLES (DEFAULT / A4)
+           ========================================================= */
+        @page {
+            size: auto;
+            margin: 5mm;
+        }
+
+        @media print {
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                color: #000 !important;
+                font-size: 13px !important;
+                line-height: 1.3 !important;
+            }
+
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            header {
+                text-align: center !important;
+            }
+
+            header h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 2px !important;
+                text-align: center !important;
+            }
+
+            header p {
+                font-size: 0.85rem !important;
+                text-align: center !important;
+            }
+
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+                padding: 8px !important;
+                margin-bottom: 8px !important;
+                border-radius: 4px !important;
+            }
+
+            .btn-container {
+                display: none !important;
+            }
+
+            .form-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 5px !important;
+            }
+
+            .form-group label {
+                font-size: 11px !important;
+                margin-bottom: 2px !important;
+            }
+
+            .form-group input, .form-group select {
+                font-size: 15px !important;
+                line-height: 1.25 !important;
+                padding: 8px 6px !important;
+                height: auto !important;
+                border: 1px solid #cbd5e1 !important;
+                background: #fff !important;
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+                background-image: none !important;
+            }
+
+            .form-group select::-ms-expand {
+                display: none !important;
+            }
+
+            .summary-grid {
+                gap: 6px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .summary-card {
+                padding: 6px !important;
+            }
+
+            .summary-card h3 {
+                font-size: 9px !important;
+                margin-bottom: 2px !important;
+            }
+
+            .summary-card .value {
+                font-size: 14px !important;
+            }
+
+            .table-responsive {
+                overflow: visible !important;
+            }
+
+            table {
+                width: 100% !important;
+                table-layout: fixed !important;
+                border-collapse: collapse !important;
+            }
+
+            th, td {
+                padding: 8px 4px !important;
+                font-size: 15px !important;
+                line-height: 1.25 !important;
+                border: 1px solid #334155 !important;
+                text-align: center !important;
+                vertical-align: middle !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+            }
+
+            th {
+                background-color: #f1f5f9 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-weight: 700 !important;
+                font-size: 14px !important;
+                text-align: center !important;
+            }
+
+            /* Month Column Left Alignment in Print Body */
+            td:nth-child(2) {
+                text-align: left !important;
+                padding-left: 8px !important;
+            }
+
+            /* Month Display Control for Print View */
+            .month-short {
+                display: none !important;
+            }
+            .month-long {
+                display: inline !important;
+            }
+
+            /* Column Widths Ratio */
+            th:nth-child(1), td:nth-child(1) { width: 5%; }  /* Sr. No. */
+            th:nth-child(2), td:nth-child(2) { width: 12%; } /* Month */
+            th:nth-child(3), td:nth-child(3) { width: 8%; }  /* Year */
+            th:nth-child(4), td:nth-child(4) { width: 10%; } /* Basic Pay */
+            th:nth-child(5), td:nth-child(5) { width: 11%; } /* Prev DA */
+            th:nth-child(6), td:nth-child(6) { width: 11%; } /* Rev DA */
+            th:nth-child(7), td:nth-child(7) { width: 14%; } /* Total Arrear */
+            th:nth-child(8), td:nth-child(8) { width: 14%; } /* NPS Share */
+            th:nth-child(9), td:nth-child(9) { width: 15%; } /* Net Arrear */
+
+            td input {
+                width: 100% !important;
+                font-size: 15px !important;
+                line-height: 1.25 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                border: none !important;
+                background: transparent !important;
+                text-align: center !important;
+            }
+
+            tr {
+                page-break-inside: avoid !important;
+            }
+
+            tfoot {
+                display: table-row-group !important;
+            }
+        }
+
+        /* =========================================================
+           A5 / SMALL PAPER SPECIFIC PRINT STYLES
+           ========================================================= */
+        @media print and (max-width: 160mm) {
+            header h1 {
+                font-size: 1.1rem !important;
+            }
+
+            header p {
+                font-size: 0.75rem !important;
+            }
+
+            .card {
+                padding: 4px !important;
+                margin-bottom: 5px !important;
+            }
+
+            .form-group label {
+                font-size: 8.5px !important;
+            }
+
+            .form-group input, .form-group select {
+                font-size: 10.5px !important;
+                line-height: 1.15 !important;
+                padding: 5px 4px !important;
+                height: auto !important;
+            }
+
+            .summary-card {
+                padding: 4px !important;
+            }
+
+            .summary-card h3 {
+                font-size: 8px !important;
+            }
+
+            .summary-card .value {
+                font-size: 11px !important;
+            }
+
+            th, td {
+                padding: 5px 2px !important;
+                font-size: 10.5px !important;
+                line-height: 1.15 !important;
+            }
+
+            th {
+                font-size: 9.5px !important;
+            }
+
+            td input {
+                font-size: 10.5px !important;
+                line-height: 1.15 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header>
+        <h1>DA Arrear Calculator</h1>
+        <p>Real-time month-wise Dearness Allowance arrears & deduction calculation</p>
+    </header>
+
+    <div class="card">
+        <div class="form-grid">
+            <div class="form-group">
+                <label for="employeeType">Employee Type</label>
+                <select id="employeeType">
+                    <option value="OPS" selected>OPS Employee</option>
+                    <option value="NPS">NPS Employee</option>
+                </select>
+            </div>
+
+            <div class="form-group" id="cpfGroup" style="display: none;">
+                <label for="gpfNps">NPS Employee share Rate (%)</label>
+                <input type="number" id="gpfNps" value="10" step="0.1" min="0" max="100">
+            </div>
+
+            <div class="form-group">
+                <label for="incrementMonth">Month of Annual Increment</label>
+                <select id="incrementMonth">
+                    <option value="None">None</option>
+                    <option value="1">January</option>
+                    <option value="2">February</option>
+                    <option value="3">March</option>
+                    <option value="4">April</option>
+                    <option value="5">May</option>
+                    <option value="6">June</option>
+                    <option value="7">July</option>
+                    <option value="8">August</option>
+                    <option value="9">September</option>
+                    <option value="10" selected>October</option>
+                    <option value="11">November</option>
+                    <option value="12">December</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="previousDa">Previous DA (%)</label>
+                <input type="number" id="previousDa" value="0" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="revisedDa">Revised DA (%)</label>
+                <input type="number" id="revisedDa" value="0" step="0.01">
+            </div>
+
+            <div class="form-group">
+                <label for="fromMonth">From Month</label>
+                <input type="month" id="fromMonth" value="2024-01">
+            </div>
+
+            <div class="form-group">
+                <label for="toMonth">To Month</label>
+                <input type="month" id="toMonth">
+            </div>
+
+            <div class="form-group">
+                <label for="totalMonths">Total Months</label>
+                <input type="text" id="totalMonths" value="0 Months" readonly>
+            </div>
+
+            <div class="form-group">
+                <label for="basicPay">Basic Pay as on (From Month) (₹)</label>
+                <input type="number" id="basicPay" value="0" step="100">
+            </div>
+        </div>
+
+        <div class="btn-container">
+            <button type="button" class="btn btn-reset" onclick="resetCalculator()">Reset</button>
+            <button type="button" class="btn btn-secondary" onclick="window.print()">Print Report</button>
+        </div>
+    </div>
+
+    <!-- Summary Cards -->
+    <div class="summary-grid" id="summaryGrid">
+        <div class="summary-card">
+            <h3>Total Arrear</h3>
+            <div class="value" id="totalGross">₹0</div>
+        </div>
+        <div class="summary-card">
+            <h3>Total NPS Employee Share deducted</h3>
+            <div class="value" id="totalCpf" style="color: var(--accent-red);">₹0</div>
+        </div>
+        <div class="summary-card highlight">
+            <h3>Net Arrear</h3>
+            <div class="value" id="totalNet">₹0</div>
+        </div>
+    </div>
+
+    <!-- Output Table -->
+    <div class="card" id="tableCard">
+        <h2 style="font-size: 1.1rem; margin-bottom: 16px; color: var(--primary-color);">Monthly Arrear Statement</h2>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Sr.<br>No.</th>
+                        <th>Month</th>
+                        <th>Year</th>
+                        <th>Basic Pay<br>(₹)</th>
+                        <th>Prev.<br>DA (%)</th>
+                        <th>Rev.<br>DA (%)</th>
+                        <th>Total Arrear<br>(₹)</th>
+                        <th>NPS Share<br>Deducted (₹)</th>
+                        <th>Net Arrear<br>(₹)</th>
+                    </tr>
+                </thead>
+                <tbody id="breakdownTableBody">
+                </tbody>
+                <tfoot>
+                    <tr>
+                        <td colspan="6" style="text-align: right;"><strong>Total:</strong></td>
+                        <td id="footTotalGross">₹0</td>
+                        <td id="footTotalCpf" style="color: var(--accent-red);">₹0</td>
+                        <td id="footTotalNet" style="color: var(--accent-green);">₹0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+    function formatCurrency(amount) {
+        return '₹' + amount.toLocaleString('en-IN', { maximumFractionDigits: 0 });
+    }
+
+    function getCurrentMonth() {
+        const today = new Date();
+        const year = today.getFullYear();
+        const month = String(today.getMonth() + 1).padStart(2, '0');
+        return `${year}-${month}`;
+    }
+
+    function toggleCpfVisibility() {
+        const empType = document.getElementById('employeeType').value;
+        const cpfGroup = document.getElementById('cpfGroup');
+        const gpfNpsInput = document.getElementById('gpfNps');
+
+        if (empType === 'OPS') {
+            cpfGroup.style.display = 'none';
+        } else {
+            cpfGroup.style.display = 'flex';
+            if (!gpfNpsInput.value || parseFloat(gpfNpsInput.value) === 0) {
+                gpfNpsInput.value = 10;
+            }
+        }
+    }
+
+    document.getElementById('employeeType').addEventListener('change', function() {
+        toggleCpfVisibility();
+        calculateArrears();
+    });
+
+    function calculateArrears() {
+        const empType = document.getElementById('employeeType').value;
+        let cpfRate = parseFloat(document.getElementById('gpfNps').value) || 0;
+        
+        if (empType === 'OPS') {
+            cpfRate = 0;
+        }
+
+        const incMonth = document.getElementById('incrementMonth').value;
+        const prevDaRate = parseFloat(document.getElementById('previousDa').value) || 0;
+        const revDaRate = parseFloat(document.getElementById('revisedDa').value) || 0;
+        
+        const fromMonthVal = document.getElementById('fromMonth').value;
+        const toMonthVal = document.getElementById('toMonth').value;
+        let startBasic = parseFloat(document.getElementById('basicPay').value) || 0;
+
+        if (!fromMonthVal || !toMonthVal) {
+            document.getElementById('totalMonths').value = '0 Months';
+            document.getElementById('summaryGrid').style.display = 'none';
+            document.getElementById('tableCard').style.display = 'none';
+            return;
+        }
+
+        const startDate = new Date(fromMonthVal + '-01');
+        const endDate = new Date(toMonthVal + '-01');
+
+        if (startDate > endDate) {
+            document.getElementById('totalMonths').value = 'Invalid Period';
+            document.getElementById('summaryGrid').style.display = 'none';
+            document.getElementById('tableCard').style.display = 'none';
+            return;
+        }
+
+        const monthsList = [];
+        let curr = new Date(startDate);
+        while (curr <= endDate) {
+            monthsList.push(new Date(curr));
+            curr.setMonth(curr.getMonth() + 1);
+        }
+
+        const monthCount = monthsList.length;
+        document.getElementById('totalMonths').value = monthCount + (monthCount === 1 ? ' Month' : ' Months');
+
+        const tableBody = document.getElementById('breakdownTableBody');
+        tableBody.innerHTML = '';
+
+        let currentRunningBasic = startBasic;
+
+        monthsList.forEach((monthDate, index) => {
+            const mIndex = monthDate.getMonth() + 1;
+            const monthShort = monthDate.toLocaleDateString('en-IN', { month: 'short' });
+            const monthLong = monthDate.toLocaleDateString('en-IN', { month: 'long' });
+            const yearStr = monthDate.getFullYear();
+
+            if (index > 0 && incMonth !== 'None' && parseInt(incMonth) === mIndex) {
+                const incrementAmount = Math.round((currentRunningBasic * 0.03) / 100) * 100;
+                currentRunningBasic = currentRunningBasic + incrementAmount;
+            }
+
+            const row = document.createElement('tr');
+
+            row.innerHTML = `
+                <td>${index + 1}.</td>
+                <td>
+                    <span class="month-short">${monthShort}</span>
+                    <span class="month-long">${monthLong}</span>
+                </td>
+                <td>${yearStr}</td>
+                <td><input type="number" value="${currentRunningBasic}" class="row-basic" oninput="recalculateRow(this)"></td>
+                <td>${prevDaRate}%</td>
+                <td>${revDaRate}%</td>
+                <td class="row-gross">₹0</td>
+                <td class="row-cpf">₹0</td>
+                <td class="row-net"><strong>₹0</strong></td>
+            `;
+
+            tableBody.appendChild(row);
+            updateRowCalculations(row, prevDaRate, revDaRate, cpfRate, empType);
+        });
+
+        document.getElementById('summaryGrid').style.display = 'grid';
+        document.getElementById('tableCard').style.display = 'block';
+
+        updateTotals();
+    }
+
+    function updateRowCalculations(row, prevDaRate, revDaRate, cpfRate, empType) {
+        const basic = parseFloat(row.querySelector('.row-basic').value) || 0;
+
+        const prevDaAmount = Math.round(basic * (prevDaRate / 100));
+        const revDaAmount = Math.round(basic * (revDaRate / 100));
+        
+        const totalArrear = revDaAmount - prevDaAmount;
+        
+        if (empType === 'OPS') {
+            row.querySelector('.row-gross').textContent = formatCurrency(totalArrear);
+            row.querySelector('.row-cpf').textContent = 'N/A';
+            row.querySelector('.row-net').innerHTML = `<strong>${formatCurrency(totalArrear)}</strong>`;
+
+            row.dataset.gross = totalArrear;
+            row.dataset.cpf = 0;
+            row.dataset.net = totalArrear;
+        } else {
+            const cpfAmount = Math.round(totalArrear * (cpfRate / 100));
+            const netArrear = totalArrear - cpfAmount;
+
+            row.querySelector('.row-gross').textContent = formatCurrency(totalArrear);
+            row.querySelector('.row-cpf').textContent = formatCurrency(cpfAmount);
+            row.querySelector('.row-net').innerHTML = `<strong>${formatCurrency(netArrear)}</strong>`;
+
+            row.dataset.gross = totalArrear;
+            row.dataset.cpf = cpfAmount;
+            row.dataset.net = netArrear;
+        }
+    }
+
+    function recalculateRow(inputElement) {
+        const empType = document.getElementById('employeeType').value;
+        const prevDaRate = parseFloat(document.getElementById('previousDa').value) || 0;
+        const revDaRate = parseFloat(document.getElementById('revisedDa').value) || 0;
+        let cpfRate = parseFloat(document.getElementById('gpfNps').value) || 0;
+        if (empType === 'OPS') cpfRate = 0;
+
+        const row = inputElement.closest('tr');
+        updateRowCalculations(row, prevDaRate, revDaRate, cpfRate, empType);
+        updateTotals();
+    }
+
+    function updateTotals() {
+        const empType = document.getElementById('employeeType').value;
+        let totalGross = 0;
+        let totalCpf = 0;
+        let totalNet = 0;
+
+        const rows = document.querySelectorAll('#breakdownTableBody tr');
+        rows.forEach(row => {
+            totalGross += parseFloat(row.dataset.gross) || 0;
+            totalCpf += parseFloat(row.dataset.cpf) || 0;
+            totalNet += parseFloat(row.dataset.net) || 0;
+        });
+
+        document.getElementById('totalGross').textContent = formatCurrency(totalGross);
+        document.getElementById('totalCpf').textContent = (empType === 'OPS') ? 'N/A' : formatCurrency(totalCpf);
+        document.getElementById('totalNet').textContent = formatCurrency(totalNet);
+
+        document.getElementById('footTotalGross').textContent = formatCurrency(totalGross);
+        document.getElementById('footTotalCpf').textContent = (empType === 'OPS') ? 'N/A' : formatCurrency(totalCpf);
+        document.getElementById('footTotalNet').textContent = formatCurrency(totalNet);
+    }
+
+    function resetCalculator() {
+        document.getElementById('employeeType').value = 'OPS';
+        document.getElementById('gpfNps').value = 10;
+        document.getElementById('incrementMonth').value = '10';
+        document.getElementById('previousDa').value = 0;
+        document.getElementById('revisedDa').value = 0;
+        document.getElementById('fromMonth').value = '2024-01';
+        document.getElementById('toMonth').value = getCurrentMonth();
+        document.getElementById('basicPay').value = 0;
+        toggleCpfVisibility();
+        calculateArrears();
+    }
+
+    document.addEventListener('focusin', function(e) {
+        if (e.target && e.target.type === 'number' && e.target.value === '0') {
+            e.target.value = '';
+        }
+    });
+
+    document.addEventListener('focusout', function(e) {
+        if (e.target && e.target.type === 'number' && e.target.value.trim() === '') {
+            e.target.value = '0';
+            e.target.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+    });
+
+    document.querySelectorAll('.form-grid input, .form-grid select').forEach(element => {
+        element.addEventListener('input', calculateArrears);
+        element.addEventListener('change', calculateArrears);
+    });
+
+    window.onload = function() {
+        document.getElementById('toMonth').value = getCurrentMonth();
+        toggleCpfVisibility();
+        calculateArrears();
+    };
+</script>
+
+</body>
+</html>
