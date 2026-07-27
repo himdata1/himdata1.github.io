@@ -5,9 +5,16 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DA Arrear Calculator</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">
+    
+    <style>
+        /* 1. ROOT SCALING FOR WEB VIEW */
+        html {
+            font-size: 100%;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
 
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">
-<style>
         :root {
             --primary-color: #1e3a8a;
             --primary-hover: #1e40af;
@@ -29,7 +36,7 @@
         body {
             background-color: var(--bg-color);
             color: var(--text-color);
-            padding: 20px;
+            padding: 1.25rem;
             line-height: 1.5;
         }
 
@@ -40,13 +47,13 @@
 
         header {
             text-align: center;
-            margin-bottom: 24px;
+            margin-bottom: 1.5rem;
         }
 
         header h1 {
             color: var(--primary-color);
             font-size: 1.8rem;
-            margin-bottom: 6px;
+            margin-bottom: 0.375rem;
         }
 
         header p {
@@ -61,17 +68,17 @@
 
         .card {
             background: var(--card-bg);
-            border-radius: 12px;
-            padding: 24px;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
             box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            margin-bottom: 24px;
+            margin-bottom: 1.5rem;
             border: 1px solid var(--border-color);
         }
 
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 16px;
+            gap: 1rem;
         }
 
         .form-group {
@@ -82,15 +89,15 @@
         .form-group label {
             font-weight: 600;
             font-size: 0.875rem;
-            margin-bottom: 6px;
+            margin-bottom: 0.375rem;
             color: #334155;
         }
 
         .form-group input, .form-group select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 0.625rem 0.75rem;
             border: 1px solid var(--border-color);
-            border-radius: 6px;
+            border-radius: 0.375rem;
             font-size: 0.95rem;
             outline: none;
             transition: border-color 0.2s;
@@ -98,8 +105,8 @@
         }
 
         .form-group input[type="month"] {
-            min-height: 42px;
-            padding: 8px 12px;
+            min-height: 2.625rem;
+            padding: 0.5rem 0.75rem;
             font-size: 0.95rem;
         }
 
@@ -115,15 +122,15 @@
         }
 
         .btn-container {
-            margin-top: 20px;
+            margin-top: 1.25rem;
             display: flex;
-            gap: 12px;
+            gap: 0.75rem;
         }
 
         .btn {
-            padding: 10px 20px;
+            padding: 0.625rem 1.25rem;
             border: none;
-            border-radius: 6px;
+            border-radius: 0.375rem;
             font-weight: 600;
             cursor: pointer;
             transition: background-color 0.2s;
@@ -151,20 +158,20 @@
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 16px;
-            margin-bottom: 24px;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
 
         .summary-card {
             background: var(--card-bg);
-            border-radius: 10px;
-            padding: 18px;
+            border-radius: 0.625rem;
+            padding: 1.125rem;
             border: 1px solid var(--border-color);
             text-align: center;
         }
 
         .summary-card.highlight {
-            border-left: 5px solid var(--accent-green);
+            border-left: 0.3125rem solid var(--accent-green);
         }
 
         .summary-card h3 {
@@ -172,7 +179,7 @@
             text-transform: uppercase;
             letter-spacing: 0.5px;
             color: #64748b;
-            margin-bottom: 8px;
+            margin-bottom: 0.5rem;
         }
 
         .summary-card .value {
@@ -197,7 +204,7 @@
         }
 
         th, td {
-            padding: 10px 6px;
+            padding: 0.625rem 0.375rem;
             border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
         }
@@ -216,10 +223,10 @@
         }
 
         td input {
-            width: 90px;
-            padding: 4px 6px;
+            width: 5.625rem;
+            padding: 0.25rem 0.375rem;
             border: 1px solid var(--border-color);
-            border-radius: 4px;
+            border-radius: 0.25rem;
             text-align: center;
         }
 
@@ -232,7 +239,7 @@
         }
 
         /* =========================================================
-           GENERAL PRINT STYLES (DEFAULT / A4)
+           STRICT PRINT STYLES (PDF Output Locked)
            ========================================================= */
         @page {
             size: auto;
@@ -240,6 +247,13 @@
         }
 
         @media print {
+            /* Lock Root Font Size for Print */
+            html {
+                font-size: 16px !important;
+                -webkit-text-size-adjust: none !important;
+                text-size-adjust: none !important;
+            }
+
             body {
                 background: white !important;
                 padding: 0 !important;
@@ -258,6 +272,7 @@
 
             header {
                 text-align: center !important;
+                margin-bottom: 10px !important;
             }
 
             header h1 {
@@ -266,7 +281,6 @@
                 text-align: center !important;
             }
 
-            /* Print Header Changes */
             .title-web {
                 display: none !important;
             }
@@ -276,7 +290,7 @@
             }
 
             header p {
-                display: none !important; /* Tagline removed from Print */
+                display: none !important;
             }
 
             .card {
@@ -313,10 +327,6 @@
                 -moz-appearance: none !important;
                 appearance: none !important;
                 background-image: none !important;
-            }
-
-            .form-group select::-ms-expand {
-                display: none !important;
             }
 
             .summary-grid {
@@ -368,13 +378,11 @@
                 text-align: center !important;
             }
 
-            /* Month Column Left Alignment in Print Body */
             td:nth-child(2) {
                 text-align: left !important;
                 padding-left: 8px !important;
             }
 
-            /* Month Display Control for Print View */
             .month-short {
                 display: none !important;
             }
@@ -382,7 +390,6 @@
                 display: inline !important;
             }
 
-            /* Column Widths Ratio */
             th:nth-child(1), td:nth-child(1) { width: 5%; }  /* Sr. No. */
             th:nth-child(2), td:nth-child(2) { width: 12%; } /* Month */
             th:nth-child(3), td:nth-child(3) { width: 8%; }  /* Year */
@@ -413,9 +420,7 @@
             }
         }
 
-        /* =========================================================
-           A5 / SMALL PAPER SPECIFIC PRINT STYLES
-           ========================================================= */
+        /* Small Paper Specific Print Lock */
         @media print and (max-width: 160mm) {
             header h1 {
                 font-size: 1.1rem !important;
@@ -434,7 +439,6 @@
                 font-size: 10.5px !important;
                 line-height: 1.15 !important;
                 padding: 5px 4px !important;
-                height: auto !important;
             }
 
             .summary-card {
@@ -566,7 +570,7 @@
 
     <!-- Output Table -->
     <div class="card" id="tableCard">
-        <h2 style="font-size: 1.1rem; margin-bottom: 16px; color: var(--primary-color);">Monthly Arrear Statement</h2>
+        <h2 style="font-size: 1.1rem; margin-bottom: 1rem; color: var(--primary-color);">Monthly Arrear Statement</h2>
         <div class="table-responsive">
             <table>
                 <thead>
@@ -645,7 +649,6 @@
         const toMonthVal = document.getElementById('toMonth').value;
         let startBasic = parseFloat(document.getElementById('basicPay').value) || 0;
 
-        // Dynamic update of Basic Pay Label based on From Month
         const basicPayLabel = document.getElementById('basicPayLabel');
         if (fromMonthVal) {
             const [year, month] = fromMonthVal.split('-');
