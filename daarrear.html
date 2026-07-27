@@ -537,7 +537,7 @@
             </div>
 
             <div class="form-group">
-                <label for="basicPay">Basic Pay as on (From Month) (₹)</label>
+                <label for="basicPay" id="basicPayLabel">Basic Pay as on From Month (₹)</label>
                 <input type="number" id="basicPay" value="0" step="100">
             </div>
         </div>
@@ -644,6 +644,17 @@
         const fromMonthVal = document.getElementById('fromMonth').value;
         const toMonthVal = document.getElementById('toMonth').value;
         let startBasic = parseFloat(document.getElementById('basicPay').value) || 0;
+
+        // Dynamic update of Basic Pay Label based on From Month (without brackets around month)
+        const basicPayLabel = document.getElementById('basicPayLabel');
+        if (fromMonthVal) {
+            const [year, month] = fromMonthVal.split('-');
+            const dateObj = new Date(year, parseInt(month) - 1, 1);
+            const monthYearStr = dateObj.toLocaleDateString('en-IN', { month: 'long', year: 'numeric' });
+            basicPayLabel.textContent = `Basic Pay as on ${monthYearStr} (₹)`;
+        } else {
+            basicPayLabel.textContent = `Basic Pay as on From Month (₹)`;
+        }
 
         if (!fromMonthVal || !toMonthVal) {
             document.getElementById('totalMonths').value = '0 Months';
