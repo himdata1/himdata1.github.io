@@ -387,8 +387,8 @@
             th:nth-child(2), td:nth-child(2) { width: 12%; } /* Month */
             th:nth-child(3), td:nth-child(3) { width: 8%; }  /* Year */
             th:nth-child(4), td:nth-child(4) { width: 10%; } /* Basic Pay */
-            th:nth-child(5), td:nth-child(5) { width: 11%; } /* Prev DA */
-            th:nth-child(6), td:nth-child(6) { width: 11%; } /* Rev DA */
+            th:nth-child(5), td:nth-child(5) { width: 11%; } /* Previous DA */
+            th:nth-child(6), td:nth-child(6) { width: 11%; } /* Revised DA */
             th:nth-child(7), td:nth-child(7) { width: 14%; } /* Total Arrear */
             th:nth-child(8), td:nth-child(8) { width: 14%; } /* NPS Share */
             th:nth-child(9), td:nth-child(9) { width: 15%; } /* Net Arrear */
@@ -575,8 +575,8 @@
                         <th>Month</th>
                         <th>Year</th>
                         <th>Basic Pay<br>(₹)</th>
-                        <th>Prev.<br>DA (%)</th>
-                        <th>Rev.<br>DA (%)</th>
+                        <th>Previous<br>DA (%)</th>
+                        <th>Revised<br>DA (%)</th>
                         <th>Total Arrear<br>(₹)</th>
                         <th>NPS Share<br>Deducted (₹)</th>
                         <th>Net Arrear<br>(₹)</th>
@@ -645,7 +645,7 @@
         const toMonthVal = document.getElementById('toMonth').value;
         let startBasic = parseFloat(document.getElementById('basicPay').value) || 0;
 
-        // Dynamic update of Basic Pay Label based on From Month (without brackets around month)
+        // Dynamic update of Basic Pay Label based on From Month
         const basicPayLabel = document.getElementById('basicPayLabel');
         if (fromMonthVal) {
             const [year, month] = fromMonthVal.split('-');
