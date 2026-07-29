@@ -233,7 +233,7 @@
         /* PRINT STYLES */
         @media print {
             html {
-                font-size: 14px !important;
+                font-size: 16px !important; /* Increased by 1px more (was 15px) */
                 -webkit-text-size-adjust: none !important;
                 text-size-adjust: none !important;
             }
@@ -243,7 +243,7 @@
                 padding: 0 !important;
                 margin: 0 !important;
                 color: #000 !important;
-                font-size: 12px !important;
+                font-size: 14px !important; /* Increased by 1px more (was 13px) */
                 line-height: 1.3 !important;
             }
 
@@ -260,7 +260,7 @@
             }
 
             header h1 {
-                font-size: 1.4rem !important;
+                font-size: 1.5rem !important;
                 margin-bottom: 2px !important;
                 text-align: center !important;
             }
@@ -296,16 +296,21 @@
             }
 
             .form-group label {
-                font-size: 10px !important;
+                font-size: 12px !important; /* Increased by 1px more (was 11px) */
                 margin-bottom: 2px !important;
                 color: #333 !important;
             }
 
-            .form-group input, .form-group select {
-                font-size: 12px !important;
+            .form-group input, 
+            .form-group select,
+            .form-group input[type="month"] {
+                font-size: 13px !important; /* Increased by 1px more (was 12px) */
                 line-height: 1.2 !important;
-                padding: 4px 6px !important;
-                height: auto !important;
+                padding: 3px 6px !important;
+                height: 26px !important;
+                min-height: 26px !important;
+                max-height: 26px !important;
+                box-sizing: border-box !important;
                 border: 1px solid #94a3b8 !important;
                 background: #fff !important;
                 color: #000 !important;
@@ -313,6 +318,13 @@
                 -moz-appearance: none !important;
                 appearance: none !important;
                 background-image: none !important;
+            }
+
+            .form-group input[type="month"]::-webkit-datetime-edit,
+            .form-group input[type="month"]::-webkit-inner-spin-button,
+            .form-group input[type="month"]::-webkit-calendar-picker-indicator {
+                padding: 0 !important;
+                margin: 0 !important;
             }
 
             .summary-grid {
@@ -328,12 +340,12 @@
             }
 
             .summary-card h3 {
-                font-size: 9px !important;
+                font-size: 11px !important; /* Increased by 1px more (was 10px) */
                 margin-bottom: 2px !important;
             }
 
             .summary-card .value {
-                font-size: 13px !important;
+                font-size: 15px !important; /* Increased by 1px more (was 14px) */
             }
 
             .table-responsive {
@@ -348,7 +360,7 @@
 
             th, td {
                 padding: 6px 3px !important;
-                font-size: 12px !important;
+                font-size: 14px !important; /* Increased by 1px more (was 13px) */
                 line-height: 1.2 !important;
                 border: 1px solid #334155 !important;
                 text-align: center !important;
