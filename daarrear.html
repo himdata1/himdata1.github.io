@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DA Arrear Calculator</title>
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">
 
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">  
 
@@ -46,6 +46,7 @@
         .container {
             max-width: 1100px;
             margin: 0 auto;
+            background: transparent;
         }
 
         header {
@@ -126,6 +127,7 @@
         .btn-container {
             margin-top: 1.25rem;
             display: flex;
+            flex-wrap: wrap;
             gap: 0.75rem;
         }
 
@@ -137,25 +139,17 @@
             cursor: pointer;
             transition: background-color 0.2s;
             font-size: 0.95rem;
-        }
-
-        .btn-reset {
-            background-color: #ef4444;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
             color: white;
         }
 
-        .btn-reset:hover {
-            background-color: #dc2626;
-        }
+        .btn-print { background-color: #28a745; }
+        .btn-print:hover { background-color: #218838; }
 
-        .btn-secondary {
-            background-color: #e2e8f0;
-            color: #334155;
-        }
-
-        .btn-secondary:hover {
-            background-color: #cbd5e1;
-        }
+        .btn-reset { background-color: #dc3545; }
+        .btn-reset:hover { background-color: #c82333; }
 
         .summary-grid {
             display: grid;
@@ -232,13 +226,14 @@
         }
 
         @page {
-            size: auto;
-            margin: 5mm;
+            size: A4 portrait;
+            margin: 8mm;
         }
 
+        /* PRINT STYLES */
         @media print {
             html {
-                font-size: 16px !important;
+                font-size: 14px !important;
                 -webkit-text-size-adjust: none !important;
                 text-size-adjust: none !important;
             }
@@ -248,7 +243,7 @@
                 padding: 0 !important;
                 margin: 0 !important;
                 color: #000 !important;
-                font-size: 13px !important;
+                font-size: 12px !important;
                 line-height: 1.3 !important;
             }
 
@@ -265,7 +260,7 @@
             }
 
             header h1 {
-                font-size: 1.5rem !important;
+                font-size: 1.4rem !important;
                 margin-bottom: 2px !important;
                 text-align: center !important;
             }
@@ -297,21 +292,23 @@
             .form-grid {
                 display: grid !important;
                 grid-template-columns: repeat(3, 1fr) !important;
-                gap: 5px !important;
+                gap: 6px !important;
             }
 
             .form-group label {
-                font-size: 11px !important;
+                font-size: 10px !important;
                 margin-bottom: 2px !important;
+                color: #333 !important;
             }
 
             .form-group input, .form-group select {
-                font-size: 15px !important;
-                line-height: 1.25 !important;
-                padding: 8px 6px !important;
+                font-size: 12px !important;
+                line-height: 1.2 !important;
+                padding: 4px 6px !important;
                 height: auto !important;
-                border: 1px solid #cbd5e1 !important;
+                border: 1px solid #94a3b8 !important;
                 background: #fff !important;
+                color: #000 !important;
                 -webkit-appearance: none !important;
                 -moz-appearance: none !important;
                 appearance: none !important;
@@ -319,12 +316,15 @@
             }
 
             .summary-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
                 gap: 6px !important;
                 margin-bottom: 8px !important;
             }
 
             .summary-card {
                 padding: 6px !important;
+                border: 1px solid #cbd5e1 !important;
             }
 
             .summary-card h3 {
@@ -333,7 +333,7 @@
             }
 
             .summary-card .value {
-                font-size: 14px !important;
+                font-size: 13px !important;
             }
 
             .table-responsive {
@@ -347,9 +347,9 @@
             }
 
             th, td {
-                padding: 8px 4px !important;
-                font-size: 15px !important;
-                line-height: 1.25 !important;
+                padding: 6px 3px !important;
+                font-size: 12px !important;
+                line-height: 1.2 !important;
                 border: 1px solid #334155 !important;
                 text-align: center !important;
                 vertical-align: middle !important;
@@ -363,13 +363,11 @@
                 -webkit-print-color-adjust: exact;
                 print-color-adjust: exact;
                 font-weight: 700 !important;
-                font-size: 14px !important;
-                text-align: center !important;
             }
 
             td:nth-child(2) {
                 text-align: left !important;
-                padding-left: 8px !important;
+                padding-left: 6px !important;
             }
 
             .month-short {
@@ -379,15 +377,15 @@
                 display: inline !important;
             }
 
-            th:nth-child(1), td:nth-child(1) { width: 5%; }  
-            th:nth-child(2), td:nth-child(2) { width: 12%; } 
-            th:nth-child(3), td:nth-child(3) { width: 8%; }  
-            th:nth-child(4), td:nth-child(4) { width: 10%; } 
-            th:nth-child(5), td:nth-child(5) { width: 11%; } 
-            th:nth-child(6), td:nth-child(6) { width: 11%; } 
-            th:nth-child(7), td:nth-child(7) { width: 14%; } 
-            th:nth-child(8), td:nth-child(8) { width: 14%; } 
-            th:nth-child(9), td:nth-child(9) { width: 15%; } 
+            th:nth-child(1), td:nth-child(1) { width: 6%; }  
+            th:nth-child(2), td:nth-child(2) { width: 13%; } 
+            th:nth-child(3), td:nth-child(3) { width: 9%; }  
+            th:nth-child(4), td:nth-child(4) { width: 12%; } 
+            th:nth-child(5), td:nth-child(5) { width: 10%; } 
+            th:nth-child(6), td:nth-child(6) { width: 10%; } 
+            th:nth-child(7), td:nth-child(7) { width: 13%; } 
+            th:nth-child(8), td:nth-child(8) { width: 13%; } 
+            th:nth-child(9), td:nth-child(9) { width: 14%; } 
 
             tr {
                 page-break-inside: avoid !important;
@@ -401,11 +399,11 @@
 </head>
 <body>
 
-<div class="container">
+<div class="container" id="printContent">
     <header>
         <h1>
             <span class="title-web">DA Arrear Calculator</span>
-            <span class="title-print">DA Arrear Calculation</span>
+            <span class="title-print">DA Arrear Calculation Statement</span>
         </h1>
         <p>Real-time month-wise Dearness Allowance arrears calculation</p>
     </header>
@@ -421,7 +419,7 @@
             </div>
 
             <div class="form-group" id="cpfGroup" style="display: none;">
-                <label for="gpfNps">NPS Employee share Rate (%)</label>
+                <label for="gpfNps">NPS Share Rate (%)</label>
                 <input type="number" id="gpfNps" value="10" step="0.1" min="0" max="100">
             </div>
 
@@ -445,7 +443,7 @@
             </div>
 
             <div class="form-group">
-                <label for="noOfAcp">No. of ACP(s) during the Arrear Period</label>
+                <label for="noOfAcp">No. of ACP(s) during Arrear Period</label>
                 <select id="noOfAcp">
                     <option value="0" selected>0</option>
                     <option value="1">1</option>
@@ -488,8 +486,8 @@
         </div>
 
         <div class="btn-container">
-            <button type="button" class="btn btn-reset" onclick="resetCalculator()">Reset</button>
-            <button type="button" class="btn btn-secondary" onclick="printReport()">Print Report</button>
+            <button type="button" class="btn btn-print" onclick="printReport()">🖨️ Print / Save as PDF</button>
+            <button type="button" class="btn btn-reset" onclick="resetCalculator()">🔄 Reset</button>
         </div>
     </div>
 
@@ -499,7 +497,7 @@
             <div class="value" id="totalGross">₹0</div>
         </div>
         <div class="summary-card">
-            <h3>Total NPS Employee Share deducted</h3>
+            <h3>Total NPS Share Deducted</h3>
             <div class="value" id="totalCpf" style="color: var(--accent-red);">₹0</div>
         </div>
         <div class="summary-card highlight">
