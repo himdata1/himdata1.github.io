@@ -6,7 +6,6 @@
 <title>Multiplication Tables (2 to 25)</title>
 
 <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2245%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>MTA</text></svg>">
-
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2245%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>MTA</text></svg>">
 
 <style>
@@ -21,68 +20,105 @@
     --table-odd:#f9fbff;
     --highlight:#ffdd71;
   }
-  body { margin:0; font-family:"Segoe UI",Arial,sans-serif; background:var(--bg); color:var(--text); transition:background .3s,color .3s; }
+  body { 
+    margin:0; 
+    font-family:"Segoe UI",Arial,sans-serif; 
+    font-size:16px; 
+    background:var(--bg); 
+    color:var(--text); 
+    transition:background .3s,color .3s; 
+  }
   header { background:linear-gradient(90deg,var(--primary),#1f4ea2); color:#fff; }
-  .wrap { max-width:var(--maxw); margin:0 auto; padding:12px 20px; display:flex; justify-content:space-between; align-items:center; }
-  h1 { margin:0; font-size:22px; font-weight:600; }
+  .wrap { max-width:var(--maxw); margin:0 auto; padding:10px 16px; display:flex; justify-content:space-between; align-items:center; }
+  
+  h1 { margin:0; font-size:15px; font-weight:600; line-height: 1.25; }
+  
   .speed-controls { display:flex; align-items:center; gap:6px; }
-  .speed-controls .btn { background:#fff; color:var(--primary); font-weight:600; }
+  .speed-controls .btn { 
+    background:#fff; 
+    color:var(--primary); 
+    font-weight:600; 
+    font-size:12px; 
+    padding:4px 8px; 
+    margin:0; 
+  }
   .speed-controls .btn:hover { background:#fff; color:var(--accent); }
-  .speed-label { font-weight:600; margin-left:6px; }
-  .page { max-width:var(--maxw); margin:24px auto; padding:0 16px; }
-  .card { background:var(--card); border-radius:14px; box-shadow:0 4px 16px rgba(0,0,0,.08); overflow:hidden; transition:background .3s; }
+  .speed-label { font-weight:600; font-size:14px; margin-left:4px; }
+  .page { max-width:var(--maxw); margin:16px auto; padding:0 12px; }
+  .card { background:var(--card); border-radius:12px; box-shadow:0 4px 16px rgba(0,0,0,.08); overflow:hidden; transition:background .3s; }
   .card-header { 
-    padding: 20px; 
+    padding: 16px; 
     border-bottom: 1px solid #eee;
     display: flex;
     flex-wrap: wrap;
     align-items: center;
     justify-content: space-between;
+    gap: 8px;
   }
   .title { 
-    font-size: 24px; 
+    font-size: 16px; 
     margin: 0; 
     font-weight: 600; 
     color: var(--primary); 
   }
   .mode-controls {
     display: flex;
-    gap: 8px;
+    gap: 6px;
     margin-left: auto;
   }
-  .controls { margin-bottom:12px; }
-  .btn { padding:8px 14px; border:none; border-radius:8px; background:var(--primary); color:#fff; font-size:15px; cursor:pointer; margin:4px; transition:background .2s; }
+  .controls { margin: 4px 0; display: flex; flex-wrap: wrap; gap: 4px; width: 100%; }
+  
+  .btn { 
+    padding: 6px 12px; 
+    border: none; 
+    border-radius: 6px; 
+    background: var(--primary); 
+    color: #fff; 
+    font-size: 13px; 
+    font-weight: 600;
+    cursor: pointer; 
+    margin: 2px; 
+    transition: background .2s; 
+  }
   .btn:hover { background:var(--accent); }
   .btn.active { background:var(--repeat); }
   
-  /* UPDATED: Better styling for disabled/faded buttons */
+  /* Fixed width for toggle buttons to prevent layout jump */
+  #singleToggleBtn, #multiToggleBtn {
+    min-width: 92px;
+    text-align: center;
+  }
+  
   .btn:disabled { 
     background: #e0e0e0 !important; 
     color: #999 !important; 
     cursor: not-allowed; 
     box-shadow: none;
-    pointer-events: none; /* Prevents clicking */
+    pointer-events: none;
   }
   
-  .nav { padding:12px 20px; border-bottom:1px solid #eee; background:#fafbff; }
-  .link-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(50px,1fr)); gap:8px; }
-  .link-grid a { display:block; padding:8px 0; text-align:center; border:1px solid #ddd; border-radius:8px; font-weight:600; text-decoration:none; color:var(--primary); background:#fff; transition:all .2s ease; }
+  .nav { padding:10px 16px; border-bottom:1px solid #eee; background:#fafbff; }
+  .link-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(40px,1fr)); gap:6px; }
+  .link-grid a { display:block; padding:6px 0; text-align:center; border:1px solid #ddd; border-radius:6px; font-weight:600; font-size:14px; text-decoration:none; color:var(--primary); background:#fff; transition:all .2s ease; }
   .link-grid a:hover { background:#edf2ff; }
   .link-grid a.active { background:var(--primary); color:#fff; border-color:var(--primary); }
-  table { width:100%; border-collapse:collapse; margin:0; font-size:20px; }
-  td { border:1px solid #eee; padding:10px; text-align:center; font-weight:bold; }
+  
+  table { width:100%; border-collapse:collapse; margin:0; font-size:15px; }
+  td { border:1px solid #eee; padding:8px 10px; text-align:center; font-weight:bold; }
   tbody tr:nth-child(odd) { background:var(--table-odd); }
   tbody tr.highlight td:not(:last-child) {
-    background-color: var(--highlight);
+    background-color: var(--highlight) !important;
     transition: background-color .3s ease;
   }
-  .play-btn { cursor:pointer; background:var(--primary); color:#fff; border:none; border-radius:6px; padding:6px 10px; font-size:16px; }
+  .play-btn { cursor:pointer; background:var(--primary); color:#fff; border:none; border-radius:4px; padding:4px 8px; font-size:13px; }
   .play-btn:hover { background:var(--accent); }
-  .input-area { margin-top:10px; display:flex; flex-wrap:wrap; gap:8px; align-items:center; }
-  .input-box { padding:8px 12px; border-radius:8px; border:1px solid #ccc; width:160px; font-size:15px; }
-  .error { color:red; font-weight:bold; margin-top:6px; display:none; }
+  
+  .input-area { margin-top:6px; display:flex; flex-wrap:wrap; gap:6px; align-items:center; width: 100%; }
+  .input-box { padding:6px 10px; border-radius:6px; border:1px solid #ccc; width:140px; font-size:13px; }
+  .error { color:red; font-weight:bold; font-size:13px; margin-top:4px; display:none; width: 100%; }
+  
   .pager { 
-    padding:16px; 
+    padding:12px; 
     text-align:center; 
     border-top:1px solid #eee; 
     background:#fafbff;
@@ -92,32 +128,32 @@
   .btn.clear-btn:hover { background: #f0f0f0; }
 
   #bottomPauseBtn {
-    padding: 10px 20px;
-    font-size: 18px;
+    padding: 8px 16px;
+    font-size: 14px;
     background: var(--primary);
     color: #fff;
     border: none;
-    border-radius: 8px;
+    border-radius: 6px;
     cursor: pointer;
-    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     transition: background .3s, transform .2s;
-    margin-top: 0px;
     display: none;
+    margin: 0 auto;
   }
   #bottomPauseBtn:hover {
     background: var(--accent);
-    transform: translateY(-2px);
+    transform: translateY(-1px);
   }
 </style>
 </head>
 <body>
 <header>
   <div class="wrap">
-    <h1>Multiplication Tables (2 to 25)</h1>
+    <h1>Multiplication Tables<br><span style="font-size: 13px; font-weight: 500; opacity: 0.9;">(2 to 25)</span></h1>
     <div class="speed-controls">
       <button class="btn" onclick="changeSpeed(-0.2)">➖ Slow</button>
       <button class="btn" onclick="changeSpeed(0.2)">➕ Fast</button>
-      <span id="speedLabel" class="speed-label"></span>
+      <span id="speedLabel" class="speed-label">1.0x</span>
     </div>
   </div>
 </header>
@@ -131,16 +167,15 @@
         <button id="delayedBtn" class="btn" onclick="setDelayMode(true)">Delayed</button>
       </div>
       <div class="controls">
-        <button class="btn" onclick="readFullTable()">▶ Play</button>
-        <button class="btn" onclick="pauseReading()">⏸ Pause</button>
+        <!-- Controls for Single Table -->
+        <button id="singleToggleBtn" class="btn" onclick="togglePlaySingle()">▶ Play</button>
         <button id="repeatSingleBtn" class="btn" onclick="toggleRepeatSingle()">🔁 Repeat</button>
       </div>
       <div class="input-area">
+        <!-- Controls strictly for Multiple/Input Tables -->
         <input type="text" id="tableInput" class="input-box" placeholder="e.g., 2,3,4 or 2-7" />
         <button class="btn clear-btn" onclick="clearInput()">❌ Clear</button>
-        
-        <button id="multiPlayBtn" class="btn" onclick="readMultipleTables()">▶ Play</button>
-        <button id="multiPauseBtn" class="btn" onclick="pauseReading()">⏸ Pause</button>
+        <button id="multiToggleBtn" class="btn" onclick="togglePlayMultiple()">▶ Play</button>
         <button id="repeatBtn" class="btn" onclick="toggleRepeat()">🔁 Repeat</button>
       </div>
       <div id="errorMsg" class="error">Table not found! Use numbers 2–25.</div>
@@ -165,6 +200,15 @@
   let currentTableNumber=MIN, speechRate=1.0, lastTables=null, repeatMode=false, repeatSingleMode=false, isDelayedMode=false;
   let isReadingActive = false;
   let timerId = null;
+  let currentSpeechCallback = null;
+
+  let playbackState = 'stopped';
+  let currentMode = 'single'; // 'single' or 'multiple'
+  let activeTablesList = [];
+  let currentTableIndex = 0;
+  let currentRowIndex = 0;
+  let isPausedByUser = false;
+  let lastPlayedInputText = "";
 
   const titleEl=document.getElementById('tableTitle');
   const tbodyEl=document.getElementById('tbody');
@@ -172,12 +216,10 @@
   const speedLabel=document.getElementById('speedLabel');
   const errorMsg=document.getElementById('errorMsg');
   
-  // Input elements
   const tableInput=document.getElementById('tableInput');
   const repeatBtn=document.getElementById('repeatBtn');
-  // New References
-  const multiPlayBtn=document.getElementById('multiPlayBtn');
-  const multiPauseBtn=document.getElementById('multiPauseBtn');
+  const singleToggleBtn=document.getElementById('singleToggleBtn');
+  const multiToggleBtn=document.getElementById('multiToggleBtn');
   
   const repeatSingleBtn=document.getElementById('repeatSingleBtn');
   const normalBtn = document.getElementById('normalBtn');
@@ -196,15 +238,83 @@
     return String(num);
   }
 
-  function stopSpeaking(){ 
-    speechSynthesis.cancel(); 
+  function updateToggleButtonsUI() {
+    if (playbackState === 'playing') {
+      if (currentMode === 'single') {
+        singleToggleBtn.textContent = '⏸ Pause';
+        multiToggleBtn.textContent = '▶ Play';
+      } else {
+        multiToggleBtn.textContent = '⏸ Pause';
+        singleToggleBtn.textContent = '▶ Play';
+      }
+    } else {
+      singleToggleBtn.textContent = '▶ Play';
+      multiToggleBtn.textContent = '▶ Play';
+    }
+    bottomPauseBtn.style.display = isReadingActive ? 'block' : 'none';
+  }
+
+  window.onSpeechEnd = function() {
+    if (currentSpeechCallback) {
+      let cb = currentSpeechCallback;
+      currentSpeechCallback = null;
+      cb();
+    } else {
+      isReadingActive = false;
+      playbackState = 'stopped';
+      updateToggleButtonsUI();
+    }
+  };
+
+  function stopAudioOnly() {
+    if (window.AndroidTTS) {
+      window.AndroidTTS.stop();
+    }
+    if ('speechSynthesis' in window) {
+      speechSynthesis.cancel();
+    }
     if (timerId) {
       clearTimeout(timerId);
       timerId = null;
     }
+    currentSpeechCallback = null;
+  }
+
+  function speakText(text, cb) {
+    stopAudioOnly();
+    isReadingActive = true;
+    playbackState = 'playing';
+    updateToggleButtonsUI();
+    currentSpeechCallback = cb || null;
+
+    if (window.AndroidTTS) {
+      window.AndroidTTS.speak(text, speechRate);
+    } else if ('speechSynthesis' in window) {
+      let u = new SpeechSynthesisUtterance(text);
+      u.rate = speechRate;
+      u.onend = () => { if (window.onSpeechEnd) window.onSpeechEnd(); };
+      u.onerror = () => { if (window.onSpeechEnd) window.onSpeechEnd(); };
+      speechSynthesis.speak(u);
+    }
+  }
+
+  function pauseReading(){ 
+    if (playbackState === 'playing') {
+      isPausedByUser = true;
+      playbackState = 'paused';
+      stopAudioOnly();
+      isReadingActive = false;
+      updateToggleButtonsUI();
+    }
+  }
+
+  function stopSpeakingFully(){ 
+    stopAudioOnly();
     unhighlightAllRows(); 
     isReadingActive = false; 
-    updateBottomPauseButton();
+    playbackState = 'stopped';
+    isPausedByUser = false;
+    updateToggleButtonsUI();
   }
 
   function highlightRow(rowIndex){
@@ -219,44 +329,21 @@
     }
   }
 
-  function unhighlightAllRows(){ tbodyEl.querySelectorAll("tr").forEach(row=>row.classList.remove("highlight")); }
-
-  function speak(text, cb, rowIndex=-1){
-    stopSpeaking();
-    isReadingActive = true;
-    updateBottomPauseButton();
-
-    if(rowIndex!==-1){ highlightRow(rowIndex); }
-    let u=new SpeechSynthesisUtterance(text);
-    u.rate=speechRate;
-    u.onend=()=>{
-      if(cb) cb();
-      if (!cb) {
-        isReadingActive = false;
-        updateBottomPauseButton();
-      }
-    };
-    speechSynthesis.speak(u);
+  function unhighlightAllRows(){ 
+    tbodyEl.querySelectorAll("tr").forEach(row=>row.classList.remove("highlight")); 
   }
 
-  function changeSpeed(d){ speechRate=Math.max(0.4,Math.min(2.0,speechRate+d)); speedLabel.textContent=`${speechRate.toFixed(1)}x`; }
-  
-  function pauseReading(){ 
-    speechSynthesis.cancel(); 
-    if (timerId) {
-      clearTimeout(timerId);
-      timerId = null;
-    }
-    unhighlightAllRows(); 
-    isReadingActive = false; 
-    updateBottomPauseButton();
+  function speak(text, cb, rowIndex=-1){
+    if(rowIndex!==-1){ highlightRow(rowIndex); }
+    speakText(text, cb);
+  }
+
+  function changeSpeed(d){ 
+    speechRate=Math.max(0.4,Math.min(2.0,speechRate+d)); 
+    speedLabel.textContent=`${speechRate.toFixed(1)}x`; 
   }
   
   function scrollToTop(){ window.scrollTo({ top: 0, behavior: 'smooth' }); }
-
-  function updateBottomPauseButton() {
-    bottomPauseBtn.style.display = isReadingActive ? 'block' : 'none';
-  }
 
   function setDelayMode(isDelayed){
     isDelayedMode = isDelayed;
@@ -269,41 +356,200 @@
     }
   }
 
-  function readFullTable(){
-    stopSpeaking();
-    isReadingActive = true;
-    updateBottomPauseButton();
+  // --- Toggle Play / Pause Handlers ---
+  function togglePlaySingle() {
+    if (playbackState === 'playing' && currentMode === 'single') {
+      pauseReading();
+    } else {
+      handlePlayFullTable();
+    }
+  }
 
-    const rows=tbodyEl.querySelectorAll("tr");
-    let i=0;
-    function readNext(){
-      if(i>=rows.length){ 
-        if(repeatSingleMode){ 
-          i=0; 
+  function togglePlayMultiple() {
+    if (playbackState === 'playing' && currentMode === 'multiple') {
+      pauseReading();
+    } else {
+      handlePlayMultipleTables();
+    }
+  }
+
+  // --- Single Table Play Logic ---
+  function handlePlayFullTable() {
+    // If coming from multiple mode, stop previous audio
+    if (currentMode !== 'single') {
+      stopSpeakingFully();
+    }
+
+    if (playbackState === 'paused' && currentMode === 'single' && isPausedByUser) {
+      isPausedByUser = false;
+      resumeFullTable();
+    } else {
+      currentMode = 'single';
+      currentTableNumber = parseInt(titleEl.textContent.replace('Table of ', ''), 10) || currentTableNumber;
+      currentRowIndex = -1;
+      render(currentTableNumber);
+      readFullTableFrom(0);
+    }
+  }
+
+  function readFullTableFrom(startIndex) {
+    playbackState = 'playing';
+    isReadingActive = true;
+    updateToggleButtonsUI();
+
+    const rows = tbodyEl.querySelectorAll("tr");
+    let i = startIndex;
+
+    if (i === 0 && currentRowIndex === -1) {
+      speakText(`Table of ${currentTableNumber}`, () => {
+        if (playbackState !== 'playing') return;
+        currentRowIndex = 0;
+        readNextRow();
+      });
+    } else {
+      currentRowIndex = i;
+      readNextRow();
+    }
+
+    function readNextRow() {
+      if (playbackState !== 'playing') return;
+      
+      if (currentRowIndex >= rows.length) { 
+        if (repeatSingleMode) { 
+          currentRowIndex = 0; 
           unhighlightAllRows(); 
-          readNext(); 
+          readNextRow(); 
         } else { 
           unhighlightAllRows(); 
           scrollToTop();
-          isReadingActive = false;
-          updateBottomPauseButton();
+          stopSpeakingFully();
         } 
         return; 
       }
-      const s=`${numberToWords(currentTableNumber)} ${numberToWords(i+1)}s are ${numberToWords(currentTableNumber*(i+1))}`;
-      highlightRow(i); 
-      let u=new SpeechSynthesisUtterance(s);
-      u.rate=speechRate;
-      u.onend=()=>{ 
-        i++; 
-        timerId = setTimeout(readNext, isDelayedMode ? 1750 : 0);
-      };
-      speechSynthesis.speak(u);
+
+      const s = `${numberToWords(currentTableNumber)} ${numberToWords(currentRowIndex + 1)}s are ${numberToWords(currentTableNumber * (currentRowIndex + 1))}`;
+      highlightRow(currentRowIndex); 
+      
+      speakText(s, () => {
+        if (playbackState !== 'playing') return;
+        currentRowIndex++;
+        timerId = setTimeout(readNextRow, isDelayedMode ? 1750 : 0);
+      });
     }
-    let initialUtterance = new SpeechSynthesisUtterance(`Table of ${currentTableNumber}`);
-    initialUtterance.rate = speechRate;
-    initialUtterance.onend = readNext;
-    speechSynthesis.speak(initialUtterance);
+  }
+
+  function resumeFullTable() {
+    readFullTableFrom(currentRowIndex >= 0 ? currentRowIndex : 0);
+  }
+
+  // --- Multiple / Input Box Tables Play Logic ---
+  function handlePlayMultipleTables() {
+    const inputVal = tableInput.value.trim();
+    if (!inputVal) return;
+
+    // Check if input value changed or if we were playing single mode
+    const isInputChanged = (inputVal !== lastPlayedInputText);
+    const wasSingleMode = (currentMode !== 'multiple');
+
+    // If input changed OR we were in single mode, reset audio completely to start fresh
+    if (isInputChanged || wasSingleMode) {
+      stopSpeakingFully();
+      isPausedByUser = false;
+    }
+
+    // Resume only if it's the SAME input AND was paused by user in multiple mode
+    if (playbackState === 'paused' && currentMode === 'multiple' && isPausedByUser && !isInputChanged) {
+      isPausedByUser = false;
+      resumeMultipleTables();
+      return;
+    }
+
+    // Otherwise, parse and start fresh
+    let tables = getTablesFromInput(inputVal);
+    if (tables.length === 0) { 
+      errorMsg.style.display="block"; 
+      return; 
+    }
+    errorMsg.style.display = "none";
+
+    currentMode = 'multiple';
+    lastPlayedInputText = inputVal;
+    activeTablesList = tables;
+    currentTableIndex = 0;
+    currentRowIndex = -1;
+
+    readMultipleTablesFrom(0, -1);
+  }
+
+  function readMultipleTablesFrom(tIdx, rIdx) {
+    playbackState = 'playing';
+    isReadingActive = true;
+    updateToggleButtonsUI();
+
+    currentTableIndex = tIdx;
+    currentRowIndex = rIdx;
+
+    function step() {
+      if (playbackState !== 'playing') return;
+
+      if (currentTableIndex >= activeTablesList.length) {
+        if (repeatMode) { 
+          currentTableIndex = 0;
+          currentRowIndex = -1;
+          unhighlightAllRows(); 
+          step(); 
+        } else { 
+          unhighlightAllRows(); 
+          scrollToTop();
+          stopSpeakingFully();
+        }
+        return;
+      }
+
+      let n = activeTablesList[currentTableIndex];
+
+      if (currentRowIndex === -1) {
+        currentTableNumber = n; 
+        titleEl.textContent = `Table of ${n}`;
+        const rows = [];
+        for (let i = 1; i <= ROWS; i++) {
+            let result = n * i;
+            let textToSpeak = `${numberToWords(n)} ${numberToWords(i)}s are ${numberToWords(result)}`;
+            rows.push(`<tr data-speak="${textToSpeak}"><td>${n}</td><td>×</td><td>${i}</td><td>=</td><td>${result}</td><td><button class="play-btn" onclick="speak('${textToSpeak}', null, ${i-1})">🔊</button></td></tr>`);
+        }
+        tbodyEl.innerHTML = rows.join('');
+        setActiveLink(n);
+        
+        speakText(`Table of ${numberToWords(n)}`, () => {
+          if (playbackState !== 'playing') return;
+          currentRowIndex = 0;
+          step();
+        });
+        return;
+      }
+
+      if (currentRowIndex < ROWS) {
+        let result = n * (currentRowIndex + 1);
+        let text = `${numberToWords(n)} ${numberToWords(currentRowIndex + 1)}s are ${numberToWords(result)}`;
+        highlightRow(currentRowIndex);
+
+        speakText(text, () => {
+          if (playbackState !== 'playing') return;
+          currentRowIndex++;
+          timerId = setTimeout(step, isDelayedMode ? 1750 : 0);
+        });
+      } else {
+        currentTableIndex++;
+        currentRowIndex = -1;
+        step();
+      }
+    }
+
+    step();
+  }
+
+  function resumeMultipleTables() {
+    readMultipleTablesFrom(currentTableIndex, currentRowIndex);
   }
 
   function toggleRepeat(){ 
@@ -315,76 +561,6 @@
   function toggleRepeatSingle(){
     repeatSingleMode = !repeatSingleMode;
     repeatSingleBtn.classList.toggle("active", repeatSingleMode);
-  }
-
-  function readMultipleTables(customTables){
-    // Logic check: if disabled, do nothing
-    if(multiPlayBtn.disabled && !customTables) return;
-
-    stopSpeaking();
-
-    errorMsg.style.display="none";
-    let tables;
-    if(customTables){ tables=customTables; }
-    else{
-      const input=tableInput.value;
-      if(!input){ return; } // Should be covered by disabled state, but extra safety
-      tables=getTablesFromInput(input);
-      if(tables.length===0){ errorMsg.style.display="block"; return; }
-      lastTables=tables;
-    }
-
-    isReadingActive = true; 
-    updateBottomPauseButton();
-
-    let tIndex=0,rIndex=1;
-    function readRow(){
-      if(tIndex>=tables.length){
-        if(repeatMode){ 
-          tIndex=0;
-          rIndex=1;
-          unhighlightAllRows(); 
-          readRow(); 
-        } else { 
-          unhighlightAllRows(); 
-          scrollToTop();
-          isReadingActive = false;
-          updateBottomPauseButton();
-        }
-        return;
-      }
-      let n=tables[tIndex];
-      if(rIndex===1){
-        currentTableNumber=n; titleEl.textContent=`Table of ${n}`;
-        const rows=[];
-        for(let i=1;i<=ROWS;i++){
-            let result=n*i;
-            let textToSpeak=`${numberToWords(n)} ${numberToWords(i)}s are ${numberToWords(result)}`;
-            rows.push(`<tr data-speak="${textToSpeak}"><td>${n}</td><td>×</td><td>${i}</td><td>=</td><td>${result}</td><td><button class="play-btn" onclick="speak('${textToSpeak}', null, ${i-1})">🔊</button></td></tr>`);
-        }
-        tbodyEl.innerHTML=rows.join('');
-        setActiveLink(n);
-        
-        let initialUtterance = new SpeechSynthesisUtterance(`Table of ${numberToWords(n)}`);
-        initialUtterance.rate = speechRate;
-        initialUtterance.onend = ()=>{ rIndex++; readRow(); };
-        speechSynthesis.speak(initialUtterance);
-        return;
-      }
-      if(rIndex<=ROWS+1){
-        let result=n*(rIndex-1);
-        let text=`${numberToWords(n)} ${numberToWords(rIndex-1)}s are ${numberToWords(result)}`;
-        highlightRow(rIndex-2);
-        let u=new SpeechSynthesisUtterance(text);
-        u.rate=speechRate;
-        u.onend=()=>{ 
-          rIndex++; 
-          timerId = setTimeout(readRow, isDelayedMode ? 1750 : 0);
-        };
-        speechSynthesis.speak(u);
-      } else { tIndex++; rIndex=1; readRow(); }
-    }
-    readRow();
   }
 
   function getTablesFromInput(input){
@@ -407,23 +583,18 @@
     return tables;
   }
 
-  // --- NEW FUNCTION: Update Button States ---
   function updateInputButtonsState() {
     const isEmpty = tableInput.value.trim() === '';
-    
-    // Set disabled property (triggers CSS)
-    multiPlayBtn.disabled = isEmpty;
-    multiPauseBtn.disabled = isEmpty;
+    multiToggleBtn.disabled = isEmpty;
     repeatBtn.disabled = isEmpty;
   }
 
-  // Listen for typing
   tableInput.addEventListener('input', updateInputButtonsState);
 
   function clearInput(){ 
     tableInput.value=''; 
     errorMsg.style.display='none'; 
-    updateInputButtonsState(); // Update buttons immediately after clearing
+    updateInputButtonsState();
   }
 
   for(let n=MIN;n<=MAX;n++){
@@ -431,14 +602,18 @@
     a.href="javascript:void(0)";
     a.textContent=n;
     a.setAttribute('data-n',String(n));
-    a.addEventListener('click',()=>{render(n);});
+    a.addEventListener('click',()=>{
+      stopSpeakingFully();
+      currentMode = 'single';
+      render(n);
+    });
     linkGrid.appendChild(a);
   }
 
   function setActiveLink(n){ linkGrid.querySelectorAll('a').forEach(a=>{a.classList.toggle('active',parseInt(a.dataset.n,10)===n);}); }
 
   function render(n){
-    stopSpeaking();
+    stopSpeakingFully();
     currentTableNumber=n; titleEl.textContent=`Table of ${n}`;
     const rows=[];
     for(let i=1;i<=ROWS;i++){
@@ -448,15 +623,16 @@
     }
     tbodyEl.innerHTML=rows.join('');
     setActiveLink(n);
-    changeSpeed(0);
   }
 
   render(MIN);
-  updateBottomPauseButton();
-  updateInputButtonsState(); // Run once on load to set initial state
+  updateToggleButtonsUI();
+  updateInputButtonsState();
 
-  window.speak=speak; window.changeSpeed=changeSpeed; window.readFullTable=readFullTable;
-  window.readMultipleTables=readMultipleTables; window.pauseReading=pauseReading;
+  window.speak=speak; window.changeSpeed=changeSpeed; 
+  window.togglePlaySingle=togglePlaySingle;
+  window.togglePlayMultiple=togglePlayMultiple; 
+  window.pauseReading=pauseReading;
   window.toggleRepeat=toggleRepeat; window.clearInput=clearInput;
   window.toggleRepeatSingle=toggleRepeatSingle; window.setDelayMode = setDelayMode;
 })();
