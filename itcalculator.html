@@ -37,6 +37,14 @@
         gap: 10px;  
     }  
 
+    .info-note {
+        text-align: center;
+        font-size: 11pt;
+        font-weight: bold;
+        color: #d9534f;
+        margin-bottom: 8px;
+    }
+
     button {  
         padding: 8px 15px;  
         color: white;  
@@ -181,7 +189,7 @@
     @media print {  
         @page { size: A4; margin: 0; }  
         body { background: none; padding: 0; margin: 0; }  
-        .no-print { display: none; }  
+        .no-print, .info-note { display: none !important; }  
         .sheet { box-shadow: none; width: 100%; min-height: auto; margin: 0; padding: 10mm 15mm 0 15mm; border: none; }  
         .input-bg { background-color: transparent !important; }  
         input, textarea { background-color: transparent !important; font-weight: normal; }  
@@ -204,27 +212,31 @@
     <h2>Income Tax Calculation for the Financial Year 2026-27 (AY 2027-28)</h2>  
     <h3>Tax Regime Opted: New Regime</h3>  
 
+    <div class="info-note" style="text-align: left;">
+    Note: Only cells in yellow are editable.
+</div>
+
     <table class="info-table">  
     <colgroup>  
         <col style="width: 20%;"> <col style="width: 40%;"> <col style="width: 16%;"> <col style="width: 24%;">  
     </colgroup>  
     <tr>  
         <td>Name</td>  
-        <td><textarea id="user_name" class="capitalize nav-field" rows="1" oninput="autoResize(this); updateTitle()"></textarea></td>  
+        <td class="input-bg"><textarea id="user_name" class="capitalize nav-field input-bg" rows="1" oninput="autoResize(this); updateTitle()"></textarea></td>  
         <td>eSalary Code</td>  
-        <td><textarea id="salary_code" class="upper nav-field" rows="1" oninput="autoResize(this); this.value = this.value.toUpperCase()"></textarea></td>  
+        <td class="input-bg"><textarea id="salary_code" class="upper nav-field input-bg" rows="1" oninput="autoResize(this); this.value = this.value.toUpperCase()"></textarea></td>  
     </tr>  
     <tr>  
         <td>Designation</td>  
-        <td><textarea id="user_desig" class="capitalize nav-field" rows="1" oninput="autoResize(this); updateTitle()"></textarea></td>  
+        <td class="input-bg"><textarea id="user_desig" class="capitalize nav-field input-bg" rows="1" oninput="autoResize(this); updateTitle()"></textarea></td>  
         <td>PAN</td>  
-        <td><input type="text" id="pan_no" class="upper nav-field" maxlength="10" oninput="validatePAN(this)"></td>  
+        <td class="input-bg"><input type="text" id="pan_no" class="upper nav-field input-bg" maxlength="10" oninput="validatePAN(this)"></td>  
     </tr>  
     <tr>  
         <td>Office Address</td>  
-        <td><textarea id="office_addr" class="capitalize nav-field" rows="1" oninput="autoResize(this)"></textarea></td>  
+        <td class="input-bg"><textarea id="office_addr" class="capitalize nav-field input-bg" rows="1" oninput="autoResize(this)"></textarea></td>  
         <td>Mobile No.</td>  
-        <td><input type="text" id="mobile_no" class="nav-field" maxlength="10" inputmode="numeric" oninput="validateMobile(this)"></td>  
+        <td class="input-bg"><input type="text" id="mobile_no" class="nav-field input-bg" maxlength="10" inputmode="numeric" oninput="validateMobile(this)"></td>  
     </tr>  
     </table>  
 
@@ -630,6 +642,7 @@
     const inputs = element.querySelectorAll("input, textarea");  
     const tables = element.querySelectorAll("table");  
     const allCells = element.querySelectorAll("th, td");  
+    const infoNote = element.querySelector(".info-note");
   
     const replacements = [];  
   
@@ -644,6 +657,8 @@
         originalBorders[i] = cell.style.cssText;  
     });  
   
+    if (infoNote) infoNote.style.display = "none";
+
     // 2️⃣ PREPARE FOR PDF  
     allCells.forEach(cell => {  
         cell.style.backgroundColor = "white";  
@@ -702,10 +717,10 @@ cell.style.letterSpacing = "0.5px"; // Words ke beech space ke liye
         }  
     });  
   
-    // 4️⃣ REPLACE INPUTS WITH DIVS (FIXED FOR TEXT VISIBILITY)  
+    // 4️⃣ REPLACE INPUTS WITH DIVS (FIXED FOR TEXT VISIBILITY & PLACEHOLDER PRINTING)  
     inputs.forEach(input => {  
         const box = document.createElement("div");  
-        let val = input.value;  
+        let val = input.value || input.placeholder;  
         if (input.classList.contains('upper')) val = val.toUpperCase();  
         if (input.classList.contains('capitalize')) val = toTitleCase(val);  
   
@@ -771,6 +786,8 @@ box.style.letterSpacing = "0.5px"; // Bold text ko chipalne se rokne ke liye
         cell.style.backgroundColor = originalBg[i];  
         cell.style.lineHeight = originalLineHeight[i];  
     });  
+
+    if (infoNote) infoNote.style.display = "";
   
     return doc;  
 }  
