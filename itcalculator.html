@@ -1,4 +1,5 @@
-<!DOCTYPE html>  <html lang="en">  
+<!DOCTYPE html>  
+<html lang="en">  
 <head>  
     <meta charset="UTF-8">  
     <meta name="viewport" content="width=device-width, initial-scale=1.0">  
@@ -458,7 +459,6 @@
         return document.title.replace(/[\\/:"*?<>|]/g, "_") + ".pdf";  
     }  
   
-    function printPage() { window.print(); }  
     function autoResize(elem) { elem.style.height = 'auto'; elem.style.height = elem.scrollHeight + 'px'; }  
   
     function adjustFontSize(idOrElem) {  
@@ -498,303 +498,303 @@
   
     function format(num) { return Math.round(num).toLocaleString('en-IN'); }  
   
-                    function calculateTax() {  
-    const getVal = (id) => parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;  
-    
-    // 1. Basic Income Calculation
-    let gross = getVal('grossIncome'), stdDed = 75000;
-    let headSalaries = Math.max(0, gross - stdDed);
-    let npsDed = getVal('npsDeduction');
-    let taxable = Math.max(0, headSalaries - npsDed);
-      
-    document.getElementById('headSalaries').innerText = format(headSalaries);  
-    document.getElementById('taxableIncome').innerText = format(taxable);  
+    function calculateTax() {  
+        const getVal = (id) => parseFloat(document.getElementById(id).value.replace(/,/g, '')) || 0;  
+        
+        let gross = getVal('grossIncome'), stdDed = 75000;
+        let headSalaries = Math.max(0, gross - stdDed);
+        let npsDed = getVal('npsDeduction');
+        let taxable = Math.max(0, headSalaries - npsDed);
+          
+        document.getElementById('headSalaries').innerText = format(headSalaries);  
+        document.getElementById('taxableIncome').innerText = format(taxable);  
 
-    // 2. Slab Calculation Logic (New Regime FY 2026-27)
-    let slabs = [  
-        { start: 0, limit: 400000, rate: 0, id: 1 },  
-        { start: 400000, limit: 800000, rate: 0.05, id: 2 },  
-        { start: 800000, limit: 1200000, rate: 0.10, id: 3 },  
-        { start: 1200000, limit: 1600000, rate: 0.15, id: 4 },  
-        { start: 1600000, limit: 2000000, rate: 0.20, id: 5 },  
-        { start: 2000000, limit: 2400000, rate: 0.25, id: 6 },  
-        { start: 2400000, limit: Infinity, rate: 0.30, id: 7 }  
-    ];  
+        let slabs = [  
+            { start: 0, limit: 400000, rate: 0, id: 1 },  
+            { start: 400000, limit: 800000, rate: 0.05, id: 2 },  
+            { start: 800000, limit: 1200000, rate: 0.10, id: 3 },  
+            { start: 1200000, limit: 1600000, rate: 0.15, id: 4 },  
+            { start: 1600000, limit: 2000000, rate: 0.20, id: 5 },  
+            { start: 2000000, limit: 2400000, rate: 0.25, id: 6 },  
+            { start: 2400000, limit: Infinity, rate: 0.30, id: 7 }  
+        ];  
 
-    let slabTaxTotal = 0, visibleCount = 0;  
-    slabs.forEach((s, i) => {  
-        let row = document.getElementById(`row-slab-${s.id}`), rel = (taxable > s.start || i === 0);  
-        if(rel) {  
-            row.style.display = 'table-row'; visibleCount++;  
-            let upperLimitText = (s.limit === Infinity) ? ((taxable > s.start) ? format(taxable) : "Above") : format(Math.min(taxable, s.limit));  
-            document.getElementById(`to-slab-${s.id}`).innerText = upperLimitText;  
-            let inc = Math.max(0, (s.limit !== Infinity ? Math.min(taxable, s.limit) : taxable) - s.start);  
-            let tax = inc * s.rate; slabTaxTotal += tax;  
-            document.getElementById(`inc-slab-${s.id}`).innerText = format(inc);  
-            document.getElementById(`tax-slab-${s.id}`).innerText = format(tax);  
-        } else row.style.display = 'none';  
-    });  
+        let slabTaxTotal = 0, visibleCount = 0;  
+        slabs.forEach((s, i) => {  
+            let row = document.getElementById(`row-slab-${s.id}`), rel = (taxable > s.start || i === 0);  
+            if(rel) {  
+                row.style.display = 'table-row'; visibleCount++;  
+                let upperLimitText = (s.limit === Infinity) ? ((taxable > s.start) ? format(taxable) : "Above") : format(Math.min(taxable, s.limit));  
+                document.getElementById(`to-slab-${s.id}`).innerText = upperLimitText;  
+                let inc = Math.max(0, (s.limit !== Infinity ? Math.min(taxable, s.limit) : taxable) - s.start);  
+                let tax = inc * s.rate; slabTaxTotal += tax;  
+                document.getElementById(`inc-slab-${s.id}`).innerText = format(inc);  
+                document.getElementById(`tax-slab-${s.id}`).innerText = format(tax);  
+            } else row.style.display = 'none';  
+        });  
 
-    document.getElementById('slab-idx-cell').rowSpan = visibleCount + 2;  
-    document.getElementById('slab-title-cell').rowSpan = visibleCount + 2;  
-    document.getElementById('totalSlabTax').innerText = format(slabTaxTotal);  
+        document.getElementById('slab-idx-cell').rowSpan = visibleCount + 2;  
+        document.getElementById('slab-title-cell').rowSpan = visibleCount + 2;  
+        document.getElementById('totalSlabTax').innerText = format(slabTaxTotal);  
 
-    // 3. Relief u/s 87A (Income up to 12L)
-    let reb87 = (taxable <= 1200000) ? slabTaxTotal : 0;  
-    let marg87 = (taxable > 1200000 && slabTaxTotal > (taxable - 1200000)) ? (slabTaxTotal - (taxable - 1200000)) : 0;  
-    let taxRel = Math.max(0, slabTaxTotal - reb87 - marg87);  
+        let reb87 = (taxable <= 1200000) ? slabTaxTotal : 0;  
+        let marg87 = (taxable > 1200000 && slabTaxTotal > (taxable - 1200000)) ? (slabTaxTotal - (taxable - 1200000)) : 0;  
+        let taxRel = Math.max(0, slabTaxTotal - reb87 - marg87);  
 
-    document.getElementById('rebate87A').innerText = format(reb87);  
-    document.getElementById('marginalRelief87A').innerText = format(marg87);  
-    document.getElementById('taxAfterRelief').innerText = format(taxRel);  
+        document.getElementById('rebate87A').innerText = format(reb87);  
+        document.getElementById('marginalRelief87A').innerText = format(marg87);  
+        document.getElementById('taxAfterRelief').innerText = format(taxRel);  
 
-    // 4. Surcharge & Marginal Relief on Surcharge (Income > 50L)
-    let surchargeAmount = 0;
-    let surchargeRate = 0;
-    let mReliefSurcharge = 0;
+        let surchargeAmount = 0;
+        let surchargeRate = 0;
+        let mReliefSurcharge = 0;
 
-    if (taxable > 20000000) surchargeRate = 0.25; 
-    else if (taxable > 10000000) surchargeRate = 0.15;
-    else if (taxable > 5000000) surchargeRate = 0.10;
+        if (taxable > 20000000) surchargeRate = 0.25; 
+        else if (taxable > 10000000) surchargeRate = 0.15;
+        else if (taxable > 5000000) surchargeRate = 0.10;
 
-    surchargeAmount = Math.round(taxRel * surchargeRate);
+        surchargeAmount = Math.round(taxRel * surchargeRate);
 
-    if (taxable > 5000000) {
-        let limit, taxAtLimit, prevSurchargeRate;
-        if (taxable > 20000000) {
-            limit = 20000000; taxAtLimit = 5580000; prevSurchargeRate = 0.15;
-        } else if (taxable > 10000000) {
-            limit = 10000000; taxAtLimit = 2580000; prevSurchargeRate = 0.10;
-        } else {
-            limit = 5000000; taxAtLimit = 1080000; prevSurchargeRate = 0;
+        if (taxable > 5000000) {
+            let limit, taxAtLimit, prevSurchargeRate;
+            if (taxable > 20000000) {
+                limit = 20000000; taxAtLimit = 5580000; prevSurchargeRate = 0.15;
+            } else if (taxable > 10000000) {
+                limit = 10000000; taxAtLimit = 2580000; prevSurchargeRate = 0.10;
+            } else {
+                limit = 5000000; taxAtLimit = 1080000; prevSurchargeRate = 0;
+            }
+
+            let taxAtLimitWithSurcharge = taxAtLimit * (1 + prevSurchargeRate);
+            let currentTaxWithSurcharge = taxRel + surchargeAmount;
+            let increaseInTax = currentTaxWithSurcharge - taxAtLimitWithSurcharge;
+            let increaseInIncome = taxable - limit;
+
+            if (increaseInTax > increaseInIncome) {
+                mReliefSurcharge = Math.round(increaseInTax - increaseInIncome);
+            }
         }
 
-        let taxAtLimitWithSurcharge = taxAtLimit * (1 + prevSurchargeRate);
-        let currentTaxWithSurcharge = taxRel + surchargeAmount;
-        let increaseInTax = currentTaxWithSurcharge - taxAtLimitWithSurcharge;
-        let increaseInIncome = taxable - limit;
+        document.getElementById('surcharge').innerText = format(surchargeAmount);  
+        document.getElementById('marginalReliefSurcharge').innerText = format(mReliefSurcharge);  
+        
+        let taxAfterSurchargeRelief = Math.max(0, taxRel + surchargeAmount - mReliefSurcharge);  
+        document.getElementById('taxAfterSurchargeRelief').innerText = format(taxAfterSurchargeRelief);  
 
-        if (increaseInTax > increaseInIncome) {
-            mReliefSurcharge = Math.round(increaseInTax - increaseInIncome);
-        }
-    }
+        let cess = Math.round(taxAfterSurchargeRelief * 0.04);
+        let totalLiab = taxAfterSurchargeRelief + cess;  
+        document.getElementById('cess').innerText = format(cess);  
+        document.getElementById('totalTaxLiability').innerText = format(totalLiab);  
 
-    document.getElementById('surcharge').innerText = format(surchargeAmount);  
-    document.getElementById('marginalReliefSurcharge').innerText = format(mReliefSurcharge);  
-    
-    let taxAfterSurchargeRelief = Math.max(0, taxRel + surchargeAmount - mReliefSurcharge);  
-    document.getElementById('taxAfterSurchargeRelief').innerText = format(taxAfterSurchargeRelief);  
+        let relief89 = getVal('relief89');  
+        let finalTaxComp = taxAfterSurchargeRelief;
+        let finalCessComp = cess; 
 
-    // 5. Cess & Total Liability
-    let cess = Math.round(taxAfterSurchargeRelief * 0.04);
-    let totalLiab = taxAfterSurchargeRelief + cess;  
-    document.getElementById('cess').innerText = format(cess);  
-    document.getElementById('totalTaxLiability').innerText = format(totalLiab);  
-
-    // 6. Relief u/s 89 & Balance Calculation (Summary Table)
-    let relief89 = getVal('relief89');  
-    let finalTaxComp = taxAfterSurchargeRelief;
-    let finalCessComp = cess; 
-
-    if (relief89 > 0) {  
-        if (relief89 <= finalTaxComp) { 
-            finalTaxComp -= relief89; 
-        } else { 
-            let rem = relief89 - finalTaxComp; 
-            finalTaxComp = 0; 
-            finalCessComp = Math.max(0, finalCessComp - rem); 
+        if (relief89 > 0) {  
+            if (relief89 <= finalTaxComp) { 
+                finalTaxComp -= relief89; 
+            } else { 
+                let rem = relief89 - finalTaxComp; 
+                finalTaxComp = 0; 
+                finalCessComp = Math.max(0, finalCessComp - rem); 
+            }  
         }  
-    }  
-      
-    let balTotal = finalTaxComp + finalCessComp;
-    document.getElementById('balanceTaxComp').innerText = format(finalTaxComp);  
-    document.getElementById('balanceCessComp').innerText = format(finalCessComp);  
-    document.getElementById('balanceTotalComp').innerText = format(balTotal);  
+          
+        let balTotal = finalTaxComp + finalCessComp;
+        document.getElementById('balanceTaxComp').innerText = format(finalTaxComp);  
+        document.getElementById('balanceCessComp').innerText = format(finalCessComp);  
+        document.getElementById('balanceTotalComp').innerText = format(balTotal);  
 
-    // 7. Net Payable/Refundable
-    let paidTax = getVal('paidTax'), paidCess = getVal('paidCess');
-    let paidTotal = paidTax + paidCess;  
-    document.getElementById('paidTotal').innerText = format(paidTotal);  
-      
-    let netTax = finalTaxComp - paidTax;
-    let netCess = finalCessComp - paidCess;
-    let netTotal = balTotal - paidTotal;  
+        let paidTax = getVal('paidTax'), paidCess = getVal('paidCess');
+        let paidTotal = paidTax + paidCess;  
+        document.getElementById('paidTotal').innerText = format(paidTotal);  
+          
+        let netTax = finalTaxComp - paidTax;
+        let netCess = finalCessComp - paidCess;
+        let netTotal = balTotal - paidTotal;  
 
-    document.getElementById('netTax').innerText = format(netTax);  
-    document.getElementById('netCess').innerText = format(netCess);  
-    document.getElementById('netTotal').innerText = format(netTotal);  
+        document.getElementById('netTax').innerText = format(netTax);  
+        document.getElementById('netCess').innerText = format(netCess);  
+        document.getElementById('netTotal').innerText = format(netTotal);  
 
-    // 8. Status Update
-    let status = document.getElementById('taxStatus');  
-    status.value = netTotal > 0 ? "Payable" : (netTotal < 0 ? "Refundable" : "Nil");  
-    status.style.color = netTotal > 0 ? "#dc3545" : (netTotal < 0 ? "#28a745" : "black");  
-}
-
-
-
-
+        let status = document.getElementById('taxStatus');  
+        status.value = netTotal > 0 ? "Payable" : (netTotal < 0 ? "Refundable" : "Nil");  
+        status.style.color = netTotal > 0 ? "#dc3545" : (netTotal < 0 ? "#28a745" : "black");  
+    }
 
     calculateTax();  
     
     async function buildVectorPDF() {  
-    const { jsPDF } = window.jspdf;  
-    const element = document.getElementById('printContent');  
-    const inputs = element.querySelectorAll("input, textarea");  
-    const tables = element.querySelectorAll("table");  
-    const allCells = element.querySelectorAll("th, td");  
-    const infoNote = element.querySelector(".info-note");
-  
-    const replacements = [];  
-  
-    // 1️⃣ STORE ORIGINAL STYLES  
-    const originalBg = [];  
-    const originalLineHeight = [];  
-    const originalBorders = [];  
-  
-    allCells.forEach((cell, i) => {  
-        originalBg[i] = cell.style.backgroundColor;  
-        originalLineHeight[i] = cell.style.lineHeight;  
-        originalBorders[i] = cell.style.cssText;  
-    });  
-  
-    if (infoNote) infoNote.style.display = "none";
-
-    // 2️⃣ PREPARE FOR PDF  
-    allCells.forEach(cell => {  
-        cell.style.backgroundColor = "white";  
-        cell.style.lineHeight = "1.5"; 
-cell.style.letterSpacing = "0.5px"; // Words ke beech space ke liye
- // Line height kam rakhi hai taaki wrap hone par text dikhe  
-        cell.style.overflow = "visible"; // Text ko chhupne se rokne ke liye  
-    });  
-        // --- Title और Sub-title के लिए भी वही 0.5px स्पेसिंग ---
-    element.querySelectorAll("h2, h3").forEach(title => {
-        title.style.letterSpacing = "0.5px"; 
-        title.style.wordSpacing = "0.5px"; // शब्दों के बीच मामूली गैप ताकि वे चिपके नहीं
-    });
-
-  
-    element.querySelectorAll(".input-bg").forEach(el => {  
-        el.style.backgroundColor = "white";  
-    });  
-  
-    // 3️⃣ FIX BORDERS  
-    allCells.forEach(cell => {  
-        cell.style.border = "none";  
-        cell.style.borderTop = "1px solid black";  
-        cell.style.borderLeft = "1px solid black";  
-    });  
-  
-    const calcTable = element.querySelector(".calc-table");  
-    if (calcTable) {  
-        const lastRowCells = calcTable.querySelectorAll("tr:last-child td");  
-        lastRowCells.forEach(cell => {  
-            cell.style.borderBottom = "1.3px solid black";   
+        const { jsPDF } = window.jspdf;  
+        const element = document.getElementById('printContent');  
+        const inputs = element.querySelectorAll("input, textarea");  
+        const tables = element.querySelectorAll("table");  
+        const allCells = element.querySelectorAll("th, td");  
+        const infoNote = element.querySelector(".info-note");  
+        const inputBgs = element.querySelectorAll(".input-bg");  
+      
+        const originalBg = [];  
+        const originalInputBg = [];
+        const originalLineHeight = [];  
+        const originalBorders = [];  
+      
+        allCells.forEach((cell, i) => {  
+            originalBg[i] = cell.style.backgroundColor;  
+            originalLineHeight[i] = cell.style.lineHeight;  
+            originalBorders[i] = cell.style.cssText;  
         });  
-    }  
-  
-    const summaryTable = element.querySelector(".summary-table");  
-    if (summaryTable) {  
-        const firstRowCells = summaryTable.querySelectorAll("tr:first-child td, tr:first-child th");  
-        firstRowCells.forEach(cell => { cell.style.borderTop = "none"; });  
-        const emptyBox = summaryTable.querySelector("tr:first-child td:first-child");  
-        if (emptyBox) { emptyBox.style.borderLeft = "none"; }  
-    }  
-  
-    element.querySelectorAll("tr").forEach(row => {  
-        const lastCell = row.querySelector("th:last-child, td:last-child");  
-        if (lastCell) { lastCell.style.borderRight = "1px solid black"; }  
-    });  
-  
-    tables.forEach(tbl => {  
-        if (!tbl.classList.contains('calc-table')) {   
-            const lastRow = tbl.querySelector("tr:last-child");  
-            if (lastRow) {  
-                lastRow.querySelectorAll("th, td").forEach(cell => {  
-                    cell.style.borderBottom = "1px solid black";  
-                });  
+
+        inputBgs.forEach((el, i) => {
+            originalInputBg[i] = el.style.backgroundColor;
+        });
+      
+        if (infoNote) infoNote.style.display = "none";
+
+        allCells.forEach(cell => {  
+            cell.style.backgroundColor = "white";  
+            cell.style.lineHeight = "1.5"; 
+            cell.style.letterSpacing = "0.5px";  
+            cell.style.overflow = "visible";  
+        });  
+
+        element.querySelectorAll("h2, h3").forEach(title => {
+            title.style.letterSpacing = "0.5px"; 
+            title.style.wordSpacing = "0.5px"; 
+        });
+
+        inputBgs.forEach(el => {  
+            el.style.backgroundColor = "white";  
+        });  
+      
+        allCells.forEach(cell => {  
+            cell.style.border = "none";  
+            cell.style.borderTop = "1px solid black";  
+            cell.style.borderLeft = "1px solid black";  
+        });  
+      
+        const calcTable = element.querySelector(".calc-table");  
+        if (calcTable) {  
+            const lastRowCells = calcTable.querySelectorAll("tr:last-child td");  
+            lastRowCells.forEach(cell => {  
+                cell.style.borderBottom = "1.3px solid black";   
+            });  
+        }  
+      
+        const summaryTable = element.querySelector(".summary-table");  
+        if (summaryTable) {  
+            const firstRowCells = summaryTable.querySelectorAll("tr:first-child td, tr:first-child th");  
+            firstRowCells.forEach(cell => { cell.style.borderTop = "none"; });  
+            const emptyBox = summaryTable.querySelector("tr:first-child td:first-child");  
+            if (emptyBox) { emptyBox.style.borderLeft = "none"; }  
+        }  
+      
+        element.querySelectorAll("tr").forEach(row => {  
+            const lastCell = row.querySelector("th:last-child, td:last-child");  
+            if (lastCell) { lastCell.style.borderRight = "1px solid black"; }  
+        });  
+      
+        tables.forEach(tbl => {  
+            if (!tbl.classList.contains('calc-table')) {   
+                const lastRow = tbl.querySelector("tr:last-child");  
+                if (lastRow) {  
+                    lastRow.querySelectorAll("th, td").forEach(cell => {  
+                        cell.style.borderBottom = "1px solid black";  
+                    });  
+                }  
             }  
-        }  
-    });  
-  
-    // 4️⃣ REPLACE INPUTS WITH DIVS (FIXED FOR TEXT VISIBILITY & PLACEHOLDER PRINTING)  
-    inputs.forEach(input => {  
-        const box = document.createElement("div");  
-        let val = input.value || input.placeholder;  
-        if (input.classList.contains('upper')) val = val.toUpperCase();  
-        if (input.classList.contains('capitalize')) val = toTitleCase(val);  
-  
-        box.innerText = val || " ";  
-        box.style.fontFamily = "Calibri, Arial, sans-serif";  
-        box.style.fontSize = window.getComputedStyle(input).fontSize;  
-        box.style.fontWeight = "normal";  
-          
-        // --- CRITICAL WRAPPING & VISIBILITY FIX ---  
-        box.style.whiteSpace = "normal";   
-        box.style.wordBreak = "break-word";  
-        box.style.display = "block"; // Block ensure karta hai ki row expand ho  
-        box.style.width = "100%";  
-        box.style.height = "auto";   
-        box.style.overflow = "visible"; // Isse text cut-out nahi hoga  
-        let content = box.innerText.trim();
+        });  
+      
+        const replacements = [];  
+        inputs.forEach(input => {  
+            const box = document.createElement("div");  
+            let val = input.value || input.placeholder;  
+            if (input.classList.contains('upper')) val = val.toUpperCase();  
+            if (input.classList.contains('capitalize')) val = toTitleCase(val);  
+      
+            box.innerText = val || " ";  
+            box.style.fontFamily = "Calibri, Arial, sans-serif";  
+            box.style.fontSize = window.getComputedStyle(input).fontSize;  
+            box.style.fontWeight = "normal";  
+            box.style.whiteSpace = "normal";   
+            box.style.wordBreak = "break-word";  
+            box.style.display = "block";  
+            box.style.width = "100%";  
+            box.style.height = "auto";   
+            box.style.overflow = "visible";  
+            
+            let content = box.innerText.trim();
+            if (/payable/i.test(content)) {
+                box.style.color = "red";   
+            } else if (/refundable/i.test(content) || /refund/i.test(content)) {
+                box.style.color = "green"; 
+            } else {
+                box.style.color = "black"; 
+            }
+     
+            box.style.lineHeight = "1.5";
+            box.style.letterSpacing = "0.5px";  
+      
+            if (input.classList.contains('right')) box.style.textAlign = 'right';  
+            if (input.classList.contains('center')) box.style.textAlign = 'center';  
+      
+            input.style.display = "none";  
+            input.parentNode.insertBefore(box, input);  
+            replacements.push({ box, input });  
+        });  
+      
+        const doc = new jsPDF({  
+            orientation: 'p', unit: 'mm', format: 'a4', precision: 16  
+        });  
+      
+        await doc.html(element, {  
+            x: 0, y: -12, margin: [0, 0, 0, 0], autoPaging: 'slice', width: 210, windowWidth: 794,  
+            html2canvas: {   
+                scale: 0.2645833333,   
+                useCORS: true,   
+                letterRendering: false,  
+                logging: false   
+            }  
+        });  
+      
+        replacements.forEach(item => {  
+            item.box.remove();  
+            item.input.style.display = "";  
+        });  
+      
+        allCells.forEach((cell, i) => {  
+            cell.style.cssText = originalBorders[i];  
+            cell.style.backgroundColor = originalBg[i];  
+            cell.style.lineHeight = originalLineHeight[i];  
+        });  
 
-// --- DYNAMIC COLOR LOGIC ---
-if (/payable/i.test(content)) {
-    box.style.color = "red";   // Payable ke liye Red
-} else if (/refundable/i.test(content) || /refund/i.test(content)) {
-    box.style.color = "green"; // Refundable ke liye Green
-} else {
-    box.style.color = "black"; // Baaki sab ke liye Black (Nil isme aa jayega)
-}
- 
-        box.style.lineHeight = "1.5";
-box.style.letterSpacing = "0.5px"; // Bold text ko chipalne se rokne ke liye
-   
-        // ------------------------------------------  
-  
-        if (input.classList.contains('right')) box.style.textAlign = 'right';  
-        if (input.classList.contains('center')) box.style.textAlign = 'center';  
-  
-        input.style.display = "none";  
-        input.parentNode.insertBefore(box, input);  
-        replacements.push({ box, input });  
-    });  
-  
-    // 5️⃣ GENERATE PDF  
-    const doc = new jsPDF({  
-        orientation: 'p', unit: 'mm', format: 'a4', precision: 16  
-    });  
-  
-    await doc.html(element, {  
-        x: 0, y: -12, margin: [0, 0, 0, 0], autoPaging: 'slice', width: 210, windowWidth: 794,  
-        html2canvas: {   
-            scale: 0.2645833333,   
-            useCORS: true,   
-            letterRendering: false, // Behtar text rendering ke liye  
-            logging: false   
-        }  
-    });  
-  
-    // 6️⃣ RESTORE ORIGINAL  
-    replacements.forEach(item => {  
-        item.box.remove();  
-        item.input.style.display = "";  
-    });  
-  
-    allCells.forEach((cell, i) => {  
-        cell.style.cssText = originalBorders[i];  
-        cell.style.backgroundColor = originalBg[i];  
-        cell.style.lineHeight = originalLineHeight[i];  
-    });  
+        inputBgs.forEach((el, i) => {
+            el.style.backgroundColor = originalInputBg[i];
+        });
 
-    if (infoNote) infoNote.style.display = "";
-  
-    return doc;  
-}  
+        if (infoNote) infoNote.style.display = "";
+      
+        return doc;  
+    }  
+
+    function printPage() { 
+        if (window.Android && window.Android.printPDF) {
+            window.Android.printPDF();
+        } else {
+            window.print(); 
+        }
+    }  
   
     async function downloadVectorPDF() {  
         document.getElementById('loadingOverlay').style.display = 'flex';  
-        try { const doc = await buildVectorPDF(); doc.save(getFileName()); } catch (e) { alert("Error"); }  
+        try {  
+            const doc = await buildVectorPDF();  
+            if (window.Android && window.Android.savePDF) {
+                const base64 = doc.output('datauristring');
+                window.Android.savePDF(getFileName(), base64);
+            } else {
+                doc.save(getFileName());  
+            }
+        } catch (e) { alert("Error: " + e.message); }  
         document.getElementById('loadingOverlay').style.display = 'none';  
     }  
   
@@ -802,14 +802,19 @@ box.style.letterSpacing = "0.5px"; // Bold text ko chipalne se rokne ke liye
         document.getElementById('loadingOverlay').style.display = 'flex';  
         try {  
             const doc = await buildVectorPDF();  
-            const blob = doc.output("blob");  
-            const file = new File([blob], getFileName(), { type: "application/pdf" });  
-            if (navigator.canShare && navigator.canShare({ files: [file] })) {  
-                await navigator.share({ files: [file], title: 'Tax Calculation' });  
-            } else { doc.save(getFileName()); }  
-        } catch (e) { alert("Sharing failed"); }  
+            if (window.Android && window.Android.sharePDF) {
+                const base64 = doc.output('datauristring');
+                window.Android.sharePDF(getFileName(), base64);
+            } else {
+                const blob = doc.output("blob");  
+                const file = new File([blob], getFileName(), { type: "application/pdf" });  
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {  
+                    await navigator.share({ files: [file], title: 'Tax Calculation' });  
+                } else { doc.save(getFileName()); }  
+            }
+        } catch (e) { alert("Sharing failed: " + e.message); }  
         document.getElementById('loadingOverlay').style.display = 'none';  
-    }  
+    }   
 </script>  
 </body>  
 </html>
