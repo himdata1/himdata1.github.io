@@ -4,7 +4,6 @@
     <title>Retirement Gratuity Calculator</title>
     
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2270%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>GC</text></svg>">
-
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2270%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>GC</text></svg>">
     
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -15,6 +14,7 @@
     <style>
         * {
             -webkit-tap-highlight-color: transparent;
+            box-sizing: border-box;
         }
 
         body {
@@ -31,7 +31,6 @@
             padding: 20px;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
-            box-sizing: border-box;
             background-color: white;
         }
 
@@ -50,7 +49,6 @@
         .form-group input[type="number"] {
             width: 100%;
             padding: 10px;
-            box-sizing: border-box;
             border: 1px solid #ccc;
             border-radius: 4px;
             background-color: white;
@@ -58,30 +56,29 @@
         }
 
         .form-group input[readonly] {
-            background-color: white !important;
+            background-color: #f0f0f0 !important;
         }
 
-        .form-group p {
-            margin-top: 5px;
-            font-size: 0.9em;
-            color: #666;
+        .da-container {
+            display: flex;
+            gap: 10px;
         }
 
-        .btn {
-            display: block;
-            width: 100%;
-            padding: 10px;
-            background-color: #007BFF;
-            color: white;
-            border: none;
-            border-radius: 4px;
-            font-size: 16px;
-            cursor: pointer;
-            margin-top: 20px;
+        .da-field {
+            flex: 1;
         }
 
-        .btn:hover {
-            background-color: #0056b3;
+        .da-field label {
+            font-weight: normal;
+            font-size: 0.85em;
+            color: #555;
+        }
+
+        .action-buttons {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 15px;
         }
 
         .btn-clear {
@@ -92,7 +89,6 @@
             border-radius: 20px;
             padding: 10px 20px;
             width: 120px;
-            margin-top: 10px;
             cursor: pointer;
             text-align: center;
             font-size: 20px;
@@ -125,21 +121,14 @@
 
         .btn-online {
             text-decoration: none; 
-            display: inline-block; 
+            display: block; 
             text-align: center; 
-            width: 320px; 
+            width: 100%; 
             background-color: #007BFF; 
             color: white; 
             padding: 10px; 
             border-radius: 20px; 
-            margin-top: 10px;
-        }
-
-        .result {
-            margin-top: 20px;
-            font-size: 1.2em;
-            font-weight: bold;
-            text-align: center;
+            margin-top: 15px;
         }
 
         .hidden {
@@ -159,37 +148,51 @@
     <h2>Retirement Gratuity Calculator</h2>
 
     <div class="form-group">
-        <label for="basicPayDA">1. Last Basic Pay + DA (in Rs.):</label>
-        <input type="number" id="basicPayDA" name="basicPayDA" placeholder="Enter amount" oninput="checkInputs()">
+        <label for="basicPay">1. Last Basic Pay (in Rs.):</label>
+        <input type="number" id="basicPay" name="basicPay" placeholder="Enter basic pay" oninput="updateDAAndCalculate()">
     </div>
 
     <div class="form-group">
-        <label for="joiningDate">2. Date of Joining:</label>
+        <label>2. Dearness Allowance (DA):</label>
+        <div class="da-container">
+            <div class="da-field">
+                <label for="daPercent">DA Rate (%)</label>
+                <input type="number" id="daPercent" name="daPercent" placeholder="e.g. 50" oninput="updateDAAndCalculate()">
+            </div>
+            <div class="da-field">
+                <label for="calculatedDA">Calculated DA (in Rs.)</label>
+                <input type="text" id="calculatedDA" name="calculatedDA" placeholder="0" readonly>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="joiningDate">3. Date of Joining:</label>
         <input type="date" id="joiningDate" name="joiningDate" onchange="checkInputs()">
     </div>
 
     <div class="form-group">
-        <label for="retirementDate">3. Date of Retirement:</label>
+        <label for="retirementDate">4. Date of Retirement:</label>
         <input type="date" id="retirementDate" name="retirementDate" onchange="setLastDateOfMonth()" onkeydown="return false;">
     </div>
 
     <div id="result-boxes" class="hidden">
         <div class="form-group">
-            <label for="durationService">4. Duration of Service:</label>
+            <label for="durationService">5. Duration of Service:</label>
             <input type="text" id="durationService" name="durationService" readonly>
         </div>
 
         <div class="form-group">
-            <label for="qualifyingService">5. Qualifying Service:</label>
+            <label for="qualifyingService">6. Qualifying Service:</label>
             <input type="text" id="qualifyingService" name="qualifyingService" readonly>
         </div>
 
         <div class="form-group">
-            <label for="gratuityAmount">6. Gratuity Amount (in Rs.):</label>
+            <label for="gratuityAmount">7. Gratuity Amount (in Rs.):</label>
             <input type="text" id="gratuityAmount" name="gratuityAmount" readonly>
         </div>
 
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 10px;">
+        <div class="action-buttons" id="actionButtons">
             <button id="clearBtn" type="button" class="btn-clear" onclick="clearFields()">Clear</button>
             
             <button id="shareBtn" type="button" class="btn-share" onclick="shareScreenshot()" aria-label="Share">
@@ -206,8 +209,7 @@
         <a id="onlineBtn" 
            href="https://pensionersportal.gov.in/PensionCalculators/RevisedPensionCalculator_2016/GratuityCalculator_7pc.aspx" 
            target="_blank" 
-           class="btn-online" 
-           style="width: 100%; box-sizing: border-box;">
+           class="btn-online">
             Click here to calculate online
         </a>
     </div>
@@ -238,13 +240,27 @@
         checkInputs();
     }
 
+    function updateDAAndCalculate() {
+        const basicPay = parseFloat(document.getElementById('basicPay').value) || 0;
+        const daPercent = parseFloat(document.getElementById('daPercent').value) || 0;
+        
+        if (basicPay > 0 && daPercent >= 0) {
+            const daAmount = Math.round((basicPay * daPercent) / 100);
+            document.getElementById('calculatedDA').value = daAmount;
+        } else {
+            document.getElementById('calculatedDA').value = '';
+        }
+
+        checkInputs();
+    }
+
     function checkInputs() {
-        const basicPayDA = document.getElementById('basicPayDA').value;
+        const basicPay = document.getElementById('basicPay').value;
         const joiningDateInput = document.getElementById('joiningDate').value;
         const retirementDateInput = document.getElementById('retirementDate').value;
         const resultBoxes = document.getElementById('result-boxes');
 
-        if (basicPayDA && joiningDateInput && retirementDateInput) {
+        if (basicPay && joiningDateInput && retirementDateInput) {
             const joiningDate = new Date(joiningDateInput);
             const retirementDate = new Date(retirementDateInput);
 
@@ -263,14 +279,17 @@
     }
 
     function calculateGratuity() {
-        const basicPayDA = parseFloat(document.getElementById('basicPayDA').value);
+        const basicPay = parseFloat(document.getElementById('basicPay').value);
+        const daPercent = parseFloat(document.getElementById('daPercent').value) || 0;
         const joiningDateInput = document.getElementById('joiningDate').value;
         const retirementDateInput = document.getElementById('retirementDate').value;
 
-        if (!joiningDateInput || !retirementDateInput || isNaN(basicPayDA)) {
-            clearFields();
+        if (!joiningDateInput || !retirementDateInput || isNaN(basicPay)) {
             return;
         }
+
+        const calculatedDA = Math.round((basicPay * daPercent) / 100);
+        const totalBasicDA = basicPay + calculatedDA;
 
         const joiningDate = new Date(joiningDateInput);
         const retirementDate = new Date(retirementDateInput);
@@ -348,14 +367,16 @@
         document.getElementById('qualifyingService').value = `${qualifyingServiceHalfYears} half years`;
 
         const maxGratuity = 2000000;
-        const gratuityCalculation = (qualifyingServiceHalfYears / 2) * (basicPayDA / 2);
+        const gratuityCalculation = (qualifyingServiceHalfYears / 2) * (totalBasicDA / 2);
         const finalGratuity = Math.min(maxGratuity, gratuityCalculation);
 
         document.getElementById('gratuityAmount').value = Math.round(finalGratuity);
     }
 
     function clearFields() {
-        document.getElementById('basicPayDA').value = '';
+        document.getElementById('basicPay').value = '';
+        document.getElementById('daPercent').value = '';
+        document.getElementById('calculatedDA').value = '';
         document.getElementById('joiningDate').value = '';
         document.getElementById('retirementDate').value = ''; 
         document.getElementById('durationService').value = '';
@@ -364,7 +385,6 @@
         document.getElementById('result-boxes').classList.add('hidden');
     }
 
-    // SCREENSHOT SHARE (DD/MM/YYYY FORMAT, NO TEXT, NO BUTTONS)
     async function shareScreenshot() {
         const amount = document.getElementById('gratuityAmount').value;
 
@@ -373,30 +393,25 @@
             return;
         }
 
-        const clearBtn = document.getElementById('clearBtn');
-        const shareBtn = document.getElementById('shareBtn');
+        const actionButtons = document.getElementById('actionButtons');
         const onlineBtn = document.getElementById('onlineBtn');
 
         const joiningDateInput = document.getElementById('joiningDate');
         const retirementDateInput = document.getElementById('retirementDate');
 
-        // Store original values (YYYY-MM-DD)
         const originalJoiningVal = joiningDateInput.value;
         const originalRetirementVal = retirementDateInput.value;
 
-        // Convert YYYY-MM-DD to DD/MM/YYYY
         const formatDateToDDMMYYYY = (dateStr) => {
             if (!dateStr) return '';
             const parts = dateStr.split('-');
             return parts.length === 3 ? `${parts[2]}/${parts[1]}/${parts[0]}` : dateStr;
         };
 
-        // Hide buttons from screenshot
-        if (clearBtn) clearBtn.style.visibility = 'hidden';
-        if (shareBtn) shareBtn.style.visibility = 'hidden';
-        if (onlineBtn) onlineBtn.style.visibility = 'hidden';
+        // HIDE BUTTONS FROM DOM BEFORE CAPTURING SCREENSHOT
+        if (actionButtons) actionButtons.style.display = 'none';
+        if (onlineBtn) onlineBtn.style.display = 'none';
 
-        // Temporarily change inputs to text type with DD/MM/YYYY format for screenshot
         if (originalJoiningVal) {
             joiningDateInput.type = 'text';
             joiningDateInput.value = formatDateToDDMMYYYY(originalJoiningVal);
@@ -407,11 +422,9 @@
         }
 
         const restoreUI = () => {
-            if (clearBtn) clearBtn.style.visibility = 'visible';
-            if (shareBtn) shareBtn.style.visibility = 'visible';
-            if (onlineBtn) onlineBtn.style.visibility = 'visible';
+            if (actionButtons) actionButtons.style.display = 'flex';
+            if (onlineBtn) onlineBtn.style.display = 'block';
 
-            // Restore inputs back to date picker type and original values
             joiningDateInput.type = 'date';
             joiningDateInput.value = originalJoiningVal;
 
@@ -419,43 +432,42 @@
             retirementDateInput.value = originalRetirementVal;
         };
 
-        try {
-            if (typeof html2canvas !== 'undefined') {
-                const container = document.getElementById('calculatorCard');
-                const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff' });
-                
-                restoreUI();
+        setTimeout(async () => {
+            try {
+                if (typeof html2canvas !== 'undefined') {
+                    const container = document.getElementById('calculatorCard');
+                    const canvas = await html2canvas(container, { scale: 2, backgroundColor: '#ffffff' });
+                    
+                    const base64Image = canvas.toDataURL('image/png');
+                    restoreUI();
 
-                canvas.toBlob(async (blob) => {
-                    const file = new File([blob], 'Gratuity_Calculation.png', { type: 'image/png' });
-
-                    if (navigator.canShare && navigator.canShare({ files: [file] })) {
-                        try {
-                            await navigator.share({
-                                files: [file]
-                            });
-                        } catch (err) {
-                            if (err.name !== 'AbortError') {
-                                console.log("Share cancelled or failed", err);
-                            }
-                        }
-                    } else if (typeof Android !== 'undefined' && typeof Android.share === 'function') {
-                        Android.share();
+                    // Send clean Base64 image to Android Java Interface
+                    if (typeof Android !== 'undefined' && typeof Android.shareImage === 'function') {
+                        Android.shareImage(base64Image);
                     } else {
-                        const link = document.createElement('a');
-                        link.href = URL.createObjectURL(blob);
-                        link.download = 'Gratuity_Calculation.png';
-                        link.click();
+                        canvas.toBlob(async (blob) => {
+                            const file = new File([blob], 'Gratuity_Calculation.png', { type: 'image/png' });
+                            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                                try {
+                                    await navigator.share({ files: [file] });
+                                } catch (e) {}
+                            } else {
+                                const link = document.createElement('a');
+                                link.href = URL.createObjectURL(blob);
+                                link.download = 'Gratuity_Calculation.png';
+                                link.click();
+                            }
+                        }, 'image/png');
                     }
-                }, 'image/png');
-            } else {
+                } else {
+                    restoreUI();
+                    alert("Screenshot tool load nahi ho saka.");
+                }
+            } catch (err) {
                 restoreUI();
-                alert("Screenshot tool load nahi ho saka.");
+                console.log(err);
             }
-        } catch (err) {
-            restoreUI();
-            console.log(err);
-        }
+        }, 50);
     }
 </script>
 
