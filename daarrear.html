@@ -4,9 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>DA Arrear Calculator</title>
-<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">
-
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">  
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2275%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>DA</text></svg>">  
 
     <style>
         html {
@@ -277,54 +276,16 @@
                 display: none !important;
             }
 
+            .card:first-of-type {
+                display: none !important;
+            }
+
             .card {
                 box-shadow: none !important;
                 border: 1px solid #cbd5e1 !important;
                 padding: 8px !important;
                 margin-bottom: 8px !important;
                 border-radius: 4px !important;
-            }
-
-            .btn-container {
-                display: none !important;
-            }
-
-            .form-grid {
-                display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 6px !important;
-            }
-
-            .form-group label {
-                font-size: 12px !important;
-                margin-bottom: 2px !important;
-                color: #333 !important;
-            }
-
-            .form-group input, 
-            .form-group select,
-            .form-group input[type="month"] {
-                font-size: 13px !important;
-                line-height: 1.2 !important;
-                padding: 3px 6px !important;
-                height: 26px !important;
-                min-height: 26px !important;
-                max-height: 26px !important;
-                box-sizing: border-box !important;
-                border: 1px solid #94a3b8 !important;
-                background: #fff !important;
-                color: #000 !important;
-                -webkit-appearance: none !important;
-                -moz-appearance: none !important;
-                appearance: none !important;
-                background-image: none !important;
-            }
-
-            .form-group input[type="month"]::-webkit-datetime-edit,
-            .form-group input[type="month"]::-webkit-inner-spin-button,
-            .form-group input[type="month"]::-webkit-calendar-picker-indicator {
-                padding: 0 !important;
-                margin: 0 !important;
             }
 
             .summary-grid {
@@ -552,8 +513,28 @@
 
 <script>
     function printReport() {
+        const fromVal = document.getElementById('fromMonth').value;
+        const toVal = document.getElementById('toMonth').value;
+
+        // Convert YYYY-MM to "Month Year" format (e.g. "2024-07" -> "July 2024")
+        function formatMonthYear(val) {
+            if (!val) return '';
+            const [year, month] = val.split('-');
+            const dateObj = new Date(year, parseInt(month) - 1, 1);
+            return dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        }
+
+        const fromFormatted = formatMonthYear(fromVal);
+        const toFormatted = formatMonthYear(toVal);
+
+        const fileName = (fromFormatted && toFormatted)
+            ? `DA Arrear Report ${fromFormatted} to ${toFormatted}`
+            : `DA Arrear Report`;
+
+        document.title = fileName;
+
         if (window.Android && typeof window.Android.printPage === 'function') {
-            window.Android.printPage();
+            window.Android.printPage(fileName);
         } else {
             window.print();
         }
@@ -708,7 +689,6 @@
             
             const currentYearMonthStr = `${yearStr}-${String(mIndex).padStart(2, '0')}`;
 
-            // Pehle month (index === 0) me ACP ya Increment add nahi hoga
             const isAcpMonth = (index > 0 && acpMonths.includes(currentYearMonthStr));
             const isIncMonth = (index > 0 && incMonth !== 'None' && parseInt(incMonth) === mIndex);
 
@@ -816,15 +796,18 @@
     }
 
     document.addEventListener('focusin', function(e) {
-        if (e.target && e.target.type === 'number' && e.target.value === '0') {
+        if (e.target && (e.target.id === 'previousDa' || e.target.id === 'revisedDa' || e.target.id === 'basicPay' || e.target.id === 'gpfNps')) {
+            e.target.dataset.previousVal = e.target.value;
             e.target.value = '';
         }
     });
 
     document.addEventListener('focusout', function(e) {
-        if (e.target && e.target.type === 'number' && e.target.value.trim() === '') {
-            e.target.value = '0';
-            e.target.dispatchEvent(new Event('input', { bubbles: true }));
+        if (e.target && (e.target.id === 'previousDa' || e.target.id === 'revisedDa' || e.target.id === 'basicPay' || e.target.id === 'gpfNps')) {
+            if (e.target.value.trim() === '') {
+                e.target.value = (e.target.dataset.previousVal !== undefined && e.target.dataset.previousVal !== '') ? e.target.dataset.previousVal : '0';
+                e.target.dispatchEvent(new Event('input', { bubbles: true }));
+            }
         }
     });
 
