@@ -93,6 +93,7 @@
             font-size: 0.875rem;
             margin-bottom: 0.375rem;
             color: #334155;
+            cursor: default;
         }
 
         .form-group input, .form-group select {
@@ -189,17 +190,19 @@
 
         .table-responsive {
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
 
         table {
             width: 100%;
+            min-width: 800px;
             border-collapse: collapse;
             font-size: 0.95rem;
             text-align: center;
         }
 
         th, td {
-            padding: 0.625rem 0.375rem;
+            padding: 0.5rem 0.2rem;
             border-bottom: 1px solid var(--border-color);
             vertical-align: middle;
         }
@@ -217,11 +220,105 @@
             font-weight: bold;
         }
 
-        .month-long {
-            display: none;
+        .table-input {
+            width: 100%;
+            padding: 0.35rem 0.2rem;
+            border: 1px solid var(--border-color);
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+            text-align: center;
+            text-align-last: center;
+            outline: none;
+            background-color: #fff;
+            transition: border-color 0.2s, background-color 0.2s;
+            -moz-appearance: textfield;
         }
-        .month-short {
-            display: inline;
+
+        .table-input::-webkit-outer-spin-button,
+        .table-input::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
+        .table-input.row-basic-input {
+            min-width: 110px;
+        }
+
+        .table-input.row-month-select {
+            min-width: 95px;
+            cursor: pointer;
+        }
+
+        .table-input.row-year-input {
+            min-width: 65px;
+        }
+
+        .table-input.row-prev-da-input,
+        .table-input.row-rev-da-input {
+            min-width: 65px;
+        }
+
+        .table-input:focus {
+            border-color: var(--primary-color);
+            background-color: #eff6ff;
+        }
+
+        .add-row-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+        }
+
+        .add-row-btn {
+            padding: 0.35rem 0.85rem;
+            background-color: #ffffff;
+            color: #dc2626;
+            border: 1px solid #dc2626;
+            border-radius: 0.25rem;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s, opacity 0.2s;
+        }
+
+        .add-row-btn:hover {
+            background-color: #fef2f2;
+        }
+
+        .add-row-input {
+            width: 60px;
+            padding: 0.35rem 0.4rem;
+            border: 1px solid #dc2626;
+            border-radius: 0.25rem;
+            font-size: 0.9rem;
+            text-align: center;
+            outline: none;
+            color: #dc2626;
+            background-color: #ffffff;
+            font-weight: 600;
+        }
+
+        .add-row-input:focus {
+            border-color: #b91c1c;
+            box-shadow: 0 0 0 2px rgba(220, 38, 38, 0.15);
+        }
+
+        .btn-delete-row {
+            background: transparent;
+            color: #dc2626;
+            border: none;
+            font-size: 0.95rem;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 0 4px;
+            line-height: 1;
+            transition: color 0.2s, transform 0.1s;
+        }
+
+        .btn-delete-row:hover {
+            color: #991b1b;
+            transform: scale(1.15);
         }
 
         @page {
@@ -229,7 +326,6 @@
             margin: 8mm;
         }
 
-        /* PRINT STYLES */
         @media print {
             html {
                 font-size: 16px !important;
@@ -315,6 +411,7 @@
 
             table {
                 width: 100% !important;
+                min-width: 0 !important;
                 table-layout: fixed !important;
                 border-collapse: collapse !important;
             }
@@ -338,27 +435,49 @@
                 font-weight: 700 !important;
             }
 
-            td:nth-child(2) {
+            .table-input {
+                border: none !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                font-size: 14px !important;
+                font-family: inherit !important;
+                color: #000 !important;
+                text-align: center !important;
+                text-align-last: center !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+            }
+
+            /* Month Column (3rd Column) Left Alignment in Print */
+            th:nth-child(3), td:nth-child(3) {
                 text-align: left !important;
                 padding-left: 6px !important;
             }
 
-            .month-short {
-                display: none !important;
-            }
-            .month-long {
-                display: inline !important;
+            td:nth-child(3) .table-input {
+                text-align: left !important;
+                text-align-last: left !important;
             }
 
-            th:nth-child(1), td:nth-child(1) { width: 6%; }  
-            th:nth-child(2), td:nth-child(2) { width: 13%; } 
-            th:nth-child(3), td:nth-child(3) { width: 9%; }  
-            th:nth-child(4), td:nth-child(4) { width: 12%; } 
-            th:nth-child(5), td:nth-child(5) { width: 10%; } 
+            .no-print {
+                display: none !important;
+            }
+
+            th:nth-child(2), td:nth-child(2) { width: 5%; }  
+            th:nth-child(3), td:nth-child(3) { width: 14%; } 
+            th:nth-child(4), td:nth-child(4) { width: 8%; }  
+            th:nth-child(5), td:nth-child(5) { width: 12%; } 
             th:nth-child(6), td:nth-child(6) { width: 10%; } 
-            th:nth-child(7), td:nth-child(7) { width: 13%; } 
-            th:nth-child(8), td:nth-child(8) { width: 13%; } 
-            th:nth-child(9), td:nth-child(9) { width: 14%; } 
+            th:nth-child(7), td:nth-child(7) { width: 10%; } 
+            th:nth-child(8), td:nth-child(8) { width: 14%; } 
+            th:nth-child(9), td:nth-child(9) { width: 12%; } 
+            th:nth-child(10), td:nth-child(10) { width: 15%; } 
 
             tr {
                 page-break-inside: avoid !important;
@@ -384,7 +503,7 @@
     <div class="card">
         <div class="form-grid">
             <div class="form-group">
-                <label for="employeeType">Employee Type</label>
+                <label>Employee Type</label>
                 <select id="employeeType">
                     <option value="OPS" selected>OPS Employee</option>
                     <option value="NPS">NPS Employee</option>
@@ -392,12 +511,12 @@
             </div>
 
             <div class="form-group" id="cpfGroup" style="display: none;">
-                <label for="gpfNps">NPS Share Rate (%)</label>
+                <label>NPS Share Rate (%)</label>
                 <input type="number" id="gpfNps" value="10" step="0.1" min="0" max="100">
             </div>
 
             <div class="form-group">
-                <label for="incrementMonth">Month of Annual Increment</label>
+                <label>Month of Annual Increment</label>
                 <select id="incrementMonth">
                     <option value="None">None</option>
                     <option value="1">January</option>
@@ -416,7 +535,7 @@
             </div>
 
             <div class="form-group">
-                <label for="noOfAcp">No. of ACP(s) during Arrear Period</label>
+                <label>No. of ACP(s) during Arrear Period</label>
                 <select id="noOfAcp">
                     <option value="0" selected>0</option>
                     <option value="1">1</option>
@@ -428,32 +547,32 @@
             <div id="acpContainer" style="display: contents;"></div>
 
             <div class="form-group">
-                <label for="previousDa">Previous DA (%)</label>
+                <label>Previous DA (%)</label>
                 <input type="number" id="previousDa" value="0" step="0.01">
             </div>
 
             <div class="form-group">
-                <label for="revisedDa">Revised DA (%)</label>
+                <label>Revised DA (%)</label>
                 <input type="number" id="revisedDa" value="0" step="0.01">
             </div>
 
             <div class="form-group">
-                <label for="fromMonth">From Month</label>
+                <label>From Month</label>
                 <input type="month" id="fromMonth" value="2024-01">
             </div>
 
             <div class="form-group">
-                <label for="toMonth">To Month</label>
+                <label>To Month</label>
                 <input type="month" id="toMonth" value="2026-07">
             </div>
 
             <div class="form-group">
-                <label for="totalMonths">Total Months</label>
+                <label>Total Months</label>
                 <input type="text" id="totalMonths" value="0 Months" readonly>
             </div>
 
             <div class="form-group">
-                <label for="basicPay" id="basicPayLabel">Basic Pay as on From Month</label>
+                <label id="basicPayLabel">Basic Pay as on From Month</label>
                 <input type="number" id="basicPay" value="0" step="100">
             </div>
         </div>
@@ -485,6 +604,7 @@
             <table>
                 <thead>
                     <tr>
+                        <th class="no-print" style="width: 35px;"></th>
                         <th>Sr.<br>No.</th>
                         <th>Month</th>
                         <th>Year</th>
@@ -499,7 +619,25 @@
                 <tbody id="breakdownTableBody">
                 </tbody>
                 <tfoot>
+                    <tr class="no-print">
+                        <td colspan="10" style="text-align: left; background-color: #ffffff; padding: 6px 12px;">
+                            <div class="add-row-container">
+                                <button type="button" class="add-row-btn" onclick="addCustomRows()">➕ Add Row(s)</button>
+                                <input 
+                                    type="number" 
+                                    id="addRowInput" 
+                                    class="add-row-input" 
+                                    value="1" 
+                                    min="1" 
+                                    max="50"
+                                    onfocus="clearAddRowInput(this)"
+                                    onblur="restoreAddRowInput(this)"
+                                >
+                            </div>
+                        </td>
+                    </tr>
                     <tr>
+                        <td class="no-print"></td>
                         <td colspan="6" style="text-align: right;"><strong>Total:</strong></td>
                         <td id="footTotalGross">₹0</td>
                         <td id="footTotalCpf" style="color: var(--accent-red);">₹0</td>
@@ -512,20 +650,52 @@
 </div>
 
 <script>
-    function printReport() {
-        const fromVal = document.getElementById('fromMonth').value;
-        const toVal = document.getElementById('toMonth').value;
+    const MONTH_NAMES = [
+        "January", "February", "March", "April", "May", "June", 
+        "July", "August", "September", "October", "November", "December"
+    ];
 
-        // Convert YYYY-MM to "Month Year" format (e.g. "2024-07" -> "July 2024")
-        function formatMonthYear(val) {
-            if (!val) return '';
-            const [year, month] = val.split('-');
-            const dateObj = new Date(year, parseInt(month) - 1, 1);
-            return dateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+    let addRowPreviousVal = "1";
+
+    function clearAddRowInput(input) {
+        addRowPreviousVal = input.value;
+        input.value = "";
+    }
+
+    function restoreAddRowInput(input) {
+        if (input.value.trim() === "") {
+            input.value = addRowPreviousVal;
         }
+    }
 
-        const fromFormatted = formatMonthYear(fromVal);
-        const toFormatted = formatMonthYear(toVal);
+    function deleteRow(button) {
+        const row = button.closest('tr');
+        row.remove();
+        updateRowNumbers();
+        recalculateTableFromStart();
+    }
+
+    function printReport() {
+        const rows = document.querySelectorAll('#breakdownTableBody tr');
+        let fromFormatted = '';
+        let toFormatted = '';
+
+        if (rows.length > 0) {
+            const firstRow = rows[0];
+            const lastRow = rows[rows.length - 1];
+
+            const firstMonthNum = parseInt(firstRow.querySelector('.row-month-select').value) || 1;
+            const firstYearVal = firstRow.querySelector('.row-year-input').value;
+            
+            const lastMonthNum = parseInt(lastRow.querySelector('.row-month-select').value) || 1;
+            const lastYearVal = lastRow.querySelector('.row-year-input').value;
+
+            const firstDateObj = new Date(parseInt(firstYearVal), firstMonthNum - 1, 1);
+            const lastDateObj = new Date(parseInt(lastYearVal), lastMonthNum - 1, 1);
+
+            fromFormatted = firstDateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+            toFormatted = lastDateObj.toLocaleDateString('en-US', { month: 'long', year: 'numeric' });
+        }
 
         const fileName = (fromFormatted && toFormatted)
             ? `DA Arrear Report ${fromFormatted} to ${toFormatted}`
@@ -582,7 +752,6 @@
             formGroup.className = 'form-group';
             
             const label = document.createElement('label');
-            label.htmlFor = `acpMonth${i}`;
             label.textContent = count === 1 ? 'Month-Year of ACP' : `Month-Year of ACP ${i}`;
             
             const input = document.createElement('input');
@@ -614,13 +783,6 @@
     document.getElementById('noOfAcp').addEventListener('change', renderAcpInputs);
 
     function calculateArrears() {
-        const empType = document.getElementById('employeeType').value;
-        let cpfRate = parseFloat(document.getElementById('gpfNps').value) || 0;
-        
-        if (empType === 'OPS') {
-            cpfRate = 0;
-        }
-
         const incMonth = document.getElementById('incrementMonth').value;
         
         const noOfAcp = parseInt(document.getElementById('noOfAcp').value) || 0;
@@ -683,8 +845,6 @@
 
         monthsList.forEach((monthDate, index) => {
             const mIndex = monthDate.getMonth() + 1;
-            const monthShort = monthDate.toLocaleDateString('en-IN', { month: 'short' });
-            const monthLong = monthDate.toLocaleDateString('en-IN', { month: 'long' });
             const yearStr = monthDate.getFullYear();
             
             const currentYearMonthStr = `${yearStr}-${String(mIndex).padStart(2, '0')}`;
@@ -692,36 +852,53 @@
             const isAcpMonth = (index > 0 && acpMonths.includes(currentYearMonthStr));
             const isIncMonth = (index > 0 && incMonth !== 'None' && parseInt(incMonth) === mIndex);
 
-            if (isAcpMonth) {
-                const inc1 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
-                currentRunningBasic += inc1;
-
-                const inc2 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
-                currentRunningBasic += inc2;
-            } else if (isIncMonth) {
-                const inc1 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
-                currentRunningBasic += inc1;
+            if (index > 0) {
+                if (isAcpMonth) {
+                    const inc1 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
+                    currentRunningBasic += inc1;
+                    const inc2 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
+                    currentRunningBasic += inc2;
+                } else if (isIncMonth) {
+                    const inc1 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
+                    currentRunningBasic += inc1;
+                }
             }
 
             const row = document.createElement('tr');
+            row.dataset.isAcp = isAcpMonth;
+            row.dataset.isInc = isIncMonth;
+
+            let monthOptionsHtml = '';
+            MONTH_NAMES.forEach((mName, mIdx) => {
+                const selected = (mIdx + 1 === mIndex) ? 'selected' : '';
+                monthOptionsHtml += `<option value="${mIdx + 1}" ${selected}>${mName}</option>`;
+            });
 
             row.innerHTML = `
+                <td class="no-print">
+                    <button type="button" class="btn-delete-row" onclick="deleteRow(this)" title="Delete Row">✕</button>
+                </td>
                 <td>${index + 1}.</td>
                 <td>
-                    <span class="month-short">${monthShort}</span>
-                    <span class="month-long">${monthLong}</span>
+                    <select class="table-input row-month-select">
+                        ${monthOptionsHtml}
+                    </select>
                 </td>
-                <td>${yearStr}</td>
-                <td>${formatCurrency(currentRunningBasic)}</td>
-                <td>${prevDaRate}%</td>
-                <td>${revDaRate}%</td>
+                <td>
+                    <input type="number" class="table-input row-year-input" value="${yearStr}" min="1900" max="2100">
+                </td>
+                <td><input type="number" class="table-input row-basic-input" value="${currentRunningBasic}" step="100"></td>
+                <td><input type="number" class="table-input row-prev-da-input" value="${prevDaRate}" step="0.01"></td>
+                <td><input type="number" class="table-input row-rev-da-input" value="${revDaRate}" step="0.01"></td>
                 <td class="row-gross">₹0</td>
                 <td class="row-cpf">₹0</td>
                 <td class="row-net"><strong>₹0</strong></td>
             `;
 
             tableBody.appendChild(row);
-            updateRowCalculations(row, currentRunningBasic, prevDaRate, revDaRate, cpfRate, empType);
+
+            attachRowEventListeners(row, index);
+            updateRowCalculations(row);
         });
 
         document.getElementById('summaryGrid').style.display = 'grid';
@@ -730,7 +907,216 @@
         updateTotals();
     }
 
-    function updateRowCalculations(row, basic, prevDaRate, revDaRate, cpfRate, empType) {
+    function addCustomRows() {
+        const countInput = document.getElementById('addRowInput');
+        const countToAdd = parseInt(countInput.value, 10);
+        
+        if (isNaN(countToAdd) || countToAdd <= 0) return;
+
+        const tableBody = document.getElementById('breakdownTableBody');
+
+        for (let i = 0; i < countToAdd; i++) {
+            const currentRows = tableBody.querySelectorAll('tr');
+            const lastRow = currentRows.length > 0 ? currentRows[currentRows.length - 1] : null;
+
+            let nextMonthIndex = 1;
+            let nextYear = new Date().getFullYear();
+            let lastPrevDa = parseFloat(document.getElementById('previousDa').value) || 0;
+            let lastRevDa = parseFloat(document.getElementById('revisedDa').value) || 0;
+
+            if (lastRow) {
+                const selMonth = parseInt(lastRow.querySelector('.row-month-select').value) || 1;
+                const valYear = parseInt(lastRow.querySelector('.row-year-input').value) || nextYear;
+                
+                if (selMonth === 12) {
+                    nextMonthIndex = 1;
+                    nextYear = valYear + 1;
+                } else {
+                    nextMonthIndex = selMonth + 1;
+                    nextYear = valYear;
+                }
+
+                lastPrevDa = parseFloat(lastRow.querySelector('.row-prev-da-input').value) || lastPrevDa;
+                lastRevDa = parseFloat(lastRow.querySelector('.row-rev-da-input').value) || lastRevDa;
+            }
+
+            const rowIndex = currentRows.length;
+            const row = document.createElement('tr');
+            row.dataset.isAcp = 'false';
+            row.dataset.isInc = 'false';
+
+            let monthOptionsHtml = '';
+            MONTH_NAMES.forEach((mName, mIdx) => {
+                const selected = (mIdx + 1 === nextMonthIndex) ? 'selected' : '';
+                monthOptionsHtml += `<option value="${mIdx + 1}" ${selected}>${mName}</option>`;
+            });
+
+            row.innerHTML = `
+                <td class="no-print">
+                    <button type="button" class="btn-delete-row" onclick="deleteRow(this)" title="Delete Row">✕</button>
+                </td>
+                <td>${rowIndex + 1}.</td>
+                <td>
+                    <select class="table-input row-month-select">
+                        ${monthOptionsHtml}
+                    </select>
+                </td>
+                <td>
+                    <input type="number" class="table-input row-year-input" value="${nextYear}" min="1900" max="2100">
+                </td>
+                <td><input type="number" class="table-input row-basic-input" value="0" step="100"></td>
+                <td><input type="number" class="table-input row-prev-da-input" value="${lastPrevDa}" step="0.01"></td>
+                <td><input type="number" class="table-input row-rev-da-input" value="${lastRevDa}" step="0.01"></td>
+                <td class="row-gross">₹0</td>
+                <td class="row-cpf">₹0</td>
+                <td class="row-net"><strong>₹0</strong></td>
+            `;
+
+            tableBody.appendChild(row);
+
+            attachRowEventListeners(row, rowIndex);
+        }
+
+        updateRowNumbers();
+        recalculateTableFromStart();
+    }
+
+    function attachRowEventListeners(row, initialIndex) {
+        const rowInputs = row.querySelectorAll('.table-input');
+        rowInputs.forEach(input => {
+            input.addEventListener('input', (e) => handleRowInputChange(e));
+            input.addEventListener('change', (e) => handleRowInputChange(e));
+
+            if (input.tagName === 'INPUT') {
+                input.addEventListener('focus', function() {
+                    this.dataset.previousVal = this.value;
+                    this.value = '';
+                });
+                input.addEventListener('blur', function() {
+                    if (this.value.trim() === '') {
+                        this.value = this.dataset.previousVal !== undefined ? this.dataset.previousVal : '';
+                        handleRowInputChange({ target: this });
+                    }
+                });
+            }
+        });
+    }
+
+    function updateRowNumbers() {
+        const rows = document.querySelectorAll('#breakdownTableBody tr');
+        rows.forEach((r, idx) => {
+            r.querySelector('td:nth-child(2)').textContent = `${idx + 1}.`;
+        });
+    }
+
+    function handleRowInputChange(event) {
+        const rows = Array.from(document.querySelectorAll('#breakdownTableBody tr'));
+        const target = event.target;
+        const row = target.closest('tr');
+        const rowIndex = rows.indexOf(row);
+
+        if (rowIndex === -1) return;
+
+        if (target.classList.contains('row-basic-input')) {
+            row.dataset.manualBasic = "true";
+        } else if (target.classList.contains('row-month-select') || target.classList.contains('row-year-input')) {
+            let currentMonth = parseInt(row.querySelector('.row-month-select').value) || 1;
+            let currentYear = parseInt(row.querySelector('.row-year-input').value) || new Date().getFullYear();
+
+            for (let k = rowIndex + 1; k < rows.length; k++) {
+                if (currentMonth === 12) {
+                    currentMonth = 1;
+                    currentYear += 1;
+                } else {
+                    currentMonth += 1;
+                }
+
+                rows[k].querySelector('.row-month-select').value = currentMonth;
+                rows[k].querySelector('.row-year-input').value = currentYear;
+            }
+        } else if (target.classList.contains('row-prev-da-input')) {
+            const newPrevDa = target.value;
+            for (let k = rowIndex + 1; k < rows.length; k++) {
+                rows[k].querySelector('.row-prev-da-input').value = newPrevDa;
+            }
+        } else if (target.classList.contains('row-rev-da-input')) {
+            const newRevDa = target.value;
+            for (let k = rowIndex + 1; k < rows.length; k++) {
+                rows[k].querySelector('.row-rev-da-input').value = newRevDa;
+            }
+        }
+
+        recalculateTableFromStart();
+    }
+
+    function recalculateTableFromStart() {
+        const rows = Array.from(document.querySelectorAll('#breakdownTableBody tr'));
+        if (rows.length === 0) return;
+
+        const incMonth = document.getElementById('incrementMonth').value;
+        const noOfAcp = parseInt(document.getElementById('noOfAcp').value) || 0;
+        const acpMonths = [];
+        for (let i = 1; i <= noOfAcp; i++) {
+            const acpEl = document.getElementById(`acpMonth${i}`);
+            if (acpEl && acpEl.value) {
+                acpMonths.push(acpEl.value);
+            }
+        }
+
+        let runningBasic = parseFloat(document.getElementById('basicPay').value) || 0;
+
+        rows.forEach((row, index) => {
+            const mIndex = parseInt(row.querySelector('.row-month-select').value) || 1;
+            const yearStr = row.querySelector('.row-year-input').value;
+            const currentYearMonthStr = `${yearStr}-${String(mIndex).padStart(2, '0')}`;
+
+            const isAcpMonth = (index > 0 && acpMonths.includes(currentYearMonthStr));
+            const isIncMonth = (index > 0 && incMonth !== 'None' && parseInt(incMonth) === mIndex);
+
+            row.dataset.isAcp = isAcpMonth;
+            row.dataset.isInc = isIncMonth;
+
+            if (index === 0) {
+                if (row.dataset.manualBasic !== "true") {
+                    row.querySelector('.row-basic-input').value = runningBasic;
+                } else {
+                    runningBasic = parseFloat(row.querySelector('.row-basic-input').value) || runningBasic;
+                }
+            } else {
+                if (row.dataset.manualBasic === "true") {
+                    runningBasic = parseFloat(row.querySelector('.row-basic-input').value) || runningBasic;
+                } else {
+                    if (isAcpMonth) {
+                        const inc1 = Math.round((runningBasic * 0.03) / 100) * 100;
+                        runningBasic += inc1;
+                        const inc2 = Math.round((runningBasic * 0.03) / 100) * 100;
+                        runningBasic += inc2;
+                    } else if (isIncMonth) {
+                        const inc1 = Math.round((runningBasic * 0.03) / 100) * 100;
+                        runningBasic += inc1;
+                    }
+                    row.querySelector('.row-basic-input').value = runningBasic;
+                }
+            }
+
+            updateRowCalculations(row);
+        });
+
+        updateTotals();
+    }
+
+    function updateRowCalculations(row) {
+        const empType = document.getElementById('employeeType').value;
+        let cpfRate = parseFloat(document.getElementById('gpfNps').value) || 0;
+        
+        if (empType === 'OPS') {
+            cpfRate = 0;
+        }
+
+        const basic = parseFloat(row.querySelector('.row-basic-input').value) || 0;
+        const prevDaRate = parseFloat(row.querySelector('.row-prev-da-input').value) || 0;
+        const revDaRate = parseFloat(row.querySelector('.row-rev-da-input').value) || 0;
+
         const prevDaAmount = Math.round(basic * (prevDaRate / 100));
         const revDaAmount = Math.round(basic * (revDaRate / 100));
         
@@ -791,27 +1177,47 @@
         document.getElementById('fromMonth').value = '2024-01';
         document.getElementById('toMonth').value = '2026-07';
         document.getElementById('basicPay').value = 0;
+        document.getElementById('addRowInput').value = 1;
         toggleCpfVisibility();
         calculateArrears();
     }
 
-    document.addEventListener('focusin', function(e) {
-        if (e.target && (e.target.id === 'previousDa' || e.target.id === 'revisedDa' || e.target.id === 'basicPay' || e.target.id === 'gpfNps')) {
-            e.target.dataset.previousVal = e.target.value;
-            e.target.value = '';
-        }
+    ['previousDa', 'revisedDa', 'basicPay', 'gpfNps'].forEach(id => {
+        const el = document.getElementById(id);
+        if (!el) return;
+
+        el.addEventListener('focus', function() {
+            this.dataset.previousVal = this.value;
+            this.value = '';
+        });
+
+        el.addEventListener('blur', function() {
+            if (this.value.trim() === '') {
+                this.value = (this.dataset.previousVal !== undefined && this.dataset.previousVal !== '') ? this.dataset.previousVal : '0';
+                this.dispatchEvent(new Event('input', { bubbles: true }));
+            }
+        });
+
+        el.addEventListener('input', calculateArrears);
+        el.addEventListener('change', calculateArrears);
     });
 
-    document.addEventListener('focusout', function(e) {
-        if (e.target && (e.target.id === 'previousDa' || e.target.id === 'revisedDa' || e.target.id === 'basicPay' || e.target.id === 'gpfNps')) {
-            if (e.target.value.trim() === '') {
-                e.target.value = (e.target.dataset.previousVal !== undefined && e.target.dataset.previousVal !== '') ? e.target.dataset.previousVal : '0';
-                e.target.dispatchEvent(new Event('input', { bubbles: true }));
+    const formContainer = document.querySelector('.card .form-grid');
+    if (formContainer) {
+        formContainer.addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                const inputs = Array.from(formContainer.querySelectorAll('input, select')).filter(inp => inp.offsetParent !== null && !inp.readOnly);
+                const currentIndex = inputs.indexOf(e.target);
+                if (currentIndex !== -1 && currentIndex < inputs.length - 1) {
+                    inputs[currentIndex + 1].focus();
+                }
             }
-        }
-    });
+        });
+    }
 
     document.querySelectorAll('.form-grid input, .form-grid select').forEach(element => {
+        if (['previousDa', 'revisedDa', 'basicPay', 'gpfNps'].includes(element.id)) return;
         element.addEventListener('input', calculateArrears);
         element.addEventListener('change', calculateArrears);
     });
