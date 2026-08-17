@@ -787,10 +787,10 @@
             toY.appendChild(opt2);
         }
 
-        fromM.value = "1";
-        fromY.value = "2024";
-        toM.value = "7";
-        toY.value = "2026";
+        fromM.value = "7";
+        fromY.value = "2022";
+        toM.value = "6";
+        toY.value = "2023";
 
         [fromM, fromY, toM, toY].forEach(el => {
             el.addEventListener('change', calculateArrears);
@@ -1287,22 +1287,26 @@
     }
 
     function resetCalculator() {
-        document.getElementById('employeeType').value = 'OPS';
-        document.getElementById('gpfNps').value = 10;
-        document.getElementById('incrementMonth').value = '10';
-        document.getElementById('noOfAcp').value = '0';
-        renderAcpInputs();
-        document.getElementById('previousDa').value = 0;
-        document.getElementById('revisedDa').value = 0;
-        document.getElementById('fromMonth').value = '1';
-        document.getElementById('fromYear').value = '2024';
-        document.getElementById('toMonth').value = '7';
-        document.getElementById('toYear').value = '2026';
-        document.getElementById('basicPay').value = 0;
-        document.getElementById('addRowInput').value = 1;
-        toggleCpfVisibility();
-        calculateArrears();
-    }
+    document.getElementById('employeeType').value = 'OPS';
+    document.getElementById('gpfNps').value = 10;
+    document.getElementById('incrementMonth').value = '10';
+    document.getElementById('noOfAcp').value = '0';
+    renderAcpInputs();
+    document.getElementById('previousDa').value = 0;
+    document.getElementById('revisedDa').value = 0;
+
+    // Yaha par bhi new defaults set kar dein:
+    document.getElementById('fromMonth').value = '7';
+    document.getElementById('fromYear').value = '2022';
+    document.getElementById('toMonth').value = '6';
+    document.getElementById('toYear').value = '2023';
+
+    document.getElementById('basicPay').value = 0;
+    document.getElementById('addRowInput').value = 1;
+    toggleCpfVisibility();
+    calculateArrears();
+}
+
 
     ['previousDa', 'revisedDa', 'basicPay', 'gpfNps'].forEach(id => {
         const el = document.getElementById(id);
