@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Financial Calculator</title>
 
     <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2270%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>FD</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2270%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>FD</text></svg>">
 
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2270%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>FD</text></svg>">
+    <!-- CDN html2canvas Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         :root {
@@ -111,6 +113,37 @@
         .total-row .result-label { font-size: 18px; font-weight: 800; }
         .total-row .result-value { font-size: 30px; }
 
+        .share-btn {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            left: auto;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            transition: transform 0.2s, background-color 0.2s;
+        }
+
+        .share-btn:active {
+            transform: scale(0.92);
+            background-color: #1557b0;
+        }
+
+        .share-btn svg {
+            width: 26px;
+            height: 26px;
+            fill: currentColor;
+        }
+
         @media (max-height: 700px) {
             .calc-container { min-height: auto; padding: 15px; }
             h2 { font-size: 22px; }
@@ -122,7 +155,7 @@
 </head>
 <body>
 
-<div class="calc-container">
+<div class="calc-container" id="calcCard">
     <h2 id="calc-title">Fixed Deposit</h2>
 
     <div class="tab-menu">
@@ -172,7 +205,6 @@
     <button class="btn-reset" onclick="resetCalc()">Reset</button>
 
     <div class="result-box">
-
         <div class="result-item" id="row-sub">
             <span class="result-label" id="res-sub-label">Total Investment</span>
             <span class="result-value" id="res-sub">0</span>
@@ -197,9 +229,14 @@
             <span class="result-label" id="res-total-label">Maturity Amount</span>
             <span class="result-value" id="res-total">0</span>
         </div>
-
     </div>
 </div>
+
+<button class="share-btn" id="shareBtn" onclick="takeScreenshot()" title="Share Calculation">
+    <svg viewBox="0 0 24 24">
+        <path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.70l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.70L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
+    </svg>
+</button>
 
 <script>
     let currentMode = 'FD';
@@ -209,6 +246,54 @@
         'EMI': { principal: '', rate: '', frequency: '4', years: '', months: '', days: '' },
         'LOAN': { principal: '', rate: '', frequency: '4', years: '', months: '', days: '' }
     };
+
+    async function takeScreenshot() {
+        if (typeof html2canvas === 'undefined') {
+            alert("html2canvas library load nahi hui.");
+            return;
+        }
+
+        const cardTarget = document.getElementById('calcCard');
+
+        try {
+            const canvas = await html2canvas(cardTarget, { 
+                scale: 2, 
+                useCORS: true,
+                backgroundColor: '#ffffff'
+            });
+
+            canvas.toBlob(async (blob) => {
+                if (!blob) {
+                    alert("Image generate nahi ho payi.");
+                    return;
+                }
+
+                const file = new File([blob], 'calculation.png', { type: 'image/png' });
+
+                // Direct file sharing without extra text/title
+                if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                    try {
+                        await navigator.share({
+                            files: [file]
+                        });
+                        return;
+                    } catch (shareErr) {
+                        if (shareErr.name === 'AbortError') return;
+                    }
+                }
+
+                // Fallback direct image download
+                const link = document.createElement('a');
+                link.download = 'calculation.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+
+            }, 'image/png');
+
+        } catch (err) {
+            alert("Error: " + err.message);
+        }
+    }
 
     function formatAmount(input) {
         let cursorPosition = input.selectionStart;
@@ -257,7 +342,6 @@
     }
 
     function switchTab(mode) {
-        // Save current inputs to formData
         formData[currentMode] = {
             principal: document.getElementById('principal').value,
             rate: document.getElementById('rate').value,
@@ -298,7 +382,6 @@
             rowInterest.style.order = "2";
             rowDivider.style.order = "3";
             rowTotal.style.order = "4";
-
         }
         else if (mode === 'EMI' || mode === 'LOAN') {
             rowEmi.classList.remove('hidden');
@@ -326,7 +409,6 @@
             amountLabel.innerText = 'Monthly EMI';
         }
 
-        // Load data for the new mode
         const data = formData[mode];
         document.getElementById('principal').value = data.principal;
         document.getElementById('rate').value = data.rate;
@@ -341,7 +423,6 @@
 
     function resetCalc() {
         document.getElementById('calcForm').reset();
-        // Clear stored data for current mode too
         formData[currentMode] = { principal: '', rate: '', frequency: '4', years: '', months: '', days: '' };
 
         document.getElementById('res-sub').innerText = "0";
@@ -421,19 +502,11 @@
             document.getElementById('res-total').innerText = format(total);
         }
         else if (currentMode === 'RD') {
-            // Re-check tMonths validity specifically for RD/EMI logic if needed,
-            // but usually RD/EMI require at least 1 month conceptually.
-            // For RD, if tMonths is 0 (only days entered), we can default to simple interest on days or force min 1 month.
-            // Here assuming RD/EMI users enter months.
-
             if (tMonths <= monthsPerCompounding) {
                 let simpleInt = 0;
-                // If only days are entered, tMonths might be 0 or 1.
-                // Standard RD formulas work on monthly integers.
-                // Fallback to simple logic if tMonths is small
                 if (tMonths < 1) {
-                    interest = P * (R/100) * T; // Treat as single deposit for duration
-                    subVal = P; // Only 1 deposit effectively
+                    interest = P * (R/100) * T; 
+                    subVal = P; 
                 } else {
                     for(let i=1; i<=tMonths; i++) {
                         let monthsInvested = tMonths - i + 1;
@@ -458,7 +531,6 @@
         }
         else if (currentMode === 'EMI') {
             if (tMonths < 1) {
-               // EMI doesn't make sense for < 1 month usually, treat as simple interest
                emiVal = P + (P * (R/100) * T);
                interest = P * (R/100) * T;
                total = emiVal;
@@ -476,11 +548,7 @@
             document.getElementById('res-total').innerText = format(emiVal);
         }
         else if (currentMode === 'LOAN') {
-            if (tMonths < 1) {
-                // Edge case handling
-                interest = 0;
-                loanPrincipal = 0;
-            } else {
+            if (tMonths >= 1) {
                 const monthlyRate = (R / 100) / 12;
                 const loanPrincipal = P / ((monthlyRate * Math.pow(1 + monthlyRate, tMonths)) / (Math.pow(1 + monthlyRate, tMonths) - 1));
                 let totalRepayment = P * tMonths;
@@ -505,7 +573,6 @@
 
     switchTab('FD');
 
-    // Swipe Navigation
     let touchstartX = 0;
     let touchendX = 0;
     const modes = ['FD', 'RD', 'EMI', 'LOAN'];
@@ -517,10 +584,8 @@
 
         let index = modes.indexOf(currentMode);
         if (diff < 0) {
-            // Swipe Left -> Next Tab
             if (index < modes.length - 1) switchTab(modes[index + 1]);
         } else {
-            // Swipe Right -> Previous Tab
             if (index > 0) switchTab(modes[index - 1]);
         }
     }
