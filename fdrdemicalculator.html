@@ -1,17 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-
 <meta charset="UTF-8">
-
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>Financial Calculator</title>
 
-<link rel="icon"
-href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2270%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>FD</text></svg>">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2270%22 fill=%22white%22 font-family=%22Verdana%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>FD</text></svg>">
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
@@ -229,7 +224,6 @@ select:focus {
 
 .share-btn:active {
     transform: scale(0.92);
-    background-color: #1557b0;
 }
 
 .share-btn svg {
@@ -262,54 +256,36 @@ select:focus {
     .total-row .result-value {
         font-size: 24px;
     }
-
 }
 
 </style>
-
 </head>
-
 
 <body>
 
-
 <div class="calc-container" id="calcCard">
 
-<h2 id="calc-title">
-Fixed Deposit
-</h2>
-
+<h2 id="calc-title">Fixed Deposit</h2>
 
 <div class="tab-menu">
 
-<button
-onclick="switchTab('FD')"
-class="active"
-id="tab-FD">
+<button onclick="switchTab('FD')" class="active" id="tab-FD">
 FD
 </button>
 
-<button
-onclick="switchTab('RD')"
-id="tab-RD">
+<button onclick="switchTab('RD')" id="tab-RD">
 RD
 </button>
 
-<button
-onclick="switchTab('EMI')"
-id="tab-EMI">
+<button onclick="switchTab('EMI')" id="tab-EMI">
 EMI
 </button>
 
-<button
-onclick="switchTab('LOAN')"
-id="tab-LOAN">
+<button onclick="switchTab('LOAN')" id="tab-LOAN">
 LOAN
 </button>
 
-<button
-onclick="switchTab('ANNUITY')"
-id="tab-ANNUITY">
+<button onclick="switchTab('ANNUITY')" id="tab-ANNUITY">
 ANNUITY
 </button>
 
@@ -317,7 +293,6 @@ ANNUITY
 
 
 <form id="calcForm">
-
 
 <div class="input-group">
 
@@ -352,6 +327,8 @@ placeholder="0">
 </div>
 
 
+<!-- FREQUENCY -->
+
 <div
 class="input-group"
 id="freq-container">
@@ -385,8 +362,9 @@ Yearly
 </div>
 
 
-<div class="time-inputs">
+<!-- TIME -->
 
+<div class="time-inputs">
 
 <div class="input-group">
 
@@ -437,7 +415,6 @@ placeholder="0">
 
 </div>
 
-
 </div>
 
 </form>
@@ -452,8 +429,9 @@ Reset
 </button>
 
 
-<div class="result-box">
+<!-- RESULTS -->
 
+<div class="result-box">
 
 <div
 class="result-item"
@@ -564,11 +542,12 @@ id="res-total">
 
 </div>
 
-
 </div>
 
 </div>
 
+
+<!-- SHARE -->
 
 <button
 class="share-btn"
@@ -578,7 +557,7 @@ title="Share Calculation">
 
 <svg viewBox="0 0 24 24">
 
-<path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7s-.04-.47-.09-.70l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.70L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92 1.61 0 2.92-1.31 2.92-2.92 0-1.61-1.31-2.92-2.92-2.92z"/>
+<path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46-.09-.70l7.05-4.11c.54.5 1.25.81 2.04.81 1.66 0 3-1.34 3-3s-1.34-3-3-3-3 1.34-3 3c0 .24.04.47.09.70L8.04 9.81C7.5 9.31 6.79 9 6 9c-1.66 0-3 1.34-3 3s1.34 3 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.16c-.05.21-.08.43-.08.65 0 1.61 1.31 2.92 2.92 2.92s2.92-1.31 2.92-2.92c0-1.61-1.31-2.92-2.92-2.92z"/>
 
 </svg>
 
@@ -590,163 +569,121 @@ title="Share Calculation">
 let currentMode = 'FD';
 
 
-/* =========================================
+/* =================================================
    DATA
-   ========================================= */
+================================================= */
 
 const formData = {
 
 FD: {
-principal:'',
-rate:'',
-frequency:'4',
-years:'',
-months:'',
-days:''
+principal: '',
+rate: '',
+frequency: '4',
+years: '',
+months: '',
+days: ''
 },
 
 RD: {
-principal:'',
-rate:'',
-frequency:'4',
-years:'',
-months:'',
-days:''
+principal: '',
+rate: '',
+frequency: '4',
+years: '',
+months: '',
+days: ''
 },
 
 EMI: {
-principal:'',
-rate:'',
-frequency:'4',
-years:'',
-months:'',
-days:''
+principal: '',
+rate: '',
+frequency: '4',
+years: '',
+months: '',
+days: ''
 },
 
 LOAN: {
-principal:'',
-rate:'',
-frequency:'4',
-years:'',
-months:'',
-days:''
+principal: '',
+rate: '',
+frequency: '4',
+years: '',
+months: '',
+days: ''
 },
 
 ANNUITY: {
-principal:'',
-rate:'',
-frequency:'4',
-years:'',
-months:'',
-days:''
+principal: '',
+rate: '',
+frequency: '4',
+years: '',
+months: '',
+days: ''
 }
 
 };
 
 
-/* =========================================
-   SCREENSHOT
-   ========================================= */
+/* =================================================
+   SCREENSHOT / SHARE
+================================================= */
 
 async function takeScreenshot() {
-
     if (typeof html2canvas === 'undefined') {
-        alert("Screenshot library load nahi hui.");
+        alert("html2canvas library load nahi hui.");
         return;
     }
 
     const cardTarget = document.getElementById('calcCard');
 
     try {
-
         const canvas = await html2canvas(cardTarget, {
             scale: 2,
             useCORS: true,
             backgroundColor: '#ffffff'
         });
 
-        const base64Image = canvas.toDataURL('image/png');
+        const dataUrl = canvas.toDataURL('image/png');
 
-        /*
-         * Android APK
-         * Java MainActivity ke AndroidBridge ko call karega
-         */
-        if (
-            typeof AndroidBridge !== 'undefined' &&
-            AndroidBridge.shareImage
-        ) {
-
-            AndroidBridge.shareImage(base64Image);
+        // 1. Android App Bridge check aur call
+        if (window.AndroidBridge && typeof window.AndroidBridge.shareImage === 'function') {
+            window.AndroidBridge.shareImage(dataUrl);
             return;
         }
 
-        /*
-         * Browser me chalane par normal sharing
-         */
-        const blob = await new Promise(resolve =>
-            canvas.toBlob(resolve, 'image/png')
-        );
-
-        if (!blob) {
-            alert("Image generate nahi ho payi.");
-            return;
-        }
-
-        const file = new File(
-            [blob],
-            'calculation.png',
-            {
-                type: 'image/png'
-            }
-        );
-
-        if (
-            navigator.canShare &&
-            navigator.canShare({
-                files: [file]
-            })
-        ) {
-
-            try {
-
-                await navigator.share({
-                    files: [file],
-                    title: 'Calculation'
-                });
-
+        // 2. Normal Web Browser Fallback (agar browser me open ho)
+        canvas.toBlob(async (blob) => {
+            if (!blob) {
+                alert("Image generate nahi ho payi.");
                 return;
-
-            } catch (err) {
-
-                if (err.name === 'AbortError') {
-                    return;
-                }
-
             }
-        }
 
-        /*
-         * Browser fallback
-         */
-        const link = document.createElement('a');
+            const file = new File([blob], 'calculation.png', { type: 'image/png' });
 
-        link.download = 'calculation.png';
+            if (navigator.canShare && navigator.canShare({ files: [file] })) {
+                try {
+                    await navigator.share({ files: [file] });
+                    return;
+                } catch (shareErr) {
+                    if (shareErr.name === 'AbortError') return;
+                }
+            }
 
-        link.href = canvas.toDataURL('image/png');
-
-        link.click();
+            const link = document.createElement('a');
+            link.download = 'calculation.png';
+            link.href = dataUrl;
+            link.click();
+        }, 'image/png');
 
     } catch (err) {
-
-        alert("Screenshot Error: " + err.message);
-
+        alert("Error: " + err.message);
     }
 }
 
 
-/* =========================================
-   INDIAN NUMBER FORMAT
-   ========================================= */
+
+/* =================================================
+   INDIAN NUMBER FORMATTING
+================================================= */
 
 function formatAmount(input) {
 
@@ -758,22 +695,32 @@ input.value;
 
 let meaningfulCharsBefore = 0;
 
-for(let i=0;i<cursorPosition;i++) {
+for (
+let i = 0;
+i < cursorPosition;
+i++
+) {
 
-if(/[0-9.]/.test(originalValue[i])) {
+if (
+/[0-9.]/.test(
+originalValue[i]
+)
+) {
+
 meaningfulCharsBefore++;
+
 }
 
 }
 
 let rawValue =
 input.value
-.replace(/,/g,'')
-.replace(/[^0-9.]/g,'');
+.replace(/,/g, '')
+.replace(/[^0-9.]/g, '');
 
-if(!rawValue) {
+if (!rawValue) {
 
-input.value="";
+input.value = "";
 
 calculate();
 
@@ -796,10 +743,13 @@ let lastThree =
 integerPart.slice(-3);
 
 let otherNumbers =
-integerPart.slice(0,-3);
+integerPart.slice(0, -3);
 
-if(otherNumbers !== '') {
-lastThree=',' + lastThree;
+if (otherNumbers !== '') {
+
+lastThree =
+',' + lastThree;
+
 }
 
 let formattedInteger =
@@ -809,32 +759,45 @@ otherNumbers.replace(
 ) + lastThree;
 
 let newValue =
-formattedInteger + decimalPart;
+formattedInteger +
+decimalPart;
 
 input.value =
 newValue;
 
-let newCursorPos=0;
-let meaningfulCharsSeen=0;
+let newCursorPos = 0;
 
-for(let i=0;i<newValue.length;i++) {
+let meaningfulCharsSeen = 0;
 
-if(
+for (
+let i = 0;
+i < newValue.length;
+i++
+) {
+
+if (
 meaningfulCharsSeen ===
 meaningfulCharsBefore
 ) {
 
-newCursorPos=i;
+newCursorPos = i;
 
 break;
 
 }
 
-if(/[0-9.]/.test(newValue[i])) {
+if (
+/[0-9.]/.test(
+newValue[i]
+)
+) {
+
 meaningfulCharsSeen++;
+
 }
 
-newCursorPos=i+1;
+newCursorPos =
+i + 1;
 
 }
 
@@ -848,300 +811,422 @@ calculate();
 }
 
 
-/* =========================================
-   FREQUENCY OPTIONS
-   IMPORTANT:
-   No frequency is disabled.
-   No automatic frequency switching.
-   ========================================= */
-
-function updateFrequencyOptions() {
-
-const frequency =
-document.getElementById('frequency');
-
-
-const options =
-frequency.querySelectorAll('option');
-
-options.forEach(option => {
-
-option.disabled = false;
-
-});
-
-}
-
-
-/* =========================================
+/* =================================================
    SWITCH TAB
-   ========================================= */
+================================================= */
 
 function switchTab(mode) {
 
+/*
+Save current data
+*/
 
 formData[currentMode] = {
 
 principal:
-document.getElementById('principal').value,
+document.getElementById(
+'principal'
+).value,
 
 rate:
-document.getElementById('rate').value,
+document.getElementById(
+'rate'
+).value,
 
 frequency:
-document.getElementById('frequency').value,
+document.getElementById(
+'frequency'
+).value,
 
 years:
-document.getElementById('years').value,
+document.getElementById(
+'years'
+).value,
 
 months:
-document.getElementById('months').value,
+document.getElementById(
+'months'
+).value,
 
 days:
-document.getElementById('days').value
+document.getElementById(
+'days'
+).value
 
 };
 
 
-currentMode=mode;
+currentMode =
+mode;
 
+
+/*
+Active tab
+*/
 
 document
-.querySelectorAll('.tab-menu button')
-.forEach(btn =>
-btn.classList.remove('active')
+.querySelectorAll(
+'.tab-menu button'
+)
+.forEach(
+btn =>
+btn.classList.remove(
+'active'
+)
+);
+
+document
+.getElementById(
+'tab-' + mode
+)
+.classList.add(
+'active'
 );
 
 
-document
-.getElementById('tab-'+mode)
-.classList.add('active');
-
-
 const title =
-document.getElementById('calc-title');
+document.getElementById(
+'calc-title'
+);
 
 const amountLabel =
-document.getElementById('amount-label');
+document.getElementById(
+'amount-label'
+);
 
 const freqContainer =
-document.getElementById('freq-container');
+document.getElementById(
+'freq-container'
+);
 
 const daysContainer =
-document.getElementById('days-container');
+document.getElementById(
+'days-container'
+);
 
 const rowEmi =
-document.getElementById('row-emi');
+document.getElementById(
+'row-emi'
+);
 
 const rowSub =
-document.getElementById('row-sub');
+document.getElementById(
+'row-sub'
+);
 
 const rowInterest =
-document.getElementById('row-interest');
+document.getElementById(
+'row-interest'
+);
 
 const rowTotal =
-document.getElementById('row-total');
+document.getElementById(
+'row-total'
+);
 
 const rowDivider =
-document.getElementById('row-divider');
+document.getElementById(
+'row-divider'
+);
 
 const pctBadge =
-document.getElementById('int-pct');
+document.getElementById(
+'int-pct'
+);
 
 
-/* DAYS */
+/*
+DAYS
+*/
 
-if(mode === 'FD') {
+if (
+mode === 'FD'
+) {
 
-daysContainer.classList.remove('hidden');
+daysContainer
+.classList
+.remove('hidden');
+
+}
+else {
+
+daysContainer
+.classList
+.add('hidden');
+
+}
+
+
+/*
+FD / RD
+*/
+
+if (
+mode === 'FD' ||
+mode === 'RD'
+) {
+
+rowEmi
+.classList
+.add('hidden');
+
+freqContainer
+.classList
+.remove('hidden');
+
+pctBadge
+.classList
+.remove('hidden');
+
+rowSub.style.order = "1";
+rowInterest.style.order = "2";
+rowDivider.style.order = "3";
+rowTotal.style.order = "4";
+
+}
+
+
+/*
+EMI / LOAN
+*/
+
+else if (
+mode === 'EMI' ||
+mode === 'LOAN'
+) {
+
+rowEmi
+.classList
+.remove('hidden');
+
+freqContainer
+.classList
+.add('hidden');
+
+pctBadge
+.classList
+.remove('hidden');
+
+rowSub.style.order = "1";
+rowInterest.style.order = "2";
+rowEmi.style.order = "3";
+rowDivider.style.order = "4";
+rowTotal.style.order = "5";
+
+}
+
+
+/*
+ANNUITY
+*/
+
+else if (
+mode === 'ANNUITY'
+) {
+
+rowEmi
+.classList
+.remove('hidden');
+
+freqContainer
+.classList
+.remove('hidden');
+
+daysContainer
+.classList
+.add('hidden');
+
+pctBadge
+.classList
+.remove('hidden');
+
+rowSub.style.order = "1";
+rowInterest.style.order = "2";
+rowEmi.style.order = "3";
+rowDivider.style.order = "4";
+rowTotal.style.order = "5";
+
+}
+
+
+/*
+TITLES
+*/
+
+if (
+mode === 'FD'
+) {
+
+title.innerText =
+'Fixed Deposit';
+
+amountLabel.innerText =
+'Principal Amount';
+
+}
+
+else if (
+mode === 'RD'
+) {
+
+title.innerText =
+'Recurring Deposit';
+
+amountLabel.innerText =
+'Monthly Deposit';
+
+}
+
+else if (
+mode === 'EMI'
+) {
+
+title.innerText =
+'EMI Calculator';
+
+amountLabel.innerText =
+'Loan Principal';
+
+}
+
+else if (
+mode === 'LOAN'
+) {
+
+title.innerText =
+'Loan Calculator';
+
+amountLabel.innerText =
+'Monthly EMI';
 
 }
 
 else {
 
-daysContainer.classList.add('hidden');
+title.innerText =
+'Annuity Deposit';
+
+amountLabel.innerText =
+'Initial Deposit';
 
 }
 
 
-/* FD / RD */
-
-if(
-mode === 'FD' ||
-mode === 'RD'
-) {
-
-rowEmi.classList.add('hidden');
-
-freqContainer.classList.remove('hidden');
-
-pctBadge.classList.remove('hidden');
-
-rowSub.style.order="1";
-rowInterest.style.order="2";
-rowDivider.style.order="3";
-rowTotal.style.order="4";
-
-}
-
-
-/* EMI / LOAN */
-
-else if(
-mode === 'EMI' ||
-mode === 'LOAN'
-) {
-
-rowEmi.classList.remove('hidden');
-
-freqContainer.classList.add('hidden');
-
-pctBadge.classList.remove('hidden');
-
-rowSub.style.order="1";
-rowInterest.style.order="2";
-rowEmi.style.order="3";
-rowDivider.style.order="4";
-rowTotal.style.order="5";
-
-}
-
-
-/* ANNUITY */
-
-else if(mode === 'ANNUITY') {
-
-rowEmi.classList.remove('hidden');
-
-freqContainer.classList.remove('hidden');
-
-daysContainer.classList.add('hidden');
-
-pctBadge.classList.remove('hidden');
-
-rowSub.style.order="1";
-rowInterest.style.order="2";
-rowEmi.style.order="3";
-rowDivider.style.order="4";
-rowTotal.style.order="5";
-
-}
-
-
-/* TITLES */
-
-if(mode === 'FD') {
-
-title.innerText='Fixed Deposit';
-
-amountLabel.innerText='Principal Amount';
-
-}
-
-else if(mode === 'RD') {
-
-title.innerText='Recurring Deposit';
-
-amountLabel.innerText='Monthly Deposit';
-
-}
-
-else if(mode === 'EMI') {
-
-title.innerText='EMI Calculator';
-
-amountLabel.innerText='Loan Principal';
-
-}
-
-else if(mode === 'LOAN') {
-
-title.innerText='Loan Calculator';
-
-amountLabel.innerText='Monthly EMI';
-
-}
-
-else if(mode === 'ANNUITY') {
-
-title.innerText='Annuity Deposit';
-
-amountLabel.innerText='Initial Deposit';
-
-}
-
-
-/* LOAD SAVED DATA */
+/*
+Load saved data
+*/
 
 const data =
 formData[mode];
 
-document.getElementById('principal').value =
+document.getElementById(
+'principal'
+).value =
 data.principal;
 
-document.getElementById('rate').value =
+document.getElementById(
+'rate'
+).value =
 data.rate;
 
-document.getElementById('frequency').value =
-data.frequency || '4';
 
-document.getElementById('years').value =
+/*
+IMPORTANT:
+हर tab पर frequency default Quarterly
+*/
+
+document.getElementById(
+'frequency'
+).value =
+'4';
+
+
+document.getElementById(
+'years'
+).value =
 data.years;
 
-document.getElementById('months').value =
+document.getElementById(
+'months'
+).value =
 data.months;
 
-document.getElementById('days').value =
+document.getElementById(
+'days'
+).value =
 data.days;
 
 
 updateLabels();
 
-updateFrequencyOptions();
-
 calculate();
 
 }
 
 
-/* =========================================
+/* =================================================
    RESET
-   ========================================= */
+================================================= */
 
 function resetCalc() {
 
 document
-.getElementById('calcForm')
+.getElementById(
+'calcForm'
+)
 .reset();
 
 
 formData[currentMode] = {
 
-principal:'',
-rate:'',
-frequency:'4',
-years:'',
-months:'',
-days:''
+principal: '',
+rate: '',
+frequency: '4',
+years: '',
+months: '',
+days: ''
 
 };
 
 
-document.getElementById('frequency').value='4';
+/*
+Always Quarterly after reset
+*/
+
+document.getElementById(
+'frequency'
+).value =
+'4';
 
 
-document.getElementById('res-sub').innerText='0';
+/*
+Clear results
+*/
 
-document.getElementById('res-emi').innerText='0';
+document.getElementById(
+'res-sub'
+).innerText =
+"0";
 
-document.getElementById('res-interest').innerText='0';
+document.getElementById(
+'res-emi'
+).innerText =
+"0";
 
-document.getElementById('res-total').innerText='0';
+document.getElementById(
+'res-interest'
+).innerText =
+"0";
 
-document.getElementById('int-pct').innerText='0%';
+document.getElementById(
+'res-total'
+).innerText =
+"0";
 
-
-updateFrequencyOptions();
+document.getElementById(
+'int-pct'
+).innerText =
+"0%";
 
 updateLabels();
 
@@ -1150,26 +1235,36 @@ calculate();
 }
 
 
-/* =========================================
+/* =================================================
    RESULT LABELS
-   ========================================= */
+================================================= */
 
 function updateLabels() {
 
 const subLabel =
-document.getElementById('res-sub-label');
+document.getElementById(
+'res-sub-label'
+);
 
 const emiLabel =
-document.getElementById('res-emi-label');
+document.getElementById(
+'res-emi-label'
+);
 
 const intLabel =
-document.getElementById('res-interest-label');
+document.getElementById(
+'res-interest-label'
+);
 
 const totalLabel =
-document.getElementById('res-total-label');
+document.getElementById(
+'res-total-label'
+);
 
 
-if(currentMode === 'EMI') {
+if (
+currentMode === 'EMI'
+) {
 
 subLabel.innerText =
 "Loan Principal";
@@ -1185,7 +1280,9 @@ totalLabel.innerText =
 
 }
 
-else if(currentMode === 'LOAN') {
+else if (
+currentMode === 'LOAN'
+) {
 
 subLabel.innerText =
 "Monthly EMI";
@@ -1201,7 +1298,9 @@ totalLabel.innerText =
 
 }
 
-else if(currentMode === 'ANNUITY') {
+else if (
+currentMode === 'ANNUITY'
+) {
 
 subLabel.innerText =
 "Initial Deposit";
@@ -1233,87 +1332,105 @@ totalLabel.innerText =
 }
 
 
-/* =========================================
+/* =================================================
    MAIN CALCULATION
-   ========================================= */
+================================================= */
 
 function calculate() {
 
-
-/*
-Important:
-Frequency options are NEVER disabled
-and NEVER automatically changed.
-*/
-
-updateFrequencyOptions();
-
-
 const principalInput =
-document.getElementById('principal')
-.value
-.replace(/,/g,'');
+document.getElementById(
+'principal'
+).value
+.replace(/,/g, '');
 
 const P =
-parseFloat(principalInput) || 0;
+parseFloat(
+principalInput
+) || 0;
 
 const R =
 parseFloat(
-document.getElementById('rate').value
+document.getElementById(
+'rate'
+).value
 ) || 0;
 
 const n =
 parseInt(
-document.getElementById('frequency').value
+document.getElementById(
+'frequency'
+).value
 ) || 4;
 
 const y =
 parseFloat(
-document.getElementById('years').value
+document.getElementById(
+'years'
+).value
 ) || 0;
 
 const m =
 parseFloat(
-document.getElementById('months').value
+document.getElementById(
+'months'
+).value
 ) || 0;
 
 const d =
 parseFloat(
-document.getElementById('days').value
+document.getElementById(
+'days'
+).value
 ) || 0;
-
 
 const T =
 y +
-(m/12) +
-(d/365);
-
+(m / 12) +
+(d / 365);
 
 const tMonths =
 Math.round(
-y*12 +
+y * 12 +
 m +
-(d/30)
+(d / 30)
 );
 
 
-/* CLEAR */
+/*
+Clear results
+*/
 
-if(
-P<=0 ||
-R<=0 ||
-T<=0
+if (
+P <= 0 ||
+R <= 0 ||
+T <= 0
 ) {
 
-document.getElementById('res-sub').innerText="0";
+document.getElementById(
+'res-sub'
+).innerText =
+"0";
 
-document.getElementById('res-emi').innerText="0";
+document.getElementById(
+'res-emi'
+).innerText =
+"0";
 
-document.getElementById('res-interest').innerText="0";
+document.getElementById(
+'res-interest'
+).innerText =
+"0";
 
-document.getElementById('res-total').innerText="0";
+document.getElementById(
+'res-total'
+).innerText =
+"0";
 
-document.getElementById('int-pct').innerText="0%";
+document.getElementById(
+'int-pct'
+).innerText =
+"0%";
 
 return;
 
@@ -1322,16 +1439,11 @@ return;
 
 updateLabels();
 
-
-let subVal=0;
-
-let interest=0;
-
-let total=0;
-
-let emiVal=0;
-
-let denominatorForPct=0;
+let subVal = 0;
+let interest = 0;
+let total = 0;
+let emiVal = 0;
+let denominatorForPct = 0;
 
 
 const format =
@@ -1341,534 +1453,547 @@ Math.round(num)
 
 
 const monthsPerCompounding =
-12/n;
+12 / n;
 
 
-/* =====================================
+/* =================================================
    FD
-   ===================================== */
+================================================= */
 
-if(currentMode === 'FD') {
+if (
+currentMode === 'FD'
+) {
 
 const cycles =
-n*T;
+n * T;
 
-
-if(cycles <= 1.00001) {
+if (
+cycles <= 1.00001
+) {
 
 interest =
-P*(R/100)*T;
+P *
+(R / 100) *
+T;
 
 total =
-P+interest;
+P + interest;
 
 }
 
 else {
 
 total =
-P*
+P *
 Math.pow(
-1+(R/100)/n,
-n*T
+1 +
+(R / 100) / n,
+n * T
 );
 
 }
 
-subVal=P;
+subVal =
+P;
 
-interest=total-P;
+interest =
+total - P;
 
-denominatorForPct=subVal;
+denominatorForPct =
+subVal;
 
 
-document.getElementById('res-sub').innerText =
+document.getElementById(
+'res-sub'
+).innerText =
 format(subVal);
 
-document.getElementById('res-interest').innerText =
+document.getElementById(
+'res-interest'
+).innerText =
 format(interest);
 
-document.getElementById('res-total').innerText =
+document.getElementById(
+'res-total'
+).innerText =
 format(total);
 
 }
 
 
-/* =====================================
+/* =================================================
    RD
-   ===================================== */
+================================================= */
 
-else if(currentMode === 'RD') {
+else if (
+currentMode === 'RD'
+) {
 
-if(tMonths <= monthsPerCompounding) {
+if (
+tMonths <=
+monthsPerCompounding
+) {
 
-let simpleInt=0;
+let simpleInt = 0;
 
-if(tMonths < 1) {
+if (
+tMonths < 1
+) {
 
 interest =
-P*(R/100)*T;
+P *
+(R / 100) *
+T;
 
-subVal=P;
+subVal =
+P;
 
 }
 
 else {
 
-for(
-let i=1;
-i<=tMonths;
+for (
+let i = 1;
+i <= tMonths;
 i++
 ) {
 
 let monthsInvested =
-tMonths-i+1;
+tMonths -
+i +
+1;
 
 simpleInt +=
-P*
-(R/100)*
-(monthsInvested/12);
+P *
+(R / 100) *
+(monthsInvested / 12);
 
 }
 
-subVal=P*tMonths;
+subVal =
+P * tMonths;
 
-interest=simpleInt;
+interest =
+simpleInt;
 
 }
 
-total=subVal+interest;
+total =
+subVal +
+interest;
 
 }
 
 else {
 
 const r_comp =
-(R/100)/n;
+(R / 100) / n;
 
 const r_eff =
 Math.pow(
-1+r_comp,
-n/12
-)-1;
+1 + r_comp,
+n / 12
+) - 1;
 
 total =
-P*
+P *
 (
 (
 Math.pow(
-1+r_eff,
+1 + r_eff,
 tMonths
-)-1
-)/
+) - 1
+) /
 r_eff
-)*
-(1+r_eff);
+) *
+(1 + r_eff);
 
-subVal=P*tMonths;
+subVal =
+P * tMonths;
 
-interest=total-subVal;
+interest =
+total -
+subVal;
 
 }
 
+denominatorForPct =
+subVal;
 
-denominatorForPct=subVal;
 
-
-document.getElementById('res-sub').innerText =
+document.getElementById(
+'res-sub'
+).innerText =
 format(subVal);
 
-document.getElementById('res-interest').innerText =
+document.getElementById(
+'res-interest'
+).innerText =
 format(interest);
 
-document.getElementById('res-total').innerText =
+document.getElementById(
+'res-total'
+).innerText =
 format(total);
 
 }
 
 
-/* =====================================
+/* =================================================
    EMI
-   ===================================== */
+================================================= */
 
-else if(currentMode === 'EMI') {
+else if (
+currentMode === 'EMI'
+) {
 
-if(tMonths < 1) {
+if (
+tMonths < 1
+) {
 
 emiVal =
-P+
+P +
 (
-P*(R/100)*T
+P *
+(R / 100) *
+T
 );
 
 interest =
-P*(R/100)*T;
+P *
+(R / 100) *
+T;
 
-total=emiVal;
+total =
+emiVal;
 
 }
 
 else {
 
 const monthlyRate =
-(R/100)/12;
+(R / 100) / 12;
 
 emiVal =
-P*
-monthlyRate*
+P *
+monthlyRate *
 Math.pow(
-1+monthlyRate,
+1 + monthlyRate,
 tMonths
-)/
+) /
 (
 Math.pow(
-1+monthlyRate,
+1 + monthlyRate,
 tMonths
-)-1
+) - 1
 );
 
 total =
-emiVal*tMonths;
+emiVal *
+tMonths;
 
 interest =
-total-P;
+total -
+P;
 
 }
 
+denominatorForPct =
+total;
 
-denominatorForPct=total;
 
-
-document.getElementById('res-sub').innerText =
+document.getElementById(
+'res-sub'
+).innerText =
 format(P);
 
-document.getElementById('res-interest').innerText =
+document.getElementById(
+'res-interest'
+).innerText =
 format(interest);
 
-document.getElementById('res-emi').innerText =
+document.getElementById(
+'res-emi'
+).innerText =
 format(total);
 
-document.getElementById('res-total').innerText =
+document.getElementById(
+'res-total'
+).innerText =
 format(emiVal);
 
 }
 
 
-/* =====================================
+/* =================================================
    LOAN
-   ===================================== */
+================================================= */
 
-else if(currentMode === 'LOAN') {
+else if (
+currentMode === 'LOAN'
+) {
 
-if(tMonths>=1) {
+if (
+tMonths >= 1
+) {
 
 const monthlyRate =
-(R/100)/12;
+(R / 100) / 12;
 
 const loanPrincipal =
-P/
+P /
 (
 (
-monthlyRate*
+monthlyRate *
 Math.pow(
-1+monthlyRate,
+1 + monthlyRate,
 tMonths
 )
-)/
+) /
 (
 Math.pow(
-1+monthlyRate,
+1 + monthlyRate,
 tMonths
-)-1
+) - 1
 )
 );
 
 const totalRepayment =
-P*tMonths;
+P *
+tMonths;
 
 interest =
-totalRepayment-loanPrincipal;
+totalRepayment -
+loanPrincipal;
 
-document.getElementById('res-sub').innerText =
+
+document.getElementById(
+'res-sub'
+).innerText =
 format(P);
 
-document.getElementById('res-interest').innerText =
+document.getElementById(
+'res-interest'
+).innerText =
 format(interest);
 
-document.getElementById('res-emi').innerText =
+document.getElementById(
+'res-emi'
+).innerText =
 format(totalRepayment);
 
-document.getElementById('res-total').innerText =
+document.getElementById(
+'res-total'
+).innerText =
 format(loanPrincipal);
 
-denominatorForPct=totalRepayment;
+denominatorForPct =
+totalRepayment;
 
 }
 
 }
 
 
-/* =====================================
+/* =================================================
    ANNUITY
-   ===================================== */
+================================================= */
 
-else if(currentMode === 'ANNUITY') {
-
-
-/*
-Number of months
-*/
+else if (
+currentMode === 'ANNUITY'
+) {
 
 const months =
 Math.round(
-y*12+m
+y * 12 + m
 );
 
+if (
+months < 1
+) {
 
-if(months<1) {
+document.getElementById(
+'res-sub'
+).innerText =
+"0";
 
-document.getElementById('res-sub').innerText="0";
+document.getElementById(
+'res-interest'
+).innerText =
+"0";
 
-document.getElementById('res-interest').innerText="0";
+document.getElementById(
+'res-emi'
+).innerText =
+"0";
 
-document.getElementById('res-emi').innerText="0";
-
-document.getElementById('res-total').innerText="0";
-
-document.getElementById('int-pct').innerText="0%";
+document.getElementById(
+'res-total'
+).innerText =
+"0";
 
 return;
 
 }
 
 
-/*
-================================================
-IMPORTANT ANNUITY FREQUENCY RULE
-================================================
+/* Tenure ke according compounding frequency adjust ki gayi hai */
+let effN = n;
 
-Monthly       = 1 month
-Quarterly     = 3 months
-Half Yearly   = 6 months
-Yearly        = 12 months
-
-If tenure is equal to or less than the
-selected compounding period, frequency
-must NOT change the interest.
-
-Examples:
-
-1 month:
-all frequencies -> same interest
-
-2 or 3 months:
-quarterly/half-yearly/yearly -> same interest
-
-4,5,6 months:
-half-yearly/yearly -> same interest
-
-7-12 months:
-yearly -> same interest
-
-Only when tenure exceeds the selected
-compounding period do we use compound
-frequency based calculation.
-*/
-
-
-const compoundingPeriodMonths =
-12/n;
-
-
-if(
-months <= compoundingPeriodMonths
-) {
-
-
-/*
----------------------------------------------
-SIMPLE INTEREST CASE
----------------------------------------------
-
-When tenure is within one compounding
-period, calculate interest using simple
-interest.
-
-This makes the result independent of
-frequency.
-*/
-
-subVal=P;
-
-interest =
-P*
-(R/100)*
-(months/12);
-
-
-/*
-Total amount available for payout
-*/
-
-total =
-P+interest;
-
-
-/*
-Equal monthly payout
-*/
-
-emiVal =
-total/months;
-
-
-denominatorForPct=P;
-
-
+if (months <= 1) {
+    effN = 1; // Monthly, Quarterly, Half Yearly, Yearly sabhi ke liye same interest
+} else if (months <= 3) {
+    if (n <= 4) effN = 1; // Quarterly, Half Yearly, Yearly ke liye same interest
+} else if (months <= 6) {
+    if (n <= 2) effN = 1; // Half Yearly aur Yearly ke liye same interest
 }
-else {
 
 
-/*
----------------------------------------------
-NORMAL ANNUITY CALCULATION
----------------------------------------------
-
-Tenure is greater than one compounding
-period, so frequency can affect the
-interest.
-*/
-
+const compoundingFrequency =
+effN;
 
 const ratePerPeriod =
-(R/100)/n;
-
-
-/*
-Effective monthly rate
-*/
+(R / 100) /
+compoundingFrequency;
 
 const monthlyRate =
 Math.pow(
-1+ratePerPeriod,
-n/12
-)-1;
+1 + ratePerPeriod,
+compoundingFrequency / 12
+) - 1;
 
 
-if(monthlyRate>0) {
+if (
+monthlyRate > 0
+) {
 
 const growthFactor =
 Math.pow(
-1+monthlyRate,
+1 + monthlyRate,
 months
 );
 
-
-/*
-Monthly payout
-*/
-
 emiVal =
-P*
-monthlyRate*
-growthFactor/
+P *
+monthlyRate *
+growthFactor /
 (
-growthFactor-1
+growthFactor - 1
 );
 
 }
-else {
 
-emiVal =
-P/months;
-
-}
-
-
-/*
-Total payout
-*/
 
 total =
-emiVal*months;
-
-
-/*
-Interest
-*/
+emiVal *
+months;
 
 interest =
-total-P;
+total -
+P;
 
-subVal=P;
+subVal =
+P;
 
-denominatorForPct=P;
+denominatorForPct =
+P;
 
-}
 
-
-/*
-Display ANNUITY results
-*/
-
-document.getElementById('res-sub').innerText =
+document.getElementById(
+'res-sub'
+).innerText =
 format(subVal);
 
-document.getElementById('res-interest').innerText =
+document.getElementById(
+'res-interest'
+).innerText =
 format(interest);
 
-document.getElementById('res-emi').innerText =
+document.getElementById(
+'res-emi'
+).innerText =
 format(total);
 
-document.getElementById('res-total').innerText =
+document.getElementById(
+'res-total'
+).innerText =
 format(emiVal);
 
 }
 
 
-/* =====================================
-   INTEREST PERCENTAGE
-   ===================================== */
+/* =================================================
+   INTEREST %
+================================================= */
 
-if(denominatorForPct>0) {
+if (
+denominatorForPct > 0
+) {
 
 const roundedInterest =
-Math.round(interest);
+Math.round(
+interest
+);
 
 const roundedDenominator =
-Math.round(denominatorForPct);
+Math.round(
+denominatorForPct
+);
 
 const pct =
 (
-roundedInterest/
+roundedInterest /
 roundedDenominator
-)*100;
+) *
+100;
 
-document.getElementById('int-pct').innerText =
-pct.toFixed(2)+'%';
+document.getElementById(
+'int-pct'
+).innerText =
+pct.toFixed(2) +
+'%';
 
 }
 
 }
 
 
-/* =========================================
-   START WITH FD
-   ========================================= */
+/* =================================================
+   START
+================================================= */
+
+/*
+Always start with Quarterly
+*/
+
+document.getElementById(
+'frequency'
+).value =
+'4';
 
 switchTab('FD');
 
 
-/* =========================================
-   SWIPE NAVIGATION
-   ========================================= */
+/*
+switchTab के बाद भी Quarterly सुनिश्चित करें
+*/
 
-let touchstartX=0;
+document.getElementById(
+'frequency'
+).value =
+'4';
 
-let touchendX=0;
 
+/*
+=================================================
+SWIPE NAVIGATION
+=================================================
+*/
 
-const modes=[
+let touchstartX = 0;
+let touchendX = 0;
+
+const modes = [
 'FD',
 'RD',
 'EMI',
@@ -1876,30 +2001,44 @@ const modes=[
 'ANNUITY'
 ];
 
-
 function handleGesture() {
 
-const threshold=100;
+const threshold = 100;
 
 const diff =
-touchendX-touchstartX;
+touchendX -
+touchstartX;
 
-if(Math.abs(diff)<threshold) {
+if (
+Math.abs(diff) <
+threshold
+) {
+
 return;
+
 }
 
 let index =
-modes.indexOf(currentMode);
+modes.indexOf(
+currentMode
+);
 
 
-/* LEFT */
+/*
+Swipe left
+*/
 
-if(diff<0) {
+if (
+diff < 0
+) {
 
-if(index<modes.length-1) {
+if (
+index <
+modes.length - 1
+) {
 
 switchTab(
-modes[index+1]
+modes[index + 1]
 );
 
 }
@@ -1907,14 +2046,18 @@ modes[index+1]
 }
 
 
-/* RIGHT */
+/*
+Swipe right
+*/
 
 else {
 
-if(index>0) {
+if (
+index > 0
+) {
 
 switchTab(
-modes[index-1]
+modes[index - 1]
 );
 
 }
@@ -1929,11 +2072,12 @@ document.addEventListener(
 e => {
 
 touchstartX =
-e.changedTouches[0].screenX;
+e.changedTouches[0]
+.screenX;
 
 },
 {
-passive:true
+passive: true
 }
 );
 
@@ -1943,18 +2087,18 @@ document.addEventListener(
 e => {
 
 touchendX =
-e.changedTouches[0].screenX;
+e.changedTouches[0]
+.screenX;
 
 handleGesture();
 
 },
 {
-passive:true
+passive: true
 }
 );
 
 </script>
 
 </body>
-
 </html>
