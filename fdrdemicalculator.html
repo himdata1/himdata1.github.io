@@ -650,99 +650,97 @@ days:''
 
 async function takeScreenshot() {
 
-if(typeof html2canvas === 'undefined') {
+    if (typeof html2canvas === 'undefined') {
+        alert("Screenshot library load nahi hui.");
+        return;
+    }
 
-alert("html2canvas library load nahi hui.");
+    const cardTarget = document.getElementById('calcCard');
 
-return;
+    try {
 
-}
+        const canvas = await html2canvas(cardTarget, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#ffffff'
+        });
 
-const cardTarget =
-document.getElementById('calcCard');
+        const base64Image = canvas.toDataURL('image/png');
 
-try {
+        /*
+         * Android APK
+         * Java MainActivity ke AndroidBridge ko call karega
+         */
+        if (
+            typeof AndroidBridge !== 'undefined' &&
+            AndroidBridge.shareImage
+        ) {
 
-const canvas =
-await html2canvas(
-cardTarget,
-{
-scale:2,
-useCORS:true,
-backgroundColor:'#ffffff'
-}
-);
+            AndroidBridge.shareImage(base64Image);
+            return;
+        }
 
-canvas.toBlob(
-async blob => {
+        /*
+         * Browser me chalane par normal sharing
+         */
+        const blob = await new Promise(resolve =>
+            canvas.toBlob(resolve, 'image/png')
+        );
 
-if(!blob) {
+        if (!blob) {
+            alert("Image generate nahi ho payi.");
+            return;
+        }
 
-alert("Image generate nahi ho payi.");
+        const file = new File(
+            [blob],
+            'calculation.png',
+            {
+                type: 'image/png'
+            }
+        );
 
-return;
+        if (
+            navigator.canShare &&
+            navigator.canShare({
+                files: [file]
+            })
+        ) {
 
-}
+            try {
 
-const file =
-new File(
-[blob],
-'calculation.png',
-{
-type:'image/png'
-}
-);
+                await navigator.share({
+                    files: [file],
+                    title: 'Calculation'
+                });
 
-if(
-navigator.canShare &&
-navigator.canShare({
-files:[file]
-})
-) {
+                return;
 
-try {
+            } catch (err) {
 
-await navigator.share({
-files:[file]
-});
+                if (err.name === 'AbortError') {
+                    return;
+                }
 
-return;
+            }
+        }
 
-}
+        /*
+         * Browser fallback
+         */
+        const link = document.createElement('a');
 
-catch(shareErr) {
+        link.download = 'calculation.png';
 
-if(shareErr.name === 'AbortError') {
-return;
-}
+        link.href = canvas.toDataURL('image/png');
 
-}
+        link.click();
 
-}
+    } catch (err) {
 
-const link =
-document.createElement('a');
+        alert("Screenshot Error: " + err.message);
 
-link.download =
-'calculation.png';
-
-link.href =
-canvas.toDataURL('image/png');
-
-link.click();
-
-},
-'image/png'
-);
-
-}
-
-catch(err) {
-
-alert("Error: " + err.message);
-
-}
-
+    }
 }
 
 
