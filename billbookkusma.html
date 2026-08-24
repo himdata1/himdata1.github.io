@@ -1,6 +1,5 @@
 <!DOCTYPE html>
-<html lang="hi" style="--font-sz: 16px;">
-<head>
+<html lang="hi" style="--font-sz: 16px;"><head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bill Book Kusma</title>
@@ -52,20 +51,9 @@
 
         .row-controls-left { display: flex; justify-content: flex-start; gap: 8px; margin-top: 8px; }
         .btn-row { 
-            width: 1.2em;
-            height: 1.2em; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            color: white; 
-            font-weight: 900;    
-            font-size: 1.8em;    
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 0; 
-            line-height: 0;    
-            overflow: hidden;    
+            width: 1.2em; height: 1.2em; border: none; border-radius: 4px; cursor: pointer; 
+            color: white; font-weight: 900; font-size: 1.8em; display: flex; align-items: center; 
+            justify-content: center; padding: 0; line-height: 0; overflow: hidden; 
         }
         .add-r { background: #2e7d32; }
         .rem-r { background: #c62828; }
@@ -75,35 +63,18 @@
         .grand-total { font-size: 1.15em; font-weight: bold; margin-top: 2px; }
 
         .footer-bottom { display: flex; justify-content: flex-end; align-items: flex-end; margin-top: 30px; }
-        
         .bank-details-box { padding: 8px 0; width: fit-content; font-size: 1em; text-align: left; }
-        .bank-details-box [contenteditable="true"], 
-        .signature-box [contenteditable="true"] { outline: none !important; border: none !important; }
+        .bank-details-box [contenteditable="true"], .signature-box [contenteditable="true"] { outline: none !important; border: none !important; }
 
         .signature-box { display: flex; flex-direction: column; align-items: center; text-align: center; min-width: 180px; opacity: 0; }
         .sig-line { border-top: 1px solid #222; width: 100%; margin-bottom: 5px; }
 
-        .btn-group { 
-            display: flex;       
-            gap: 8px; 
-            width: 100%;         
-            margin-top: 10px;
-        }
-
-        .btn { 
-            flex: 1;             
-            padding: 10px; 
-            border: none; 
-            border-radius: 4px; 
-            cursor: pointer; 
-            font-weight: bold; 
-            color: white; 
-            text-align: center;
-        }
+        .btn-group { display: flex; gap: 8px; width: 100%; margin-top: 10px; }
+        .btn { flex: 1; padding: 10px; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; text-align: center; }
 
         .btn-save { background: #2e7d32; }
         .btn-print { background: #333; }
-        .btn-clear { background: #d84315; }
+        .btn-sync { background: #00897b; }
         .btn-share { background: #0288d1; }
         .btn-master { background: #4527a0; }
         
@@ -121,11 +92,7 @@
             .bill-container { border: none; width: 100%; margin: 0; padding: 0; }
         }
 
-        [contenteditable="true"]:focus, .input-cell:focus, input:focus {
-            outline: none !important;
-            border: none !important;
-            box-shadow: none !important;
-        }
+        [contenteditable="true"]:focus, .input-cell:focus, input:focus { outline: none !important; border: none !important; box-shadow: none !important; }
     </style>
 </head>
 <body onkeyup="navigationHandler(event)">
@@ -144,6 +111,7 @@
     <div class="btn-group">
         <button class="btn btn-save" onclick="saveOnly()">💾 Save Bill</button>
         <button class="btn btn-print" onclick="window.print()">🖨️ Print Bill</button>
+        <button class="btn btn-sync" onclick="syncWithSheet()">🔄 Sync</button>
         <button class="btn btn-share" onclick="shareBackup()">📤 Share Backup</button>
         <button class="btn btn-master" onclick="downloadMaster()">📥 Download Backup</button>
     </div>
@@ -153,11 +121,11 @@
     <div class="header">
         <div class="mobile-top">
             <span>Mobile No.</span>
-            <input type="text" class="mobile-input" value="7876531911" id="shopMobile" oninput="this.style.width = (this.value.length + 1) + 'ch'" style="width: 11ch;">
+            <input type="text" class="mobile-input" value="7876531911" id="shopMobile" oninput="this.style.width = (this.value.length + 1) + 'ch'">
         </div>
         <h1 contenteditable="true" style="font-weight: bold; margin: 5px 0; font-size: 1em; text-decoration: underline;">Bill</h1>
         <div class="shop-name" contenteditable="true">Kusma Devi</div>
-        <p contenteditable="true">Deals in Colour &amp; B/W Document Printing, Scanning &amp; Lamination,<br>A4, 4"×6" and passport size Photos, Students ID Cards etc.</p>
+        <p contenteditable="true">Deals in Colour &amp; B/W Document Printing, Scanning &amp; Lamination,<br>A4, 4"x6" and passport size Photos, Students ID Cards etc.</p>
         <div class="address-text" contenteditable="true">Village Lower Majhetli, Post Office Pathiar,<div>District Kangra, (H.P.) PIN 176047</div></div>
     </div>
 
@@ -214,64 +182,136 @@
 
 <div class="no-print" id="history" style="margin-top: 20px;">
     <div class="history-section">
-        <h3>📜 Saved History (Sorted by Bill No.)</h3>
+        <h3>📋 Saved History (Sorted by Bill No.)</h3>
         <div id="historyList"></div>
-        <button class="btn-danger-all" onclick="deleteAllHistory()">⚠️ Move All to Trash</button>
+        <button class="btn-danger-all" onclick="deleteAllHistory()">🗑️ Move All to Trash</button>
     </div>
 
     <div class="trash-section">
         <h3>🗑️ Trash Bin (Deleted Bills)</h3>
         <div id="trashList"></div>
-        <button class="btn-empty-trash" id="emptyTrashBtn" onclick="emptyTrashOnly()" style="display: none;">🧹 Empty Trash Bin</button>
-        <button class="btn-restore" id="restoreAllBtn" onclick="restoreAllTrash()" style="display: none; width: 100%; margin-top: 10px; padding: 12px; font-weight: bold;">🔄 Restore All to History</button>
+        <button class="btn-empty-trash" id="emptyTrashBtn" onclick="emptyTrashOnly()" style="display: block;">🧹 Empty Trash Bin</button>
+        <button class="btn-restore" id="restoreAllBtn" onclick="restoreAllTrash()" style="display: block; width: 100%; margin-top: 10px; padding: 12px; font-weight: bold;">🔄 Restore All to History</button>
     </div>
 </div>
 
 <script>
-    // 133 se 148 tak ke sabhi bills hardcoded shamil hain
-    let masterData = [
-        {"id":1773159969457,"no":"133","date":"16/05/2025","name":"SMC GPS Chambi","shop":"Kusma Devi","items":[{"desc":"Fa1 Question Paper Printing","qty":"64","unit":"Nos.","rate":"3","amt":"192.00"}],"total":"192.00"},
-        {"id":1773069340430,"no":"134","date":"16/05/2025","name":"SMC GPS Khatehr U","items":[{"desc":"FA1 Question Paper Printing","qty":"74","unit":"Nos.","rate":"3","amt":"222.00"}],"total":"222.00"},
-        {"id":1773069953833,"no":"135","date":"16/05/2025","name":"SMC GPS Sukrehar","items":[{"desc":"FA1 Question Paper Printing","qty":"90","unit":"Nos.","rate":"3","amt":"270.00"}],"total":"270.00"},
-        {"id":1773069997952,"no":"136","date":"16/05/2025","name":"SMC GPS Lakha Mandal","items":[{"desc":"FA1 Question Paper Printing","qty":"78","unit":"Nos.","rate":"3","amt":"234.00"}],"total":"234.00"},
-        {"id":1773070114993,"no":"137","date":"10/05/2025","name":"SMC GPS Kasba Pathiar","items":[{"desc":"FA1 Question Paper Printing","qty":"158","unit":"Nos.","rate":"3","amt":"474.00"}],"total":"474.00"},
-        {"id":1773070347336,"no":"138","date":"17/05/2025","name":"SMC GPS Dadh","items":[{"desc":"FA1 Question Paper Printing","qty":"130","unit":"Nos.","rate":"3","amt":"390.00"}],"total":"390.00"},
-        {"id":1773070402078,"no":"139","date":"25/06/2025","name":"SMC GPS Khatehr U","items":[{"desc":"FA2 Question Paper Printing","qty":"74","unit":"Nos.","rate":"3","amt":"222.00"}],"total":"222.00"},
-        {"id":1773070452334,"no":"140","date":"01/07/2025","name":"SMC GPS Kasba Pathiar","items":[{"desc":"FA2 Question Paper Printing","qty":"176","unit":"Nos.","rate":"3","amt":"528.00"}],"total":"528.00"},
-        {"id":1773070490372,"no":"141","date":"01/07/2025","name":"SMC GPS Chambi","items":[{"desc":"FA2 Question Paper Printing","qty":"64","unit":"Nos.","rate":"3","amt":"192.00"}],"total":"192.00"},
-        {"id":1773070538698,"no":"142","date":"01/07/2025","name":"SMC GPS Sukrehar","items":[{"desc":"PM Poshan MDCF Printing","qty":"9","unit":"Nos.","rate":"3","amt":"27.00"}],"total":"27.00"},
-        {"id":1773070586063,"no":"143","date":"12/01/2026","name":"SMC GPS Sukrehar","items":[{"desc":"Pre-Primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"},
-        {"id":1773908773805,"no":"144","date":"12/01/2026","name":"SMC GPS Lakha Mandal","shopName":"Kusma Devi","items":[{"desc":"Pre-primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"},
-        {"id":1773160558081,"no":"145","date":"12/01/2026","name":"SMC GPS Pathiar","shop":"Kusma Devi","items":[{"desc":"Pre-primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"},
-        {"id":1775667758648,"no":"146","date":"23/02/2026","name":"SMC GPS Chambi","shopName":"Kusma Devi","items":[{"desc":"Pre-primary Coloured Advertising Pumphlets","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"},
-        {"id":1782267107290,"no":"147","date":"08/06/2026","name":"SMC GPS Chhughera","shopName":"Kusma Devi","items":[{"desc":"FA1 Question Paper Printing","qty":"78","unit":"Nos.","rate":"3","amt":"234.00"}],"total":"234.00"},
-        {"id":1787572892289,"no":"148","date":"24/08/2026","name":"GPS Chhughera","shopName":"Kusma Devi","items":[{"desc":"FA-2 Question Paper Printing","qty":"78","unit":"Nos.","rate":"3","amt":"234.00"}],"total":"234.00"}
-    ]; 
-    let trashData = [];
+    const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwePg_-5S2nDdPMfXN28gIVxQGZoJvH12InRXNTZEVJR58oqHl5nM1QsYt7Z0dcR6L3-Q/exec";
 
-    window.onload = function() {
+    let masterData = [{"id":1787581741662,"no":"133","date":"16/05/2025","name":"SMC GPS Chambi","items":[{"desc":"Fa1 Question Paper Printing","qty":"64","unit":"Nos.","rate":3,"amt":192}],"total":"192.00"},{"id":1787581741663,"no":"134","date":"16/05/2025","name":"SMC GPS Khatehr U","items":[{"desc":"FA1 Question Paper Printing","qty":"74","unit":"Nos.","rate":3,"amt":222}],"total":"222.00"},{"id":1787581741664,"no":"135","date":"16/05/2025","name":"SMC GPS Sukrehar","items":[{"desc":"FA1 Question Paper Printing","qty":"90","unit":"Nos.","rate":3,"amt":270}],"total":"270.00"},{"id":1787581741665,"no":"136","date":"16/05/2025","name":"SMC GPS Lakha Mandal","items":[{"desc":"FA1 Question Paper Printing","qty":"78","unit":"Nos.","rate":3,"amt":234}],"total":"234.00"},{"id":1787581741666,"no":"137","date":"10/52/0256","name":"SMC GPS Kasba Pathiar","items":[{"desc":"FA1 Question Paper Printing","qty":"158","unit":"Nos.","rate":3,"amt":474}],"total":"474.00"},{"id":1787581741667,"no":"138","date":"17/05/2025","name":"SMC GPS Dadh","items":[{"desc":"FA1 Question Paper Printing","qty":"130","unit":"Nos.","rate":3,"amt":390}],"total":"390.00"},{"id":1787581741668,"no":"139","date":"25/06/2025","name":"SMC GPS Khatehr U","items":[{"desc":"FA2 Question Paper Printing","qty":"74","unit":"Nos.","rate":3,"amt":222}],"total":"222.00"},{"id":1787581741669,"no":"140","date":"01/07/2025","name":"SMC GPS Kasba Pathiar","items":[{"desc":"FA2 Question Paper Printing","qty":"176","unit":"Nos.","rate":3,"amt":528}],"total":"528.00"},{"id":1787581741670,"no":"141","date":"01/07/2025","name":"SMC GPS Chambi","items":[{"desc":"FA2 Question Paper Printing","qty":"64","unit":"Nos.","rate":3,"amt":192}],"total":"192.00"},{"id":1787581741671,"no":"142","date":"01/07/2025","name":"SMC GPS Sukrehar","items":[{"desc":"PM Poshan MDCF Printing","qty":"9","unit":"Nos.","rate":3,"amt":27}],"total":"27.00"},{"id":1787581741672,"no":"143","date":"12/01/2026","name":"SMC GPS Sukrehar","items":[{"desc":"Pre-Primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":15,"amt":375}],"total":"375.00"},{"id":1787581741673,"no":"144","date":"12/01/2026","name":"GPS Lakha Mandal","items":[{"desc":"Pre-Primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":15,"amt":375}],"total":"375.00"},{"id":1787581741674,"no":"145","date":"12/01/2026","name":"SMC GPS Pathiar","items":[{"desc":"Pre-primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":15,"amt":375}],"total":"375.00"},{"id":1787581741675,"no":"146","date":"23/02/2026","name":"SMC GPS Chambi","items":[{"desc":"Pre-primary Coloured Advertising Pumphlets","qty":"25","unit":"Nos.","rate":15,"amt":375}],"total":"375.00"},{"id":1787581741676,"no":"147","date":"08/06/2026","name":"SMC GPS Chhughera","items":[{"desc":"FA1 Question Paper Printing","qty":"78","unit":"Nos.","rate":3,"amt":234}],"total":"234.00"},{"id":1787581741677,"no":"148","date":"24/08/2026","name":"GPS Chhughera","items":[{"desc":"FA-2 Question Paper Printing","qty":"78","unit":"Nos.","rate":3,"amt":234}],"total":"234.00"}]; 
+    let trashData = [{"id":1787586763600,"no":"149","date":"24/08/2026","name":"Narender Kumar","shopName":"Kusma Devi","items":[{"desc":"Abc","qty":"333","unit":"Nos.","rate":"66","amt":"21978.00"}],"total":"21978.00"}];
+    let deletedNos = ["151","150","10/52/0256","2025-05-15T18:30:00.000Z","2025-05-16T18:30:00.000Z","2025-06-24T18:30:00.000Z","2025-06-30T18:30:00.000Z","2026-08-23T18:30:00.000Z","2026-01-11T18:30:00.000Z","2026-02-22T18:30:00.000Z","2026-06-07T18:30:00.000Z","149"];
+
+    function getFormattedToday() {
+        const today = new Date();
+        const dd = String(today.getDate()).padStart(2, '0');
+        const mm = String(today.getMonth() + 1).padStart(2, '0');
+        const yyyy = today.getFullYear();
+        return `${dd}/${mm}/${yyyy}`;
+    }
+
+    function formatDateStandard(dStr) {
+        if (!dStr) return getFormattedToday();
+        dStr = String(dStr).trim();
+
+        if (dStr.includes('T')) {
+            let dt = new Date(dStr);
+            if (!isNaN(dt.getTime())) {
+                let dd = String(dt.getDate()).padStart(2, '0');
+                let mm = String(dt.getMonth() + 1).padStart(2, '0');
+                let yyyy = dt.getFullYear();
+                return `${dd}/${mm}/${yyyy}`;
+            }
+        }
+
+        if (/^\d{4}-\d{2}-\d{2}$/.test(dStr)) {
+            let parts = dStr.split('-');
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
+        }
+
+        if (dStr.includes('/')) {
+            let parts = dStr.split('/');
+            if (parts.length === 3) {
+                let p1 = parts[0].padStart(2, '0');
+                let p2 = parts[1].padStart(2, '0');
+                let p3 = parts[2];
+                if (p3.length === 4) {
+                    return `${p1}/${p2}/${p3}`;
+                }
+            }
+        }
+
+        return dStr;
+    }
+
+    window.onload = async function() {
         const dateEl = document.getElementById('billDate');
-        dateEl.value = new Date().toLocaleDateString('en-GB');
+        if (dateEl) {
+            dateEl.value = getFormattedToday();
+        }
         adjustWidth(dateEl);
         
+        // 1. LocalStorage se instant local data fetch karein
         let savedLocal = localStorage.getItem('my_bill_records_v1');
-        let localRecords = savedLocal ? JSON.parse(savedLocal) : [];
         let savedTrash = localStorage.getItem('my_bill_trash_v1');
-        trashData = savedTrash ? JSON.parse(savedTrash) : [];
+        let savedDeleted = localStorage.getItem('my_bill_deleted_nos_v1');
 
-        // Smart Merge: HTML ke hardcoded 148 tak ke bills aur localStorage ko aapas me bina kisi bill ko chhode merge karega
-        let combinedMap = new Map();
-        masterData.forEach(b => combinedMap.set(String(b.no), b));
-        localRecords.forEach(b => combinedMap.set(String(b.no), b));
+        if (savedTrash !== null) { trashData = JSON.parse(savedTrash); }
+        if (savedDeleted !== null) { deletedNos = JSON.parse(savedDeleted); }
+        if (savedLocal !== null) { masterData = JSON.parse(savedLocal); }
 
-        masterData = Array.from(combinedMap.values());
-        localStorage.setItem('my_bill_records_v1', JSON.stringify(masterData));
+        masterData.forEach(b => {
+            b.date = formatDateStandard(b.date);
+        });
 
+        // Deleted aur Trash bill numbers ko masterData se filter karein
+        let trashNos = trashData.map(tb => String(tb.no).trim());
+        let delNos = deletedNos.map(d => String(d).trim());
+        masterData = masterData.filter(b => {
+            let bNo = String(b.no).trim();
+            return !delNos.includes(bNo) && !trashNos.includes(bNo);
+        });
+
+        // ⚡ INSTANT DISPLAY: Network call ka wait kare bina page par turant History/Trash render karein
         sortMasterData();
         setNextBillNo();
         if(tbodyIsEmpty()) { addNewRow(); }
         updateHistoryUI();
         syncSignature();
+
+        // 2. Google Sheet se background mein sync karein (UI lag nahi hoga)
+        try {
+            let res = await fetch(SCRIPT_URL);
+            let sheetBills = await res.json();
+            
+            if (Array.isArray(sheetBills) && sheetBills.length > 0) {
+                let sheetMap = new Map();
+                masterData.forEach(b => sheetMap.set(String(b.no).trim(), b));
+
+                let curTrashNos = trashData.map(tb => String(tb.no).trim());
+                let curDelNos = deletedNos.map(d => String(d).trim());
+
+                sheetBills.forEach(b => {
+                    if (!b || b.no === undefined) return;
+                    let bNo = String(b.no).trim();
+                    b.date = formatDateStandard(b.date);
+                    let isTrash = curTrashNos.includes(bNo);
+                    let isDeleted = curDelNos.includes(bNo);
+                    if (!sheetMap.has(bNo) && !isTrash && !isDeleted) {
+                        sheetMap.set(bNo, b);
+                    }
+                });
+                masterData = Array.from(sheetMap.values());
+                
+                // Sheet se naya data fetch hone par silently UI update karein
+                sortMasterData();
+                saveAll();
+                setNextBillNo();
+                updateHistoryUI();
+            }
+        } catch (err) {
+            console.log("Offline mode or Sheet Fetch Error:", err);
+        }
     };
 
     function tbodyIsEmpty() { return document.getElementById('itemsTable').rows.length === 0; }
@@ -286,7 +326,7 @@
         masterData.slice().reverse().forEach((b) => {
             let realIndex = masterData.findIndex(item => item.id === b.id || item.no === b.no);
             list.innerHTML += `<div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-                <div onclick="loadBill(${realIndex})" style="flex-grow:1; cursor:pointer;"><b>#${b.no}</b> - ${b.name} (Rs. ${b.total})</div>
+                <div onclick="loadBill(${realIndex})" style="flex-grow:1; cursor:pointer;"><b>#${b.no}</b> - ${b.name} (${b.date}) (Rs. ${b.total})</div>
                 <button onclick="moveToTrash(${realIndex})" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
             </div>`;
         });
@@ -294,7 +334,7 @@
         trashData.slice().reverse().forEach((b, index) => {
             let revIndex = trashData.length - 1 - index;
             trashList.innerHTML += `<div class="trash-item">
-                <div style="flex-grow:1;"><b>#${b.no}</b> - ${b.name} (Rs. ${b.total})</div>
+                <div style="flex-grow:1;"><b>#${b.no}</b> - ${b.name} (${b.date}) (Rs. ${b.total})</div>
                 <div class="trash-actions">
                     <button class="btn-restore" style="font-size:inherit;" onclick="restoreFromTrash(${revIndex})">Restore</button>
                     <button style="background:#333; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;" onclick="permDelete(${revIndex})">Delete Forever</button>
@@ -307,18 +347,76 @@
         document.getElementById('restoreAllBtn').style.display = hasTrash ? 'block' : 'none';
     }
 
-    function moveToTrash(i) { trashData.push(masterData[i]); masterData.splice(i, 1); saveAll(); }
-    function restoreFromTrash(i) { masterData.push(trashData[i]); trashData.splice(i, 1); sortMasterData(); saveAll(); }
-    function permDelete(i) { if(confirm("Permanently delete this bill?")) { trashData.splice(i, 1); saveAll(); } }
-    function emptyTrashOnly() { if(confirm("Empty Trash Bin? (Permanent)")) { trashData = []; saveAll(); } }
+    function moveToTrash(i) { 
+        let bill = masterData[i];
+        if (bill && bill.no) {
+            let bNo = String(bill.no).trim();
+            if (!deletedNos.includes(bNo)) {
+                deletedNos.push(bNo);
+            }
+            if (!trashData.some(tb => String(tb.no).trim() === bNo)) {
+                trashData.push(bill);
+            }
+        }
+        masterData.splice(i, 1); 
+        saveAll(); 
+        syncWithSheet();
+    }
+
+    function restoreFromTrash(i) { 
+        let bill = trashData[i];
+        if (bill && bill.no) {
+            let bNo = String(bill.no).trim();
+            deletedNos = deletedNos.filter(no => String(no).trim() !== bNo);
+            if (!masterData.some(mb => String(mb.no).trim() === bNo)) {
+                masterData.push(bill);
+            }
+        }
+        trashData.splice(i, 1); 
+        sortMasterData(); 
+        saveAll(); 
+        syncWithSheet();
+    }
+
+    function permDelete(i) { 
+        if(confirm("Permanently delete this bill?")) { 
+            let bill = trashData[i];
+            if (bill && bill.no) {
+                let bNo = String(bill.no).trim();
+                if (!deletedNos.includes(bNo)) {
+                    deletedNos.push(bNo);
+                }
+            }
+            trashData.splice(i, 1); 
+            saveAll(); 
+            syncWithSheet();
+        } 
+    }
+
+    function emptyTrashOnly() { 
+        if(confirm("Empty Trash Bin? (Permanent)")) { 
+            trashData.forEach(b => {
+                if(b && b.no) {
+                    let bNo = String(b.no).trim();
+                    if(!deletedNos.includes(bNo)) {
+                        deletedNos.push(bNo);
+                    }
+                }
+            });
+            trashData = []; 
+            saveAll(); 
+            syncWithSheet();
+        } 
+    }
 
     function saveAll() {
         localStorage.setItem('my_bill_records_v1', JSON.stringify(masterData));
         localStorage.setItem('my_bill_trash_v1', JSON.stringify(trashData));
+        localStorage.setItem('my_bill_deleted_nos_v1', JSON.stringify(deletedNos));
         updateHistoryUI();
     }
 
-    function saveOnly() {
+    async function saveOnly() {
         let items = [];
         document.querySelectorAll("#itemsTable tr").forEach(row => {
             let cells = row.querySelectorAll("td");
@@ -334,18 +432,18 @@
 
         let currentBillNo = document.getElementById('billNo').value.trim();
         
-        let existsInTrash = trashData.some(b => b.no === currentBillNo);
+        let existsInTrash = trashData.some(b => String(b.no).trim() === currentBillNo);
         if (existsInTrash) {
             alert("⚠️ Bill No. " + currentBillNo + " already exists in TRASH!\nPlease restore it or use a different Bill No.");
             return; 
         }
 
-        let existingIndex = masterData.findIndex(b => b.no === currentBillNo);
+        let existingIndex = masterData.findIndex(b => String(b.no).trim() === currentBillNo);
         
         let billObj = { 
             id: Date.now(), 
             no: currentBillNo, 
-            date: document.getElementById('billDate').value, 
+            date: formatDateStandard(document.getElementById('billDate').value), 
             name: toTitleCase(document.getElementById('custName').value || "Cash"), 
             shopName: toTitleCase(document.querySelector('.shop-name').innerText), 
             items, 
@@ -362,17 +460,80 @@
             masterData.push(billObj); 
         }
 
+        if (deletedNos.includes(currentBillNo)) {
+            deletedNos = deletedNos.filter(no => no !== currentBillNo);
+        }
+
         sortMasterData();
         saveAll();
+
+        try {
+            fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "save", bill: billObj, deletedNos: deletedNos })
+            });
+        } catch(e) {
+            console.log("Sheet Sync Error:", e);
+        }
+
         alert("Saved Successfully!");
         resetForm();
+    }
+
+    async function syncWithSheet() {
+        let syncBtn = document.querySelector('.btn-sync');
+        let originalText = syncBtn ? syncBtn.innerText : "🔄 Sync";
+        if(syncBtn) syncBtn.innerText = "🔄 Syncing...";
+
+        try {
+            await fetch(SCRIPT_URL, {
+                method: "POST",
+                headers: { "Content-Type": "text/plain;charset=utf-8" },
+                body: JSON.stringify({ action: "sync", bills: masterData, deletedNos: deletedNos })
+            });
+
+            let res = await fetch(SCRIPT_URL);
+            let sheetBills = await res.json();
+
+            if (Array.isArray(sheetBills)) {
+                let sheetMap = new Map();
+                masterData.forEach(b => sheetMap.set(String(b.no).trim(), b));
+
+                let curTrashNos = trashData.map(tb => String(tb.no).trim());
+                let curDelNos = deletedNos.map(d => String(d).trim());
+
+                sheetBills.forEach(b => {
+                    if (!b || b.no === undefined) return;
+                    let bNo = String(b.no).trim();
+                    b.date = formatDateStandard(b.date);
+                    let isTrash = curTrashNos.includes(bNo);
+                    let isDeleted = curDelNos.includes(bNo);
+                    if (!sheetMap.has(bNo) && !isTrash && !isDeleted) {
+                        sheetMap.set(bNo, b);
+                    }
+                });
+                masterData = Array.from(sheetMap.values());
+            }
+
+            sortMasterData();
+            saveAll();
+            setNextBillNo();
+            updateHistoryUI();
+            alert("✅ Google Sheet Sync Successful!");
+        } catch (err) {
+            console.error("Sync Error:", err);
+            alert("⚠️ Sync failed! Check internet connection.");
+        } finally {
+            if(syncBtn) syncBtn.innerText = originalText;
+        }
     }
 
     function loadBill(index) {
         let b = masterData[index];
         document.getElementById('billNo').value = b.no;
         document.getElementById('custName').value = b.name;
-        document.getElementById('billDate').value = b.date;
+        document.getElementById('billDate').value = formatDateStandard(b.date);
         const tbody = document.getElementById('itemsTable');
         tbody.innerHTML = ""; 
         b.items.forEach((item, i) => {
@@ -397,15 +558,14 @@
 
             let qInput = cells[2].querySelector("input");  
             let rInput = cells[3].querySelector("input");  
-            let aInput = cells[4].querySelector("input");  
 
-            if (!qInput || !rInput || !aInput) return;  
+            if (!qInput || !rInput) return;  
 
             let q = parseFloat(qInput.value) || 0;  
             let r = parseFloat(rInput.value) || 0;  
 
             let rowAmt = Math.round(q * r * 100) / 100; 
-            aInput.value = rowAmt.toFixed(2);  
+            cells[4].querySelector("input").value = rowAmt.toFixed(2);  
             subTotal += rowAmt;  
         });  
 
@@ -444,16 +604,16 @@
 
         let fullHTML = document.documentElement.outerHTML;
         
-        // Arrow Function () => se replacement string safe rehti hai
         let updated = fullHTML.replace(/let masterData = \[.*?\];/s, () => `let masterData = ${JSON.stringify(masterData)};`);
         updated = updated.replace(/let trashData = \[.*?\];/s, () => `let trashData = ${JSON.stringify(trashData)};`);
+        updated = updated.replace(/let deletedNos = \[.*?\];/s, () => `let deletedNos = ${JSON.stringify(deletedNos)};`);
         
         return "<!DOCTYPE html>\n" + updated;
     }
 
     function getFileName() {
         let d = new Date();
-        let dateStr = d.getDate().toString().padStart(2,'0') + "-" + (d.getMonth()+1).toString().padStart(2,'0') + "-" + d.getFullYear();
+        let dateStr = String(d.getDate()).padStart(2,'0') + "-" + String(d.getMonth()+1).padStart(2,'0') + "-" + d.getFullYear();
         return `Bill Book Kusma Backup ${dateStr}.html`;
     }
 
@@ -500,7 +660,15 @@
     }
 
     function removeLastRow() { if(document.getElementById('itemsTable').rows.length > 1) { document.getElementById('itemsTable').deleteRow(-1); calculate(); } }
-    function resetForm() { document.getElementById('custName').value = ""; document.getElementById('itemsTable').innerHTML = ""; addNewRow(); calculate(); setNextBillNo(); }
+    
+    function resetForm() { 
+        document.getElementById('custName').value = ""; 
+        document.getElementById('billDate').value = getFormattedToday(); 
+        document.getElementById('itemsTable').innerHTML = ""; 
+        addNewRow(); 
+        calculate(); 
+        setNextBillNo(); 
+    }
     
     function setNextBillNo() { 
         let max = masterData.length > 0 ? Math.max(...masterData.map(b => parseInt(b.no) || 0)) : 0; 
@@ -518,7 +686,7 @@
         let formatted = "";
         
         if (v.length > 4) {
-            formatted = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4);
+            formatted = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4, 8);
         } else if (v.length > 2) {
             formatted = v.slice(0, 2) + '/' + v.slice(2);
         } else {
@@ -548,10 +716,21 @@
     function deleteAllHistory() { 
         if(masterData.length === 0) return alert("History is already empty!");
         if(confirm("Move all bills to Trash? You can restore them later.")) { 
-            trashData = [...trashData, ...masterData]; 
+            masterData.forEach(b => {
+                if(b && b.no) {
+                    let bNo = String(b.no).trim();
+                    if(!deletedNos.includes(bNo)) {
+                        deletedNos.push(bNo);
+                    }
+                    if(!trashData.some(tb => String(tb.no).trim() === bNo)) {
+                        trashData.push(b);
+                    }
+                }
+            });
             masterData = []; 
             saveAll(); 
             setNextBillNo(); 
+            syncWithSheet();
         } 
     }
     
@@ -560,12 +739,20 @@
     function restoreAllTrash() {
         if (trashData.length === 0) return;
         if (confirm("Restore all bills from trash to history?")) {
-            masterData = [...masterData, ...trashData];
+            trashData.forEach(b => {
+                if(b && b.no) {
+                    let bNo = String(b.no).trim();
+                    deletedNos = deletedNos.filter(no => String(no).trim() !== bNo);
+                    if(!masterData.some(mb => String(mb.no).trim() === bNo)) {
+                        masterData.push(b);
+                    }
+                }
+            });
             trashData = [];
             sortMasterData();
             saveAll();
+            syncWithSheet();
         }
     }
 </script>
-</body>
-</html>
+</body></html>
