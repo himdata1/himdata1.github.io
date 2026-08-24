@@ -1,11 +1,12 @@
-<html lang="hi" style="--font-sz: 16px;"><head>
+<!DOCTYPE html>
+<html lang="hi" style="--font-sz: 16px;">
+<head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bill Book Kusma</title>
     
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/&gt;&lt;text x=%2250%22 y=%2255%22 font-size=%2245%22 fill=%22white%22 font-family=%22Verdana,sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22&gt;BBK&lt;/text&gt;&lt;/svg&gt;">
-
-<link rel="apple-touch-icon" href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/&gt;&lt;text x=%2250%22 y=%2255%22 font-size=%2245%22 fill=%22white%22 font-family=%22Verdana,sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22&gt;BBK&lt;/text&gt;&lt;/svg&gt;">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,&lt;svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22&gt;&lt;rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/&gt;&lt;text x=%2250%22 y=%2255%22 font-size=%2245%22 fill=%22white%22 font-family=%22Verdana,sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22&gt;BBK&lt;/text&gt;&lt;/svg&gt;">
     
     <style>
         :root { --font-sz: 16px; }
@@ -51,21 +52,21 @@
 
         .row-controls-left { display: flex; justify-content: flex-start; gap: 8px; margin-top: 8px; }
         .btn-row { 
-    width: 1.2em;
-    height: 1.2em; 
-    border: none; 
-    border-radius: 4px; 
-    cursor: pointer; 
-    color: white; 
-    font-weight: 900;    
-    font-size: 1.8em;    
-    display: flex; 
-    align-items: center; 
-    justify-content: center; 
-    padding: 0; 
-    line-height: 0;    
-    overflow: hidden;    
-}
+            width: 1.2em;
+            height: 1.2em; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            color: white; 
+            font-weight: 900;    
+            font-size: 1.8em;    
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            padding: 0; 
+            line-height: 0;    
+            overflow: hidden;    
+        }
         .add-r { background: #2e7d32; }
         .rem-r { background: #c62828; }
 
@@ -83,22 +84,22 @@
         .sig-line { border-top: 1px solid #222; width: 100%; margin-bottom: 5px; }
 
         .btn-group { 
-    display: flex;       /* Grid ki jagah flex */
-    gap: 8px; 
-    width: 100%;         /* Poori width cover karne ke liye */
-    margin-top: 10px;
-}
+            display: flex;       
+            gap: 8px; 
+            width: 100%;         
+            margin-top: 10px;
+        }
 
-.btn { 
-    flex: 1;             /* Ye har button ko barabar faila dega */
-    padding: 10px; 
-    border: none; 
-    border-radius: 4px; 
-    cursor: pointer; 
-    font-weight: bold; 
-    color: white; 
-    text-align: center;
-}
+        .btn { 
+            flex: 1;             
+            padding: 10px; 
+            border: none; 
+            border-radius: 4px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            color: white; 
+            text-align: center;
+        }
 
         .btn-save { background: #2e7d32; }
         .btn-print { background: #333; }
@@ -119,14 +120,13 @@
             body { background: white; padding: 0; }
             .bill-container { border: none; width: 100%; margin: 0; padding: 0; }
         }
-   /* Click karne par aane wala box hatane ke liye */
-[contenteditable="true"]:focus, .input-cell:focus, input:focus {
-    outline: none !important;
-    border: none !important;
-    box-shadow: none !important;
-}
 
- </style>
+        [contenteditable="true"]:focus, .input-cell:focus, input:focus {
+            outline: none !important;
+            border: none !important;
+            box-shadow: none !important;
+        }
+    </style>
 </head>
 <body onkeyup="navigationHandler(event)">
 
@@ -142,12 +142,11 @@
         </select>
     </div>
     <div class="btn-group">
-    <button class="btn btn-save" onclick="saveOnly()">💾 Save Bill</button>
-    <button class="btn btn-print" onclick="window.print()">🖨️ Print Bill</button>
-    <button class="btn btn-share" onclick="shareBackup()">📤 Share Backup</button>
-    <button class="btn btn-master" onclick="downloadMaster()">📥 Download Backup</button>
-</div>
-
+        <button class="btn btn-save" onclick="saveOnly()">💾 Save Bill</button>
+        <button class="btn btn-print" onclick="window.print()">🖨️ Print Bill</button>
+        <button class="btn btn-share" onclick="shareBackup()">📤 Share Backup</button>
+        <button class="btn btn-master" onclick="downloadMaster()">📥 Download Backup</button>
+    </div>
 </div>
 
 <div class="bill-container" id="mainBill">
@@ -163,10 +162,10 @@
     </div>
 
     <div class="bill-meta">
-        <div>No. <input type="text" id="billNo" class="input-cell" value="146" oninput="adjustWidth(this)" style="width: 4.5ch;"></div>
+        <div>No. <input type="text" id="billNo" class="input-cell" value="149" oninput="adjustWidth(this)" style="width: 4.5ch;"></div>
         <div class="date-group">
             <span>Date:</span>
-            <input type="text" id="billDate" class="input-cell" value="19/03/2026" oninput="autoSlash(this); adjustWidth(this)" inputmode="numeric" style="width: 11.5ch;">
+            <input type="text" id="billDate" class="input-cell" value="24/08/2026" oninput="autoSlash(this); adjustWidth(this)" inputmode="numeric" style="width: 11.5ch;">
         </div>
     </div>
     
@@ -216,46 +215,7 @@
 <div class="no-print" id="history" style="margin-top: 20px;">
     <div class="history-section">
         <h3>📜 Saved History (Sorted by Bill No.)</h3>
-        <div id="historyList"><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(12)" style="flex-grow:1; cursor:pointer;"><b>#145</b> - SMC GPS Pathiar (Rs. 375.00)</div>
-            <button onclick="moveToTrash(12)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(11)" style="flex-grow:1; cursor:pointer;"><b>#144</b> - SMC GPS Lakha Mandal (Rs. 375.00)</div>
-            <button onclick="moveToTrash(11)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(10)" style="flex-grow:1; cursor:pointer;"><b>#143</b> - SMC GPS Sukrehar (Rs. 375.00)</div>
-            <button onclick="moveToTrash(10)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(9)" style="flex-grow:1; cursor:pointer;"><b>#142</b> - SMC GPS Sukrehar (Rs. 27.00)</div>
-            <button onclick="moveToTrash(9)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(8)" style="flex-grow:1; cursor:pointer;"><b>#141</b> - SMC GPS Chambi (Rs. 192.00)</div>
-            <button onclick="moveToTrash(8)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(7)" style="flex-grow:1; cursor:pointer;"><b>#140</b> - SMC GPS Kasba Pathiar (Rs. 528.00)</div>
-            <button onclick="moveToTrash(7)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(6)" style="flex-grow:1; cursor:pointer;"><b>#139</b> - SMC GPS Khatehr U (Rs. 222.00)</div>
-            <button onclick="moveToTrash(6)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(5)" style="flex-grow:1; cursor:pointer;"><b>#138</b> - SMC GPS Dadh (Rs. 390.00)</div>
-            <button onclick="moveToTrash(5)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(4)" style="flex-grow:1; cursor:pointer;"><b>#137</b> - SMC GPS Kasba Pathiar (Rs. 474.00)</div>
-            <button onclick="moveToTrash(4)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(3)" style="flex-grow:1; cursor:pointer;"><b>#136</b> - SMC GPS Lakha Mandal (Rs. 234.00)</div>
-            <button onclick="moveToTrash(3)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(2)" style="flex-grow:1; cursor:pointer;"><b>#135</b> - SMC GPS Sukrehar (Rs. 270.00)</div>
-            <button onclick="moveToTrash(2)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(1)" style="flex-grow:1; cursor:pointer;"><b>#134</b> - SMC GPS Khatehr U (Rs. 222.00)</div>
-            <button onclick="moveToTrash(1)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div><div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(0)" style="flex-grow:1; cursor:pointer;"><b>#133</b> - SMC GPS Chambi (Rs. 192.00)</div>
-            <button onclick="moveToTrash(0)" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div></div>
+        <div id="historyList"></div>
         <button class="btn-danger-all" onclick="deleteAllHistory()">⚠️ Move All to Trash</button>
     </div>
 
@@ -268,7 +228,25 @@
 </div>
 
 <script>
-    let masterData = [{"id":1773159969457,"no":"133","date":"16/05/2025","name":"SMC GPS Chambi","shop":"Kusma Devi","items":[{"desc":"Fa1 Question Paper Printing","qty":"64","unit":"Nos.","rate":"3","amt":"192.00"}],"total":"192.00"},{"id":1773069340430,"no":"134","date":"16/05/2025","name":"SMC GPS Khatehr U","items":[{"desc":"FA1 Question Paper Printing","qty":"74","unit":"Nos.","rate":"3","amt":"222.00"}],"total":"222.00"},{"id":1773069953833,"no":"135","date":"16/05/2025","name":"SMC GPS Sukrehar","items":[{"desc":"FA1 Question Paper Printing","qty":"90","unit":"Nos.","rate":"3","amt":"270.00"}],"total":"270.00"},{"id":1773069997952,"no":"136","date":"16/05/2025","name":"SMC GPS Lakha Mandal","items":[{"desc":"FA1 Question Paper Printing","qty":"78","unit":"Nos.","rate":"3","amt":"234.00"}],"total":"234.00"},{"id":1773070114993,"no":"137","date":"10/52/0256","name":"SMC GPS Kasba Pathiar","items":[{"desc":"FA1 Question Paper Printing","qty":"158","unit":"Nos.","rate":"3","amt":"474.00"}],"total":"474.00"},{"id":1773070347336,"no":"138","date":"17/05/2025","name":"SMC GPS Dadh","items":[{"desc":"FA1 Question Paper Printing","qty":"130","unit":"Nos.","rate":"3","amt":"390.00"}],"total":"390.00"},{"id":1773070402078,"no":"139","date":"25/06/2025","name":"SMC GPS Khatehr U","items":[{"desc":"FA2 Question Paper Printing","qty":"74","unit":"Nos.","rate":"3","amt":"222.00"}],"total":"222.00"},{"id":1773070452334,"no":"140","date":"01/07/2025","name":"SMC GPS Kasba Pathiar","items":[{"desc":"FA2 Question Paper Printing","qty":"176","unit":"Nos.","rate":"3","amt":"528.00"}],"total":"528.00"},{"id":1773070490372,"no":"141","date":"01/07/2025","name":"SMC GPS Chambi","items":[{"desc":"FA2 Question Paper Printing","qty":"64","unit":"Nos.","rate":"3","amt":"192.00"}],"total":"192.00"},{"id":1773070538698,"no":"142","date":"01/07/2025","name":"SMC GPS Sukrehar","items":[{"desc":"PM Poshan MDCF Printing","qty":"9","unit":"Nos.","rate":"3","amt":"27.00"}],"total":"27.00"},{"id":1773070586063,"no":"143","date":"12/01/2026","name":"SMC GPS Sukrehar","items":[{"desc":"Pre-Primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"},{"id":1773908773805,"no":"144","date":"12/01/2026","name":"SMC GPS Lakha Mandal","shopName":"Kusma Devi","items":[{"desc":"Pre-primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"},{"id":1773160558081,"no":"145","date":"12/01/2026","name":"SMC GPS Pathiar","shop":"Kusma Devi","items":[{"desc":"Pre-primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"}]; 
+    // 133 se 148 tak ke sabhi bills hardcoded shamil hain
+    let masterData = [
+        {"id":1773159969457,"no":"133","date":"16/05/2025","name":"SMC GPS Chambi","shop":"Kusma Devi","items":[{"desc":"Fa1 Question Paper Printing","qty":"64","unit":"Nos.","rate":"3","amt":"192.00"}],"total":"192.00"},
+        {"id":1773069340430,"no":"134","date":"16/05/2025","name":"SMC GPS Khatehr U","items":[{"desc":"FA1 Question Paper Printing","qty":"74","unit":"Nos.","rate":"3","amt":"222.00"}],"total":"222.00"},
+        {"id":1773069953833,"no":"135","date":"16/05/2025","name":"SMC GPS Sukrehar","items":[{"desc":"FA1 Question Paper Printing","qty":"90","unit":"Nos.","rate":"3","amt":"270.00"}],"total":"270.00"},
+        {"id":1773069997952,"no":"136","date":"16/05/2025","name":"SMC GPS Lakha Mandal","items":[{"desc":"FA1 Question Paper Printing","qty":"78","unit":"Nos.","rate":"3","amt":"234.00"}],"total":"234.00"},
+        {"id":1773070114993,"no":"137","date":"10/05/2025","name":"SMC GPS Kasba Pathiar","items":[{"desc":"FA1 Question Paper Printing","qty":"158","unit":"Nos.","rate":"3","amt":"474.00"}],"total":"474.00"},
+        {"id":1773070347336,"no":"138","date":"17/05/2025","name":"SMC GPS Dadh","items":[{"desc":"FA1 Question Paper Printing","qty":"130","unit":"Nos.","rate":"3","amt":"390.00"}],"total":"390.00"},
+        {"id":1773070402078,"no":"139","date":"25/06/2025","name":"SMC GPS Khatehr U","items":[{"desc":"FA2 Question Paper Printing","qty":"74","unit":"Nos.","rate":"3","amt":"222.00"}],"total":"222.00"},
+        {"id":1773070452334,"no":"140","date":"01/07/2025","name":"SMC GPS Kasba Pathiar","items":[{"desc":"FA2 Question Paper Printing","qty":"176","unit":"Nos.","rate":"3","amt":"528.00"}],"total":"528.00"},
+        {"id":1773070490372,"no":"141","date":"01/07/2025","name":"SMC GPS Chambi","items":[{"desc":"FA2 Question Paper Printing","qty":"64","unit":"Nos.","rate":"3","amt":"192.00"}],"total":"192.00"},
+        {"id":1773070538698,"no":"142","date":"01/07/2025","name":"SMC GPS Sukrehar","items":[{"desc":"PM Poshan MDCF Printing","qty":"9","unit":"Nos.","rate":"3","amt":"27.00"}],"total":"27.00"},
+        {"id":1773070586063,"no":"143","date":"12/01/2026","name":"SMC GPS Sukrehar","items":[{"desc":"Pre-Primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"},
+        {"id":1773908773805,"no":"144","date":"12/01/2026","name":"SMC GPS Lakha Mandal","shopName":"Kusma Devi","items":[{"desc":"Pre-primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"},
+        {"id":1773160558081,"no":"145","date":"12/01/2026","name":"SMC GPS Pathiar","shop":"Kusma Devi","items":[{"desc":"Pre-primary Advertising Pumphlets Coloured","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"},
+        {"id":1775667758648,"no":"146","date":"23/02/2026","name":"SMC GPS Chambi","shopName":"Kusma Devi","items":[{"desc":"Pre-primary Coloured Advertising Pumphlets","qty":"25","unit":"Nos.","rate":"15","amt":"375.00"}],"total":"375.00"},
+        {"id":1782267107290,"no":"147","date":"08/06/2026","name":"SMC GPS Chhughera","shopName":"Kusma Devi","items":[{"desc":"FA1 Question Paper Printing","qty":"78","unit":"Nos.","rate":"3","amt":"234.00"}],"total":"234.00"},
+        {"id":1787572892289,"no":"148","date":"24/08/2026","name":"GPS Chhughera","shopName":"Kusma Devi","items":[{"desc":"FA-2 Question Paper Printing","qty":"78","unit":"Nos.","rate":"3","amt":"234.00"}],"total":"234.00"}
+    ]; 
     let trashData = [];
 
     window.onload = function() {
@@ -281,12 +259,14 @@
         let savedTrash = localStorage.getItem('my_bill_trash_v1');
         trashData = savedTrash ? JSON.parse(savedTrash) : [];
 
-        if (localRecords.length === 0 && masterData.length > 0) {
-            localRecords = masterData;
-            localStorage.setItem('my_bill_records_v1', JSON.stringify(localRecords));
-        }
+        // Smart Merge: HTML ke hardcoded 148 tak ke bills aur localStorage ko aapas me bina kisi bill ko chhode merge karega
+        let combinedMap = new Map();
+        masterData.forEach(b => combinedMap.set(String(b.no), b));
+        localRecords.forEach(b => combinedMap.set(String(b.no), b));
 
-        masterData = localRecords; 
+        masterData = Array.from(combinedMap.values());
+        localStorage.setItem('my_bill_records_v1', JSON.stringify(masterData));
+
         sortMasterData();
         setNextBillNo();
         if(tbodyIsEmpty()) { addNewRow(); }
@@ -298,35 +278,34 @@
     function sortMasterData() { masterData.sort((a, b) => parseInt(a.no) - parseInt(b.no)); }
 
     function updateHistoryUI() {
-    let list = document.getElementById('historyList');
-    list.innerHTML = "";
-    let trashList = document.getElementById('trashList');
-    trashList.innerHTML = "";
-    
-    masterData.slice().reverse().forEach((b) => {
-        let realIndex = masterData.findIndex(item => item.id === b.id);
-        list.innerHTML += `<div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
-            <div onclick="loadBill(${realIndex})" style="flex-grow:1; cursor:pointer;"><b>#${b.no}</b> - ${b.name} (Rs. ${b.total})</div>
-            <button onclick="moveToTrash(${realIndex})" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
-        </div>`;
-    });
+        let list = document.getElementById('historyList');
+        list.innerHTML = "";
+        let trashList = document.getElementById('trashList');
+        trashList.innerHTML = "";
+        
+        masterData.slice().reverse().forEach((b) => {
+            let realIndex = masterData.findIndex(item => item.id === b.id || item.no === b.no);
+            list.innerHTML += `<div style="background:white; padding:10px; margin-bottom:5px; border-left:5px solid #4527a0; display:flex; justify-content:space-between; align-items:center;">
+                <div onclick="loadBill(${realIndex})" style="flex-grow:1; cursor:pointer;"><b>#${b.no}</b> - ${b.name} (Rs. ${b.total})</div>
+                <button onclick="moveToTrash(${realIndex})" style="background:#ff5252; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;">Delete</button>
+            </div>`;
+        });
 
-    trashData.slice().reverse().forEach((b, index) => {
-        let revIndex = trashData.length - 1 - index;
-        trashList.innerHTML += `<div class="trash-item">
-            <div style="flex-grow:1;"><b>#${b.no}</b> - ${b.name} (Rs. ${b.total})</div>
-            <div class="trash-actions">
-                <button class="btn-restore" style="font-size:inherit;" onclick="restoreFromTrash(${revIndex})">Restore</button>
-                <button style="background:#333; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;" onclick="permDelete(${revIndex})">Delete Forever</button>
-            </div>
-        </div>`;
-    });
+        trashData.slice().reverse().forEach((b, index) => {
+            let revIndex = trashData.length - 1 - index;
+            trashList.innerHTML += `<div class="trash-item">
+                <div style="flex-grow:1;"><b>#${b.no}</b> - ${b.name} (Rs. ${b.total})</div>
+                <div class="trash-actions">
+                    <button class="btn-restore" style="font-size:inherit;" onclick="restoreFromTrash(${revIndex})">Restore</button>
+                    <button style="background:#333; color:white; border:none; padding:5px 12px; border-radius:3px; cursor:pointer; font-size:inherit;" onclick="permDelete(${revIndex})">Delete Forever</button>
+                </div>
+            </div>`;
+        });
 
-    const hasTrash = trashData.length > 0;
-    document.getElementById('emptyTrashBtn').style.display = hasTrash ? 'block' : 'none';
-    document.getElementById('restoreAllBtn').style.display = hasTrash ? 'block' : 'none';
-}
-
+        const hasTrash = trashData.length > 0;
+        document.getElementById('emptyTrashBtn').style.display = hasTrash ? 'block' : 'none';
+        document.getElementById('restoreAllBtn').style.display = hasTrash ? 'block' : 'none';
+    }
 
     function moveToTrash(i) { trashData.push(masterData[i]); masterData.splice(i, 1); saveAll(); }
     function restoreFromTrash(i) { masterData.push(trashData[i]); trashData.splice(i, 1); sortMasterData(); saveAll(); }
@@ -340,58 +319,54 @@
     }
 
     function saveOnly() {
-    let items = [];
-    document.querySelectorAll("#itemsTable tr").forEach(row => {
-        let cells = row.querySelectorAll("td");
-        let desc = cells[1].querySelector(".particulars-cell").innerText;
-        let qty = cells[2].querySelector("input").value;
-        let unit = cells[2].querySelector("select").value;
-        let rate = cells[3].querySelector("input").value;
-        let amt = cells[4].querySelector("input").value;
-        if(desc) items.push({ desc: toTitleCase(desc), qty, unit, rate, amt });
-    });
+        let items = [];
+        document.querySelectorAll("#itemsTable tr").forEach(row => {
+            let cells = row.querySelectorAll("td");
+            let desc = cells[1].querySelector(".particulars-cell").innerText;
+            let qty = cells[2].querySelector("input").value;
+            let unit = cells[2].querySelector("select").value;
+            let rate = cells[3].querySelector("input").value;
+            let amt = cells[4].querySelector("input").value;
+            if(desc) items.push({ desc: toTitleCase(desc), qty, unit, rate, amt });
+        });
 
-    if(items.length === 0) return alert("Add items first");
+        if(items.length === 0) return alert("Add items first");
 
-    let currentBillNo = document.getElementById('billNo').value.trim();
-    
-    // 1. Check if exists in Trash
-    let existsInTrash = trashData.some(b => b.no === currentBillNo);
-    if (existsInTrash) {
-        alert("⚠️ Bill No. " + currentBillNo + " already exists in TRASH!\nPlease restore it or use a different Bill No.");
-        return; 
-    }
-
-    // 2. Check if exists in History (Update logic)
-    let existingIndex = masterData.findIndex(b => b.no === currentBillNo);
-    
-    let billObj = { 
-        id: Date.now(), 
-        no: currentBillNo, 
-        date: document.getElementById('billDate').value, 
-        name: toTitleCase(document.getElementById('custName').value || "Cash"), 
-        shopName: toTitleCase(document.querySelector('.shop-name').innerText), 
-        items, 
-        total: document.getElementById('grandTotal').innerText 
-    };
-
-    if (existingIndex !== -1) { 
-        if(confirm("Bill No. " + currentBillNo + " already exists in History. Do you want to UPDATE it?")) {
-            masterData[existingIndex] = billObj;
-        } else {
+        let currentBillNo = document.getElementById('billNo').value.trim();
+        
+        let existsInTrash = trashData.some(b => b.no === currentBillNo);
+        if (existsInTrash) {
+            alert("⚠️ Bill No. " + currentBillNo + " already exists in TRASH!\nPlease restore it or use a different Bill No.");
             return; 
         }
-    } else { 
-        masterData.push(billObj); 
+
+        let existingIndex = masterData.findIndex(b => b.no === currentBillNo);
+        
+        let billObj = { 
+            id: Date.now(), 
+            no: currentBillNo, 
+            date: document.getElementById('billDate').value, 
+            name: toTitleCase(document.getElementById('custName').value || "Cash"), 
+            shopName: toTitleCase(document.querySelector('.shop-name').innerText), 
+            items, 
+            total: document.getElementById('grandTotal').innerText 
+        };
+
+        if (existingIndex !== -1) { 
+            if(confirm("Bill No. " + currentBillNo + " already exists in History. Do you want to UPDATE it?")) {
+                masterData[existingIndex] = billObj;
+            } else {
+                return; 
+            }
+        } else { 
+            masterData.push(billObj); 
+        }
+
+        sortMasterData();
+        saveAll();
+        alert("Saved Successfully!");
+        resetForm();
     }
-
-    sortMasterData();
-    saveAll();
-    alert("Saved Successfully!");
-    resetForm();
-}
-
-
 
     function loadBill(index) {
         let b = masterData[index];
@@ -414,50 +389,42 @@
     }
 
     function calculate() {
-    let subTotal = 0;
+        let subTotal = 0;
 
-    document.querySelectorAll("#itemsTable tr").forEach(row => {  
-        let cells = row.querySelectorAll("td");  
-        if (cells.length < 5) return;  
+        document.querySelectorAll("#itemsTable tr").forEach(row => {  
+            let cells = row.querySelectorAll("td");  
+            if (cells.length < 5) return;  
 
-        let qInput = cells[2].querySelector("input");  
-        let rInput = cells[3].querySelector("input");  
-        let aInput = cells[4].querySelector("input");  
+            let qInput = cells[2].querySelector("input");  
+            let rInput = cells[3].querySelector("input");  
+            let aInput = cells[4].querySelector("input");  
 
-        if (!qInput || !rInput || !aInput) return;  
+            if (!qInput || !rInput || !aInput) return;  
 
-        let q = parseFloat(qInput.value) || 0;  
-        let r = parseFloat(rInput.value) || 0;  
+            let q = parseFloat(qInput.value) || 0;  
+            let r = parseFloat(rInput.value) || 0;  
 
-        // 1. Pehle row ka amount calculate karke 2 decimal tak round karein
-        let rowAmt = Math.round(q * r * 100) / 100; 
-        
-        // 2. Screen par wahi 2 decimal wala amount dikhayein
-        aInput.value = rowAmt.toFixed(2);  
+            let rowAmt = Math.round(q * r * 100) / 100; 
+            aInput.value = rowAmt.toFixed(2);  
+            subTotal += rowAmt;  
+        });  
 
-        // 3. Subtotal mein wahi amount jodein jo screen par dikh raha hai
-        subTotal += rowAmt;  
-    });  
+        subTotal = Math.round(subTotal * 100) / 100;
 
-    // JavaScript floating point error se bachne ke liye final Subtotal ko bhi clean karein
-    subTotal = Math.round(subTotal * 100) / 100;
+        let roundedTotal = Math.round(subTotal);  
+        let diff = roundedTotal - subTotal;  
 
-    let roundedTotal = Math.round(subTotal);  
-    let diff = roundedTotal - subTotal;  
+        let roundOffStr = diff.toFixed(2);  
+        if (diff > 0) {  
+            roundOffStr = "+" + roundOffStr;  
+        } else if (diff === 0) {  
+            roundOffStr = "0.00"; 
+        }  
 
-    let roundOffStr = diff.toFixed(2);  
-    if (diff > 0) {  
-        roundOffStr = "+" + roundOffStr;  
-    } else if (diff === 0) {  
-        roundOffStr = "0.00"; 
-    }  
-
-    document.getElementById("subTotal").innerText = subTotal.toFixed(2);  
-    document.getElementById("roundOff").innerText = roundOffStr;  
-    document.getElementById("grandTotal").innerText = roundedTotal.toFixed(2);
-}
-
-
+        document.getElementById("subTotal").innerText = subTotal.toFixed(2);  
+        document.getElementById("roundOff").innerText = roundOffStr;  
+        document.getElementById("grandTotal").innerText = roundedTotal.toFixed(2);
+    }
 
     function addNewRow() {
         const tbody = document.getElementById('itemsTable');
@@ -466,24 +433,23 @@
     }
 
     function getUpdatedHTML() { 
-    // Type kiye gaye mobile number ko HTML attribute mein pakka (sync) karein
-    const mobInput = document.getElementById('shopMobile');
-    if(mobInput) mobInput.setAttribute('value', mobInput.value);
+        const mobInput = document.getElementById('shopMobile');
+        if(mobInput) mobInput.setAttribute('value', mobInput.value);
 
-    // Bill Date aur Bill No ko bhi sync karein taaki backup fresh rahe
-    const dateInput = document.getElementById('billDate');
-    if(dateInput) dateInput.setAttribute('value', dateInput.value);
-    
-    const noInput = document.getElementById('billNo');
-    if(noInput) noInput.setAttribute('value', noInput.value);
+        const dateInput = document.getElementById('billDate');
+        if(dateInput) dateInput.setAttribute('value', dateInput.value);
+        
+        const noInput = document.getElementById('billNo');
+        if(noInput) noInput.setAttribute('value', noInput.value);
 
-    let fullHTML = document.documentElement.outerHTML;
-    let updated = fullHTML.replace(/let masterData = \[.*?\];/, `let masterData = ${JSON.stringify(masterData)};`);
-    updated = updated.replace(/let trashData = \[.*?\];/, `let trashData = ${JSON.stringify(trashData)};`);
-    
-    return updated;
-}
-
+        let fullHTML = document.documentElement.outerHTML;
+        
+        // Arrow Function () => se replacement string safe rehti hai
+        let updated = fullHTML.replace(/let masterData = \[.*?\];/s, () => `let masterData = ${JSON.stringify(masterData)};`);
+        updated = updated.replace(/let trashData = \[.*?\];/s, () => `let trashData = ${JSON.stringify(trashData)};`);
+        
+        return "<!DOCTYPE html>\n" + updated;
+    }
 
     function getFileName() {
         let d = new Date();
@@ -500,23 +466,22 @@
     }
 
     async function shareBackup() { 
-    const fileName = getFileName(); // फ़ाइल का नाम यहाँ जनरेट होगा
-    const f = new File([getUpdatedHTML()], fileName, {type: 'text/html'}); 
-    
-    if (navigator.share) {
-        try {
-            await navigator.share({
-                files: [f], 
-                title: fileName // यहाँ 'Backup' की जगह अब dynamic नाम जाएगा
-            }); 
-        } catch (err) {
-            console.error("Sharing failed:", err);
+        const fileName = getFileName(); 
+        const f = new File([getUpdatedHTML()], fileName, {type: 'text/html'}); 
+        
+        if (navigator.share) {
+            try {
+                await navigator.share({
+                    files: [f], 
+                    title: fileName 
+                }); 
+            } catch (err) {
+                console.error("Sharing failed:", err);
+            }
+        } else {
+            alert("Sharing is not supported on this browser.");
         }
-    } else {
-        alert("Sharing is not supported on this browser.");
     }
-}
-
 
     function navigationHandler(e) {
         if (e.keyCode === 13) { 
@@ -536,50 +501,47 @@
 
     function removeLastRow() { if(document.getElementById('itemsTable').rows.length > 1) { document.getElementById('itemsTable').deleteRow(-1); calculate(); } }
     function resetForm() { document.getElementById('custName').value = ""; document.getElementById('itemsTable').innerHTML = ""; addNewRow(); calculate(); setNextBillNo(); }
+    
     function setNextBillNo() { 
-    // Agar history khali hai toh 0 se shuru karega (+1 hokar 1 banega)
-    // Warna history mein se sabse bada number dhoondhega
-    let max = masterData.length > 0 ? Math.max(...masterData.map(b => parseInt(b.no) || 0)) : 0; 
-    
-    document.getElementById('billNo').value = max + 1; 
-    adjustWidth(document.getElementById('billNo')); 
-}
-    function adjustWidth(el) { el.style.width = (el.value.length + 1.5) + "ch"; }
-    function autoSlash(el) {
-    // कर्सर की वर्तमान स्थिति (position) को सेव करें
-    let selectionStart = el.selectionStart;
-    let oldLength = el.value.length;
-
-    let v = el.value.replace(/\D/g, '').slice(0, 8);
-    let formatted = "";
-    
-    if (v.length > 4) {
-        formatted = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4);
-    } else if (v.length > 2) {
-        formatted = v.slice(0, 2) + '/' + v.slice(2);
-    } else {
-        formatted = v;
+        let max = masterData.length > 0 ? Math.max(...masterData.map(b => parseInt(b.no) || 0)) : 0; 
+        document.getElementById('billNo').value = max + 1; 
+        adjustWidth(document.getElementById('billNo')); 
     }
 
-    el.value = formatted;
+    function adjustWidth(el) { el.style.width = (el.value.length + 1.5) + "ch"; }
+    
+    function autoSlash(el) {
+        let selectionStart = el.selectionStart;
+        let oldLength = el.value.length;
 
-    // कर्सर की स्थिति को वापस सेट करें ताकि वह अंत में जंप न करे
-    let newLength = el.value.length;
-    selectionStart = selectionStart + (newLength - oldLength);
-    el.setSelectionRange(selectionStart, selectionStart);
-}
+        let v = el.value.replace(/\D/g, '').slice(0, 8);
+        let formatted = "";
+        
+        if (v.length > 4) {
+            formatted = v.slice(0, 2) + '/' + v.slice(2, 4) + '/' + v.slice(4);
+        } else if (v.length > 2) {
+            formatted = v.slice(0, 2) + '/' + v.slice(2);
+        } else {
+            formatted = v;
+        }
+
+        el.value = formatted;
+
+        let newLength = el.value.length;
+        selectionStart = selectionStart + (newLength - oldLength);
+        el.setSelectionRange(selectionStart, selectionStart);
+    }
 
     function changeFont(val) { document.documentElement.style.setProperty('--font-sz', val + 'px'); }
+    
     function toTitleCase(str) {
-    return str.trim().split(/\s+/).map(w => {
-        // अगर शब्द पूरी तरह Uppercase है (जैसे SMC, GPS, ID), तो उसे वैसा ही रहने दें
-        if (w === w.toUpperCase() && w.length > 1) {
-            return w;
-        }
-        // बाकी शब्दों के लिए Title Case अप्लाई करें
-        return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
-    }).join(' ');
-}
+        return str.trim().split(/\s+/).map(w => {
+            if (w === w.toUpperCase() && w.length > 1) {
+                return w;
+            }
+            return w.charAt(0).toUpperCase() + w.slice(1).toLowerCase();
+        }).join(' ');
+    }
 
     function syncSignature() { document.querySelector('.signature-box div[contenteditable="true"]').innerHTML = `<b>For&nbsp;</b> ${document.querySelector('.shop-name').innerText}`; }
     
@@ -592,21 +554,18 @@
             setNextBillNo(); 
         } 
     }
+    
     document.querySelector('.shop-name').addEventListener('input', syncSignature);
 
-function restoreAllTrash() {
-    if (trashData.length === 0) return;
-    if (confirm("Restore all bills from trash to history?")) {
-        masterData = [...masterData, ...trashData];
-        trashData = [];
-        sortMasterData();
-        saveAll();
+    function restoreAllTrash() {
+        if (trashData.length === 0) return;
+        if (confirm("Restore all bills from trash to history?")) {
+            masterData = [...masterData, ...trashData];
+            trashData = [];
+            sortMasterData();
+            saveAll();
+        }
     }
-}
-
 </script>
-
-
-
-
-</body></html>
+</body>
+</html>
