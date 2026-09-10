@@ -1131,14 +1131,13 @@ data.rate;
 
 
 /*
-IMPORTANT:
-हर tab पर frequency default Quarterly
+Load saved frequency or default to Quarterly
 */
 
 document.getElementById(
 'frequency'
 ).value =
-'4';
+data.frequency || '4';
 
 
 document.getElementById(
