@@ -7,11 +7,12 @@
     <!-- Tailwind CSS for styling -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @media print {
-            * {
-                box-sizing: border-box !important;
-            }
+        @page {
+            size: A4 portrait;
+            margin: 8mm;
+        }
 
+        @media print {
             html {
                 font-size: 16px !important;
                 -webkit-text-size-adjust: none !important;
@@ -32,6 +33,7 @@
                 width: 100% !important;
                 margin: 0 !important;
                 padding: 0 !important;
+                box-shadow: none !important;
             }
 
             header {
@@ -100,12 +102,11 @@
             table {
                 width: 100% !important;
                 min-width: 0 !important;
-                table-layout: auto !important;
+                table-layout: fixed !important;
                 border-collapse: collapse !important;
             }
 
             th, td {
-                box-sizing: border-box !important;
                 padding: 6px 3px !important;
                 font-size: 14px !important;
                 line-height: 1.2 !important;
@@ -125,7 +126,6 @@
             }
 
             .table-input {
-                box-sizing: border-box !important;
                 border: none !important;
                 background: transparent !important;
                 box-shadow: none !important;
@@ -158,6 +158,43 @@
                 display: none !important;
             }
 
+            /* PDF ONLY: exact visible column proportions */
+th:nth-child(2), td:nth-child(2) {
+    width: 6% !important;
+}
+
+th:nth-child(3), td:nth-child(3) {
+    width: 14% !important;
+}
+
+th:nth-child(4), td:nth-child(4) {
+    width: 8% !important;
+}
+
+th:nth-child(5), td:nth-child(5) {
+    width: 12% !important;
+}
+
+th:nth-child(6), td:nth-child(6) {
+    width: 11% !important;
+}
+
+th:nth-child(7), td:nth-child(7) {
+    width: 11% !important;
+}
+
+th:nth-child(8), td:nth-child(8) {
+    width: 14% !important;
+}
+
+th:nth-child(9), td:nth-child(9) {
+    width: 10% !important;
+}
+
+th:nth-child(10), td:nth-child(10) {
+    width: 14% !important;
+}
+
             tr {
                 page-break-inside: avoid !important;
             }
@@ -178,7 +215,7 @@
         <header>
             <h1 class="text-2xl sm:text-3xl font-bold text-center mb-2 text-blue-900">
                 <span class="title-web">DA Arrear Calculation</span>
-                <span class="title-print" style="display:none;">DA Arrear Calculation</span>
+                <span class="title-print" style="display:none;">DA Arrear Calculation Statement</span>
             </h1>
             <div id="headerPeriod" style="display:none;"></div>
         </header>
@@ -226,14 +263,14 @@
                     <tr>
                         <th class="p-3 text-center border-r border-gray-200 no-print" style="width: 5%;">Del</th>
                         <th class="p-3 text-center border-r border-gray-200" style="width: 6%;">Sr. No.</th>
-                        <th class="p-3 border-r border-gray-200" style="width: 14%;">Month</th>
+                        <th class="p-3 border-r border-gray-200" style="width: 13%;">Month</th>
                         <th class="p-3 text-center border-r border-gray-200" style="width: 8%;">Year</th>
-                        <th class="p-3 text-center border-r border-gray-200" style="width: 11%;">Basic Pay</th>
+                        <th class="p-3 text-center border-r border-gray-200" style="width: 12%;">Basic Pay</th>
                         <th class="p-3 text-center border-r border-gray-200" style="width: 10%;">Previous DA (%)</th>
                         <th class="p-3 text-center border-r border-gray-200" style="width: 10%;">Revised DA (%)</th>
-                        <th class="p-3 text-center border-r border-gray-200" style="width: 13%;">Total Arrear</th>
+                        <th class="p-3 text-center border-r border-gray-200" style="width: 14%;">Total Arrear</th>
                         <th class="p-3 text-center border-r border-gray-200" style="width: 9%;">NPS Share (%)</th>
-                        <th class="p-3 text-center" style="width: 13%;">Net Arrear</th>
+                        <th class="p-3 text-center" style="width: 18%;">Net Arrear</th>
                     </tr>
                 </thead>
                 <tbody id="calculatorTableBody" class="divide-y divide-gray-200">
@@ -512,7 +549,7 @@
                         <button onclick="deleteRow(${index})" class="text-red-500 hover:text-red-700 font-bold px-2 py-1 rounded transition">&times;</button>
                     </td>
                     <td class="p-2 text-center border-r border-gray-200 font-medium ${inputExtra}" style="width: 6%;">${index + 1}</td>
-                    <td class="p-2 border-r border-gray-200" style="width: 14%;">
+                    <td class="p-2 border-r border-gray-200" style="width: 13%;">
                         <select class="table-input w-full bg-transparent appearance-none focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="month" data-index="${index}">
                             ${monthOptions}
                         </select>
@@ -520,7 +557,7 @@
                     <td class="p-2 text-center border-r border-gray-200" style="width: 8%;">
                         <input type="number" value="${item.year}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="year" data-index="${index}">
                     </td>
-                    <td class="p-2 text-center border-r border-gray-200" style="width: 11%;">
+                    <td class="p-2 text-center border-r border-gray-200" style="width: 12%;">
                         <input type="number" value="${item.basic}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="basic" data-index="${index}">
                     </td>
                     <td class="p-2 text-center border-r border-gray-200" style="width: 10%;">
@@ -529,11 +566,11 @@
                     <td class="p-2 text-center border-r border-gray-200" style="width: 10%;">
                         <input type="number" value="${item.revDA}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="revDA" data-index="${index}">
                     </td>
-                    <td class="p-2 text-center border-r border-gray-200 font-semibold ${isRedRow ? 'text-red-600' : 'text-blue-800'}" style="width: 13%;" id="totalArrear-${index}">0</td>
+                    <td class="p-2 text-center border-r border-gray-200 font-semibold ${isRedRow ? 'text-red-600' : 'text-blue-800'}" style="width: 14%;" id="totalArrear-${index}">0</td>
                     <td class="p-2 text-center border-r border-gray-200" style="width: 9%;">
                         <input type="number" value="${item.nps}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="nps" data-index="${index}">
                     </td>
-                    <td class="p-2 text-center font-semibold ${isRedRow ? 'text-red-600' : 'text-green-800'}" style="width: 13%;" id="netArrear-${index}">0</td>
+                    <td class="p-2 text-center font-semibold ${isRedRow ? 'text-red-600' : 'text-green-800'}" style="width: 18%;" id="netArrear-${index}">0</td>
                 `;
                 tbody.appendChild(tr);
             });
