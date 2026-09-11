@@ -1,0 +1,654 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DA Arrear Calculator</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @media print {
+            * {
+                box-sizing: border-box !important;
+            }
+
+            html {
+                font-size: 16px !important;
+                -webkit-text-size-adjust: none !important;
+                text-size-adjust: none !important;
+            }
+
+            body {
+                background: white !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                color: #000 !important;
+                font-size: 14px !important;
+                line-height: 1.3 !important;
+            }
+
+            .container {
+                max-width: 100% !important;
+                width: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+
+            header {
+                text-align: center !important;
+                margin-bottom: 10px !important;
+            }
+
+            header h1 {
+                font-size: 1.5rem !important;
+                margin-bottom: 2px !important;
+                text-align: center !important;
+            }
+
+            .title-web {
+                display: none !important;
+            }
+
+            .title-print {
+                display: inline !important;
+            }
+
+            #headerPeriod {
+                display: block !important;
+                font-size: 13px !important;
+                color: #334155 !important;
+                margin-top: 2px !important;
+            }
+
+            .card:first-of-type {
+                display: none !important;
+            }
+
+            .card {
+                box-shadow: none !important;
+                border: 1px solid #cbd5e1 !important;
+                padding: 8px !important;
+                margin-bottom: 8px !important;
+                border-radius: 4px !important;
+            }
+
+            .summary-grid {
+                display: grid !important;
+                grid-template-columns: repeat(3, 1fr) !important;
+                gap: 6px !important;
+                margin-bottom: 8px !important;
+            }
+
+            .summary-card {
+                padding: 6px !important;
+                border: 1px solid #cbd5e1 !important;
+            }
+
+            .summary-card h3 {
+                font-size: 11px !important;
+                margin-bottom: 2px !important;
+            }
+
+            .summary-card .value {
+                font-size: 15px !important;
+            }
+
+            .table-responsive {
+                overflow: visible !important;
+            }
+
+            table {
+                width: 100% !important;
+                min-width: 0 !important;
+                table-layout: auto !important;
+                border-collapse: collapse !important;
+            }
+
+            th, td {
+                box-sizing: border-box !important;
+                padding: 6px 3px !important;
+                font-size: 14px !important;
+                line-height: 1.2 !important;
+                border: 1px solid #334155 !important;
+                text-align: center !important;
+                vertical-align: middle !important;
+                word-wrap: break-word !important;
+                overflow-wrap: break-word !important;
+                white-space: normal !important;
+            }
+
+            th {
+                background-color: #f1f5f9 !important;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+                font-weight: 700 !important;
+            }
+
+            .table-input {
+                box-sizing: border-box !important;
+                border: none !important;
+                background: transparent !important;
+                box-shadow: none !important;
+                font-size: 14px !important;
+                font-family: inherit !important;
+                color: #000 !important;
+                text-align: center !important;
+                text-align-last: center !important;
+                width: 100% !important;
+                max-width: 100% !important;
+                min-width: 0 !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+            }
+
+            th:nth-child(3), td:nth-child(3) {
+                text-align: left !important;
+                padding-left: 6px !important;
+            }
+
+            td:nth-child(3) .table-input {
+                text-align: left !important;
+                text-align-last: left !important;
+            }
+
+            .no-print {
+                display: none !important;
+            }
+
+            tr {
+                page-break-inside: avoid !important;
+            }
+
+            tfoot {
+                display: table-row-group !important;
+            }
+        }
+
+        /* Web View Table Min-Width to prevent squishing on mobile */
+        .custom-table {
+            min-width: 780px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 p-4 sm:p-6">
+    <div class="container max-w-7xl mx-auto bg-white shadow-xl rounded-xl p-6 sm:p-8">
+        <header>
+            <h1 class="text-2xl sm:text-3xl font-bold text-center mb-2 text-blue-900">
+                <span class="title-web">DA Arrear Calculation</span>
+                <span class="title-print" style="display:none;">DA Arrear Calculation</span>
+            </h1>
+            <div id="headerPeriod" style="display:none;"></div>
+        </header>
+        
+        <!-- Top Control: Month of Annual Increment (No Print) -->
+        <div class="card mb-6 bg-blue-50 p-4 rounded-xl border border-blue-200 flex flex-wrap items-center justify-between gap-4 shadow-sm">
+            <div class="flex items-center space-x-3">
+                <label for="incrementMonthSelect" class="font-semibold text-blue-900">Month of Annual Increment:</label>
+                <select id="incrementMonthSelect" class="bg-white border border-blue-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-blue-900 shadow-sm appearance-none">
+                    <!-- Options populated via JS -->
+                </select>
+            </div>
+        </div>
+
+        <!-- Summary Cards -->
+        <div class="summary-grid grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div class="summary-card bg-blue-50 p-4 rounded-lg border border-blue-200 text-center shadow-sm">
+                <h3 class="text-sm font-semibold text-blue-600">TOTAL ARREAR</h3>
+                <div id="grandTotalArrear" class="value text-2xl font-bold text-blue-900">0</div>
+            </div>
+            <div class="summary-card bg-gray-50 p-4 rounded-lg border border-gray-200 text-center shadow-sm">
+                <h3 class="text-sm font-semibold text-gray-600">TOTAL NPS DEDUCTION</h3>
+                <div id="grandTotalNps" class="value text-2xl font-bold text-gray-900">0</div>
+            </div>
+            <div class="summary-card bg-green-50 p-4 rounded-lg border border-green-200 text-center shadow-sm">
+                <h3 class="text-sm font-semibold text-green-600">NET ARREAR</h3>
+                <div id="grandNetArrear" class="value text-2xl font-bold text-green-900">0</div>
+            </div>
+        </div>
+
+        <!-- Action Buttons (Print / Save as PDF & Reset) - No Print -->
+        <div class="flex justify-end space-x-3 mb-3 no-print">
+            <button onclick="window.print()" class="bg-purple-600 hover:bg-purple-700 text-white font-semibold px-4 py-2 rounded-lg shadow-sm transition flex items-center space-x-2">
+                <span>Print / Save as PDF</span>
+            </button>
+            <button id="resetBtn" class="bg-gray-600 hover:bg-gray-700 text-white font-semibold px-4 py-2 rounded-lg shadow-sm transition">
+                Reset
+            </button>
+        </div>
+
+        <!-- Calculator Table -->
+        <div class="table-responsive overflow-x-auto border border-gray-200 rounded-lg">
+            <table class="w-full border-collapse text-sm text-left custom-table">
+                <thead class="text-gray-900 font-bold uppercase tracking-wider text-xs border-b border-gray-300">
+                    <tr>
+                        <th class="p-3 text-center border-r border-gray-200 no-print" style="width: 5%;">Del</th>
+                        <th class="p-3 text-center border-r border-gray-200" style="width: 6%;">Sr. No.</th>
+                        <th class="p-3 border-r border-gray-200" style="width: 14%;">Month</th>
+                        <th class="p-3 text-center border-r border-gray-200" style="width: 8%;">Year</th>
+                        <th class="p-3 text-center border-r border-gray-200" style="width: 11%;">Basic Pay</th>
+                        <th class="p-3 text-center border-r border-gray-200" style="width: 10%;">Previous DA (%)</th>
+                        <th class="p-3 text-center border-r border-gray-200" style="width: 10%;">Revised DA (%)</th>
+                        <th class="p-3 text-center border-r border-gray-200" style="width: 13%;">Total Arrear</th>
+                        <th class="p-3 text-center border-r border-gray-200" style="width: 9%;">NPS Share (%)</th>
+                        <th class="p-3 text-center" style="width: 13%;">Net Arrear</th>
+                    </tr>
+                </thead>
+                <tbody id="calculatorTableBody" class="divide-y divide-gray-200">
+                    <!-- Rows injected via JavaScript -->
+                </tbody>
+                <!-- Add Row Controls Row (Above Total) - No Print -->
+                <tbody class="no-print">
+                    <tr class="bg-gray-50 border-t border-gray-200">
+                        <td colspan="10" class="p-3">
+                            <div class="flex items-center space-x-3">
+                                <button id="addRowBtn" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-4 py-2 rounded-lg shadow-sm transition">Add row(s)</button>
+                                <input type="number" id="rowCountInput" value="1" min="1" onfocus="this.select()" class="w-20 bg-white border border-blue-300 rounded-lg px-3 py-2 text-center focus:outline-none focus:ring-2 focus:ring-blue-500 font-medium text-blue-900 shadow-sm">
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+                <tfoot>
+                    <tr class="bg-gray-100 font-bold text-gray-900">
+                        <td class="p-3 border-t border-gray-300 no-print"></td>
+                        <td colspan="6" class="p-3 text-right border-t border-gray-300">Total:</td>
+                        <td id="footerTotalArrear" class="p-3 text-center border-t border-gray-300 text-blue-800">0</td>
+                        <td id="footerTotalNps" class="p-3 text-center border-t border-gray-300">0</td>
+                        <td id="footerNetArrear" class="p-3 text-center border-t border-gray-300 text-green-800">0</td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        const monthsList = [
+            "January", "February", "March", "April", "May", "June", 
+            "July", "August", "September", "October", "November", "December"
+        ];
+
+        // Initialize Increment Month Dropdown with "None" at the top
+        const incrementSelect = document.getElementById('incrementMonthSelect');
+        const incrementOptions = ["None", ...monthsList];
+        incrementOptions.forEach(m => {
+            const opt = document.createElement('option');
+            opt.value = m;
+            opt.textContent = m;
+            if (m === "October") opt.selected = true; // Default October
+            incrementSelect.appendChild(opt);
+        });
+
+        // Default Data with NPS percentage default set to 0
+        const defaultRawData = [
+            {month: "July", year: 2022, basic: 49300, prevDA: 34, revDA: 38, nps: 0},
+            {month: "August", year: 2022, basic: 49300, prevDA: 34, revDA: 38, nps: 0},
+            {month: "September", year: 2022, basic: 49300, prevDA: 34, revDA: 38, nps: 0},
+            {month: "October", year: 2022, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "November", year: 2022, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "December", year: 2022, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "January", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "February", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "March", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "April", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "May", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "June", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "July", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "August", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "September", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
+            {month: "October", year: 2023, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
+            {month: "November", year: 2023, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
+            {month: "December", year: 2023, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
+            {month: "January", year: 2024, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
+            {month: "February", year: 2024, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
+            {month: "March", year: 2024, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
+            {month: "January", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
+            {month: "February", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
+            {month: "March", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
+            {month: "April", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
+            {month: "May", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
+            {month: "June", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
+            {month: "July", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
+            {month: "August", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
+            {month: "September", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
+            {month: "October", year: 2023, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "November", year: 2023, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "December", year: 2023, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "January", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "February", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "March", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "April", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "May", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "June", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "July", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "August", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "September", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
+            {month: "July", year: 2023, basic: 50800, prevDA: 42, revDA: 45, nps: 0},
+            {month: "August", year: 2023, basic: 50800, prevDA: 42, revDA: 45, nps: 0},
+            {month: "September", year: 2023, basic: 50800, prevDA: 42, revDA: 45, nps: 0},
+            {month: "October", year: 2023, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "November", year: 2023, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "December", year: 2023, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "January", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "February", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "March", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "April", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "May", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "June", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "July", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "August", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "September", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
+            {month: "October", year: 2024, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
+            {month: "November", year: 2024, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
+            {month: "December", year: 2024, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
+            {month: "January", year: 2025, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
+            {month: "February", year: 2025, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
+            {month: "March", year: 2025, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
+            {month: "July", year: 2023, basic: 50800, prevDA: 45, revDA: 46, nps: 0},
+            {month: "August", year: 2023, basic: 50800, prevDA: 45, revDA: 46, nps: 0},
+            {month: "September", year: 2023, basic: 50800, prevDA: 45, revDA: 46, nps: 0},
+            {month: "October", year: 2023, basic: 52300, prevDA: 45, revDA: 46, nps: 0},
+            {month: "November", year: 2023, basic: 52300, prevDA: 45, revDA: 46, nps: 0},
+            {month: "December", year: 2023, basic: 52300, prevDA: 45, revDA: 46, nps: 0},
+            {month: "January", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
+            {month: "February", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
+            {month: "March", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
+            {month: "April", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
+            {month: "May", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
+            {month: "June", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
+            {month: "July", year: 2024, basic: 52300, prevDA: 45, revDA: 53, nps: 0},
+            {month: "August", year: 2024, basic: 52300, prevDA: 45, revDA: 53, nps: 0},
+            {month: "September", year: 2024, basic: 52300, prevDA: 45, revDA: 53, nps: 0},
+            {month: "October", year: 2024, basic: 53900, prevDA: 45, revDA: 53, nps: 0},
+            {month: "November", year: 2024, basic: 53900, prevDA: 45, revDA: 53, nps: 0},
+            {month: "December", year: 2024, basic: 53900, prevDA: 45, revDA: 53, nps: 0},
+            {month: "January", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
+            {month: "February", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
+            {month: "March", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
+            {month: "April", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
+            {month: "May", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
+            {month: "June", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
+            {month: "July", year: 2025, basic: 53900, prevDA: 45, revDA: 58, nps: 0},
+            {month: "August", year: 2025, basic: 53900, prevDA: 45, revDA: 58, nps: 0},
+            {month: "September", year: 2025, basic: 53900, prevDA: 45, revDA: 58, nps: 0},
+            {month: "October", year: 2025, basic: 55500, prevDA: 45, revDA: 58, nps: 0},
+            {month: "November", year: 2025, basic: 55500, prevDA: 45, revDA: 58, nps: 0},
+            {month: "December", year: 2025, basic: 55500, prevDA: 45, revDA: 58, nps: 0},
+            {month: "January", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0},
+            {month: "February", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0},
+            {month: "March", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0},
+            {month: "April", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0},
+            {month: "May", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0},
+            {month: "June", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0}
+        ];
+
+        let rawData = JSON.parse(JSON.stringify(defaultRawData));
+        const tbody = document.getElementById('calculatorTableBody');
+
+        function formatIndianCurrency(num) {
+            if (isNaN(num)) return num;
+            return num.toLocaleString('en-IN');
+        }
+
+        // Apply annual increments and inherit basic pay if month-year has appeared previously
+        function applyAnnualIncrements() {
+            const incrementMonth = document.getElementById('incrementMonthSelect').value;
+            if (rawData.length === 0) return;
+
+            // If "None" is selected, skip annual increment checks
+            const applyIncrements = incrementMonth !== "None";
+
+            let baseBasic = parseFloat(rawData[0]?.basic) || 49300;
+            let runningBasic = baseBasic;
+            let startYear = parseInt(rawData[0].year) || 2022;
+            let startMonthIndex = monthsList.indexOf(rawData[0].month);
+            if (startMonthIndex === -1) startMonthIndex = 0;
+
+            const monthYearMap = {};
+            let prevYear = startYear;
+            let prevMonthIdx = startMonthIndex;
+
+            for (let i = 0; i < rawData.length; i++) {
+                let item = rawData[i];
+                let key = `${item.month}-${item.year}`;
+
+                if (i === 0) {
+                    runningBasic = parseFloat(item.basic) || 49300;
+                    monthYearMap[key] = runningBasic;
+                } else {
+                    if (monthYearMap[key] !== undefined) {
+                        // Inherit basic pay from its previous occurrence
+                        item.basic = monthYearMap[key];
+                    } else {
+                        let itemYear = parseInt(item.year) || 2022;
+                        let itemMonthIdx = monthsList.indexOf(item.month);
+                        if (itemMonthIdx === -1) itemMonthIdx = 0;
+
+                        if (applyIncrements && item.month === incrementMonth) {
+                            if (itemYear > prevYear || (itemYear === prevYear && itemMonthIdx > prevMonthIdx)) {
+                                let increment = Math.round((runningBasic * 0.03) / 100) * 100;
+                                runningBasic += increment;
+                            }
+                        }
+
+                        item.basic = runningBasic;
+                        monthYearMap[key] = runningBasic;
+                        prevYear = itemYear;
+                        prevMonthIdx = itemMonthIdx;
+                    }
+                }
+            }
+        }
+
+        // Cascade months and years sequentially starting from startIndex
+        function cascadeMonthsAndYears(startIndex) {
+            for (let i = startIndex + 1; i < rawData.length; i++) {
+                let prevMonth = rawData[i - 1].month;
+                let prevYear = parseInt(rawData[i - 1].year) || 2022;
+                
+                let mIndex = monthsList.indexOf(prevMonth);
+                if (mIndex === -1) mIndex = 0;
+                
+                let nextMIndex = (mIndex + 1) % 12;
+                let nextYear = prevYear;
+                if (nextMIndex === 0) {
+                    nextYear += 1;
+                }
+                
+                rawData[i].month = monthsList[nextMIndex];
+                rawData[i].year = nextYear;
+            }
+        }
+
+        // Cascade non-month field value down to subsequent rows
+        function cascadeFieldDown(startIndex, field) {
+            const val = rawData[startIndex][field];
+            for (let i = startIndex + 1; i < rawData.length; i++) {
+                rawData[i][field] = val;
+            }
+        }
+
+        function deleteRow(index) {
+            if (rawData.length <= 1) {
+                alert("At least one row must remain.");
+                return;
+            }
+            rawData.splice(index, 1);
+            renderTable();
+        }
+
+        function updateHeaderPeriod() {
+            const headerPeriod = document.getElementById('headerPeriod');
+            if (rawData.length > 0) {
+                const first = rawData[0];
+                const last = rawData[rawData.length - 1];
+                headerPeriod.textContent = `Period: ${first.month} ${first.year} to ${last.month} ${last.year}`;
+            } else {
+                headerPeriod.textContent = '';
+            }
+        }
+
+        function renderTable() {
+            applyAnnualIncrements();
+            updateHeaderPeriod();
+            tbody.innerHTML = '';
+            rawData.forEach((item, index) => {
+                const tr = document.createElement('tr');
+                const isRedRow = item.month === "January" || item.month === "July";
+                const bgClass = index % 2 === 0 ? 'bg-white hover:bg-red-50' : 'bg-gray-50 hover:bg-red-50';
+                tr.className = `${bgClass} ${isRedRow ? 'text-red-600' : ''}`;
+                
+                let monthOptions = '';
+                monthsList.forEach(m => {
+                    const selected = (m === item.month) ? 'selected' : '';
+                    monthOptions += `<option value="${m}" ${selected}>${m}</option>`;
+                });
+
+                const inputExtra = isRedRow ? 'text-red-600 font-semibold' : '';
+
+                tr.innerHTML = `
+                    <td class="p-2 text-center border-r border-gray-200 no-print" style="width: 5%;">
+                        <button onclick="deleteRow(${index})" class="text-red-500 hover:text-red-700 font-bold px-2 py-1 rounded transition">&times;</button>
+                    </td>
+                    <td class="p-2 text-center border-r border-gray-200 font-medium ${inputExtra}" style="width: 6%;">${index + 1}</td>
+                    <td class="p-2 border-r border-gray-200" style="width: 14%;">
+                        <select class="table-input w-full bg-transparent appearance-none focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="month" data-index="${index}">
+                            ${monthOptions}
+                        </select>
+                    </td>
+                    <td class="p-2 text-center border-r border-gray-200" style="width: 8%;">
+                        <input type="number" value="${item.year}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="year" data-index="${index}">
+                    </td>
+                    <td class="p-2 text-center border-r border-gray-200" style="width: 11%;">
+                        <input type="number" value="${item.basic}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="basic" data-index="${index}">
+                    </td>
+                    <td class="p-2 text-center border-r border-gray-200" style="width: 10%;">
+                        <input type="number" value="${item.prevDA}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="prevDA" data-index="${index}">
+                    </td>
+                    <td class="p-2 text-center border-r border-gray-200" style="width: 10%;">
+                        <input type="number" value="${item.revDA}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="revDA" data-index="${index}">
+                    </td>
+                    <td class="p-2 text-center border-r border-gray-200 font-semibold ${isRedRow ? 'text-red-600' : 'text-blue-800'}" style="width: 13%;" id="totalArrear-${index}">0</td>
+                    <td class="p-2 text-center border-r border-gray-200" style="width: 9%;">
+                        <input type="number" value="${item.nps}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="nps" data-index="${index}">
+                    </td>
+                    <td class="p-2 text-center font-semibold ${isRedRow ? 'text-red-600' : 'text-green-800'}" style="width: 13%;" id="netArrear-${index}">0</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            calculateAll();
+        }
+
+        function calculateAll() {
+            let grandTotalArrear = 0;
+            let grandNetArrear = 0;
+            let totalNpsAmountSum = 0;
+
+            rawData.forEach((item, index) => {
+                const basic = parseFloat(item.basic) || 0;
+                const prevDA = parseFloat(item.prevDA) || 0;
+                const revDA = parseFloat(item.revDA) || 0;
+                
+                const totalArrear = Math.round(basic * (revDA - prevDA) / 100);
+                grandTotalArrear += totalArrear;
+
+                const totalArrearElem = document.getElementById(`totalArrear-${index}`);
+                if (totalArrearElem) totalArrearElem.innerText = formatIndianCurrency(totalArrear);
+
+                const npsPct = parseFloat(item.nps) || 0;
+                const npsDeduction = Math.round(totalArrear * npsPct / 100);
+                totalNpsAmountSum += npsDeduction;
+
+                const netArrear = totalArrear - npsDeduction;
+                grandNetArrear += netArrear;
+                const netArrearElem = document.getElementById(`netArrear-${index}`);
+                if (netArrearElem) netArrearElem.innerText = formatIndianCurrency(netArrear);
+            });
+
+            document.getElementById('grandTotalArrear').innerText = formatIndianCurrency(grandTotalArrear);
+            document.getElementById('footerTotalArrear').innerText = formatIndianCurrency(grandTotalArrear);
+
+            const npsDisplay = formatIndianCurrency(totalNpsAmountSum);
+            document.getElementById('grandTotalNps').innerText = npsDisplay;
+            document.getElementById('footerTotalNps').innerText = npsDisplay;
+
+            document.getElementById('grandNetArrear').innerText = formatIndianCurrency(grandNetArrear);
+            document.getElementById('footerNetArrear').innerText = formatIndianCurrency(grandNetArrear);
+        }
+
+        // Event listener for increment month change
+        document.getElementById('incrementMonthSelect').addEventListener('change', function() {
+            renderTable();
+        });
+
+        // Event listener for Add Row(s) button
+        document.getElementById('addRowBtn').addEventListener('click', function() {
+            const countInput = document.getElementById('rowCountInput');
+            let count = parseInt(countInput.value) || 1;
+            if (count < 1) count = 1;
+
+            for (let k = 0; k < count; k++) {
+                const lastItem = rawData[rawData.length - 1];
+                let mIndex = monthsList.indexOf(lastItem ? lastItem.month : "January");
+                if (mIndex === -1) mIndex = 0;
+                let nextMIndex = (mIndex + 1) % 12;
+                let nextYear = lastItem ? parseInt(lastItem.year) || 2022 : 2022;
+                if (nextMIndex === 0) {
+                    nextYear += 1;
+                }
+                const nextMonth = monthsList[nextMIndex];
+
+                rawData.push({
+                    month: nextMonth,
+                    year: nextYear,
+                    basic: lastItem ? lastItem.basic : 49300,
+                    prevDA: lastItem ? lastItem.prevDA : 34,
+                    revDA: lastItem ? lastItem.revDA : 38,
+                    nps: lastItem ? lastItem.nps : 0
+                });
+            }
+
+            countInput.value = 1;
+            renderTable();
+        });
+
+        // Reset button listener
+        document.getElementById('resetBtn').addEventListener('click', function() {
+            rawData = JSON.parse(JSON.stringify(defaultRawData));
+            document.getElementById('incrementMonthSelect').value = "October";
+            document.getElementById('rowCountInput').value = 1;
+            renderTable();
+        });
+
+        // Live calculation during typing without losing input focus
+        document.addEventListener('input', function(e) {
+            if (e.target && e.target.dataset && e.target.dataset.field) {
+                const index = parseInt(e.target.dataset.index);
+                const field = e.target.dataset.field;
+                rawData[index][field] = e.target.value;
+                calculateAll();
+            }
+        });
+
+        // Downward propagation and structural re-rendering on change (committed edit)
+        document.addEventListener('change', function(e) {
+            if (e.target && e.target.dataset && e.target.dataset.field) {
+                const index = parseInt(e.target.dataset.index);
+                const field = e.target.dataset.field;
+                rawData[index][field] = e.target.value;
+
+                if (field === 'month' || field === 'year') {
+                    cascadeMonthsAndYears(index);
+                } else if (field !== 'basic') {
+                    cascadeFieldDown(index, field);
+                }
+                renderTable();
+            }
+        });
+
+        // Initial setup call
+        renderTable();
+    </script>
+</body>
+</html>
