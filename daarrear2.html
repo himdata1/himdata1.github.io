@@ -159,41 +159,41 @@
             }
 
             /* PDF ONLY: exact visible column proportions */
-th:nth-child(2), td:nth-child(2) {
-    width: 6% !important;
-}
+            th:nth-child(2), td:nth-child(2) {
+                width: 6% !important;
+            }
 
-th:nth-child(3), td:nth-child(3) {
-    width: 14% !important;
-}
+            th:nth-child(3), td:nth-child(3) {
+                width: 14% !important;
+            }
 
-th:nth-child(4), td:nth-child(4) {
-    width: 8% !important;
-}
+            th:nth-child(4), td:nth-child(4) {
+                width: 8% !important;
+            }
 
-th:nth-child(5), td:nth-child(5) {
-    width: 12% !important;
-}
+            th:nth-child(5), td:nth-child(5) {
+                width: 12% !important;
+            }
 
-th:nth-child(6), td:nth-child(6) {
-    width: 11% !important;
-}
+            th:nth-child(6), td:nth-child(6) {
+                width: 11% !important;
+            }
 
-th:nth-child(7), td:nth-child(7) {
-    width: 11% !important;
-}
+            th:nth-child(7), td:nth-child(7) {
+                width: 11% !important;
+            }
 
-th:nth-child(8), td:nth-child(8) {
-    width: 14% !important;
-}
+            th:nth-child(8), td:nth-child(8) {
+                width: 14% !important;
+            }
 
-th:nth-child(9), td:nth-child(9) {
-    width: 10% !important;
-}
+            th:nth-child(9), td:nth-child(9) {
+                width: 10% !important;
+            }
 
-th:nth-child(10), td:nth-child(10) {
-    width: 14% !important;
-}
+            th:nth-child(10), td:nth-child(10) {
+                width: 14% !important;
+            }
 
             tr {
                 page-break-inside: avoid !important;
@@ -269,7 +269,15 @@ th:nth-child(10), td:nth-child(10) {
                         <th class="p-3 text-center border-r border-gray-200" style="width: 10%;">Previous DA (%)</th>
                         <th class="p-3 text-center border-r border-gray-200" style="width: 10%;">Revised DA (%)</th>
                         <th class="p-3 text-center border-r border-gray-200" style="width: 14%;">Total Arrear</th>
-                        <th class="p-3 text-center border-r border-gray-200" style="width: 9%;">NPS Share (%)</th>
+                        <th class="p-3 text-center border-r border-gray-200" style="width: 9%;">
+                            <div class="flex flex-col items-center justify-center leading-tight">
+                                <span class="whitespace-nowrap">NPS Ded.</span>
+                                <div class="flex items-center justify-center space-x-0.5 mt-1">
+                                    <input type="number" id="headerNpsInput" value="0" min="0" max="100" onfocus="this.select()" class="w-8 bg-white border border-blue-300 rounded px-0.5 py-0.5 text-center text-xs font-bold text-blue-900 focus:outline-none focus:ring-1 focus:ring-blue-500 shadow-sm" title="Enter NPS Share %">
+                                    <span>%</span>
+                                </div>
+                            </div>
+                        </th>
                         <th class="p-3 text-center" style="width: 18%;">Net Arrear</th>
                     </tr>
                 </thead>
@@ -317,107 +325,107 @@ th:nth-child(10), td:nth-child(10) {
             incrementSelect.appendChild(opt);
         });
 
-        // Default Data with NPS percentage default set to 0
+        // Default Data
         const defaultRawData = [
-            {month: "July", year: 2022, basic: 49300, prevDA: 34, revDA: 38, nps: 0},
-            {month: "August", year: 2022, basic: 49300, prevDA: 34, revDA: 38, nps: 0},
-            {month: "September", year: 2022, basic: 49300, prevDA: 34, revDA: 38, nps: 0},
-            {month: "October", year: 2022, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "November", year: 2022, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "December", year: 2022, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "January", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "February", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "March", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "April", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "May", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "June", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "July", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "August", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "September", year: 2023, basic: 50800, prevDA: 34, revDA: 38, nps: 0},
-            {month: "October", year: 2023, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
-            {month: "November", year: 2023, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
-            {month: "December", year: 2023, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
-            {month: "January", year: 2024, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
-            {month: "February", year: 2024, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
-            {month: "March", year: 2024, basic: 52300, prevDA: 34, revDA: 38, nps: 0},
-            {month: "January", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
-            {month: "February", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
-            {month: "March", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
-            {month: "April", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
-            {month: "May", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
-            {month: "June", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
-            {month: "July", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
-            {month: "August", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
-            {month: "September", year: 2023, basic: 50800, prevDA: 38, revDA: 42, nps: 0},
-            {month: "October", year: 2023, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "November", year: 2023, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "December", year: 2023, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "January", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "February", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "March", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "April", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "May", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "June", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "July", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "August", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "September", year: 2024, basic: 52300, prevDA: 38, revDA: 42, nps: 0},
-            {month: "July", year: 2023, basic: 50800, prevDA: 42, revDA: 45, nps: 0},
-            {month: "August", year: 2023, basic: 50800, prevDA: 42, revDA: 45, nps: 0},
-            {month: "September", year: 2023, basic: 50800, prevDA: 42, revDA: 45, nps: 0},
-            {month: "October", year: 2023, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "November", year: 2023, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "December", year: 2023, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "January", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "February", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "March", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "April", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "May", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "June", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "July", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "August", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "September", year: 2024, basic: 52300, prevDA: 42, revDA: 45, nps: 0},
-            {month: "October", year: 2024, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
-            {month: "November", year: 2024, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
-            {month: "December", year: 2024, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
-            {month: "January", year: 2025, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
-            {month: "February", year: 2025, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
-            {month: "March", year: 2025, basic: 53900, prevDA: 42, revDA: 45, nps: 0},
-            {month: "July", year: 2023, basic: 50800, prevDA: 45, revDA: 46, nps: 0},
-            {month: "August", year: 2023, basic: 50800, prevDA: 45, revDA: 46, nps: 0},
-            {month: "September", year: 2023, basic: 50800, prevDA: 45, revDA: 46, nps: 0},
-            {month: "October", year: 2023, basic: 52300, prevDA: 45, revDA: 46, nps: 0},
-            {month: "November", year: 2023, basic: 52300, prevDA: 45, revDA: 46, nps: 0},
-            {month: "December", year: 2023, basic: 52300, prevDA: 45, revDA: 46, nps: 0},
-            {month: "January", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
-            {month: "February", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
-            {month: "March", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
-            {month: "April", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
-            {month: "May", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
-            {month: "June", year: 2024, basic: 52300, prevDA: 45, revDA: 50, nps: 0},
-            {month: "July", year: 2024, basic: 52300, prevDA: 45, revDA: 53, nps: 0},
-            {month: "August", year: 2024, basic: 52300, prevDA: 45, revDA: 53, nps: 0},
-            {month: "September", year: 2024, basic: 52300, prevDA: 45, revDA: 53, nps: 0},
-            {month: "October", year: 2024, basic: 53900, prevDA: 45, revDA: 53, nps: 0},
-            {month: "November", year: 2024, basic: 53900, prevDA: 45, revDA: 53, nps: 0},
-            {month: "December", year: 2024, basic: 53900, prevDA: 45, revDA: 53, nps: 0},
-            {month: "January", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
-            {month: "February", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
-            {month: "March", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
-            {month: "April", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
-            {month: "May", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
-            {month: "June", year: 2025, basic: 53900, prevDA: 45, revDA: 55, nps: 0},
-            {month: "July", year: 2025, basic: 53900, prevDA: 45, revDA: 58, nps: 0},
-            {month: "August", year: 2025, basic: 53900, prevDA: 45, revDA: 58, nps: 0},
-            {month: "September", year: 2025, basic: 53900, prevDA: 45, revDA: 58, nps: 0},
-            {month: "October", year: 2025, basic: 55500, prevDA: 45, revDA: 58, nps: 0},
-            {month: "November", year: 2025, basic: 55500, prevDA: 45, revDA: 58, nps: 0},
-            {month: "December", year: 2025, basic: 55500, prevDA: 45, revDA: 58, nps: 0},
-            {month: "January", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0},
-            {month: "February", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0},
-            {month: "March", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0},
-            {month: "April", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0},
-            {month: "May", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0},
-            {month: "June", year: 2026, basic: 55500, prevDA: 45, revDA: 60, nps: 0}
+            {month: "July", year: 2022, basic: 49300, prevDA: 34, revDA: 38},
+            {month: "August", year: 2022, basic: 49300, prevDA: 34, revDA: 38},
+            {month: "September", year: 2022, basic: 49300, prevDA: 34, revDA: 38},
+            {month: "October", year: 2022, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "November", year: 2022, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "December", year: 2022, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "January", year: 2023, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "February", year: 2023, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "March", year: 2023, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "April", year: 2023, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "May", year: 2023, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "June", year: 2023, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "July", year: 2023, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "August", year: 2023, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "September", year: 2023, basic: 50800, prevDA: 34, revDA: 38},
+            {month: "October", year: 2023, basic: 52300, prevDA: 34, revDA: 38},
+            {month: "November", year: 2023, basic: 52300, prevDA: 34, revDA: 38},
+            {month: "December", year: 2023, basic: 52300, prevDA: 34, revDA: 38},
+            {month: "January", year: 2024, basic: 52300, prevDA: 34, revDA: 38},
+            {month: "February", year: 2024, basic: 52300, prevDA: 34, revDA: 38},
+            {month: "March", year: 2024, basic: 52300, prevDA: 34, revDA: 38},
+            {month: "January", year: 2023, basic: 50800, prevDA: 38, revDA: 42},
+            {month: "February", year: 2023, basic: 50800, prevDA: 38, revDA: 42},
+            {month: "March", year: 2023, basic: 50800, prevDA: 38, revDA: 42},
+            {month: "April", year: 2023, basic: 50800, prevDA: 38, revDA: 42},
+            {month: "May", year: 2023, basic: 50800, prevDA: 38, revDA: 42},
+            {month: "June", year: 2023, basic: 50800, prevDA: 38, revDA: 42},
+            {month: "July", year: 2023, basic: 50800, prevDA: 38, revDA: 42},
+            {month: "August", year: 2023, basic: 50800, prevDA: 38, revDA: 42},
+            {month: "September", year: 2023, basic: 50800, prevDA: 38, revDA: 42},
+            {month: "October", year: 2023, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "November", year: 2023, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "December", year: 2023, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "January", year: 2024, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "February", year: 2024, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "March", year: 2024, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "April", year: 2024, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "May", year: 2024, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "June", year: 2024, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "July", year: 2024, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "August", year: 2024, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "September", year: 2024, basic: 52300, prevDA: 38, revDA: 42},
+            {month: "July", year: 2023, basic: 50800, prevDA: 42, revDA: 45},
+            {month: "August", year: 2023, basic: 50800, prevDA: 42, revDA: 45},
+            {month: "September", year: 2023, basic: 50800, prevDA: 42, revDA: 45},
+            {month: "October", year: 2023, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "November", year: 2023, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "December", year: 2023, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "January", year: 2024, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "February", year: 2024, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "March", year: 2024, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "April", year: 2024, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "May", year: 2024, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "June", year: 2024, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "July", year: 2024, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "August", year: 2024, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "September", year: 2024, basic: 52300, prevDA: 42, revDA: 45},
+            {month: "October", year: 2024, basic: 53900, prevDA: 42, revDA: 45},
+            {month: "November", year: 2024, basic: 53900, prevDA: 42, revDA: 45},
+            {month: "December", year: 2024, basic: 53900, prevDA: 42, revDA: 45},
+            {month: "January", year: 2025, basic: 53900, prevDA: 42, revDA: 45},
+            {month: "February", year: 2025, basic: 53900, prevDA: 42, revDA: 45},
+            {month: "March", year: 2025, basic: 53900, prevDA: 42, revDA: 45},
+            {month: "July", year: 2023, basic: 50800, prevDA: 45, revDA: 46},
+            {month: "August", year: 2023, basic: 50800, prevDA: 45, revDA: 46},
+            {month: "September", year: 2023, basic: 50800, prevDA: 45, revDA: 46},
+            {month: "October", year: 2023, basic: 52300, prevDA: 45, revDA: 46},
+            {month: "November", year: 2023, basic: 52300, prevDA: 45, revDA: 46},
+            {month: "December", year: 2023, basic: 52300, prevDA: 45, revDA: 46},
+            {month: "January", year: 2024, basic: 52300, prevDA: 45, revDA: 50},
+            {month: "February", year: 2024, basic: 52300, prevDA: 45, revDA: 50},
+            {month: "March", year: 2024, basic: 52300, prevDA: 45, revDA: 50},
+            {month: "April", year: 2024, basic: 52300, prevDA: 45, revDA: 50},
+            {month: "May", year: 2024, basic: 52300, prevDA: 45, revDA: 50},
+            {month: "June", year: 2024, basic: 52300, prevDA: 45, revDA: 50},
+            {month: "July", year: 2024, basic: 52300, prevDA: 45, revDA: 53},
+            {month: "August", year: 2024, basic: 52300, prevDA: 45, revDA: 53},
+            {month: "September", year: 2024, basic: 52300, prevDA: 45, revDA: 53},
+            {month: "October", year: 2024, basic: 53900, prevDA: 45, revDA: 53},
+            {month: "November", year: 2024, basic: 53900, prevDA: 45, revDA: 53},
+            {month: "December", year: 2024, basic: 53900, prevDA: 45, revDA: 53},
+            {month: "January", year: 2025, basic: 53900, prevDA: 45, revDA: 55},
+            {month: "February", year: 2025, basic: 53900, prevDA: 45, revDA: 55},
+            {month: "March", year: 2025, basic: 53900, prevDA: 45, revDA: 55},
+            {month: "April", year: 2025, basic: 53900, prevDA: 45, revDA: 55},
+            {month: "May", year: 2025, basic: 53900, prevDA: 45, revDA: 55},
+            {month: "June", year: 2025, basic: 53900, prevDA: 45, revDA: 55},
+            {month: "July", year: 2025, basic: 53900, prevDA: 45, revDA: 58},
+            {month: "August", year: 2025, basic: 53900, prevDA: 45, revDA: 58},
+            {month: "September", year: 2025, basic: 53900, prevDA: 45, revDA: 58},
+            {month: "October", year: 2025, basic: 55500, prevDA: 45, revDA: 58},
+            {month: "November", year: 2025, basic: 55500, prevDA: 45, revDA: 58},
+            {month: "December", year: 2025, basic: 55500, prevDA: 45, revDA: 58},
+            {month: "January", year: 2026, basic: 55500, prevDA: 45, revDA: 60},
+            {month: "February", year: 2026, basic: 55500, prevDA: 45, revDA: 60},
+            {month: "March", year: 2026, basic: 55500, prevDA: 45, revDA: 60},
+            {month: "April", year: 2026, basic: 55500, prevDA: 45, revDA: 60},
+            {month: "May", year: 2026, basic: 55500, prevDA: 45, revDA: 60},
+            {month: "June", year: 2026, basic: 55500, prevDA: 45, revDA: 60}
         ];
 
         let rawData = JSON.parse(JSON.stringify(defaultRawData));
@@ -433,7 +441,6 @@ th:nth-child(10), td:nth-child(10) {
             const incrementMonth = document.getElementById('incrementMonthSelect').value;
             if (rawData.length === 0) return;
 
-            // If "None" is selected, skip annual increment checks
             const applyIncrements = incrementMonth !== "None";
 
             let baseBasic = parseFloat(rawData[0]?.basic) || 49300;
@@ -455,7 +462,6 @@ th:nth-child(10), td:nth-child(10) {
                     monthYearMap[key] = runningBasic;
                 } else {
                     if (monthYearMap[key] !== undefined) {
-                        // Inherit basic pay from its previous occurrence
                         item.basic = monthYearMap[key];
                     } else {
                         let itemYear = parseInt(item.year) || 2022;
@@ -567,9 +573,7 @@ th:nth-child(10), td:nth-child(10) {
                         <input type="number" value="${item.revDA}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="revDA" data-index="${index}">
                     </td>
                     <td class="p-2 text-center border-r border-gray-200 font-semibold ${isRedRow ? 'text-red-600' : 'text-blue-800'}" style="width: 14%;" id="totalArrear-${index}">0</td>
-                    <td class="p-2 text-center border-r border-gray-200" style="width: 9%;">
-                        <input type="number" value="${item.nps}" onfocus="this.select()" class="table-input w-full text-center bg-transparent focus:bg-white focus:outline-none focus:ring-1 focus:ring-red-500 rounded p-1 ${inputExtra}" data-field="nps" data-index="${index}">
-                    </td>
+                    <td class="p-2 text-center border-r border-gray-200 font-semibold ${isRedRow ? 'text-red-600' : 'text-gray-800'}" style="width: 9%;" id="npsShare-${index}">0</td>
                     <td class="p-2 text-center font-semibold ${isRedRow ? 'text-red-600' : 'text-green-800'}" style="width: 18%;" id="netArrear-${index}">0</td>
                 `;
                 tbody.appendChild(tr);
@@ -582,6 +586,8 @@ th:nth-child(10), td:nth-child(10) {
             let grandNetArrear = 0;
             let totalNpsAmountSum = 0;
 
+            const headerNpsPct = parseFloat(document.getElementById('headerNpsInput').value) || 0;
+
             rawData.forEach((item, index) => {
                 const basic = parseFloat(item.basic) || 0;
                 const prevDA = parseFloat(item.prevDA) || 0;
@@ -593,9 +599,11 @@ th:nth-child(10), td:nth-child(10) {
                 const totalArrearElem = document.getElementById(`totalArrear-${index}`);
                 if (totalArrearElem) totalArrearElem.innerText = formatIndianCurrency(totalArrear);
 
-                const npsPct = parseFloat(item.nps) || 0;
-                const npsDeduction = Math.round(totalArrear * npsPct / 100);
+                const npsDeduction = Math.round(totalArrear * headerNpsPct / 100);
                 totalNpsAmountSum += npsDeduction;
+
+                const npsShareElem = document.getElementById(`npsShare-${index}`);
+                if (npsShareElem) npsShareElem.innerText = formatIndianCurrency(npsDeduction);
 
                 const netArrear = totalArrear - npsDeduction;
                 grandNetArrear += netArrear;
@@ -617,6 +625,11 @@ th:nth-child(10), td:nth-child(10) {
         // Event listener for increment month change
         document.getElementById('incrementMonthSelect').addEventListener('change', function() {
             renderTable();
+        });
+
+        // Event listener for header NPS percentage input
+        document.getElementById('headerNpsInput').addEventListener('input', function() {
+            calculateAll();
         });
 
         // Event listener for Add Row(s) button
@@ -641,8 +654,7 @@ th:nth-child(10), td:nth-child(10) {
                     year: nextYear,
                     basic: lastItem ? lastItem.basic : 49300,
                     prevDA: lastItem ? lastItem.prevDA : 34,
-                    revDA: lastItem ? lastItem.revDA : 38,
-                    nps: lastItem ? lastItem.nps : 0
+                    revDA: lastItem ? lastItem.revDA : 38
                 });
             }
 
@@ -654,6 +666,7 @@ th:nth-child(10), td:nth-child(10) {
         document.getElementById('resetBtn').addEventListener('click', function() {
             rawData = JSON.parse(JSON.stringify(defaultRawData));
             document.getElementById('incrementMonthSelect').value = "October";
+            document.getElementById('headerNpsInput').value = 0;
             document.getElementById('rowCountInput').value = 1;
             renderTable();
         });
