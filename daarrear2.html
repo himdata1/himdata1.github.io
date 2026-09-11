@@ -215,7 +215,7 @@ th:nth-child(10), td:nth-child(10) {
         <header>
             <h1 class="text-2xl sm:text-3xl font-bold text-center mb-2 text-blue-900">
                 <span class="title-web">DA Arrear Calculation</span>
-                <span class="title-print" style="display:none;">DA Arrear Calculation Statement</span>
+                <span class="title-print" style="display:none;">DA Arrear Calculation</span>
             </h1>
             <div id="headerPeriod" style="display:none;"></div>
         </header>
@@ -520,7 +520,7 @@ th:nth-child(10), td:nth-child(10) {
             if (rawData.length > 0) {
                 const first = rawData[0];
                 const last = rawData[rawData.length - 1];
-                headerPeriod.textContent = `Period: ${first.month} ${first.year} to ${last.month} ${last.year}`;
+                headerPeriod.textContent = `(${first.month} ${first.year} to ${last.month} ${last.year})`;
             } else {
                 headerPeriod.textContent = '';
             }
