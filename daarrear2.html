@@ -8,7 +8,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @page {
-            size: A4 portrait;
+            size: auto;
             margin: 8mm;
         }
 
@@ -111,6 +111,8 @@
                 font-size: 14px !important;
                 line-height: 1.2 !important;
                 border: 1px solid #334155 !important;
+                /* Fix for missing bottom border on page breaks in PDF/Print */
+                box-shadow: inset 0 -1px 0 0 #334155 !important;
                 text-align: center !important;
                 vertical-align: middle !important;
                 word-wrap: break-word !important;
@@ -131,7 +133,6 @@
                 box-shadow: none !important;
                 font-size: 14px !important;
                 font-family: inherit !important;
-                color: #000 !important;
                 text-align: center !important;
                 text-align-last: center !important;
                 width: 100% !important;
@@ -156,6 +157,11 @@
 
             .no-print {
                 display: none !important;
+            }
+
+            /* Force black text in print/PDF to override row highlights */
+            tr, th, td, .table-input, select {
+                color: #000 !important;
             }
 
             /* PDF ONLY: exact visible column proportions */
