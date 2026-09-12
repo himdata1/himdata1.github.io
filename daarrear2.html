@@ -115,7 +115,6 @@
                 font-size: 14px !important;
                 line-height: 1.2 !important;
                 border: 1px solid #334155 !important;
-                /* Fix for missing bottom border on page breaks in PDF/Print */
                 box-shadow: inset 0 -1px 0 0 #334155 !important;
                 text-align: center !important;
                 vertical-align: middle !important;
@@ -163,12 +162,10 @@
                 display: none !important;
             }
 
-            /* Force black text in print/PDF to override row highlights */
             tr, th, td, .table-input, select {
                 color: #000 !important;
             }
 
-            /* PDF ONLY: exact visible column proportions */
             th:nth-child(2), td:nth-child(2) {
                 width: 6% !important;
             }
@@ -214,7 +211,6 @@
             }
         }
 
-        /* Web View Table Min-Width to prevent squishing on mobile */
         .custom-table {
             min-width: 780px;
         }
@@ -446,51 +442,50 @@
             return num.toLocaleString('en-IN');
         }
 
-        // Apply annual increments and inherit basic pay if month-year has appeared previously
-        function applyAnnualIncrements() {
+        // Apply annual increments and synchronize repeating Month + Year instances
+        function applyAnnualIncrements(startIndex = 0) {
             const incrementMonth = document.getElementById('incrementMonthSelect').value;
             if (rawData.length === 0) return;
 
             const applyIncrements = incrementMonth !== "None";
 
-            let baseBasic = parseFloat(rawData[0]?.basic) || 49300;
-            let runningBasic = baseBasic;
-            let startYear = parseInt(rawData[0].year) || 2022;
-            let startMonthIndex = monthsList.indexOf(rawData[0].month);
-            if (startMonthIndex === -1) startMonthIndex = 0;
-
-            const monthYearMap = {};
-            let prevYear = startYear;
-            let prevMonthIdx = startMonthIndex;
+            let monthYearMap = {}; // Tracks basic pay for each unique Month-Year
+            let runningBasic = parseFloat(rawData[0]?.basic) || 49300;
+            let prevYear = parseInt(rawData[0]?.year) || 2022;
+            let prevMonthIdx = monthsList.indexOf(rawData[0]?.month);
+            if (prevMonthIdx === -1) prevMonthIdx = 0;
 
             for (let i = 0; i < rawData.length; i++) {
                 let item = rawData[i];
-                let key = `${item.month}-${item.year}`;
+                let itemYear = parseInt(item.year) || 2022;
+                let itemMonthIdx = monthsList.indexOf(item.month);
+                if (itemMonthIdx === -1) itemMonthIdx = 0;
+
+                let myKey = `${item.month}_${item.year}`;
 
                 if (i === 0) {
-                    runningBasic = parseFloat(item.basic) || 49300;
-                    monthYearMap[key] = runningBasic;
+                    runningBasic = parseFloat(item.basic) || runningBasic;
+                    monthYearMap[myKey] = runningBasic;
                 } else {
-                    if (monthYearMap[key] !== undefined) {
-                        item.basic = monthYearMap[key];
+                    // If this Month+Year has appeared before, inherit its basic pay from its previous instance
+                    if (monthYearMap.hasOwnProperty(myKey)) {
+                        item.basic = monthYearMap[myKey];
+                        runningBasic = item.basic;
                     } else {
-                        let itemYear = parseInt(item.year) || 2022;
-                        let itemMonthIdx = monthsList.indexOf(item.month);
-                        if (itemMonthIdx === -1) itemMonthIdx = 0;
-
+                        // Check if an annual increment should apply for new month-years
                         if (applyIncrements && item.month === incrementMonth) {
                             if (itemYear > prevYear || (itemYear === prevYear && itemMonthIdx > prevMonthIdx)) {
                                 let increment = Math.round((runningBasic * 0.03) / 100) * 100;
                                 runningBasic += increment;
                             }
                         }
-
                         item.basic = runningBasic;
-                        monthYearMap[key] = runningBasic;
-                        prevYear = itemYear;
-                        prevMonthIdx = itemMonthIdx;
+                        monthYearMap[myKey] = runningBasic;
                     }
                 }
+
+                prevYear = itemYear;
+                prevMonthIdx = itemMonthIdx;
             }
         }
 
@@ -543,7 +538,6 @@
         }
 
         function renderTable() {
-            applyAnnualIncrements();
             updateHeaderPeriod();
             tbody.innerHTML = '';
             rawData.forEach((item, index) => {
@@ -634,6 +628,7 @@
 
         // Event listener for increment month change
         document.getElementById('incrementMonthSelect').addEventListener('change', function() {
+            applyAnnualIncrements(0);
             renderTable();
         });
 
@@ -669,6 +664,7 @@
             }
 
             countInput.value = 1;
+            applyAnnualIncrements(0);
             renderTable();
         });
 
@@ -678,6 +674,7 @@
             document.getElementById('incrementMonthSelect').value = "October";
             document.getElementById('headerNpsInput').value = 0;
             document.getElementById('rowCountInput').value = 1;
+            applyAnnualIncrements(0);
             renderTable();
         });
 
@@ -700,7 +697,52 @@
 
                 if (field === 'month' || field === 'year') {
                     cascadeMonthsAndYears(index);
-                } else if (field !== 'basic') {
+                    applyAnnualIncrements(0);
+                } else if (field === 'basic') {
+                    rawData[index].basic = parseFloat(e.target.value) || 0;
+                    
+                    let incrementMonth = document.getElementById('incrementMonthSelect').value;
+                    let applyIncrements = incrementMonth !== "None";
+                    
+                    let runningBasic = rawData[index].basic;
+                    let prevYear = parseInt(rawData[index].year) || 2022;
+                    let prevMonthIdx = monthsList.indexOf(rawData[index].month);
+                    if (prevMonthIdx === -1) prevMonthIdx = 0;
+
+                    let monthYearMap = {};
+                    for (let j = 0; j <= index; j++) {
+                        let k = `${rawData[j].month}_${rawData[j].year}`;
+                        if (!monthYearMap.hasOwnProperty(k)) {
+                            monthYearMap[k] = rawData[j].basic;
+                        }
+                    }
+                    monthYearMap[`${rawData[index].month}_${rawData[index].year}`] = runningBasic;
+
+                    for (let k = index + 1; k < rawData.length; k++) {
+                        let item = rawData[k];
+                        let itemYear = parseInt(item.year) || 2022;
+                        let itemMonthIdx = monthsList.indexOf(item.month);
+                        if (itemMonthIdx === -1) itemMonthIdx = 0;
+
+                        let myKey = `${item.month}_${item.year}`;
+
+                        if (monthYearMap.hasOwnProperty(myKey)) {
+                            item.basic = monthYearMap[myKey];
+                            runningBasic = item.basic;
+                        } else {
+                            if (applyIncrements && item.month === incrementMonth) {
+                                if (itemYear > prevYear || (itemYear === prevYear && itemMonthIdx > prevMonthIdx)) {
+                                    let increment = Math.round((runningBasic * 0.03) / 100) * 100;
+                                    runningBasic += increment;
+                                }
+                            }
+                            item.basic = runningBasic;
+                            monthYearMap[myKey] = runningBasic;
+                        }
+                        prevYear = itemYear;
+                        prevMonthIdx = itemMonthIdx;
+                    }
+                } else {
                     cascadeFieldDown(index, field);
                 }
                 renderTable();
@@ -708,6 +750,7 @@
         });
 
         // Initial setup call
+        applyAnnualIncrements(0);
         renderTable();
     </script>
 </body>
