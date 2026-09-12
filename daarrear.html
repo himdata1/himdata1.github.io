@@ -280,6 +280,14 @@
             background-color: #eff6ff;
         }
 
+        /* January & July Row Highlight Style (Web View Only) */
+        .jan-jul-row td,
+        .jan-jul-row .table-input,
+        .jan-jul-row select.table-input,
+        .jan-jul-row input.table-input {
+            color: var(--accent-red) !important;
+        }
+
         .add-row-container {
             display: flex;
             align-items: center;
@@ -357,6 +365,14 @@
                 color: #000 !important;
                 font-size: 14px !important;
                 line-height: 1.3 !important;
+            }
+
+            /* Disable red color override for print */
+            .jan-jul-row td,
+            .jan-jul-row .table-input,
+            .jan-jul-row select.table-input,
+            .jan-jul-row input.table-input {
+                color: #000 !important;
             }
 
             .container {
@@ -514,7 +530,7 @@
     <header>
         <h1>
             <span class="title-web">DA Arrear Calculator</span>
-            <span class="title-print">DA Arrear Calculation Statement</span>
+            <span class="title-print">DA Arrear Calculation</span>
         </h1>
         <p id="headerPeriod"></p>
     </header>
@@ -1014,6 +1030,9 @@
             }
 
             const row = document.createElement('tr');
+            if (mIndex === 1 || mIndex === 7) {
+                row.classList.add('jan-jul-row');
+            }
             row.dataset.isAcp = isAcpMonth;
             row.dataset.isInc = isIncMonth;
 
@@ -1092,6 +1111,9 @@
 
             const rowIndex = currentRows.length;
             const row = document.createElement('tr');
+            if (nextMonthIndex === 1 || nextMonthIndex === 7) {
+                row.classList.add('jan-jul-row');
+            }
             row.dataset.isAcp = 'false';
             row.dataset.isInc = 'false';
 
@@ -1225,6 +1247,13 @@
             const mIndex = parseInt(row.querySelector('.row-month-select').value) || 1;
             const yearStr = row.querySelector('.row-year-input').value;
             const currentYearMonthStr = `${yearStr}-${String(mIndex).padStart(2, '0')}`;
+
+            // Apply or remove Jan/July red styling for web view
+            if (mIndex === 1 || mIndex === 7) {
+                row.classList.add('jan-jul-row');
+            } else {
+                row.classList.remove('jan-jul-row');
+            }
 
             const isAcpMonth = (index > 0 && acpMonths.includes(currentYearMonthStr));
             const isIncMonth = (index > 0 && incMonth !== 'None' && parseInt(incMonth) === mIndex);
