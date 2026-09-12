@@ -1007,6 +1007,7 @@
         tableBody.innerHTML = '';
 
         let currentRunningBasic = startBasic;
+        const monthYearBasicMap = {};
 
         monthsList.forEach((monthDate, index) => {
             const mIndex = monthDate.getMonth() + 1;
@@ -1018,16 +1019,23 @@
             const isIncMonth = (index > 0 && incMonth !== 'None' && parseInt(incMonth) === mIndex);
 
             if (index > 0) {
-                if (isAcpMonth) {
-                    const inc1 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
-                    currentRunningBasic += inc1;
-                    const inc2 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
-                    currentRunningBasic += inc2;
-                } else if (isIncMonth) {
-                    const inc1 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
-                    currentRunningBasic += inc1;
+                if (monthYearBasicMap.hasOwnProperty(currentYearMonthStr)) {
+                    currentRunningBasic = monthYearBasicMap[currentYearMonthStr];
+                } else {
+                    if (isAcpMonth) {
+                        const inc1 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
+                        currentRunningBasic += inc1;
+                        const inc2 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
+                        currentRunningBasic += inc2;
+                    } else if (isIncMonth) {
+                        const inc1 = Math.round((currentRunningBasic * 0.03) / 100) * 100;
+                        currentRunningBasic += inc1;
+                    }
                 }
+            } else {
+                currentRunningBasic = startBasic;
             }
+            monthYearBasicMap[currentYearMonthStr] = currentRunningBasic;
 
             const row = document.createElement('tr');
             if (mIndex === 1 || mIndex === 7) {
@@ -1242,6 +1250,7 @@
         }
 
         let runningBasic = parseFloat(document.getElementById('basicPay').value) || 0;
+        const monthYearBasicMap = {};
 
         rows.forEach((row, index) => {
             const mIndex = parseInt(row.querySelector('.row-month-select').value) || 1;
@@ -1261,16 +1270,15 @@
             row.dataset.isAcp = isAcpMonth;
             row.dataset.isInc = isIncMonth;
 
-            if (index === 0) {
-                if (row.dataset.manualBasic !== "true") {
-                    row.querySelector('.row-basic-input').value = runningBasic;
-                } else {
-                    runningBasic = parseFloat(row.querySelector('.row-basic-input').value) || runningBasic;
-                }
+            if (row.dataset.manualBasic === "true") {
+                runningBasic = parseFloat(row.querySelector('.row-basic-input').value) || runningBasic;
+                monthYearBasicMap[currentYearMonthStr] = runningBasic;
+            } else if (monthYearBasicMap.hasOwnProperty(currentYearMonthStr)) {
+                // If this month + year has appeared before, inherit its basic pay from the previous instance
+                runningBasic = monthYearBasicMap[currentYearMonthStr];
+                row.querySelector('.row-basic-input').value = runningBasic;
             } else {
-                if (row.dataset.manualBasic === "true") {
-                    runningBasic = parseFloat(row.querySelector('.row-basic-input').value) || runningBasic;
-                } else {
+                if (index > 0) {
                     if (isAcpMonth) {
                         const inc1 = Math.round((runningBasic * 0.03) / 100) * 100;
                         runningBasic += inc1;
@@ -1280,8 +1288,11 @@
                         const inc1 = Math.round((runningBasic * 0.03) / 100) * 100;
                         runningBasic += inc1;
                     }
-                    row.querySelector('.row-basic-input').value = runningBasic;
+                } else {
+                    runningBasic = parseFloat(document.getElementById('basicPay').value) || runningBasic;
                 }
+                row.querySelector('.row-basic-input').value = runningBasic;
+                monthYearBasicMap[currentYearMonthStr] = runningBasic;
             }
 
             updateRowCalculations(row);
