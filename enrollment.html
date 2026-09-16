@@ -3,16 +3,16 @@
 <meta charset="utf-8">    
 <title>Enrollment</title>
 
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2270%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>E</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2220%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2250%22 font-size=%2270%22 fill=%22white%22 font-family=%22Arial, sans-serif%22 font-weight=%22bold%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>E</text></svg>">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2275%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>E</text></svg>">
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>    
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><rect width=%22100%22 height=%22100%22 rx=%2225%22 fill=%22%23007bff%22/><text x=%2250%22 y=%2255%22 font-size=%2275%22 fill=%22white%22 font-family=%22Verdana, sans-serif%22 font-weight=%22900%22 text-anchor=%22middle%22 dominant-baseline=%22central%22>E</text></svg>">
+    
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>  
 <style>    
 html, body { overscroll-behavior-y: auto; }    
 body{font-family:Arial;margin:0;padding:5px; overflow-x: auto;}    
 #topbar{display:flex;gap:8px;justify-content:center;margin-bottom:8px;flex-wrap:wrap;background:#f8f9fa;padding:10px;border-radius:8px; width: fit-content; min-width: 100%;}    
-.topbtn{padding:6px 12px;font-size:14px;cursor:pointer;border:1px solid #ccc;background:#fff;border-radius:4px;display:flex;align-items:center;gap:5px;transition: all 0.3s ease;}
+.topbtn{padding:6px 12px;font-size:18px;cursor:pointer;border:1px solid #ccc;background:#fff;border-radius:4px;display:flex;align-items:center;gap:5px;transition: all 0.2s ease;font-weight: normal;}
 .topbtn span{
     font-size:16px;
     line-height:1;
@@ -37,22 +37,34 @@ td, th {
     overflow: hidden; 
 }
 
-.classcol, .label{ width:140px !important; }
+.classcol, .label{ width:175px !important; }
 .delcol{width:40px}
 th:not(.classcol):not(.delcol), td:not(.classcol):not(.delcell) { width: 45px; }
 
-.edit{background:#fff; outline: none;}
+.edit{
+    background:#fff; 
+    outline: none;
+    appearance: none;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    border: none;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+    text-align-last: center;
+    font-size: 20px;
+    font-family: Arial;
+    cursor: pointer;
+}
+.edit::-ms-expand { display: none; }
 .edit:focus{background:#fffbe6; border: 2px solid blue !important;}
 
 #pre td, #pri td, #grand td { color: red; font-weight: bold; }
 .sc-t,.st-t,.obc-t,.gen-t,.tt{color:red;font-weight:bold}
 .head-t{color:red;font-weight:bold}
 .label{ color:red; font-weight:bold; white-space:normal; line-height:1.2; font-size:20px; }
-.delcell button{border:none;background:none;font-size:18px;cursor:pointer;color:black}
+.delcell button{border:none;background:none;font-size:18px;cursor:pointer;color:red}
 .hidepdf{display:none}
-#pri td{height:45px; background-color:#fff;}
-#pre td{height:auto !important; background-color:#fff;}
-
 .pdfmode td, .pdfmode th { border: 0.5px solid #000 !important; }
 .pdfmode table { 
     border-right: 0.5px solid #000 !important;
@@ -89,41 +101,23 @@ thead tr:first-child th:nth-child(3), thead tr:first-child th:nth-child(4), thea
 #mainTable tr#pri td:not(.delcell){ border-bottom:1.125pt solid #000 !important; }
 
 /* --- Naya Zero Hiding Logic --- */
-.hide-zeros .zero-val { color: transparent !important; }
-.hide-zeros .zero-val:focus { color: inherit !important; }
-
-/* Style section mein sabse niche add karein */
-#saveBtn {
-    background-color: #28a745 !important; /* Green background */
-    color: white !important;              /* White text */
-    border: 1px solid #1e7e34;            /* Dark green border */
-    font-weight: bold;
-    padding: 6px 20px;                    /* Thoda wide look */
-}
-
-#saveBtn:hover {
-    background-color: #218838 !important; /* Hover karne par thoda dark */
-    box-shadow: 0 2px 5px rgba(0,0,0,0.2);
-}
-
-
+.hide-zeros .zero-val, .hide-zeros select.zero-val { color: transparent !important; }
+.hide-zeros .zero-val:focus, .hide-zeros select.zero-val:focus { color: inherit !important; }
 </style>
 </head>    
 <body>    
 <div id="topbar">    
 <button class="topbtn" onclick="undoAction()"><span>&#8634;</span> Undo</button>    
-<button class="topbtn" onclick="redoAction()"><span>&#8635;</span> Redo</button>    
-<button class="topbtn" id="saveBtn" onclick="saveToLocal(true)">Save</button>
-<div style="width:1px; background:#ccc; margin:0 10px;"></div>    
+<button class="topbtn" onclick="redoAction()"><span>&#8635;</span> Redo</button>        
 <button class="topbtn" id="zeroBtn" onclick="toggleZeros()"><span>&#9678;</span> Hide 0</button>
 <button class="topbtn" onclick="printPDF()">Print/ Save as PDF</button>    
 <button class="topbtn" id="shareBtn" onclick="shareAsPDF()">Share PDF</button>    
-<button class="topbtn" id="downloadBtn" onclick="makePDF()">Download PDF</button>     
+<button class="topbtn" id="downloadBtn" onclick="makePDF()">Download PDF</button>    
 <button class="topbtn" id="resetBtn" onclick="resetForm()">Reset</button>    
 </div>    
 
 <div id="pdfArea">    
-<div id="title" contenteditable="true" spellcheck="false">Enrollment</div>    
+<div id="title" contenteditable="true" spellcheck="false">Enrollment GPS&nbsp</div>    
 <table id="mainTable">    
   <thead>    
     <tr>    
@@ -150,9 +144,14 @@ thead tr:first-child th:nth-child(3), thead tr:first-child th:nth-child(4), thea
 <script>    
 let undoStack = [];    
 let redoStack = [];    
-let isDataEntered = false;     
+let isDataEntered = true;     
 let zerosHidden = false; 
 const classes=[["Nursery","pre"],["LKG","pre"],["UKG","pre"],["TOTAL PRE-PRI","total-pre"],["I","pri"],["II","pri"],["III","pri"],["IV","pri"],["V","pri"]];    
+
+let optionsHTML = '';
+for(let i=0; i<=20; i++) {
+    optionsHTML += `<option value="${i}">${i}</option>`;
+}
 
 function flashButton(btnId, tempText) {    
     const btn = document.getElementById(btnId);    
@@ -189,50 +188,48 @@ function redoAction() {
 }  
   
 function attachEvents() {    
-    document.querySelectorAll(".edit, #title").forEach(el => {    
+    document.querySelectorAll(".edit").forEach(el => {    
         el.onfocus = () => saveState();    
-        if(el.classList.contains('edit')){    
-            el.addEventListener('keydown', (e) => {    
-                if ([46, 8, 9, 27, 13].indexOf(e.keyCode) !== -1 || (e.keyCode >= 35 && e.keyCode <= 39)) return;    
-                if ((e.shiftKey || (e.keyCode < 48 || e.keyCode > 57)) && (e.keyCode < 96 || e.keyCode > 105)) e.preventDefault();    
-            });    
-            el.addEventListener('input', (e) => {    
-                let clean = el.innerText.replace(/[^\d]/g, '');    
-                if (el.innerText !== clean) {    
-                    el.innerText = clean;    
-                    const range = document.createRange();    
-                    const sel = window.getSelection();    
-                    range.selectNodeContents(el);    
-                    range.collapse(false);    
-                    sel.removeAllRanges();    
-                    sel.addRange(range);    
-                }    
-                isDataEntered = true; calc(); saveToLocal(false);     
-            });    
-        } else {    
-            el.oninput = () => { isDataEntered = true; saveToLocal(false); };    
-        }    
+        el.addEventListener('change', () => {    
+            isDataEntered = true; calc(); saveToLocal();     
+        });    
     });    
+    const titleEl = document.getElementById("title");
+    if(titleEl) {
+        titleEl.onfocus = () => saveState();
+        titleEl.oninput = () => { isDataEntered = true; saveToLocal(); };
+    }
 }    
   
 function deleteRow(btn) {    
     saveState();    
     btn.closest('tr').remove();    
     calc();    
-    saveToLocal(false);    
+    saveToLocal();    
 }    
   
-function n(x){return x ? (parseInt(x.innerText)||0) : 0}    
+function n(x){
+    if(!x) return 0;
+    let sel = x.querySelector("select");
+    if(sel) return parseInt(sel.value) || 0;
+    return parseInt(x.innerText) || 0;
+}    
   
 function setVal(el, value) {    
     if(!el) return;    
-    el.innerText = (isDataEntered) ? value : "";    
+    let sel = el.querySelector("select");
+    if(sel) {
+        sel.value = (value !== undefined ? value : 0);
+    } else {
+        el.innerText = (value !== undefined ? value : 0);    
+    }
 }    
 
 function toggleZeros() {
     zerosHidden = !zerosHidden;
     updateZeroButtonUI();
     calc();
+    saveToLocal();
 }
 
 function updateZeroButtonUI() {
@@ -277,10 +274,16 @@ function calc(){
 
   const allCells = document.querySelectorAll("#mainTable td:not(.classcol):not(.label):not(.delcell)");
   allCells.forEach(td => {
-      let valText = td.innerText.trim();
+      let sel = td.querySelector("select");
+      let valText = sel ? sel.value.trim() : td.innerText.trim();
       let numericVal = parseInt(valText);
-      if (valText !== "" && numericVal === 0) { td.classList.add("zero-val"); } 
-      else { td.classList.remove("zero-val"); }
+      if (valText !== "" && numericVal === 0) { 
+          td.classList.add("zero-val"); 
+          if(sel) sel.classList.add("zero-val");
+      } else { 
+          td.classList.remove("zero-val"); 
+          if(sel) sel.classList.remove("zero-val");
+      }
   });
 }
   
@@ -289,9 +292,9 @@ function buildTable(){
   rows.innerHTML = "";    
   classes.forEach(c=>{    
     if(c[1] === "total-pre") {    
-      rows.insertAdjacentHTML("beforeend",`<tr id="pre"><td class="delcell"><button onclick="deleteRow(this)">×</button></td><td class="label">Total<br>(Pre-Primary)</td><td class="sc-b"></td><td class="sc-g"></td><td class="sc-t"></td><td class="st-b"></td><td class="st-g"></td><td class="st-t"></td><td class="obc-b"></td><td class="obc-g"></td><td class="obc-t"></td><td class="gen-b"></td><td class="gen-g"></td><td class="gen-t"></td><td class="tb"></td><td class="tg"></td><td class="tt"></td></tr>`);    
+      rows.insertAdjacentHTML("beforeend",`<tr id="pre"><td class="delcell"><button onclick="deleteRow(this)">×</button></td><td class="label">Total (Pre-Primary)</td><td class="sc-b"></td><td class="sc-g"></td><td class="sc-t"></td><td class="st-b"></td><td class="st-g"></td><td class="st-t"></td><td class="obc-b"></td><td class="obc-g"></td><td class="obc-t"></td><td class="gen-b"></td><td class="gen-g"></td><td class="gen-t"></td><td class="tb"></td><td class="tg"></td><td class="tt"></td></tr>`);    
     } else {    
-      rows.insertAdjacentHTML("beforeend",`<tr class="row ${c[1]}"><td class="delcell"><button onclick="deleteRow(this)">×</button></td><td class="classcol">${c[0]}</td><td class="sc-b edit" contenteditable="true" inputmode="numeric"></td><td class="sc-g edit" contenteditable="true" inputmode="numeric"></td><td class="sc-t"></td><td class="st-b edit" contenteditable="true" inputmode="numeric"></td><td class="st-g edit" contenteditable="true" inputmode="numeric"></td><td class="st-t"></td><td class="obc-b edit" contenteditable="true" inputmode="numeric"></td><td class="obc-g edit" contenteditable="true" inputmode="numeric"></td><td class="obc-t"></td><td class="gen-b edit" contenteditable="true" inputmode="numeric"></td><td class="gen-g edit" contenteditable="true" inputmode="numeric"></td><td class="gen-t"></td><td class="tb"></td><td class="tg"></td><td class="tt"></td></tr>`);    
+      rows.insertAdjacentHTML("beforeend",`<tr class="row ${c[1]}"><td class="delcell"><button onclick="deleteRow(this)">×</button></td><td class="classcol">${c[0]}</td><td class="sc-b"><select class="edit">${optionsHTML}</select></td><td class="sc-g"><select class="edit">${optionsHTML}</select></td><td class="sc-t"></td><td class="st-b"><select class="edit">${optionsHTML}</select></td><td class="st-g"><select class="edit">${optionsHTML}</select></td><td class="st-t"></td><td class="obc-b"><select class="edit">${optionsHTML}</select></td><td class="obc-g"><select class="edit">${optionsHTML}</select></td><td class="obc-t"></td><td class="gen-b"><select class="edit">${optionsHTML}</select></td><td class="gen-g"><select class="edit">${optionsHTML}</select></td><td class="gen-t"></td><td class="tb"></td><td class="tg"></td><td class="tt"></td></tr>`);    
     }    
   });    
     
@@ -302,7 +305,7 @@ function buildTable(){
   const footerHTML = `  
     <tr id="pri">    
       <td class="delcell"><button onclick="deleteRow(this)">×</button></td>    
-      <td class="label">Total<br>(Primary)</td>    
+      <td class="label">Total (Primary)</td>    
       <td class="sc-b"></td><td class="sc-g"></td><td class="sc-t"></td>    
       <td class="st-b"></td><td class="st-g"></td><td class="st-t"></td>    
       <td class="obc-b"></td><td class="obc-g"></td><td class="obc-t"></td>    
@@ -322,16 +325,25 @@ function buildTable(){
   attachEvents();    
 }    
   
-function saveToLocal(manual){    
+function saveToLocal(){    
+    document.querySelectorAll("select.edit").forEach(sel => {
+        Array.from(sel.options).forEach(opt => {
+            if (opt.value === sel.value) {
+                opt.setAttribute("selected", "selected");
+            } else {
+                opt.removeAttribute("selected");
+            }
+        });
+    });
+
     localStorage.setItem("goshwara_data", document.getElementById("pdfArea").innerHTML);    
     localStorage.setItem("isDataEntered", isDataEntered);     
-    localStorage.setItem("zerosHidden", zerosHidden); 
-    if(manual) flashButton("saveBtn", "Saved! ✅");    
+    localStorage.setItem("zerosHidden", zerosHidden);    
 }    
   
 function resetForm(){    
     saveState();    
-    isDataEntered = false;     
+    isDataEntered = true;     
     zerosHidden = false; 
     localStorage.removeItem("goshwara_data");    
     localStorage.removeItem("isDataEntered");    
@@ -343,24 +355,99 @@ function resetForm(){
     flashButton("resetBtn", "Cleared! 🧹");    
 }    
   
-async function generatePDFFile() {    
-    const area = document.getElementById("pdfArea");    
-    area.classList.add("pdfmode");    
-    document.querySelectorAll(".delcell,.delcol").forEach(e=>e.classList.add("hidepdf"));    
-    const canvas = await html2canvas(area, { scale: 2, useCORS: true });    
-    area.classList.remove("pdfmode");    
-    document.querySelectorAll(".delcell,.delcol").forEach(e=>e.classList.remove("hidepdf"));    
-    const imgData = canvas.toDataURL("image/jpeg", 1.0);    
-    const pdf = new jspdf.jsPDF("p", "mm", "a4");    
-    const pageWidth = pdf.internal.pageSize.getWidth();    
-    const marginX = 1;   
-    const marginTop = 10; 
-    const innerWidth = pageWidth - (marginX * 2);
-    const imgWidth = innerWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-    pdf.addImage(imgData, "JPEG", marginX, marginTop, imgWidth, imgHeight, undefined, "FAST");    
-    return pdf;    
-}    
+async function generatePDFFile() {
+    const { jsPDF } = window.jspdf;
+    const pdf = new jsPDF("p", "mm", "a4");
+
+    const title = document.getElementById("title").innerText.trim();
+    
+    const pageWidth = 210;
+    const margin = 10;
+    const usableWidth = pageWidth - margin * 2;
+    const classWidth = 38; 
+    const totalDataCols = 15; 
+    const dataWidth = (usableWidth - classWidth) / totalDataCols;
+    const rowHeight = 7; 
+    let y = 25;
+
+    pdf.setFont("helvetica", "bold");
+    pdf.setFontSize(16);
+    pdf.setTextColor(0, 0, 0);
+    pdf.text(title, pageWidth / 2, 15, { align: "center" });
+    pdf.setFontSize(11);
+
+    const rows = document.querySelectorAll("#mainTable tr");
+
+    rows.forEach((row, rowIndex) => {
+        let x = margin;
+        const cells = Array.from(row.querySelectorAll("th, td"))
+                           .filter(c => !c.classList.contains("delcol") && !c.classList.contains("delcell"));
+
+        const isHeaderRow1 = rowIndex === 0;
+        const isHeaderRow2 = rowIndex === 1;
+        const isAnyTotalRow = ["pre", "pri", "grand"].includes(row.id);
+
+        if (isHeaderRow1) {
+            pdf.setLineWidth(0.3);
+            pdf.rect(x, y, classWidth, rowHeight * 2); 
+            pdf.text("Class", x + (classWidth / 2), y + rowHeight, { align: "center", baseline: "middle" });
+            x += classWidth;
+        } else if (isHeaderRow2) {
+            x += classWidth;
+        }
+
+        cells.forEach((cell) => {
+            if (isHeaderRow1 && cell.classList.contains("classcol")) return;
+
+            let colspan = parseInt(cell.getAttribute("colspan")) || 1;
+            let currentWidth = (cell.classList.contains("classcol") || cell.classList.contains("label")) 
+                               ? classWidth : dataWidth * colspan;
+
+            const isTotalColumn = cell.classList.contains("sc-t") || cell.classList.contains("st-t") || 
+                                  cell.classList.contains("obc-t") || cell.classList.contains("gen-t") || 
+                                  cell.classList.contains("tt") || cell.classList.contains("head-t") ||
+                                  (isHeaderRow2 && (cell.innerText.trim() === "T"));
+
+            if (isHeaderRow1 || isHeaderRow2 || isAnyTotalRow || isTotalColumn) {
+                pdf.setFont("helvetica", "bold");
+                isTotalColumn ? pdf.setTextColor(200, 0, 0) : pdf.setTextColor(0, 0, 0);
+                if (isAnyTotalRow && !isTotalColumn) pdf.setTextColor(200, 0, 0); 
+            } else {
+                pdf.setFont("helvetica", "normal");
+                pdf.setTextColor(0, 0, 0);
+            }
+
+            pdf.setLineWidth(0.1);
+            pdf.rect(x, y, currentWidth, rowHeight);
+
+            let sel = cell.querySelector("select");
+            let txt = sel ? sel.value.trim() : cell.innerText.trim();
+            if (zerosHidden && !isHeaderRow1 && !isHeaderRow2 && txt === "0") txt = "";
+
+            pdf.text(txt, x + (currentWidth / 2), y + (rowHeight / 2), {
+                align: "center", baseline: "middle", maxWidth: currentWidth - 1
+            });
+
+            if (isAnyTotalRow || isHeaderRow2) {
+                pdf.setLineWidth(0.3);
+                pdf.line(x, y + rowHeight, x + currentWidth, y + rowHeight);
+                if(isAnyTotalRow) pdf.line(x, y, x + currentWidth, y);
+            }
+            x += currentWidth;
+        });
+        y += rowHeight;
+    });
+
+    pdf.setLineWidth(0.4);
+    pdf.rect(margin, 25, usableWidth, y - 25);
+    pdf.setLineWidth(0.3);
+    pdf.line(margin + classWidth, 25, margin + classWidth, y);
+    for (let i = 1; i <= 5; i++) {
+        pdf.line(margin + classWidth + (i * dataWidth * 3), 25, margin + classWidth + (i * dataWidth * 3), y);
+    }
+
+    return pdf;
+}
   
 async function shareAsPDF() {  
     const title = document.getElementById("title").innerText;  
@@ -403,7 +490,7 @@ window.onload = () => {
     let savedZeros = localStorage.getItem("zerosHidden");
     if (savedZeros !== null) { zerosHidden = (savedZeros === "true"); }
     if(d) { document.getElementById("pdfArea").innerHTML = d; attachEvents(); }     
-    else { buildTable(); }    
+    else { buildTable(); isDataEntered = true; }    
     updateZeroButtonUI(); 
     calc();     
 };    
