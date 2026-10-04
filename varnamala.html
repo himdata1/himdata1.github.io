@@ -4,6 +4,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Hindi Varnamala App</title>
+    <!-- Google Fonts for Hindi & Devanagari rendering -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Color+Emoji&family=Noto+Sans+Devanagari:wght@500;700;800&display=swap" rel="stylesheet">
+    
     <style>
         html {
             -webkit-text-size-adjust: 100%;
@@ -12,7 +17,7 @@
 
         * {
             box-sizing: border-box;
-            font-family: 'Segoe UI', Roboto, 'Noto Sans Devanagari', -apple-system, sans-serif;
+            font-family: 'Noto Sans Devanagari', 'Segoe UI', Roboto, -apple-system, sans-serif;
             margin: 0;
             padding: 0;
             -webkit-tap-highlight-color: transparent;
@@ -48,6 +53,7 @@
             margin-bottom: 10px;
             color: #2c3e50;
             font-size: 20px;
+            font-weight: 700;
         }
 
         .controls {
@@ -120,6 +126,7 @@
             padding: 6px 12px;
             font-size: 13px;
             border-radius: 5px;
+            font-weight: 600;
         }
 
         .mode-btn.active {
@@ -166,12 +173,12 @@
 
         .grid-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            grid-template-columns: repeat(auto-fill, minmax(145px, 1fr));
             gap: 12px;
             background: #fafafa;
-            padding: 10px;
+            padding: 10px 10px 140px 10px;
             min-height: 220px;
-            max-height: 540px;
+            max-height: 560px;
             overflow-y: auto;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
@@ -185,7 +192,7 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            padding: 12px 8px;
+            padding: 12px 6px;
             cursor: pointer;
             transition: all 0.2s ease;
             border: 2px solid #e2e8f0;
@@ -206,23 +213,30 @@
 
         .letter-symbol {
             font-size: 32px;
-            font-weight: bold;
+            font-weight: 800;
             color: #1e293b;
+            line-height: 1.2;
         }
 
         .letter-emoji {
             font-size: 68px;
-            margin: 4px 0;
+            font-family: 'Noto Color Emoji', 'Segoe UI Emoji', 'Apple Color Emoji', sans-serif;
+            margin: 6px 0;
             line-height: 1;
             display: flex;
             align-items: center;
             justify-content: center;
-            height: 72px;
+            height: 88px;
+            width: 100%;
         }
 
         .letter-emoji svg {
-            width: 68px;
-            height: 68px;
+            width: 78px;
+            height: 78px;
+            max-width: 100%;
+            max-height: 100%;
+            flex-shrink: 0;
+            display: block;
         }
 
         .letter-word {
@@ -296,10 +310,9 @@
     </div>
 
     <script>
-        const boondiLadduSVG = `<svg width="68" height="68" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="44" fill="#FB8500"/><circle cx="35" cy="32" r="9" fill="#FFB703"/><circle cx="62" cy="32" r="8" fill="#FFB703"/><circle cx="48" cy="28" r="10" fill="#FFA200"/><circle cx="28" cy="52" r="9" fill="#FFB703"/><circle cx="50" cy="52" r="11" fill="#FF9E00"/><circle cx="70" cy="50" r="9" fill="#FFB703"/><circle cx="36" cy="68" r="8" fill="#FFB703"/><circle cx="58" cy="68" r="9" fill="#FB8500"/><circle cx="44" cy="42" r="3" fill="#2A9D8F"/><circle cx="56" cy="46" r="3" fill="#2A9D8F"/></svg>`;
+        const boondiLadduSVG = `<svg width="78" height="78" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="44" fill="#FB8500"/><circle cx="35" cy="32" r="9" fill="#FFB703"/><circle cx="62" cy="32" r="8" fill="#FFB703"/><circle cx="48" cy="28" r="10" fill="#FFA200"/><circle cx="28" cy="52" r="9" fill="#FFB703"/><circle cx="50" cy="52" r="11" fill="#FF9E00"/><circle cx="70" cy="50" r="9" fill="#FFB703"/><circle cx="36" cy="68" r="8" fill="#FFB703"/><circle cx="58" cy="68" r="9" fill="#FB8500"/><circle cx="44" cy="42" r="3" fill="#2A9D8F"/><circle cx="56" cy="46" r="3" fill="#2A9D8F"/></svg>`;
 
-        // Custom Tamarind (इमली) SVG
-        const imliSVG = `<svg width="68" height="68" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        const imliSVG = `<svg width="78" height="78" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <path d="M 32 15 Q 22 8 36 10 Q 42 16 32 18 Z" fill="#4CAF50"/>
             <path d="M 32 15 Q 42 8 46 16 Q 38 20 32 18 Z" fill="#388E3C"/>
             <path d="M 32 18 L 36 28" stroke="#5D4037" stroke-width="4" stroke-linecap="round"/>
@@ -310,8 +323,7 @@
             <path d="M 30 32 Q 22 40 30 50 Q 40 62 56 68" stroke="#A1887F" stroke-width="2" fill="none" opacity="0.6"/>
         </svg>`;
 
-        // Custom Green Sugarcane (ईख/गन्ना) SVG
-        const eekhSVG = `<svg width="68" height="68" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        const eekhSVG = `<svg width="78" height="78" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <path d="M 40 28 Q 20 8 10 16 Q 28 26 38 30 Z" fill="#2E7D32"/>
             <path d="M 50 26 Q 50 4 65 6 Q 58 20 48 28 Z" fill="#4CAF50"/>
             <path d="M 58 30 Q 80 12 88 22 Q 70 30 56 34 Z" fill="#1B5E20"/>
@@ -325,8 +337,7 @@
             <line x1="53" y1="78" x2="67" y2="78" stroke="#C5E1A5" stroke-width="2.5" stroke-linecap="round"/>
         </svg>`;
 
-        // Custom Rishi (ऋषि) SVG
-        const rishiSVG = `<svg width="68" height="68" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+        const rishiSVG = `<svg width="78" height="78" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
             <circle cx="50" cy="50" r="45" fill="#FFF3E0"/>
             <path d="M 22 84 Q 50 68 78 84 L 82 92 L 18 92 Z" fill="#E65100"/>
             <path d="M 30 72 C 30 58 70 58 70 72 L 74 90 L 26 90 Z" fill="#EF6C00"/>
@@ -340,6 +351,70 @@
             <path d="M 34 44 Q 50 82 66 44 Q 58 72 50 72 Q 42 72 34 44 Z" fill="#ECEFF1"/>
             <path d="M 38 46 Q 50 76 62 46 Q 50 68 38 46 Z" fill="#FFFFFF"/>
             <path d="M 36 60 Q 50 76 64 60" stroke="#8D6E63" stroke-width="2.5" stroke-dasharray="3,3" fill="none"/>
+        </svg>`;
+
+        const thanSVG = `<svg width="78" height="78" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 15 30 Q 50 15 85 30 Q 88 58 50 60 Q 12 58 15 30 Z" fill="#F8BBD0"/>
+            <path d="M 22 32 Q 50 20 78 32 Q 80 52 50 54 Q 20 52 22 32 Z" fill="#F48FB1"/>
+            <rect x="23" y="50" width="10" height="24" rx="5" fill="#EC407A"/>
+            <rect x="38" y="52" width="10" height="28" rx="5" fill="#D81B60"/>
+            <rect x="52" y="52" width="10" height="28" rx="5" fill="#D81B60"/>
+            <rect x="67" y="50" width="10" height="24" rx="5" fill="#EC407A"/>
+            <circle cx="28" cy="78" r="2" fill="#E0F7FA"/>
+            <circle cx="43" cy="84" r="2.5" fill="#E0F7FA"/>
+            <circle cx="57" cy="84" r="2.5" fill="#E0F7FA"/>
+            <circle cx="72" cy="78" r="2" fill="#E0F7FA"/>
+        </svg>`;
+
+        const shatkonSVG = `<svg width="78" height="78" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <polygon points="50,6 88,28 88,72 50,94 12,72 12,28" fill="#7C4DFF" stroke="#311B92" stroke-width="4"/>
+            <polygon points="50,16 80,33 80,67 50,84 20,67 20,33" fill="#B388FF"/>
+            <polygon points="50,26 72,39 72,61 50,74 28,61 28,39" fill="#EDD8FF"/>
+            <circle cx="50" cy="50" r="10" fill="#FF4081"/>
+        </svg>`;
+
+        // नया डमरू (Damru) SVG
+        const damruSVG = `<svg width="78" height="78" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <!-- Top Cup -->
+            <polygon points="20,18 80,18 50,50" fill="#8D6E63" stroke="#4E342E" stroke-width="3"/>
+            <!-- Bottom Cup -->
+            <polygon points="20,82 80,82 50,50" fill="#8D6E63" stroke="#4E342E" stroke-width="3"/>
+            <!-- Top Rim -->
+            <ellipse cx="50" cy="18" rx="30" ry="7" fill="#D7CCC8" stroke="#4E342E" stroke-width="2"/>
+            <!-- Bottom Rim -->
+            <ellipse cx="50" cy="82" rx="30" ry="7" fill="#D7CCC8" stroke="#4E342E" stroke-width="2"/>
+            <!-- Middle Ring / Tied Thread -->
+            <rect x="42" y="46" width="16" height="8" rx="2" fill="#FF9800" stroke="#E65100" stroke-width="2"/>
+            <!-- Strings & Balls -->
+            <path d="M 46 50 C 26 55 18 64 22 70" fill="none" stroke="#3E2723" stroke-width="2"/>
+            <circle cx="22" cy="70" r="5" fill="#D32F2F"/>
+            <path d="M 54 50 C 74 45 82 36 78 30" fill="none" stroke="#3E2723" stroke-width="2"/>
+            <circle cx="78" cy="30" r="5" fill="#D32F2F"/>
+        </svg>`;
+
+        // नया रथ (Rath / Chariot) SVG
+        const rathSVG = `<svg width="78" height="78" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <!-- Flag Pole & Flag -->
+            <line x1="28" y1="10" x2="28" y2="45" stroke="#795548" stroke-width="3"/>
+            <polygon points="28,10 60,20 28,30" fill="#FF5722"/>
+            <!-- Chariot Canopy / Roof -->
+            <path d="M 20 42 Q 50 25 80 42 L 75 52 L 25 52 Z" fill="#FFC107" stroke="#FF8F00" stroke-width="2"/>
+            <!-- Main Body -->
+            <path d="M 22 52 L 78 52 L 72 74 L 30 74 Z" fill="#D84315" stroke="#BF360C" stroke-width="2"/>
+            <!-- Gold Trim Line -->
+            <line x1="25" y1="62" x2="75" y2="62" stroke="#FFD54F" stroke-width="3"/>
+            <!-- Wheels -->
+            <circle cx="35" cy="76" r="14" fill="#8D6E63" stroke="#3E2723" stroke-width="3"/>
+            <circle cx="35" cy="76" r="4" fill="#FFD54F"/>
+            <line x1="35" y1="62" x2="35" y2="90" stroke="#3E2723" stroke-width="1.5"/>
+            <line x1="21" y1="76" x2="49" y2="76" stroke="#3E2723" stroke-width="1.5"/>
+
+            <circle cx="65" cy="76" r="14" fill="#8D6E63" stroke="#3E2723" stroke-width="3"/>
+            <circle cx="65" cy="76" r="4" fill="#FFD54F"/>
+            <line x1="65" y1="62" x2="65" y2="90" stroke="#3E2723" stroke-width="1.5"/>
+            <line x1="51" y1="76" x2="79" y2="76" stroke="#3E2723" stroke-width="1.5"/>
+            <!-- Shaft Front -->
+            <line x1="10" y1="72" x2="30" y2="72" stroke="#5D4037" stroke-width="4" stroke-linecap="round"/>
         </svg>`;
 
         const varnamalaData = [
@@ -371,12 +446,12 @@
             { letter: 'ञ', word: 'खाली', fullText: 'ञ खाली', type: 'vyanjan', emoji: '😃' },
             { letter: 'ट', word: 'टमाटर', fullText: 'ट टमाटर', type: 'vyanjan', emoji: '🍅' },
             { letter: 'ठ', word: 'ठठेरा', fullText: 'ठ ठठेरा', type: 'vyanjan', emoji: '🔨' },
-            { letter: 'ड', word: 'डमरू', fullText: 'ड डमरू', type: 'vyanjan', emoji: '🥁' },
-            { letter: 'ढ', word: 'ढक्कन', fullText: 'ढ ढक्कन', type: 'vyanjan', emoji: '🫕' },
+            { letter: 'ड', word: 'डमरू', fullText: 'ड डमरू', type: 'vyanjan', emoji: damruSVG },
+            { letter: 'ढ', word: 'ढक्कन', fullText: 'ढ ढक्कन', type: 'vyanjan', emoji: '🪣' },
             { letter: 'ण', word: 'खाली', fullText: 'ण खाली', type: 'vyanjan', emoji: '😃' },
             { letter: 'त', word: 'तरबूज', fullText: 'त तरबूज', type: 'vyanjan', emoji: '🍉' },
-            { letter: 'थ', word: 'थन', fullText: 'थ थन', type: 'vyanjan', emoji: '🐄' },
-            { letter: 'द', word: 'दवात', fullText: 'द दवात', type: 'vyanjan', emoji: '🖋️' },
+            { letter: 'थ', word: 'थन', fullText: 'थ थन', type: 'vyanjan', emoji: thanSVG },
+            { letter: 'द', word: 'दवात', fullText: 'द दवात', type: 'vyanjan', emoji: '🖊️' },
             { letter: 'ध', word: 'धनुष', fullText: 'ध धनुष', type: 'vyanjan', emoji: '🏹' },
             { letter: 'न', word: 'नल', fullText: 'न नल', type: 'vyanjan', emoji: '🚰' },
             { letter: 'प', word: 'पतंग', fullText: 'प पतंग', type: 'vyanjan', emoji: '🪁' },
@@ -385,11 +460,11 @@
             { letter: 'भ', word: 'भालू', fullText: 'भ भालू', type: 'vyanjan', emoji: '🐻' },
             { letter: 'म', word: 'मछली', fullText: 'म मछली', type: 'vyanjan', emoji: '🐟' },
             { letter: 'य', word: 'यज्ञ', fullText: 'य यज्ञ', type: 'vyanjan', emoji: '🔥' },
-            { letter: 'र', word: 'रथ', fullText: 'र रथ', type: 'vyanjan', emoji: '🛺' },
+            { letter: 'र', word: 'रथ', fullText: 'र रथ', type: 'vyanjan', emoji: rathSVG },
             { letter: 'ल', word: 'लड्डू', fullText: 'ल लड्डू', type: 'vyanjan', emoji: boondiLadduSVG },
             { letter: 'व', word: 'वक', fullText: 'व वक', type: 'vyanjan', emoji: '🦩' },
             { letter: 'श', word: 'शेर', fullText: 'श शेर', type: 'vyanjan', emoji: '🦁' },
-            { letter: 'ष', word: 'षट्कोण', fullText: 'ष षट्कोण', type: 'vyanjan', emoji: '🔷' },
+            { letter: 'ष', word: 'षट्कोण', fullText: 'ष षट्कोण', type: 'vyanjan', emoji: shatkonSVG },
             { letter: 'स', word: 'सेब', fullText: 'स सेब', type: 'vyanjan', emoji: '🍎' },
             { letter: 'ह', word: 'हाथी', fullText: 'ह हाथी', type: 'vyanjan', emoji: '🐘' },
             { letter: 'क्ष', word: 'क्षत्रिय', fullText: 'क्ष क्षत्रिय', type: 'vyanjan', emoji: '🤴' },
