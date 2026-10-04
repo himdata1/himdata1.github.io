@@ -2,7 +2,7 @@
 <html lang="hi">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Counting App</title>
     <style>
         html {
@@ -28,6 +28,7 @@
             align-items: flex-start;
             min-height: 100vh;
             padding: 12px;
+            padding-bottom: 80px;
             user-select: none;
             -webkit-user-select: none;
         }
@@ -108,7 +109,6 @@
         .btn-generate { background-color: #3498db; }
         .btn-play { background-color: #2ecc71; }
         
-        /* Repeat button styling: Grayed out by default, green when active */
         .btn-repeat { 
             background-color: #94a3b8; 
             opacity: 0.7;
@@ -171,7 +171,6 @@
             background: #fafafa;
         }
 
-        /* Pull-to-refresh Spinner Indicator */
         .refresh-spinner {
             position: absolute;
             top: -40px;
@@ -206,7 +205,7 @@
             background: #fafafa;
             padding: 8px;
             min-height: 220px;
-            max-height: 580px;
+            max-height: 520px;
             overflow-y: auto;
             overflow-x: auto;
             scroll-behavior: smooth;
@@ -267,6 +266,36 @@
             font-size: 13px;
             font-weight: bold;
         }
+
+        /* Fixed Exit Container - Hidden by default for web browsers */
+        .exit-container {
+            position: fixed;
+            bottom: calc(16px + env(safe-area-inset-bottom));
+            right: 16px;
+            z-index: 9999;
+            display: none; /* Hide by default */
+        }
+
+        .btn-exit {
+            background-color: #dc2626;
+            color: #ffffff;
+            padding: 9px 16px;
+            border: 2px solid #ffffff;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            touch-action: manipulation;
+        }
+
+        .btn-exit:active {
+            background-color: #b91c1c;
+            transform: scale(0.94);
+        }
     </style>
 </head>
 <body>
@@ -282,7 +311,6 @@
             </div>
             <button class="btn-generate" onclick="generateCounting()">Generate</button>
             <button class="btn-play" id="playBtn" onclick="toggleAudio()">▶ Play</button>
-            <!-- Repeat Toggle Button -->
             <button class="btn-repeat" id="repeatBtn" onclick="toggleRepeat()">🔁 Repeat</button>
             <button class="btn-stop" id="stopBtn" onclick="stopAudio()">⏹ Stop</button>
         </div>
@@ -306,9 +334,14 @@
         <div id="errorMsg" class="error"></div>
     </div>
 
+    <!-- Exit Container (ID added for JS detection) -->
+    <div class="exit-container" id="exitContainer">
+        <button class="btn-exit" onclick="exitApp()">✖ Exit</button>
+    </div>
+
     <script>
         let isSpeaking = false;
-        let isRepeatActive = false; // Repeat feature state
+        let isRepeatActive = false;
         let generatedNumbers = [];
         let currentIndex = 0;
         let mode = 'delayed';
@@ -318,6 +351,16 @@
             '0': 'zero', '1': 'one', '2': 'two', '3': 'three', '4': 'four',
             '5': 'five', '6': 'six', '7': 'seven', '8': 'eight', '9': 'nine'
         };
+
+        function checkAppEnvironment() {
+            // Show exit button ONLY inside the Android App WebView
+            if (window.AndroidTTS && typeof window.AndroidTTS.exitApp === 'function') {
+                const exitContainer = document.getElementById('exitContainer');
+                if (exitContainer) {
+                    exitContainer.style.display = 'block';
+                }
+            }
+        }
 
         function numberToWords(num) {
             const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 
@@ -533,7 +576,7 @@
 
             if (currentIndex >= generatedNumbers.length) {
                 if (isRepeatActive) {
-                    currentIndex = 0; // Loop back to start if repeat is on
+                    currentIndex = 0;
                 } else {
                     stopAudio();
                     return;
@@ -579,6 +622,15 @@
             document.getElementById('stopBtn').style.display = 'none';
 
             document.querySelectorAll('.number-item.highlight').forEach(el => el.classList.remove('highlight'));
+        }
+
+        function exitApp() {
+            stopAudio();
+            if (window.AndroidTTS && window.AndroidTTS.exitApp) {
+                window.AndroidTTS.exitApp();
+            } else {
+                window.close();
+            }
         }
 
         function resetAudio() {
@@ -638,6 +690,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             generateCounting();
+            checkAppEnvironment(); // App environment check call
         });
     </script>
 </body>
