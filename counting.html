@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Counting App</title>
+    <style>
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 12px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 980px;
+            margin-top: 15px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 18px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .input-group {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .input-group span {
+            font-weight: bold;
+            color: #555;
+            font-size: 16px;
+        }
+
+        input {
+            width: 75px;
+            padding: 6px 8px;
+            border: 2px solid #ccc;
+            border-radius: 6px;
+            font-size: 18px;
+            outline: none;
+            text-align: center;
+            user-select: auto;
+            -webkit-user-select: auto;
+        }
+
+        input:focus {
+            border-color: #3498db;
+        }
+
+        button {
+            padding: 8px 14px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s active;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            touch-action: manipulation;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .btn-generate { background-color: #3498db; }
+        .btn-play { background-color: #2ecc71; }
+        
+        /* Repeat button styling: Grayed out by default, green when active */
+        .btn-repeat { 
+            background-color: #94a3b8; 
+            opacity: 0.7;
+        }
+        .btn-repeat.active { 
+            background-color: #10b981; 
+            opacity: 1;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-stop { background-color: #e74c3c; display: none; }
+
+        .section-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .mode-container {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            background-color: #e2e8f0;
+            color: #475569;
+            padding: 6px 10px;
+            font-size: 12px;
+            border-radius: 5px;
+        }
+
+        .mode-btn.active {
+            background-color: #8b5cf6;
+            color: white;
+            box-shadow: 0 2px 6px rgba(139, 92, 246, 0.4);
+        }
+
+        .pronounce-btn.active {
+            background-color: #059669;
+            color: white;
+            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.4);
+        }
+
+        .columns-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            background: #fafafa;
+        }
+
+        /* Pull-to-refresh Spinner Indicator */
+        .refresh-spinner {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 32px;
+            border: 3px solid #cbd5e1;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            z-index: 10;
+            transition: top 0.2s ease, transform 0.1s linear;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .refresh-spinner.spinning {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        .columns-container {
+            display: flex;
+            gap: 8px;
+            background: #fafafa;
+            padding: 8px;
+            min-height: 220px;
+            max-height: 580px;
+            overflow-y: auto;
+            overflow-x: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .column {
+            flex: 1;
+            min-width: 75px;
+            background: #ffffff;
+            border-radius: 6px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            border-top: 4px solid #3498db;
+            height: fit-content;
+        }
+
+        .column-numbers {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 6px 2px;
+            width: 100%;
+            text-align: center;
+        }
+
+        .number-item {
+            font-size: 22px;
+            font-weight: 700;
+            color: #333;
+            padding: 4px 2px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 1px solid transparent;
+            touch-action: manipulation;
+        }
+
+        .number-item:active {
+            background-color: #e0f2fe;
+        }
+
+        .number-item.highlight {
+            background-color: #f1c40f !important;
+            color: #000 !important;
+            transform: scale(1.08);
+            box-shadow: 0 0 8px rgba(241, 196, 15, 0.9);
+            font-weight: bold;
+            border-color: #d97706;
+        }
+
+        .error {
+            color: #e74c3c;
+            text-align: center;
+            margin-top: 8px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>Vertical Counting Generator</h2>
+        
+        <div class="controls">
+            <div class="input-group">
+                <input type="number" id="startInput" placeholder="Start" value="1" pattern="[0-9]*" inputmode="numeric">
+                <span>to</span>
+                <input type="number" id="endInput" placeholder="End" value="100" pattern="[0-9]*" inputmode="numeric">
+            </div>
+            <button class="btn-generate" onclick="generateCounting()">Generate</button>
+            <button class="btn-play" id="playBtn" onclick="toggleAudio()">▶ Play</button>
+            <!-- Repeat Toggle Button -->
+            <button class="btn-repeat" id="repeatBtn" onclick="toggleRepeat()">🔁 Repeat</button>
+            <button class="btn-stop" id="stopBtn" onclick="stopAudio()">⏹ Stop</button>
+        </div>
+
+        <div class="section-label">Pronunciation Mode</div>
+        <div class="mode-container">
+            <button class="mode-btn pronounce-btn" id="wordOnlyBtn" onclick="setPronounceMode('word')">📢 Word Only</button>
+            <button class="mode-btn pronounce-btn active" id="spellWordBtn" onclick="setPronounceMode('spell_word')">🔤 Spell + Word</button>
+        </div>
+
+        <div class="section-label">Speed Mode</div>
+        <div class="mode-container">
+            <button class="mode-btn" id="normalBtn" onclick="setSpeedMode('normal')">⚡ Normal Speed</button>
+            <button class="mode-btn active" id="delayedBtn" onclick="setSpeedMode('delayed')">🐢 Delayed (1.5s Gap)</button>
+        </div>
+
+        <div class="columns-wrapper" id="columnsWrapper">
+            <div class="refresh-spinner" id="refreshSpinner"></div>
+            <div class="columns-container" id="output"></div>
+        </div>
+        <div id="errorMsg" class="error"></div>
+    </div>
+
+    <script>
+        let isSpeaking = false;
+        let isRepeatActive = false; // Repeat feature state
+        let generatedNumbers = [];
+        let currentIndex = 0;
+        let mode = 'delayed';
+        let pronounceMode = 'spell_word';
+
+        const digitWords = {
+            '0': 'zero', '1': 'one', '2': 'two', '3': 'three', '4': 'four',
+            '5': 'five', '6': 'six', '7': 'seven', '8': 'eight', '9': 'nine'
+        };
+
+        function numberToWords(num) {
+            const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 
+                          'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
+            const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
+
+            if (num === 0) return 'zero';
+
+            function convertBelow1000(n) {
+                if (n === 0) return '';
+                if (n < 20) return ones[n];
+                if (n < 100) {
+                    return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + ones[n % 10] : '');
+                }
+                return ones[Math.floor(n / 100)] + ' hundred' + (n % 100 !== 0 ? ' ' + convertBelow1000(n % 100) : '');
+            }
+
+            let result = '';
+
+            let crore = Math.floor(num / 10000000);
+            num %= 10000000;
+            let lakh = Math.floor(num / 100000);
+            num %= 100000;
+            let thousand = Math.floor(num / 1000);
+            num %= 1000;
+            let remainder = num;
+
+            if (crore > 0) {
+                result += convertBelow1000(crore) + ' crore ';
+            }
+            if (lakh > 0) {
+                result += convertBelow1000(lakh) + ' lakh ';
+            }
+            if (thousand > 0) {
+                result += convertBelow1000(thousand) + ' thousand ';
+            }
+            if (remainder > 0) {
+                result += convertBelow1000(remainder);
+            }
+
+            return result.trim();
+        }
+
+        function getSpokenText(num) {
+            const numberSpoken = numberToWords(num);
+            if (num <= 9 || pronounceMode === 'word') {
+                return numberSpoken;
+            }
+            const digitsSpoken = num.toString().split('').map(d => digitWords[d]).join(' ');
+            return `${digitsSpoken}, ${numberSpoken}`;
+        }
+
+        function setPronounceMode(selectedMode) {
+            pronounceMode = selectedMode;
+            document.getElementById('wordOnlyBtn').classList.toggle('active', pronounceMode === 'word');
+            document.getElementById('spellWordBtn').classList.toggle('active', pronounceMode === 'spell_word');
+        }
+
+        function setSpeedMode(selectedMode) {
+            mode = selectedMode;
+            document.getElementById('normalBtn').classList.toggle('active', mode === 'normal');
+            document.getElementById('delayedBtn').classList.toggle('active', mode === 'delayed');
+        }
+
+        function toggleRepeat() {
+            isRepeatActive = !isRepeatActive;
+            const repeatBtn = document.getElementById('repeatBtn');
+            repeatBtn.classList.toggle('active', isRepeatActive);
+        }
+
+        function generateCounting() {
+            stopAudio();
+
+            const startElem = document.getElementById('startInput');
+            const endElem = document.getElementById('endInput');
+            
+            const startVal = startElem ? startElem.value.trim() : "1";
+            const endVal = endElem ? endElem.value.trim() : "100";
+            
+            const outputDiv = document.getElementById('output');
+            const errorDiv = document.getElementById('errorMsg');
+            
+            outputDiv.innerHTML = '';
+            errorDiv.innerText = '';
+
+            const start = parseInt(startVal, 10);
+            const end = parseInt(endVal, 10);
+
+            if (isNaN(start) || isNaN(end) || start > end) {
+                errorDiv.innerText = "Sahi numbers enter karein (Start number End se chhota hona chahiye)";
+                return;
+            }
+
+            generatedNumbers = [];
+            for (let i = start; i <= end; i++) {
+                generatedNumbers.push(i);
+            }
+
+            const itemsPerCol = 10;
+
+            for (let i = 0; i < generatedNumbers.length; i += itemsPerCol) {
+                const chunk = generatedNumbers.slice(i, i + itemsPerCol);
+
+                const colDiv = document.createElement('div');
+                colDiv.className = 'column';
+
+                const numbersDiv = document.createElement('div');
+                numbersDiv.className = 'column-numbers';
+
+                chunk.forEach(num => {
+                    const numSpan = document.createElement('span');
+                    numSpan.className = 'number-item';
+                    numSpan.id = `num-${num}`;
+                    numSpan.innerText = num;
+                    
+                    numSpan.onclick = () => tapAndSelectNumber(num);
+
+                    numbersDiv.appendChild(numSpan);
+                });
+
+                colDiv.appendChild(numbersDiv);
+                outputDiv.appendChild(colDiv);
+            }
+        }
+
+        function speakItemNative(text, isDelayed) {
+            if (window.AndroidTTS) {
+                const speechRate = 0.85;
+                window.AndroidTTS.speakItem(text, speechRate, isDelayed);
+            } else if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.rate = 0.85;
+                u.onend = () => {
+                    if (isSpeaking) {
+                        setTimeout(() => {
+                            window.onSpeechEnd();
+                        }, isDelayed ? 1500 : 250);
+                    }
+                };
+                u.onerror = () => {
+                    if (isSpeaking) {
+                        window.onSpeechEnd();
+                    }
+                };
+                speechSynthesis.speak(u);
+            }
+        }
+
+        function tapAndSelectNumber(num) {
+            stopAudioOnly();
+
+            const foundIndex = generatedNumbers.indexOf(num);
+            if (foundIndex !== -1) {
+                currentIndex = foundIndex;
+            }
+
+            isSpeaking = false;
+            document.getElementById('playBtn').innerText = '▶ Play';
+            document.getElementById('stopBtn').style.display = 'none';
+
+            highlightNumber(num);
+            speakItemNative(getSpokenText(num), false);
+        }
+
+        function highlightNumber(num) {
+            document.querySelectorAll('.number-item.highlight').forEach(el => el.classList.remove('highlight'));
+            const activeElem = document.getElementById(`num-${num}`);
+            if (activeElem) {
+                activeElem.classList.add('highlight');
+                
+                const container = document.getElementById('output');
+                if (container) {
+                    const elemRect = activeElem.getBoundingClientRect();
+                    const containerRect = container.getBoundingClientRect();
+                    
+                    const scrollTopTarget = container.scrollTop + (elemRect.top - containerRect.top) - (container.clientHeight / 2) + (elemRect.height / 2);
+                    const scrollLeftTarget = container.scrollLeft + (elemRect.left - containerRect.left) - (container.clientWidth / 2) + (elemRect.width / 2);
+
+                    container.scrollTo({
+                        top: scrollTopTarget,
+                        left: scrollLeftTarget,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
+
+        function toggleAudio() {
+            if (isSpeaking) {
+                pauseAudio();
+            } else {
+                startAudio();
+            }
+        }
+
+        function startAudio() {
+            if (generatedNumbers.length === 0) return;
+
+            if (currentIndex >= generatedNumbers.length) {
+                currentIndex = 0;
+            }
+
+            isSpeaking = true;
+            document.getElementById('playBtn').innerText = '⏸ Pause';
+            document.getElementById('stopBtn').style.display = 'inline-flex';
+
+            playCurrentNumber();
+        }
+
+        function playCurrentNumber() {
+            if (!isSpeaking) return;
+
+            if (currentIndex >= generatedNumbers.length) {
+                if (isRepeatActive) {
+                    currentIndex = 0; // Loop back to start if repeat is on
+                } else {
+                    stopAudio();
+                    return;
+                }
+            }
+
+            const currentNum = generatedNumbers[currentIndex];
+            highlightNumber(currentNum);
+
+            const textToSpeak = getSpokenText(currentNum);
+            const isDelayed = (mode === 'delayed');
+
+            speakItemNative(textToSpeak, isDelayed);
+        }
+
+        window.onSpeechEnd = function() {
+            if (!isSpeaking) return;
+            currentIndex++;
+            playCurrentNumber();
+        };
+
+        function stopAudioOnly() {
+            if (window.AndroidTTS) {
+                window.AndroidTTS.stop();
+            }
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+            }
+        }
+
+        function pauseAudio() {
+            isSpeaking = false;
+            stopAudioOnly();
+            document.getElementById('playBtn').innerText = '▶ Play';
+        }
+
+        function stopAudio() {
+            isSpeaking = false;
+            stopAudioOnly();
+
+            currentIndex = 0;
+            document.getElementById('playBtn').innerText = '▶ Play';
+            document.getElementById('stopBtn').style.display = 'none';
+
+            document.querySelectorAll('.number-item.highlight').forEach(el => el.classList.remove('highlight'));
+        }
+
+        function resetAudio() {
+            stopAudio();
+            document.getElementById('startInput').value = "1";
+            document.getElementById('endInput').value = "100";
+            generateCounting();
+        }
+
+        // Pull-to-refresh Gesture Fix
+        let touchStartY = 0;
+        let isPulling = false;
+        const outputContainer = document.getElementById('output');
+        const refreshSpinner = document.getElementById('refreshSpinner');
+
+        outputContainer.addEventListener('touchstart', (e) => {
+            if (outputContainer.scrollTop === 0) {
+                touchStartY = e.touches[0].clientY;
+                isPulling = true;
+            } else {
+                isPulling = false;
+            }
+        }, { passive: true });
+
+        outputContainer.addEventListener('touchmove', (e) => {
+            if (!isPulling) return;
+            let touchCurrentY = e.touches[0].clientY;
+            let pullDistance = touchCurrentY - touchStartY;
+
+            if (pullDistance > 0 && outputContainer.scrollTop === 0) {
+                let offset = Math.min(pullDistance * 0.4, 70);
+                refreshSpinner.style.top = `${offset - 40}px`;
+                refreshSpinner.style.transform = `translateX(-50%) rotate(${pullDistance * 2}deg)`;
+            }
+        }, { passive: true });
+
+        outputContainer.addEventListener('touchend', (e) => {
+            if (!isPulling) return;
+            isPulling = false;
+            let touchEndY = e.changedTouches[0].clientY;
+            let pullDistance = touchEndY - touchStartY;
+
+            if (outputContainer.scrollTop === 0 && pullDistance > 80) {
+                refreshSpinner.style.top = "12px";
+                refreshSpinner.classList.add('spinning');
+
+                setTimeout(() => {
+                    resetAudio();
+                    refreshSpinner.style.top = "-40px";
+                    refreshSpinner.classList.remove('spinning');
+                }, 600);
+            } else {
+                refreshSpinner.style.top = "-40px";
+                refreshSpinner.classList.remove('spinning');
+            }
+        }, { passive: true });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateCounting();
+        });
+    </script>
+</body>
+</html>
