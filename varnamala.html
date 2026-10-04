@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Hindi Varnamala App</title>
+    <style>
+        html {
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        * {
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Roboto, 'Noto Sans Devanagari', -apple-system, sans-serif;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+            -webkit-text-size-adjust: 100%;
+            text-size-adjust: 100%;
+        }
+
+        body {
+            background-color: #f0f4f8;
+            color: #333;
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 12px;
+            padding-bottom: 80px;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 12px;
+            border-radius: 10px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            width: 100%;
+            max-width: 980px;
+            margin-top: 15px;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            font-size: 20px;
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 10px;
+            justify-content: center;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        button {
+            padding: 8px 14px;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: transform 0.1s active;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            touch-action: manipulation;
+        }
+
+        button:active {
+            transform: scale(0.97);
+        }
+
+        .btn-play { background-color: #2ecc71; }
+        
+        .btn-repeat { 
+            background-color: #94a3b8; 
+            opacity: 0.7;
+        }
+        .btn-repeat.active { 
+            background-color: #10b981; 
+            opacity: 1;
+            box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+        }
+
+        .btn-stop { background-color: #e74c3c; display: none; }
+
+        .section-label {
+            text-align: center;
+            font-size: 11px;
+            font-weight: 600;
+            color: #64748b;
+            margin-bottom: 2px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .mode-container {
+            display: flex;
+            justify-content: center;
+            gap: 6px;
+            margin-bottom: 8px;
+            background: #f8f9fa;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #e2e8f0;
+            flex-wrap: wrap;
+        }
+
+        .mode-btn {
+            background-color: #e2e8f0;
+            color: #475569;
+            padding: 6px 12px;
+            font-size: 13px;
+            border-radius: 5px;
+        }
+
+        .mode-btn.active {
+            background-color: #8b5cf6;
+            color: white;
+            box-shadow: 0 2px 6px rgba(139, 92, 246, 0.4);
+        }
+
+        .columns-wrapper {
+            position: relative;
+            overflow: hidden;
+            border-radius: 6px;
+            border: 1px solid #e0e0e0;
+            background: #fafafa;
+        }
+
+        .refresh-spinner {
+            position: absolute;
+            top: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 32px;
+            height: 32px;
+            border: 3px solid #cbd5e1;
+            border-top: 3px solid #3498db;
+            border-radius: 50%;
+            z-index: 10;
+            transition: top 0.2s ease, transform 0.1s linear;
+            background: white;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .refresh-spinner.spinning {
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: translateX(-50%) rotate(0deg); }
+            100% { transform: translateX(-50%) rotate(360deg); }
+        }
+
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 12px;
+            background: #fafafa;
+            padding: 10px;
+            min-height: 220px;
+            max-height: 540px;
+            overflow-y: auto;
+            scroll-behavior: smooth;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .letter-card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 12px 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            border: 2px solid #e2e8f0;
+            touch-action: manipulation;
+        }
+
+        .letter-card:active {
+            background-color: #e0f2fe;
+        }
+
+        .letter-card.highlight {
+            background-color: #fef08a !important;
+            color: #1e293b !important;
+            transform: scale(1.05);
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
+            border-color: #eab308;
+        }
+
+        .letter-symbol {
+            font-size: 32px;
+            font-weight: bold;
+            color: #1e293b;
+        }
+
+        .letter-emoji {
+            font-size: 68px;
+            margin: 4px 0;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 72px;
+        }
+
+        .letter-emoji svg {
+            width: 68px;
+            height: 68px;
+        }
+
+        .letter-word {
+            font-size: 15px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        .exit-container {
+            position: fixed;
+            bottom: calc(16px + env(safe-area-inset-bottom));
+            right: 16px;
+            z-index: 9999;
+            display: none;
+        }
+
+        .btn-exit {
+            background-color: #dc2626;
+            color: #ffffff;
+            padding: 9px 16px;
+            border: 2px solid #ffffff;
+            border-radius: 24px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            touch-action: manipulation;
+        }
+
+        .btn-exit:active {
+            background-color: #b91c1c;
+            transform: scale(0.94);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h2>हिंदी वर्णमाला (Hindi Alphabet)</h2>
+        
+        <div class="controls">
+            <button class="btn-play" id="playBtn" onclick="toggleAudio()">▶ Play</button>
+            <button class="btn-repeat" id="repeatBtn" onclick="toggleRepeat()">🔁 Repeat</button>
+            <button class="btn-stop" id="stopBtn" onclick="stopAudio()">⏹ Stop</button>
+        </div>
+
+        <div class="section-label">Category Filter</div>
+        <div class="mode-container">
+            <button class="mode-btn active" id="filterAllBtn" onclick="setCategoryFilter('all')">सभी (All)</button>
+            <button class="mode-btn" id="filterSwarBtn" onclick="setCategoryFilter('swar')">स्वर (Swar)</button>
+            <button class="mode-btn" id="filterVyanjanBtn" onclick="setCategoryFilter('vyanjan')">व्यंजन (Vyanjan)</button>
+        </div>
+
+        <div class="section-label">Speed Mode</div>
+        <div class="mode-container">
+            <button class="mode-btn" id="normalBtn" onclick="setSpeedMode('normal')">⚡ Normal Speed</button>
+            <button class="mode-btn active" id="delayedBtn" onclick="setSpeedMode('delayed')">🐢 Delayed (1.5s Gap)</button>
+        </div>
+
+        <div class="columns-wrapper" id="columnsWrapper">
+            <div class="refresh-spinner" id="refreshSpinner"></div>
+            <div class="grid-container" id="output"></div>
+        </div>
+    </div>
+
+    <div class="exit-container" id="exitContainer">
+        <button class="btn-exit" onclick="exitApp()">✖ Exit</button>
+    </div>
+
+    <script>
+        const boondiLadduSVG = `<svg width="68" height="68" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg"><circle cx="50" cy="50" r="44" fill="#FB8500"/><circle cx="35" cy="32" r="9" fill="#FFB703"/><circle cx="62" cy="32" r="8" fill="#FFB703"/><circle cx="48" cy="28" r="10" fill="#FFA200"/><circle cx="28" cy="52" r="9" fill="#FFB703"/><circle cx="50" cy="52" r="11" fill="#FF9E00"/><circle cx="70" cy="50" r="9" fill="#FFB703"/><circle cx="36" cy="68" r="8" fill="#FFB703"/><circle cx="58" cy="68" r="9" fill="#FB8500"/><circle cx="44" cy="42" r="3" fill="#2A9D8F"/><circle cx="56" cy="46" r="3" fill="#2A9D8F"/></svg>`;
+
+        // Custom Tamarind (इमली) SVG
+        const imliSVG = `<svg width="68" height="68" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 32 15 Q 22 8 36 10 Q 42 16 32 18 Z" fill="#4CAF50"/>
+            <path d="M 32 15 Q 42 8 46 16 Q 38 20 32 18 Z" fill="#388E3C"/>
+            <path d="M 32 18 L 36 28" stroke="#5D4037" stroke-width="4" stroke-linecap="round"/>
+            <path d="M 36 28 Q 22 38 32 52 Q 42 66 58 72 Q 76 78 82 62 Q 86 46 70 42 Q 54 38 42 28 Z" fill="#8D6E63"/>
+            <circle cx="36" cy="38" r="11" fill="#795548"/>
+            <circle cx="48" cy="52" r="12" fill="#6D4C41"/>
+            <circle cx="68" cy="60" r="13" fill="#5D4037"/>
+            <path d="M 30 32 Q 22 40 30 50 Q 40 62 56 68" stroke="#A1887F" stroke-width="2" fill="none" opacity="0.6"/>
+        </svg>`;
+
+        // Custom Green Sugarcane (ईख/गन्ना) SVG
+        const eekhSVG = `<svg width="68" height="68" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <path d="M 40 28 Q 20 8 10 16 Q 28 26 38 30 Z" fill="#2E7D32"/>
+            <path d="M 50 26 Q 50 4 65 6 Q 58 20 48 28 Z" fill="#4CAF50"/>
+            <path d="M 58 30 Q 80 12 88 22 Q 70 30 56 34 Z" fill="#1B5E20"/>
+            <rect x="36" y="28" width="14" height="64" rx="3" fill="#7CB342"/>
+            <line x1="34" y1="43" x2="52" y2="43" stroke="#DCEDC8" stroke-width="3" stroke-linecap="round"/>
+            <line x1="34" y1="58" x2="52" y2="58" stroke="#DCEDC8" stroke-width="3" stroke-linecap="round"/>
+            <line x1="34" y1="73" x2="52" y2="73" stroke="#DCEDC8" stroke-width="3" stroke-linecap="round"/>
+            <rect x="54" y="34" width="12" height="58" rx="3" fill="#558B2F"/>
+            <line x1="53" y1="48" x2="67" y2="48" stroke="#C5E1A5" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="53" y1="64" x2="67" y2="64" stroke="#C5E1A5" stroke-width="2.5" stroke-linecap="round"/>
+            <line x1="53" y1="78" x2="67" y2="78" stroke="#C5E1A5" stroke-width="2.5" stroke-linecap="round"/>
+        </svg>`;
+
+        // Custom Rishi (ऋषि) SVG
+        const rishiSVG = `<svg width="68" height="68" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="50" cy="50" r="45" fill="#FFF3E0"/>
+            <path d="M 22 84 Q 50 68 78 84 L 82 92 L 18 92 Z" fill="#E65100"/>
+            <path d="M 30 72 C 30 58 70 58 70 72 L 74 90 L 26 90 Z" fill="#EF6C00"/>
+            <circle cx="50" cy="42" r="16" fill="#FFCC80"/>
+            <ellipse cx="44" cy="40" rx="1.5" ry="2" fill="#3E2723"/>
+            <ellipse cx="56" cy="40" rx="1.5" ry="2" fill="#3E2723"/>
+            <line x1="44" y1="33" x2="56" y2="33" stroke="#D32F2F" stroke-width="1.8"/>
+            <circle cx="50" cy="36" r="1.2" fill="#D32F2F"/>
+            <circle cx="50" cy="20" r="10" fill="#4E342E"/>
+            <circle cx="50" cy="15" r="4" fill="#E65100"/>
+            <path d="M 34 44 Q 50 82 66 44 Q 58 72 50 72 Q 42 72 34 44 Z" fill="#ECEFF1"/>
+            <path d="M 38 46 Q 50 76 62 46 Q 50 68 38 46 Z" fill="#FFFFFF"/>
+            <path d="M 36 60 Q 50 76 64 60" stroke="#8D6E63" stroke-width="2.5" stroke-dasharray="3,3" fill="none"/>
+        </svg>`;
+
+        const varnamalaData = [
+            // Swar (Vowels)
+            { letter: 'अ', word: 'अनार', fullText: 'अ अनार', type: 'swar', emoji: '🍎' },
+            { letter: 'आ', word: 'आम', fullText: 'आ आम', type: 'swar', emoji: '🥭' },
+            { letter: 'इ', word: 'इमली', fullText: 'इ इमली', type: 'swar', emoji: imliSVG },
+            { letter: 'ई', word: 'ईख', fullText: 'ई ईख', type: 'swar', emoji: eekhSVG },
+            { letter: 'उ', word: 'उल्लू', fullText: 'उ उल्लू', type: 'swar', emoji: '🦉' },
+            { letter: 'ऊ', word: 'ऊन', fullText: 'ऊ ऊन', type: 'swar', emoji: '🧶' },
+            { letter: 'ऋ', word: 'ऋषि', fullText: 'ऋ ऋषि', type: 'swar', emoji: rishiSVG },
+            { letter: 'ए', word: 'एड़ी', fullText: 'ए एड़ी', type: 'swar', emoji: '🦶' },
+            { letter: 'ऐ', word: 'ऐनक', fullText: 'ऐ ऐनक', type: 'swar', emoji: '👓' },
+            { letter: 'ओ', word: 'ओखली', fullText: 'ओ ओखली', type: 'swar', emoji: '🥣' },
+            { letter: 'औ', word: 'औरत', fullText: 'औ औरत', type: 'swar', emoji: '👩' },
+            { letter: 'अं', word: 'अंगूर', fullText: 'अं अंगूर', type: 'swar', emoji: '🍇' },
+            { letter: 'अः', word: 'खाली', fullText: 'अः खाली', type: 'swar', emoji: '😃' },
+
+            // Vyanjan (Consonants)
+            { letter: 'क', word: 'कबूतर', fullText: 'क कबूतर', type: 'vyanjan', emoji: '🕊️' },
+            { letter: 'ख', word: 'खरगोश', fullText: 'ख खरगोश', type: 'vyanjan', emoji: '🐇' },
+            { letter: 'ग', word: 'गमला', fullText: 'ग गमला', type: 'vyanjan', emoji: '🪴' },
+            { letter: 'घ', word: 'घड़ी', fullText: 'घ घड़ी', type: 'vyanjan', emoji: '⏰' },
+            { letter: 'ङ', word: 'खाली', fullText: 'ङ खाली', type: 'vyanjan', emoji: '😃' },
+            { letter: 'च', word: 'चम्मच', fullText: 'च चम्मच', type: 'vyanjan', emoji: '🥄' },
+            { letter: 'छ', word: 'छतरी', fullText: 'छ छतरी', type: 'vyanjan', emoji: '☂️' },
+            { letter: 'ज', word: 'जहाज', fullText: 'ज जहाज', type: 'vyanjan', emoji: '🚢' },
+            { letter: 'झ', word: 'झंडा', fullText: 'झ झंडा', type: 'vyanjan', emoji: '🚩' },
+            { letter: 'ञ', word: 'खाली', fullText: 'ञ खाली', type: 'vyanjan', emoji: '😃' },
+            { letter: 'ट', word: 'टमाटर', fullText: 'ट टमाटर', type: 'vyanjan', emoji: '🍅' },
+            { letter: 'ठ', word: 'ठठेरा', fullText: 'ठ ठठेरा', type: 'vyanjan', emoji: '🔨' },
+            { letter: 'ड', word: 'डमरू', fullText: 'ड डमरू', type: 'vyanjan', emoji: '🥁' },
+            { letter: 'ढ', word: 'ढक्कन', fullText: 'ढ ढक्कन', type: 'vyanjan', emoji: '🫕' },
+            { letter: 'ण', word: 'खाली', fullText: 'ण खाली', type: 'vyanjan', emoji: '😃' },
+            { letter: 'त', word: 'तरबूज', fullText: 'त तरबूज', type: 'vyanjan', emoji: '🍉' },
+            { letter: 'थ', word: 'थन', fullText: 'थ थन', type: 'vyanjan', emoji: '🐄' },
+            { letter: 'द', word: 'दवात', fullText: 'द दवात', type: 'vyanjan', emoji: '🖋️' },
+            { letter: 'ध', word: 'धनुष', fullText: 'ध धनुष', type: 'vyanjan', emoji: '🏹' },
+            { letter: 'न', word: 'नल', fullText: 'न नल', type: 'vyanjan', emoji: '🚰' },
+            { letter: 'प', word: 'पतंग', fullText: 'प पतंग', type: 'vyanjan', emoji: '🪁' },
+            { letter: 'फ', word: 'फल', fullText: 'फ फल', type: 'vyanjan', emoji: '🍎' },
+            { letter: 'ब', word: 'बस', fullText: 'ब बस', type: 'vyanjan', emoji: '🚌' },
+            { letter: 'भ', word: 'भालू', fullText: 'भ भालू', type: 'vyanjan', emoji: '🐻' },
+            { letter: 'म', word: 'मछली', fullText: 'म मछली', type: 'vyanjan', emoji: '🐟' },
+            { letter: 'य', word: 'यज्ञ', fullText: 'य यज्ञ', type: 'vyanjan', emoji: '🔥' },
+            { letter: 'र', word: 'रथ', fullText: 'र रथ', type: 'vyanjan', emoji: '🛺' },
+            { letter: 'ल', word: 'लड्डू', fullText: 'ल लड्डू', type: 'vyanjan', emoji: boondiLadduSVG },
+            { letter: 'व', word: 'वक', fullText: 'व वक', type: 'vyanjan', emoji: '🦩' },
+            { letter: 'श', word: 'शेर', fullText: 'श शेर', type: 'vyanjan', emoji: '🦁' },
+            { letter: 'ष', word: 'षट्कोण', fullText: 'ष षट्कोण', type: 'vyanjan', emoji: '🔷' },
+            { letter: 'स', word: 'सेब', fullText: 'स सेब', type: 'vyanjan', emoji: '🍎' },
+            { letter: 'ह', word: 'हाथी', fullText: 'ह हाथी', type: 'vyanjan', emoji: '🐘' },
+            { letter: 'क्ष', word: 'क्षत्रिय', fullText: 'क्ष क्षत्रिय', type: 'vyanjan', emoji: '🤴' },
+            { letter: 'त्र', word: 'त्रिशूल', fullText: 'त्र त्रिशूल', type: 'vyanjan', emoji: '🔱' },
+            { letter: 'ज्ञ', word: 'ज्ञानी', fullText: 'ज्ञ ज्ञानी', type: 'vyanjan', emoji: '🧘' }
+        ];
+
+        let isSpeaking = false;
+        let isRepeatActive = false;
+        let currentFilteredList = [];
+        let currentIndex = 0;
+        let mode = 'delayed';
+        let currentCategory = 'all';
+
+        function checkAppEnvironment() {
+            if (window.AndroidTTS && typeof window.AndroidTTS.exitApp === 'function') {
+                const exitContainer = document.getElementById('exitContainer');
+                if (exitContainer) {
+                    exitContainer.style.display = 'block';
+                }
+            }
+        }
+
+        function setCategoryFilter(category) {
+            currentCategory = category;
+            document.getElementById('filterAllBtn').classList.toggle('active', category === 'all');
+            document.getElementById('filterSwarBtn').classList.toggle('active', category === 'swar');
+            document.getElementById('filterVyanjanBtn').classList.toggle('active', category === 'vyanjan');
+            generateVarnamala();
+        }
+
+        function setSpeedMode(selectedMode) {
+            mode = selectedMode;
+            document.getElementById('normalBtn').classList.toggle('active', mode === 'normal');
+            document.getElementById('delayedBtn').classList.toggle('active', mode === 'delayed');
+        }
+
+        function toggleRepeat() {
+            isRepeatActive = !isRepeatActive;
+            document.getElementById('repeatBtn').classList.toggle('active', isRepeatActive);
+        }
+
+        function generateVarnamala() {
+            stopAudio();
+            const outputDiv = document.getElementById('output');
+            outputDiv.innerHTML = '';
+
+            if (currentCategory === 'all') {
+                currentFilteredList = varnamalaData;
+            } else {
+                currentFilteredList = varnamalaData.filter(item => item.type === currentCategory);
+            }
+
+            currentFilteredList.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'letter-card';
+                card.id = `card-${index}`;
+                card.onclick = () => tapAndSelectLetter(index);
+
+                card.innerHTML = `
+                    <div class="letter-symbol">${item.letter}</div>
+                    <div class="letter-emoji">${item.emoji}</div>
+                    <div class="letter-word">${item.word}</div>
+                `;
+
+                outputDiv.appendChild(card);
+            });
+        }
+
+        function speakItemNative(text, isDelayed) {
+            if (window.AndroidTTS) {
+                const speechRate = 0.85;
+                window.AndroidTTS.speakItem(text, speechRate, isDelayed);
+            } else if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'hi-IN';
+                u.rate = 0.85;
+                u.onend = () => {
+                    if (isSpeaking) {
+                        setTimeout(() => {
+                            window.onSpeechEnd();
+                        }, isDelayed ? 1500 : 250);
+                    }
+                };
+                u.onerror = () => {
+                    if (isSpeaking) {
+                        window.onSpeechEnd();
+                    }
+                };
+                speechSynthesis.speak(u);
+            }
+        }
+
+        function tapAndSelectLetter(index) {
+            stopAudioOnly();
+            currentIndex = index;
+
+            isSpeaking = false;
+            document.getElementById('playBtn').innerText = '▶ Play';
+            document.getElementById('stopBtn').style.display = 'none';
+
+            highlightLetter(index);
+            speakItemNative(currentFilteredList[index].fullText, false);
+        }
+
+        function highlightLetter(index) {
+            document.querySelectorAll('.letter-card.highlight').forEach(el => el.classList.remove('highlight'));
+            const activeElem = document.getElementById(`card-${index}`);
+            if (activeElem) {
+                activeElem.classList.add('highlight');
+                
+                const container = document.getElementById('output');
+                if (container) {
+                    const elemRect = activeElem.getBoundingClientRect();
+                    const containerRect = container.getBoundingClientRect();
+                    
+                    const scrollTopTarget = container.scrollTop + (elemRect.top - containerRect.top) - (container.clientHeight / 2) + (elemRect.height / 2);
+
+                    container.scrollTo({
+                        top: scrollTopTarget,
+                        behavior: 'smooth'
+                    });
+                }
+            }
+        }
+
+        function toggleAudio() {
+            if (isSpeaking) {
+                pauseAudio();
+            } else {
+                startAudio();
+            }
+        }
+
+        function startAudio() {
+            if (currentFilteredList.length === 0) return;
+
+            if (currentIndex >= currentFilteredList.length) {
+                currentIndex = 0;
+            }
+
+            isSpeaking = true;
+            document.getElementById('playBtn').innerText = '⏸ Pause';
+            document.getElementById('stopBtn').style.display = 'inline-flex';
+
+            playCurrentLetter();
+        }
+
+        function playCurrentLetter() {
+            if (!isSpeaking) return;
+
+            if (currentIndex >= currentFilteredList.length) {
+                if (isRepeatActive) {
+                    currentIndex = 0;
+                } else {
+                    stopAudio();
+                    return;
+                }
+            }
+
+            const currentItem = currentFilteredList[currentIndex];
+            highlightLetter(currentIndex);
+
+            const isDelayed = (mode === 'delayed');
+            speakItemNative(currentItem.fullText, isDelayed);
+        }
+
+        window.onSpeechEnd = function() {
+            if (!isSpeaking) return;
+            currentIndex++;
+            playCurrentLetter();
+        };
+
+        function stopAudioOnly() {
+            if (window.AndroidTTS) {
+                window.AndroidTTS.stop();
+            }
+            if ('speechSynthesis' in window) {
+                speechSynthesis.cancel();
+            }
+        }
+
+        function pauseAudio() {
+            isSpeaking = false;
+            stopAudioOnly();
+            document.getElementById('playBtn').innerText = '▶ Play';
+        }
+
+        function stopAudio() {
+            isSpeaking = false;
+            stopAudioOnly();
+
+            currentIndex = 0;
+            document.getElementById('playBtn').innerText = '▶ Play';
+            document.getElementById('stopBtn').style.display = 'none';
+
+            document.querySelectorAll('.letter-card.highlight').forEach(el => el.classList.remove('highlight'));
+        }
+
+        function exitApp() {
+            stopAudio();
+            if (window.AndroidTTS && window.AndroidTTS.exitApp) {
+                window.AndroidTTS.exitApp();
+            } else {
+                window.close();
+            }
+        }
+
+        function resetAudio() {
+            stopAudio();
+            generateVarnamala();
+        }
+
+        // Pull-to-refresh Gesture
+        let touchStartY = 0;
+        let isPulling = false;
+        const outputContainer = document.getElementById('output');
+        const refreshSpinner = document.getElementById('refreshSpinner');
+
+        outputContainer.addEventListener('touchstart', (e) => {
+            if (outputContainer.scrollTop === 0) {
+                touchStartY = e.touches[0].clientY;
+                isPulling = true;
+            } else {
+                isPulling = false;
+            }
+        }, { passive: true });
+
+        outputContainer.addEventListener('touchmove', (e) => {
+            if (!isPulling) return;
+            let touchCurrentY = e.touches[0].clientY;
+            let pullDistance = touchCurrentY - touchStartY;
+
+            if (pullDistance > 0 && outputContainer.scrollTop === 0) {
+                let offset = Math.min(pullDistance * 0.4, 70);
+                refreshSpinner.style.top = `${offset - 40}px`;
+                refreshSpinner.style.transform = `translateX(-50%) rotate(${pullDistance * 2}deg)`;
+            }
+        }, { passive: true });
+
+        outputContainer.addEventListener('touchend', (e) => {
+            if (!isPulling) return;
+            isPulling = false;
+            let touchEndY = e.changedTouches[0].clientY;
+            let pullDistance = touchEndY - touchStartY;
+
+            if (outputContainer.scrollTop === 0 && pullDistance > 80) {
+                refreshSpinner.style.top = "12px";
+                refreshSpinner.classList.add('spinning');
+
+                setTimeout(() => {
+                    resetAudio();
+                    refreshSpinner.style.top = "-40px";
+                    refreshSpinner.classList.remove('spinning');
+                }, 600);
+            } else {
+                refreshSpinner.style.top = "-40px";
+                refreshSpinner.classList.remove('spinning');
+            }
+        }, { passive: true });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            generateVarnamala();
+            checkAppEnvironment();
+        });
+    </script>
+</body>
+</html>

@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="hi">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Counting App</title>
+    <title>English Alphabets App</title>
     <style>
         html {
             -webkit-text-size-adjust: 100%;
@@ -47,7 +47,7 @@
             text-align: center;
             margin-bottom: 10px;
             color: #2c3e50;
-            font-size: 18px;
+            font-size: 20px;
         }
 
         .controls {
@@ -57,34 +57,6 @@
             justify-content: center;
             flex-wrap: wrap;
             align-items: center;
-        }
-
-        .input-group {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .input-group span {
-            font-weight: bold;
-            color: #555;
-            font-size: 16px;
-        }
-
-        input {
-            width: 75px;
-            padding: 6px 8px;
-            border: 2px solid #ccc;
-            border-radius: 6px;
-            font-size: 18px;
-            outline: none;
-            text-align: center;
-            user-select: auto;
-            -webkit-user-select: auto;
-        }
-
-        input:focus {
-            border-color: #3498db;
         }
 
         button {
@@ -106,7 +78,6 @@
             transform: scale(0.97);
         }
 
-        .btn-generate { background-color: #3498db; }
         .btn-play { background-color: #2ecc71; }
         
         .btn-repeat { 
@@ -146,8 +117,8 @@
         .mode-btn {
             background-color: #e2e8f0;
             color: #475569;
-            padding: 6px 10px;
-            font-size: 12px;
+            padding: 6px 12px;
+            font-size: 13px;
             border-radius: 5px;
         }
 
@@ -155,12 +126,6 @@
             background-color: #8b5cf6;
             color: white;
             box-shadow: 0 2px 6px rgba(139, 92, 246, 0.4);
-        }
-
-        .pronounce-btn.active {
-            background-color: #059669;
-            color: white;
-            box-shadow: 0 2px 6px rgba(5, 150, 105, 0.4);
         }
 
         .columns-wrapper {
@@ -199,82 +164,76 @@
             100% { transform: translateX(-50%) rotate(360deg); }
         }
 
-        .columns-container {
-            display: flex;
-            gap: 8px;
+        .grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 12px;
             background: #fafafa;
-            padding: 8px;
+            padding: 10px;
             min-height: 220px;
-            max-height: 520px;
+            max-height: 580px;
             overflow-y: auto;
-            overflow-x: auto;
             scroll-behavior: smooth;
             -webkit-overflow-scrolling: touch;
         }
 
-        .column {
-            flex: 1;
-            min-width: 75px;
+        .letter-card {
             background: #ffffff;
-            border-radius: 6px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            border-radius: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.06);
             display: flex;
             flex-direction: column;
             align-items: center;
-            border-top: 4px solid #3498db;
-            height: fit-content;
-        }
-
-        .column-numbers {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            padding: 6px 2px;
-            width: 100%;
-            text-align: center;
-        }
-
-        .number-item {
-            font-size: 22px;
-            font-weight: 700;
-            color: #333;
-            padding: 4px 2px;
-            border-radius: 5px;
+            justify-content: center;
+            padding: 14px 10px;
             cursor: pointer;
             transition: all 0.2s ease;
-            border: 1px solid transparent;
+            border: 2px solid #e2e8f0;
             touch-action: manipulation;
         }
 
-        .number-item:active {
+        .letter-card:active {
             background-color: #e0f2fe;
         }
 
-        /* Updated soft-yellow highlight styles */
-        .number-item.highlight {
+        /* Lighter & Softer Yellow Highlight */
+        .letter-card.highlight {
             background-color: #fef08a !important;
             color: #1e293b !important;
-            transform: scale(1.08);
+            transform: scale(1.04);
             box-shadow: 0 0 10px rgba(250, 204, 21, 0.5);
-            font-weight: bold;
             border-color: #eab308;
         }
 
-        .error {
-            color: #e74c3c;
-            text-align: center;
-            margin-top: 8px;
-            font-size: 13px;
+        .letter-symbol {
+            font-size: 34px;
             font-weight: bold;
+            color: #1e293b;
         }
 
-        /* Fixed Exit Container - Hidden by default for web browsers */
+        .letter-emoji {
+            font-size: 72px;
+            margin: 8px 0;
+            line-height: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 76px;
+        }
+
+        .letter-word {
+            font-size: 16px;
+            font-weight: 700;
+            color: #475569;
+        }
+
+        /* Fixed Exit Container */
         .exit-container {
             position: fixed;
             bottom: calc(16px + env(safe-area-inset-bottom));
             right: 16px;
             z-index: 9999;
-            display: none; /* Hide by default */
+            display: none;
         }
 
         .btn-exit {
@@ -302,24 +261,19 @@
 <body>
 
     <div class="card">
-        <h2>Vertical Counting Generator</h2>
+        <h2>English Alphabets (A to Z)</h2>
         
         <div class="controls">
-            <div class="input-group">
-                <input type="number" id="startInput" placeholder="Start" value="1" pattern="[0-9]*" inputmode="numeric">
-                <span>to</span>
-                <input type="number" id="endInput" placeholder="End" value="100" pattern="[0-9]*" inputmode="numeric">
-            </div>
-            <button class="btn-generate" onclick="generateCounting()">Generate</button>
             <button class="btn-play" id="playBtn" onclick="toggleAudio()">▶ Play</button>
             <button class="btn-repeat" id="repeatBtn" onclick="toggleRepeat()">🔁 Repeat</button>
             <button class="btn-stop" id="stopBtn" onclick="stopAudio()">⏹ Stop</button>
         </div>
 
-        <div class="section-label">Pronunciation Mode</div>
+        <div class="section-label">Category Filter</div>
         <div class="mode-container">
-            <button class="mode-btn pronounce-btn" id="wordOnlyBtn" onclick="setPronounceMode('word')">📢 Word Only</button>
-            <button class="mode-btn pronounce-btn active" id="spellWordBtn" onclick="setPronounceMode('spell_word')">🔤 Spell + Word</button>
+            <button class="mode-btn active" id="filterAllBtn" onclick="setCategoryFilter('all')">All (A-Z)</button>
+            <button class="mode-btn" id="filterVowelsBtn" onclick="setCategoryFilter('vowels')">Vowels</button>
+            <button class="mode-btn" id="filterConsonantsBtn" onclick="setCategoryFilter('consonants')">Consonants</button>
         </div>
 
         <div class="section-label">Speed Mode</div>
@@ -330,31 +284,52 @@
 
         <div class="columns-wrapper" id="columnsWrapper">
             <div class="refresh-spinner" id="refreshSpinner"></div>
-            <div class="columns-container" id="output"></div>
+            <div class="grid-container" id="output"></div>
         </div>
-        <div id="errorMsg" class="error"></div>
     </div>
 
-    <!-- Exit Container (ID added for JS detection) -->
     <div class="exit-container" id="exitContainer">
         <button class="btn-exit" onclick="exitApp()">✖ Exit</button>
     </div>
 
     <script>
+        const alphabetsData = [
+            { letter: 'A', word: 'Apple', fullText: 'A for Apple', type: 'vowels', emoji: '🍎' },
+            { letter: 'B', word: 'Ball', fullText: 'B for Ball', type: 'consonants', emoji: '⚽' },
+            { letter: 'C', word: 'Cat', fullText: 'C for Cat', type: 'consonants', emoji: '🐱' },
+            { letter: 'D', word: 'Dog', fullText: 'D for Dog', type: 'consonants', emoji: '🐶' },
+            { letter: 'E', word: 'Elephant', fullText: 'E for Elephant', type: 'vowels', emoji: '🐘' },
+            { letter: 'F', word: 'Fish', fullText: 'F for Fish', type: 'consonants', emoji: '🐟' },
+            { letter: 'G', word: 'Grapes', fullText: 'G for Grapes', type: 'consonants', emoji: '🍇' },
+            { letter: 'H', word: 'Hen', fullText: 'H for Hen', type: 'consonants', emoji: '🐔' },
+            { letter: 'I', word: 'Ice Cream', fullText: 'I for Ice Cream', type: 'vowels', emoji: '🍦' },
+            { letter: 'J', word: 'Jug', fullText: 'J for Jug', type: 'consonants', emoji: '🏺' },
+            { letter: 'K', word: 'Kite', fullText: 'K for Kite', type: 'consonants', emoji: '🪁' },
+            { letter: 'L', word: 'Lion', fullText: 'L for Lion', type: 'consonants', emoji: '🦁' },
+            { letter: 'M', word: 'Mango', fullText: 'M for Mango', type: 'consonants', emoji: '🥭' },
+            { letter: 'N', word: 'Nest', fullText: 'N for Nest', type: 'consonants', emoji: '🪹' },
+            { letter: 'O', word: 'Orange', fullText: 'O for Orange', type: 'vowels', emoji: '🍊' },
+            { letter: 'P', word: 'Peacock', fullText: 'P for Peacock', type: 'consonants', emoji: '🦚' },
+            { letter: 'Q', word: 'Queen', fullText: 'Q for Queen', type: 'consonants', emoji: '👸' },
+            { letter: 'R', word: 'Rose', fullText: 'R for Rose', type: 'consonants', emoji: '🌹' },
+            { letter: 'S', word: 'Ship', fullText: 'S for Ship', type: 'consonants', emoji: '🚢' },
+            { letter: 'T', word: 'Tiger', fullText: 'T for Tiger', type: 'consonants', emoji: '🐯' },
+            { letter: 'U', word: 'Umbrella', fullText: 'U for Umbrella', type: 'vowels', emoji: '☂️' },
+            { letter: 'V', word: 'Van', fullText: 'V for Van', type: 'consonants', emoji: '🚐' },
+            { letter: 'W', word: 'Watch', fullText: 'W for Watch', type: 'consonants', emoji: '⌚' },
+            { letter: 'X', word: 'Xylophone', fullText: 'X for Xylophone', type: 'consonants', emoji: '🎼' },
+            { letter: 'Y', word: 'Yak', fullText: 'Y for Yak', type: 'consonants', emoji: '🦬' },
+            { letter: 'Z', word: 'Zebra', fullText: 'Zed for Zebra', type: 'consonants', emoji: '🦓' }
+        ];
+
         let isSpeaking = false;
         let isRepeatActive = false;
-        let generatedNumbers = [];
+        let currentFilteredList = [];
         let currentIndex = 0;
         let mode = 'delayed';
-        let pronounceMode = 'spell_word';
-
-        const digitWords = {
-            '0': 'zero', '1': 'one', '2': 'two', '3': 'three', '4': 'four',
-            '5': 'five', '6': 'six', '7': 'seven', '8': 'eight', '9': 'nine'
-        };
+        let currentCategory = 'all';
 
         function checkAppEnvironment() {
-            // Show exit button ONLY inside the Android App WebView
             if (window.AndroidTTS && typeof window.AndroidTTS.exitApp === 'function') {
                 const exitContainer = document.getElementById('exitContainer');
                 if (exitContainer) {
@@ -363,61 +338,12 @@
             }
         }
 
-        function numberToWords(num) {
-            const ones = ['', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine', 'ten', 
-                          'eleven', 'twelve', 'thirteen', 'fourteen', 'fifteen', 'sixteen', 'seventeen', 'eighteen', 'nineteen'];
-            const tens = ['', '', 'twenty', 'thirty', 'forty', 'fifty', 'sixty', 'seventy', 'eighty', 'ninety'];
-
-            if (num === 0) return 'zero';
-
-            function convertBelow1000(n) {
-                if (n === 0) return '';
-                if (n < 20) return ones[n];
-                if (n < 100) {
-                    return tens[Math.floor(n / 10)] + (n % 10 !== 0 ? ' ' + ones[n % 10] : '');
-                }
-                return ones[Math.floor(n / 100)] + ' hundred' + (n % 100 !== 0 ? ' ' + convertBelow1000(n % 100) : '');
-            }
-
-            let result = '';
-
-            let crore = Math.floor(num / 10000000);
-            num %= 10000000;
-            let lakh = Math.floor(num / 100000);
-            num %= 100000;
-            let thousand = Math.floor(num / 1000);
-            num %= 1000;
-            let remainder = num;
-
-            if (crore > 0) {
-                result += convertBelow1000(crore) + ' crore ';
-            }
-            if (lakh > 0) {
-                result += convertBelow1000(lakh) + ' lakh ';
-            }
-            if (thousand > 0) {
-                result += convertBelow1000(thousand) + ' thousand ';
-            }
-            if (remainder > 0) {
-                result += convertBelow1000(remainder);
-            }
-
-            return result.trim();
-        }
-
-        function getSpokenText(num) {
-            const numberSpoken = numberToWords(num);
-            if (num <= 9 || pronounceMode === 'word') {
-                return numberSpoken;
-            }
-            const digitsSpoken = num.toString().split('').map(d => digitWords[d]).join(' ');
-            return `${digitsSpoken}, ${numberSpoken}`;
-        }
-
-        function setPronounceMode(selectedMode) {
-            pronounceMode = selectedMode;
-            document.getElementById('wordOnlyBtn').classList.toggle('active', pronounceMode === 'word');
-            document.getElementById('spellWordBtn').classList.toggle('active', pronounceMode === 'spell_word');
+        function setCategoryFilter(category) {
+            currentCategory = category;
+            document.getElementById('filterAllBtn').classList.toggle('active', category === 'all');
+            document.getElementById('filterVowelsBtn').classList.toggle('active', category === 'vowels');
+            document.getElementById('filterConsonantsBtn').classList.toggle('active', category === 'consonants');
+            generateAlphabets();
         }
 
         function setSpeedMode(selectedMode) {
@@ -428,63 +354,34 @@
 
         function toggleRepeat() {
             isRepeatActive = !isRepeatActive;
-            const repeatBtn = document.getElementById('repeatBtn');
-            repeatBtn.classList.toggle('active', isRepeatActive);
+            document.getElementById('repeatBtn').classList.toggle('active', isRepeatActive);
         }
 
-        function generateCounting() {
+        function generateAlphabets() {
             stopAudio();
-
-            const startElem = document.getElementById('startInput');
-            const endElem = document.getElementById('endInput');
-            
-            const startVal = startElem ? startElem.value.trim() : "1";
-            const endVal = endElem ? endElem.value.trim() : "100";
-            
             const outputDiv = document.getElementById('output');
-            const errorDiv = document.getElementById('errorMsg');
-            
             outputDiv.innerHTML = '';
-            errorDiv.innerText = '';
 
-            const start = parseInt(startVal, 10);
-            const end = parseInt(endVal, 10);
-
-            if (isNaN(start) || isNaN(end) || start > end) {
-                errorDiv.innerText = "Sahi numbers enter karein (Start number End se chhota hona chahiye)";
-                return;
+            if (currentCategory === 'all') {
+                currentFilteredList = alphabetsData;
+            } else {
+                currentFilteredList = alphabetsData.filter(item => item.type === currentCategory);
             }
 
-            generatedNumbers = [];
-            for (let i = start; i <= end; i++) {
-                generatedNumbers.push(i);
-            }
+            currentFilteredList.forEach((item, index) => {
+                const card = document.createElement('div');
+                card.className = 'letter-card';
+                card.id = `card-${index}`;
+                card.onclick = () => tapAndSelectLetter(index);
 
-            const itemsPerCol = 10;
+                card.innerHTML = `
+                    <div class="letter-symbol">${item.letter}</div>
+                    <div class="letter-emoji">${item.emoji}</div>
+                    <div class="letter-word">${item.word}</div>
+                `;
 
-            for (let i = 0; i < generatedNumbers.length; i += itemsPerCol) {
-                const chunk = generatedNumbers.slice(i, i + itemsPerCol);
-
-                const colDiv = document.createElement('div');
-                colDiv.className = 'column';
-
-                const numbersDiv = document.createElement('div');
-                numbersDiv.className = 'column-numbers';
-
-                chunk.forEach(num => {
-                    const numSpan = document.createElement('span');
-                    numSpan.className = 'number-item';
-                    numSpan.id = `num-${num}`;
-                    numSpan.innerText = num;
-                    
-                    numSpan.onclick = () => tapAndSelectNumber(num);
-
-                    numbersDiv.appendChild(numSpan);
-                });
-
-                colDiv.appendChild(numbersDiv);
-                outputDiv.appendChild(colDiv);
-            }
+                outputDiv.appendChild(card);
+            });
         }
 
         function speakItemNative(text, isDelayed) {
@@ -494,6 +391,7 @@
             } else if ('speechSynthesis' in window) {
                 window.speechSynthesis.cancel();
                 const u = new SpeechSynthesisUtterance(text);
+                u.lang = 'en-GB';
                 u.rate = 0.85;
                 u.onend = () => {
                     if (isSpeaking) {
@@ -511,25 +409,21 @@
             }
         }
 
-        function tapAndSelectNumber(num) {
+        function tapAndSelectLetter(index) {
             stopAudioOnly();
-
-            const foundIndex = generatedNumbers.indexOf(num);
-            if (foundIndex !== -1) {
-                currentIndex = foundIndex;
-            }
+            currentIndex = index;
 
             isSpeaking = false;
             document.getElementById('playBtn').innerText = '▶ Play';
             document.getElementById('stopBtn').style.display = 'none';
 
-            highlightNumber(num);
-            speakItemNative(getSpokenText(num), false);
+            highlightLetter(index);
+            speakItemNative(currentFilteredList[index].fullText, false);
         }
 
-        function highlightNumber(num) {
-            document.querySelectorAll('.number-item.highlight').forEach(el => el.classList.remove('highlight'));
-            const activeElem = document.getElementById(`num-${num}`);
+        function highlightLetter(index) {
+            document.querySelectorAll('.letter-card.highlight').forEach(el => el.classList.remove('highlight'));
+            const activeElem = document.getElementById(`card-${index}`);
             if (activeElem) {
                 activeElem.classList.add('highlight');
                 
@@ -539,11 +433,9 @@
                     const containerRect = container.getBoundingClientRect();
                     
                     const scrollTopTarget = container.scrollTop + (elemRect.top - containerRect.top) - (container.clientHeight / 2) + (elemRect.height / 2);
-                    const scrollLeftTarget = container.scrollLeft + (elemRect.left - containerRect.left) - (container.clientWidth / 2) + (elemRect.width / 2);
 
                     container.scrollTo({
                         top: scrollTopTarget,
-                        left: scrollLeftTarget,
                         behavior: 'smooth'
                     });
                 }
@@ -559,9 +451,9 @@
         }
 
         function startAudio() {
-            if (generatedNumbers.length === 0) return;
+            if (currentFilteredList.length === 0) return;
 
-            if (currentIndex >= generatedNumbers.length) {
+            if (currentIndex >= currentFilteredList.length) {
                 currentIndex = 0;
             }
 
@@ -569,13 +461,13 @@
             document.getElementById('playBtn').innerText = '⏸ Pause';
             document.getElementById('stopBtn').style.display = 'inline-flex';
 
-            playCurrentNumber();
+            playCurrentLetter();
         }
 
-        function playCurrentNumber() {
+        function playCurrentLetter() {
             if (!isSpeaking) return;
 
-            if (currentIndex >= generatedNumbers.length) {
+            if (currentIndex >= currentFilteredList.length) {
                 if (isRepeatActive) {
                     currentIndex = 0;
                 } else {
@@ -584,19 +476,17 @@
                 }
             }
 
-            const currentNum = generatedNumbers[currentIndex];
-            highlightNumber(currentNum);
+            const currentItem = currentFilteredList[currentIndex];
+            highlightLetter(currentIndex);
 
-            const textToSpeak = getSpokenText(currentNum);
             const isDelayed = (mode === 'delayed');
-
-            speakItemNative(textToSpeak, isDelayed);
+            speakItemNative(currentItem.fullText, isDelayed);
         }
 
         window.onSpeechEnd = function() {
             if (!isSpeaking) return;
             currentIndex++;
-            playCurrentNumber();
+            playCurrentLetter();
         };
 
         function stopAudioOnly() {
@@ -622,7 +512,7 @@
             document.getElementById('playBtn').innerText = '▶ Play';
             document.getElementById('stopBtn').style.display = 'none';
 
-            document.querySelectorAll('.number-item.highlight').forEach(el => el.classList.remove('highlight'));
+            document.querySelectorAll('.letter-card.highlight').forEach(el => el.classList.remove('highlight'));
         }
 
         function exitApp() {
@@ -636,12 +526,10 @@
 
         function resetAudio() {
             stopAudio();
-            document.getElementById('startInput').value = "1";
-            document.getElementById('endInput').value = "100";
-            generateCounting();
+            generateAlphabets();
         }
 
-        // Pull-to-refresh Gesture Fix
+        // Pull-to-refresh Gesture
         let touchStartY = 0;
         let isPulling = false;
         const outputContainer = document.getElementById('output');
@@ -690,8 +578,8 @@
         }, { passive: true });
 
         window.addEventListener('DOMContentLoaded', () => {
-            generateCounting();
-            checkAppEnvironment(); // App environment check call
+            generateAlphabets();
+            checkAppEnvironment();
         });
     </script>
 </body>
