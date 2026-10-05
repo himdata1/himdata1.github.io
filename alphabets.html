@@ -169,7 +169,7 @@
             grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
             gap: 12px;
             background: #fafafa;
-            padding: 10px 10px 140px 10px; /* Added extra bottom padding so last cards (Y, Z) scroll fully into view */
+            padding: 10px 10px 140px 10px;
             min-height: 220px;
             max-height: 580px;
             overflow-y: auto;
@@ -196,7 +196,6 @@
             background-color: #e0f2fe;
         }
 
-        /* Lighter & Softer Yellow Highlight */
         .letter-card.highlight {
             background-color: #fef08a !important;
             color: #1e293b !important;
@@ -227,7 +226,6 @@
             color: #475569;
         }
 
-        /* Fixed Exit Container */
         .exit-container {
             position: fixed;
             bottom: calc(16px + env(safe-area-inset-bottom));
@@ -269,11 +267,19 @@
             <button class="btn-stop" id="stopBtn" onclick="stopAudio()">⏹ Stop</button>
         </div>
 
+        <!-- Category Filter Section -->
         <div class="section-label">Category Filter</div>
         <div class="mode-container">
             <button class="mode-btn active" id="filterAllBtn" onclick="setCategoryFilter('all')">All (A-Z)</button>
             <button class="mode-btn" id="filterVowelsBtn" onclick="setCategoryFilter('vowels')">Vowels</button>
             <button class="mode-btn" id="filterConsonantsBtn" onclick="setCategoryFilter('consonants')">Consonants</button>
+        </div>
+
+        <!-- Speech Text Format Controls (Moved Below Category Filter) -->
+        <div class="section-label">Audio Speech Mode</div>
+        <div class="mode-container">
+            <button class="mode-btn" id="speechAlphabetBtn" onclick="setSpeechFormat('alphabet')">🔤 Alphabets Only (A, B, C)</button>
+            <button class="mode-btn active" id="speechFullBtn" onclick="setSpeechFormat('full')">🍎 Word Phonics (A for Apple)</button>
         </div>
 
         <div class="section-label">Speed Mode</div>
@@ -319,7 +325,7 @@
             { letter: 'W', word: 'Watch', fullText: 'W for Watch', type: 'consonants', emoji: '⌚' },
             { letter: 'X', word: 'Xylophone', fullText: 'X for Xylophone', type: 'consonants', emoji: '🎼' },
             { letter: 'Y', word: 'Yak', fullText: 'Y for Yak', type: 'consonants', emoji: '🦬' },
-            { letter: 'Z', word: 'Zebra', fullText: 'Zed for Zebra', type: 'consonants', emoji: '🦓' }
+            { letter: 'Z', word: 'Zebra', fullText: 'Zed for Zebra', type: 'consonants', emoji: 'ZEBRA' }
         ];
 
         let isSpeaking = false;
@@ -328,6 +334,7 @@
         let currentIndex = 0;
         let mode = 'delayed';
         let currentCategory = 'all';
+        let speechFormat = 'full'; // 'alphabet' or 'full'
 
         function checkAppEnvironment() {
             if (window.AndroidTTS && typeof window.AndroidTTS.exitApp === 'function') {
@@ -336,6 +343,12 @@
                     exitContainer.style.display = 'block';
                 }
             }
+        }
+
+        function setSpeechFormat(format) {
+            speechFormat = format;
+            document.getElementById('speechAlphabetBtn').classList.toggle('active', format === 'alphabet');
+            document.getElementById('speechFullBtn').classList.toggle('active', format === 'full');
         }
 
         function setCategoryFilter(category) {
@@ -376,12 +389,20 @@
 
                 card.innerHTML = `
                     <div class="letter-symbol">${item.letter}</div>
-                    <div class="letter-emoji">${item.emoji}</div>
+                    <div class="letter-emoji">${item.emoji === 'ZEBRA' ? '🦓' : item.emoji}</div>
                     <div class="letter-word">${item.word}</div>
                 `;
 
                 outputDiv.appendChild(card);
             });
+        }
+
+        function getSpeechText(item) {
+            if (speechFormat === 'alphabet') {
+                return item.letter === 'Z' ? 'Zed' : item.letter;
+            } else {
+                return item.fullText;
+            }
         }
 
         function speakItemNative(text, isDelayed) {
@@ -418,7 +439,8 @@
             document.getElementById('stopBtn').style.display = 'none';
 
             highlightLetter(index);
-            speakItemNative(currentFilteredList[index].fullText, false);
+            const textToSpeak = getSpeechText(currentFilteredList[index]);
+            speakItemNative(textToSpeak, false);
         }
 
         function highlightLetter(index) {
@@ -480,7 +502,8 @@
             highlightLetter(currentIndex);
 
             const isDelayed = (mode === 'delayed');
-            speakItemNative(currentItem.fullText, isDelayed);
+            const textToSpeak = getSpeechText(currentItem);
+            speakItemNative(textToSpeak, isDelayed);
         }
 
         window.onSpeechEnd = function() {

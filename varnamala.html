@@ -293,6 +293,12 @@
             <button class="mode-btn" id="filterVyanjanBtn" onclick="setCategoryFilter('vyanjan')">व्यंजन (Vyanjan)</button>
         </div>
 
+        <div class="section-label">Speech Mode</div>
+        <div class="mode-container">
+            <button class="mode-btn" id="speechLetterBtn" onclick="setSpeechMode('letterOnly')">🔠 केवल वर्ण (अ, आ)</button>
+            <button class="mode-btn active" id="speechWordBtn" onclick="setSpeechMode('full')">🔤 वर्ण + शब्द (अ अनार)</button>
+        </div>
+
         <div class="section-label">Speed Mode</div>
         <div class="mode-container">
             <button class="mode-btn" id="normalBtn" onclick="setSpeedMode('normal')">⚡ Normal Speed</button>
@@ -373,47 +379,32 @@
             <circle cx="50" cy="50" r="10" fill="#FF4081"/>
         </svg>`;
 
-        // नया डमरू (Damru) SVG
         const damruSVG = `<svg width="78" height="78" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <!-- Top Cup -->
             <polygon points="20,18 80,18 50,50" fill="#8D6E63" stroke="#4E342E" stroke-width="3"/>
-            <!-- Bottom Cup -->
             <polygon points="20,82 80,82 50,50" fill="#8D6E63" stroke="#4E342E" stroke-width="3"/>
-            <!-- Top Rim -->
             <ellipse cx="50" cy="18" rx="30" ry="7" fill="#D7CCC8" stroke="#4E342E" stroke-width="2"/>
-            <!-- Bottom Rim -->
             <ellipse cx="50" cy="82" rx="30" ry="7" fill="#D7CCC8" stroke="#4E342E" stroke-width="2"/>
-            <!-- Middle Ring / Tied Thread -->
             <rect x="42" y="46" width="16" height="8" rx="2" fill="#FF9800" stroke="#E65100" stroke-width="2"/>
-            <!-- Strings & Balls -->
             <path d="M 46 50 C 26 55 18 64 22 70" fill="none" stroke="#3E2723" stroke-width="2"/>
             <circle cx="22" cy="70" r="5" fill="#D32F2F"/>
             <path d="M 54 50 C 74 45 82 36 78 30" fill="none" stroke="#3E2723" stroke-width="2"/>
             <circle cx="78" cy="30" r="5" fill="#D32F2F"/>
         </svg>`;
 
-        // नया रथ (Rath / Chariot) SVG
         const rathSVG = `<svg width="78" height="78" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
-            <!-- Flag Pole & Flag -->
             <line x1="28" y1="10" x2="28" y2="45" stroke="#795548" stroke-width="3"/>
             <polygon points="28,10 60,20 28,30" fill="#FF5722"/>
-            <!-- Chariot Canopy / Roof -->
             <path d="M 20 42 Q 50 25 80 42 L 75 52 L 25 52 Z" fill="#FFC107" stroke="#FF8F00" stroke-width="2"/>
-            <!-- Main Body -->
             <path d="M 22 52 L 78 52 L 72 74 L 30 74 Z" fill="#D84315" stroke="#BF360C" stroke-width="2"/>
-            <!-- Gold Trim Line -->
             <line x1="25" y1="62" x2="75" y2="62" stroke="#FFD54F" stroke-width="3"/>
-            <!-- Wheels -->
             <circle cx="35" cy="76" r="14" fill="#8D6E63" stroke="#3E2723" stroke-width="3"/>
             <circle cx="35" cy="76" r="4" fill="#FFD54F"/>
             <line x1="35" y1="62" x2="35" y2="90" stroke="#3E2723" stroke-width="1.5"/>
             <line x1="21" y1="76" x2="49" y2="76" stroke="#3E2723" stroke-width="1.5"/>
-
             <circle cx="65" cy="76" r="14" fill="#8D6E63" stroke="#3E2723" stroke-width="3"/>
             <circle cx="65" cy="76" r="4" fill="#FFD54F"/>
             <line x1="65" y1="62" x2="65" y2="90" stroke="#3E2723" stroke-width="1.5"/>
             <line x1="51" y1="76" x2="79" y2="76" stroke="#3E2723" stroke-width="1.5"/>
-            <!-- Shaft Front -->
             <line x1="10" y1="72" x2="30" y2="72" stroke="#5D4037" stroke-width="4" stroke-linecap="round"/>
         </svg>`;
 
@@ -478,6 +469,7 @@
         let currentIndex = 0;
         let mode = 'delayed';
         let currentCategory = 'all';
+        let speechMode = 'full'; // 'full' -> वर्ण + शब्द, 'letterOnly' -> केवल वर्ण
 
         function checkAppEnvironment() {
             if (window.AndroidTTS && typeof window.AndroidTTS.exitApp === 'function') {
@@ -494,6 +486,12 @@
             document.getElementById('filterSwarBtn').classList.toggle('active', category === 'swar');
             document.getElementById('filterVyanjanBtn').classList.toggle('active', category === 'vyanjan');
             generateVarnamala();
+        }
+
+        function setSpeechMode(selectedSpeechMode) {
+            speechMode = selectedSpeechMode;
+            document.getElementById('speechWordBtn').classList.toggle('active', speechMode === 'full');
+            document.getElementById('speechLetterBtn').classList.toggle('active', speechMode === 'letterOnly');
         }
 
         function setSpeedMode(selectedMode) {
@@ -559,6 +557,10 @@
             }
         }
 
+        function getTextToSpeak(item) {
+            return (speechMode === 'letterOnly') ? item.letter : item.fullText;
+        }
+
         function tapAndSelectLetter(index) {
             stopAudioOnly();
             currentIndex = index;
@@ -568,7 +570,7 @@
             document.getElementById('stopBtn').style.display = 'none';
 
             highlightLetter(index);
-            speakItemNative(currentFilteredList[index].fullText, false);
+            speakItemNative(getTextToSpeak(currentFilteredList[index]), false);
         }
 
         function highlightLetter(index) {
@@ -630,7 +632,7 @@
             highlightLetter(currentIndex);
 
             const isDelayed = (mode === 'delayed');
-            speakItemNative(currentItem.fullText, isDelayed);
+            speakItemNative(getTextToSpeak(currentItem), isDelayed);
         }
 
         window.onSpeechEnd = function() {
