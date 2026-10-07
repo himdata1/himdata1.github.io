@@ -401,9 +401,9 @@
       <div class="form-group">
         <label class="group-label" for="groupingMode">Regrouping (Borrow):</label>
         <select id="groupingMode" onchange="saveAndGenerate()">
-          <option value="any" selected>Any (Mixed)</option>
-          <option value="no_borrow">Without Borrowing</option>
+          <option value="no_borrow" selected>Without Borrowing</option>
           <option value="with_borrow">With Borrowing</option>
+          <option value="any">Mixed</option>
         </select>
       </div>
 
@@ -498,7 +498,7 @@
 
     function resetToDefaults() {
       currentLineDigits = [2, 2];
-      document.getElementById('groupingMode').value = "any";
+      document.getElementById('groupingMode').value = "no_borrow";
       document.getElementById('numQuestions').value = "18";
       document.getElementById('answerOption').value = "no_answers";
       renderLineDigitInputs();

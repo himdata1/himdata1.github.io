@@ -40,9 +40,6 @@
       flex-direction: column;
       align-items: center;
       gap: 14px;
-      /* position: sticky; removed so it scrolls away */
-      /* top: 0; removed */
-      /* z-index: 100; removed */
       width: 100%;
       max-width: 100vw;
     }
@@ -431,9 +428,9 @@
       <div class="form-group">
         <label class="group-label" for="groupingMode">Regrouping (Carry):</label>
         <select id="groupingMode" onchange="saveAndGenerate()">
-          <option value="any" selected>Any (Mixed)</option>
-          <option value="no_carry">Without Carrying</option>
+          <option value="no_carry" selected>Without Carrying</option>
           <option value="with_carry">With Carrying</option>
+          <option value="any">Mixed</option>
         </select>
       </div>
 
@@ -524,13 +521,13 @@
     function updateLineDigitVal(index, value) {
       const val = parseInt(value) || 1;
       currentLineDigits[index] = val;
-      saveAndGenerator();
+      saveAndGenerate();
     }
 
     function resetToDefaults() {
       document.getElementById('numLines').value = "2";
       currentLineDigits = [2, 2];
-      document.getElementById('groupingMode').value = "any";
+      document.getElementById('groupingMode').value = "no_carry";
       document.getElementById('numQuestions').value = "18";
       document.getElementById('answerOption').value = "no_answers";
       renderLineDigitInputs();

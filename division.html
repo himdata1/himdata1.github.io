@@ -243,11 +243,11 @@ body {
 }
 
 .divisor {
-  width: 38px;
-  min-width: 38px;
+  width: 45px;
+  min-width: 45px;
   color: #c2410c;
   text-align: right;
-  padding-right: 4px;
+  padding-right: 6px;
   white-space: nowrap;
 }
 
@@ -273,7 +273,7 @@ body {
 
 .work-area {
   position: relative;
-  margin-left: 38px;
+  margin-left: 45px;
   width: calc(var(--digit-width) * 6);
   min-height: 170px;
 }
@@ -326,19 +326,35 @@ body {
   break-before: page;
 }
 
-/* Seamless editable styles without highlights */
 .editable-input {
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
   color: inherit;
+  border: none;
+  background: transparent;
+  outline: none;
+  padding: 0 0 0 4px;
+  margin: 0;
+  height: 26px;
+  line-height: 26px;
+  letter-spacing: 21.5px;
+}
+
+.editable-divisor {
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #c2410c;
   border: none;
   background: transparent;
   outline: none;
   padding: 0;
   margin: 0;
-  text-align: center;
+  text-align: right;
+  width: 42px;
   height: 26px;
+  line-height: 26px;
 }
 
 body.pdf-mode { background: #fff; }
@@ -363,8 +379,8 @@ body.pdf-mode .paper-sheet {
     box-shadow: none !important;
   }
   .page-break { page-break-before: always !important; break-before: page !important; }
-  .quotient-digit, .work-number.remainder, .divisor { color: #000 !important; }
-  .editable-input { border: none !important; background: transparent !important; }
+  .quotient-digit, .work-number.remainder, .divisor, .editable-divisor { color: #000 !important; }
+  .editable-input, .editable-divisor { border: none !important; background: transparent !important; }
 }
 
 @media (max-width: 768px) {
@@ -393,8 +409,8 @@ body.pdf-mode .paper-sheet {
     <div class="form-group">
       <label class="group-label" for="answerOption">Answer Options:</label>
       <select id="answerOption" onchange="saveAndGenerate()">
-        <option value="no_answers">No Answers (Blank Steps)</option>
-        <option value="show_answers" selected>Show Full Solution Steps</option>
+        <option value="no_answers" selected>No Answers</option>
+        <option value="show_answers">Show Full Solution Steps</option>
       </select>
     </div>
   </div>
@@ -420,7 +436,7 @@ function initQuestionDropdown() {
     const option = document.createElement("option");
     option.value = i;
     option.textContent = `${i} Questions`;
-    if (i === 6) option.selected = true;
+    if (i === 12) option.selected = true;
     select.appendChild(option);
   }
 }
@@ -433,7 +449,7 @@ function renderLineDigitInputs() {
     const item = document.createElement("div");
     item.className = "line-digit-item";
     const minLimit = index === 0 ? 2 : 1;
-    const maxLimit = index === 0 ? 4 : 3; // Divisor limit up to 3 digits
+    const maxLimit = index === 0 ? 4 : 3;
     let options = "";
     for (let d = minLimit; d <= maxLimit; d++) {
       options += `<option value="${d}" ${d === digits ? "selected" : ""}>${d} Digit${d > 1 ? "s" : ""}</option>`;
@@ -454,8 +470,8 @@ function updateLineDigitVal(index, value) {
 
 function resetToDefaults() {
   currentLineDigits = [3, 2];
-  document.getElementById("numQuestions").value = "6";
-  document.getElementById("answerOption").value = "show_answers";
+  document.getElementById("numQuestions").value = "12";
+  document.getElementById("answerOption").value = "no_answers";
   renderLineDigitInputs();
   saveAndGenerate();
 }
@@ -466,12 +482,12 @@ function saveAndGenerate() {
     numQuestions: document.getElementById("numQuestions").value,
     answerOption: document.getElementById("answerOption").value
   };
-  localStorage.setItem("division_worksheet_settings_v13", JSON.stringify(settings));
+  localStorage.setItem("division_worksheet_settings_v18", JSON.stringify(settings));
   generateWorksheet();
 }
 
 function loadSavedChoices() {
-  const saved = localStorage.getItem("division_worksheet_settings_v13");
+  const saved = localStorage.getItem("division_worksheet_settings_v18");
   if (saved) {
     try {
       const settings = JSON.parse(saved);
@@ -528,7 +544,7 @@ function computeLongDivisionSteps(dividend, divisor) {
 }
 
 function generateWorksheet() {
-  const questionsCount = parseInt(document.getElementById("numQuestions").value) || 6;
+  const questionsCount = parseInt(document.getElementById("numQuestions").value) || 12;
   const answerOption = document.getElementById("answerOption").value;
   problems = [];
 
@@ -616,14 +632,15 @@ function renderCardContent(p, showAnswers, isFirst) {
 
   let divisorHTML = '';
   if (isFirst) {
-    divisorHTML = `<input type="text" class="editable-input" style="text-align: right; width: 34px; padding-right: 2px;" value="${p.divisor}" onclick="this.select()" onchange="updateFirstDivisor(this.value)">`;
+    divisorHTML = `<input type="text" class="editable-divisor" value="${p.divisor}" onclick="this.select()" onchange="updateFirstDivisor(this.value)">`;
   } else {
     divisorHTML = p.divisor;
   }
 
   let dividendHTML = "";
+  const dividendWidth = dividendString.length * 28;
   if (isFirst) {
-    dividendHTML = `<input type="text" class="editable-input" style="width: ${dividendString.length * 28}px;" value="${p.dividend}" onclick="this.select()" onchange="updateFirstDividend(this.value)">`;
+    dividendHTML = `<input type="text" class="editable-input" style="width: ${dividendWidth}px;" value="${p.dividend}" onclick="this.select()" onchange="updateFirstDividend(this.value)">`;
   } else {
     for (let i = 0; i < dividendString.length; i++) {
       dividendHTML += `<div class="digit-cell">${dividendString[i]}</div>`;
@@ -635,8 +652,8 @@ function renderCardContent(p, showAnswers, isFirst) {
       <div class="division-header">${quotientDigits}</div>
       <div class="division-line">
         <div class="divisor">${divisorHTML}</div>
-        <div class="dividend-area">
-          <div class="digit-grid" ${isFirst ? 'style="width: max-content;"' : ''}>${dividendHTML}</div>
+        <div class="dividend-area" style="width: ${dividendWidth}px;">
+          <div class="digit-grid" ${isFirst ? `style="width: ${dividendWidth}px;"` : ''}>${dividendHTML}</div>
         </div>
       </div>
   `;

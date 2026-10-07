@@ -39,7 +39,6 @@
       flex-direction: column;
       align-items: center;
       gap: 14px;
-      /* position: sticky aur top: 0 yahan se hata diye gaye hain taaki yeh scroll ho sake */
       z-index: 100;
       width: 100%;
       max-width: 100vw;
@@ -438,6 +437,16 @@
         <div id="lineDigitsContainer" class="line-digits-group"></div>
       </div>
 
+      <!-- Regrouping / Carry Dropdown -->
+      <div class="form-group">
+        <label class="group-label" for="groupingMode">Regrouping (Carry):</label>
+        <select id="groupingMode" onchange="saveAndGenerate()">
+          <option value="no_carry" selected>Without Carrying</option>
+          <option value="with_carry">With Carrying</option>
+          <option value="any">Mixed</option>
+        </select>
+      </div>
+
       <div class="form-group">
         <label class="group-label" for="numQuestions">No. of Questions:</label>
         <select id="numQuestions" onchange="saveAndGenerate()"></select>
@@ -446,8 +455,8 @@
       <div class="form-group">
         <label class="group-label" for="answerOption">Answer Options:</label>
         <select id="answerOption" onchange="saveAndGenerate()">
-          <option value="no_answers">No Answers</option>
-          <option value="inline" selected>Show Answers Inline (With Step Solutions)</option>
+          <option value="no_answers" selected>No Answers</option>
+          <option value="inline">Show Answers Inline (With Step Solutions)</option>
         </select>
       </div>
     </div>
@@ -463,7 +472,8 @@
   <div id="worksheetContainer"></div>
 
   <script>
-    let currentLineDigits = [3, 2];
+    // Default set to Top: 2 digits, Bottom: 1 digit
+    let currentLineDigits = [2, 1];
     let problems = [];
 
     function initQuestionDropdown() {
@@ -511,9 +521,10 @@
     }
 
     function resetToDefaults() {
-      currentLineDigits = [3, 2];
+      currentLineDigits = [2, 1];
+      document.getElementById('groupingMode').value = "no_carry";
       document.getElementById('numQuestions').value = "18";
-      document.getElementById('answerOption').value = "inline";
+      document.getElementById('answerOption').value = "no_answers";
       renderLineDigitInputs();
       saveAndGenerate();
     }
@@ -521,19 +532,21 @@
     function saveAndGenerate() {
       const settings = {
         lineDigits: currentLineDigits,
+        groupingMode: document.getElementById('groupingMode').value,
         numQuestions: document.getElementById('numQuestions').value,
         answerOption: document.getElementById('answerOption').value
       };
-      localStorage.setItem('multiplication_worksheet_settings_v19', JSON.stringify(settings));
+      localStorage.setItem('multiplication_worksheet_settings_v21', JSON.stringify(settings));
       generateWorksheet();
     }
 
     function loadSavedChoices() {
-      const saved = localStorage.getItem('multiplication_worksheet_settings_v19');
+      const saved = localStorage.getItem('multiplication_worksheet_settings_v21');
       if (saved) {
         try {
           const settings = JSON.parse(saved);
           if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
+          if (settings.groupingMode) document.getElementById('groupingMode').value = settings.groupingMode;
           if (settings.numQuestions) document.getElementById('numQuestions').value = settings.numQuestions;
           if (settings.answerOption) document.getElementById('answerOption').value = settings.answerOption;
         } catch(e) {
@@ -550,16 +563,81 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    // Helper function to check if multiplication requires carrying/regrouping
+    function hasMultiplicationCarry(top, bottom) {
+      const topDigits = String(top).split('').map(Number).reverse();
+      const bottomDigits = String(bottom).split('').map(Number).reverse();
+
+      // Check carry in single-digit partial products
+      for (let b of bottomDigits) {
+        for (let a of topDigits) {
+          if (a * b >= 10) return true;
+        }
+      }
+
+      // If bottom has more than 1 digit, check carry during addition of partial products
+      if (bottomDigits.length > 1) {
+        let partials = bottomDigits.map((b, i) => top * b * Math.pow(10, i));
+        let maxLen = Math.max(...partials.map(p => String(p).length));
+        let carry = 0;
+        
+        for (let col = 0; col < maxLen; col++) {
+          let colSum = carry;
+          for (let p of partials) {
+            let digit = Math.floor(p / Math.pow(10, col)) % 10;
+            colSum += digit;
+          }
+          if (colSum >= 10 && col < maxLen - 1) return true;
+          carry = Math.floor(colSum / 10);
+        }
+      }
+
+      return false;
+    }
+
+    function generateSingleProblem(topDigits, bottomDigits, mode) {
+      if (mode === 'any') {
+        const top = getRandomNumber(topDigits);
+        const bottom = getRandomNumber(bottomDigits);
+        return { top, bottom, product: top * bottom };
+      }
+
+      if (mode === 'no_carry') {
+        for (let attempt = 0; attempt < 500; attempt++) {
+          const top = getRandomNumber(topDigits);
+          const bottom = getRandomNumber(bottomDigits);
+          if (!hasMultiplicationCarry(top, bottom)) {
+            return { top, bottom, product: top * bottom };
+          }
+        }
+      }
+
+      if (mode === 'with_carry') {
+        for (let attempt = 0; attempt < 500; attempt++) {
+          const top = getRandomNumber(topDigits);
+          const bottom = getRandomNumber(bottomDigits);
+          if (hasMultiplicationCarry(top, bottom)) {
+            return { top, bottom, product: top * bottom };
+          }
+        }
+      }
+
+      // Fallback
+      const top = getRandomNumber(topDigits);
+      const bottom = getRandomNumber(bottomDigits);
+      return { top, bottom, product: top * bottom };
+    }
+
     function generateWorksheet() {
       const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
       const answerOption = document.getElementById('answerOption').value;
+      const groupingMode = document.getElementById('groupingMode').value;
 
       problems = [];
       for (let i = 0; i < questionsCount; i++) {
-        const top = getRandomNumber(currentLineDigits[0]);
-        const bottom = getRandomNumber(currentLineDigits[1]);
-        const product = top * bottom;
-        problems.push({ id: i + 1, top, bottom, product });
+        const p = generateSingleProblem(currentLineDigits[0], currentLineDigits[1], groupingMode);
+        p.id = i + 1;
+        problems.push(p);
       }
 
       renderWorksheetDOM(answerOption);
