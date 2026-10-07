@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Multiplication Worksheet Generator</title>
+  <!-- html2pdf Library for direct PDF Download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-workspace: #cbd5e1;
+      --text: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-workspace);
+      color: var(--text);
+      line-height: 1.4;
+      padding-bottom: 40px;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    .controls-panel {
+      background: #ffffff;
+      padding: 16px;
+      border-bottom: 2px solid #94a3b8;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      /* position: sticky aur top: 0 yahan se hata diye gaye hain taaki yeh scroll ho sake */
+      z-index: 100;
+      width: 100%;
+      max-width: 100vw;
+    }
+
+    .app-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #0f172a;
+      text-align: center;
+      letter-spacing: -0.3px;
+      width: 100%;
+    }
+
+    .controls-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 16px;
+      align-items: flex-end;
+      justify-content: center;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1 1 auto;
+      min-width: 130px;
+    }
+
+    .form-group label.group-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group select {
+      padding: 8px 10px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      outline: none;
+      background: #f8fafc;
+      color: #0f172a;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .form-group select:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    .line-digits-group {
+      display: flex;
+      gap: 6px;
+      align-items: flex-end;
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1.5px solid #cbd5e1;
+      min-height: 38px;
+      flex-wrap: wrap;
+    }
+
+    .line-digit-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .line-digit-item span {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #64748b;
+    }
+
+    .line-digit-item select {
+      min-width: 50px;
+      padding: 4px 2px;
+      text-align: center;
+      font-size: 0.82rem;
+      width: 100%;
+    }
+
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 700px;
+      margin-top: 2px;
+    }
+
+    .btn {
+      flex: 1 1 calc(50% - 10px);
+      max-width: 180px;
+      min-width: 110px;
+      padding: 9px 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 38px;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    @media (min-width: 640px) {
+      .btn {
+        flex: 0 0 auto;
+        min-width: 120px;
+      }
+    }
+
+    .btn-generate { background: var(--primary); color: white; }
+    .btn-generate:hover { background: var(--primary-hover); }
+
+    .btn-reset { background: #64748b; color: white; }
+    .btn-reset:hover { background: #475569; }
+
+    .btn-pdf { background: #0284c7; color: white; }
+    .btn-pdf:hover { background: #0369a1; }
+
+    .btn-print { background: #059669; color: white; }
+    .btn-print:hover { background: #047857; }
+
+    #worksheetContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 10px 15px;
+    }
+
+    .paper-sheet {
+      width: 210mm;
+      max-width: 100%;
+      background: #ffffff;
+      padding: 15mm;
+      margin: 15px auto;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-radius: 2px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .worksheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .worksheet-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #000;
+    }
+
+    .student-info {
+      display: flex;
+      gap: 18px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #000;
+      flex-wrap: wrap;
+    }
+
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px 8px;
+      justify-items: center;
+      width: 100%;
+    }
+
+    .problem-card {
+      display: flex;
+      gap: 4px;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 700;
+      width: 100%;
+      justify-content: flex-start;
+      color: #000;
+      padding-left: 2px;
+      box-sizing: border-box;
+    }
+
+    .problem-num {
+      font-size: 0.85rem;
+      color: #334155;
+      min-width: 22px;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+
+    /* Standard Problem Layout (No Answers / Blank) */
+    .math-block {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      width: auto;
+      max-width: calc(100% - 24px);
+    }
+
+    .number-row {
+      text-align: right;
+      width: 100%;
+      padding-right: 2px;
+      white-space: nowrap;
+      letter-spacing: 1.5px;
+    }
+
+    .number-row.bottom {
+      position: relative;
+      padding-left: 1.2em;
+      padding-bottom: 3px;
+      margin-bottom: 3px;
+      width: 100%;
+      border-bottom: 2px solid #000000;
+    }
+
+    .number-row.bottom::before {
+      content: "×";
+      position: absolute;
+      left: 0;
+      bottom: 1px;
+      font-weight: bold;
+      font-size: 1.2em;
+      line-height: 1;
+    }
+
+    .answer-space {
+      min-height: 2.2em;
+      width: 100%;
+    }
+
+    /* Proper Step-by-Step Solution Layout */
+    .solution-block {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      width: auto;
+      font-size: 0.9rem;
+    }
+
+    .sol-row {
+      text-align: right;
+      width: 100%;
+      padding-right: 2px;
+      white-space: nowrap;
+      letter-spacing: 1.2px;
+    }
+
+    .sol-row.bottom {
+      position: relative;
+      padding-left: 1.2em;
+      padding-bottom: 3px;
+      margin-bottom: 4px;
+      width: 100%;
+      border-bottom: 2px solid #000000;
+    }
+
+    .sol-row.bottom::before {
+      content: "×";
+      position: absolute;
+      left: 0;
+      bottom: 1px;
+      font-weight: bold;
+      font-size: 1.2em;
+      line-height: 1;
+    }
+
+    .sol-row.partial-line {
+      padding-bottom: 2px;
+      margin-bottom: 2px;
+    }
+
+    .sol-row.partial-line.last-partial {
+      padding-bottom: 3px;
+      margin-bottom: 3px;
+      border-bottom: 2px solid #000000;
+    }
+
+    .sol-final {
+      text-align: right;
+      width: 100%;
+      padding-right: 2px;
+      padding-bottom: 2px;
+      margin-top: 2px;
+      font-weight: 800;
+      color: #1d4ed8;
+      letter-spacing: 1.2px;
+      border-bottom: 2px solid #000000;
+    }
+
+    /* Invisible Borderless Editable Input for Question 1 */
+    .custom-input {
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 700;
+      font-size: inherit;
+      text-align: right;
+      width: auto;
+      max-width: 110px;
+      border: none;
+      background: transparent;
+      padding: 0;
+      outline: none;
+      color: inherit;
+      letter-spacing: inherit;
+    }
+
+    .custom-input:focus {
+      background: #e2e8f0;
+      border-radius: 2px;
+      outline: 1px dashed var(--primary);
+    }
+
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+    }
+
+    @media (max-width: 640px) {
+      .app-title { font-size: 1.15rem; }
+      .paper-sheet { padding: 10mm 6mm; }
+      .worksheet-title { font-size: 1.1rem; }
+      .student-info { font-size: 0.75rem; gap: 8px; }
+      .controls-panel { padding: 12px 10px; }
+    }
+
+    body.pdf-mode .paper-sheet {
+      width: 210mm !important;
+      max-width: none !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      min-height: auto !important;
+      height: auto !important;
+      padding: 12mm 15mm !important;
+    }
+
+    body.pdf-mode .page-break {
+      page-break-before: always !important;
+      break-before: page !important;
+    }
+
+    @media print {
+      .no-print { display: none !important; }
+      body { background: #ffffff !important; padding: 0 !important; }
+      .paper-sheet {
+        width: 210mm !important;
+        max-width: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 10mm !important;
+      }
+      .page-break {
+        page-break-before: always !important;
+        break-before: page !important;
+      }
+      .sol-final { color: #000000 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="controls-panel no-print">
+    <h1 class="app-title">Multiplication Worksheet Generator</h1>
+
+    <div class="controls-wrapper">
+      <div class="form-group">
+        <label class="group-label">Digits Per Line:</label>
+        <div id="lineDigitsContainer" class="line-digits-group"></div>
+      </div>
+
+      <div class="form-group">
+        <label class="group-label" for="numQuestions">No. of Questions:</label>
+        <select id="numQuestions" onchange="saveAndGenerate()"></select>
+      </div>
+
+      <div class="form-group">
+        <label class="group-label" for="answerOption">Answer Options:</label>
+        <select id="answerOption" onchange="saveAndGenerate()">
+          <option value="no_answers">No Answers</option>
+          <option value="inline" selected>Show Answers Inline (With Step Solutions)</option>
+        </select>
+      </div>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-generate" onclick="generateWorksheet()">Generate New</button>
+      <button class="btn btn-reset" onclick="resetToDefaults()">Reset</button>
+      <button class="btn btn-pdf" onclick="downloadPDF()">Download PDF</button>
+      <button class="btn btn-print" onclick="window.print()">Print Sheet</button>
+    </div>
+  </div>
+
+  <div id="worksheetContainer"></div>
+
+  <script>
+    let currentLineDigits = [3, 2];
+    let problems = [];
+
+    function initQuestionDropdown() {
+      const qSelect = document.getElementById('numQuestions');
+      qSelect.innerHTML = '';
+      for (let i = 3; i <= 60; i += 3) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${i} Questions`;
+        if (i === 18) opt.selected = true;
+        qSelect.appendChild(opt);
+      }
+    }
+
+    function renderLineDigitInputs() {
+      const container = document.getElementById('lineDigitsContainer');
+      container.innerHTML = '';
+
+      currentLineDigits.forEach((digits, index) => {
+        const item = document.createElement('div');
+        item.className = 'line-digit-item';
+        
+        let optionsHtml = '';
+        const maxLimit = (index === 0) ? 5 : 3;
+        
+        for (let d = 1; d <= maxLimit; d++) {
+          optionsHtml += `<option value="${d}" ${d === digits ? 'selected' : ''}>${d} Digit${d > 1 ? 's' : ''}</option>`;
+        }
+
+        item.innerHTML = `
+          <span>${index === 0 ? 'Top' : 'Bottom'}</span>
+          <select onchange="updateLineDigitVal(${index}, this.value)">
+            ${optionsHtml}
+          </select>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateLineDigitVal(index, value) {
+      const val = parseInt(value) || 1;
+      currentLineDigits[index] = val;
+      renderLineDigitInputs();
+      saveAndGenerate();
+    }
+
+    function resetToDefaults() {
+      currentLineDigits = [3, 2];
+      document.getElementById('numQuestions').value = "18";
+      document.getElementById('answerOption').value = "inline";
+      renderLineDigitInputs();
+      saveAndGenerate();
+    }
+
+    function saveAndGenerate() {
+      const settings = {
+        lineDigits: currentLineDigits,
+        numQuestions: document.getElementById('numQuestions').value,
+        answerOption: document.getElementById('answerOption').value
+      };
+      localStorage.setItem('multiplication_worksheet_settings_v19', JSON.stringify(settings));
+      generateWorksheet();
+    }
+
+    function loadSavedChoices() {
+      const saved = localStorage.getItem('multiplication_worksheet_settings_v19');
+      if (saved) {
+        try {
+          const settings = JSON.parse(saved);
+          if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
+          if (settings.numQuestions) document.getElementById('numQuestions').value = settings.numQuestions;
+          if (settings.answerOption) document.getElementById('answerOption').value = settings.answerOption;
+        } catch(e) {
+          console.error("Failed to load saved settings", e);
+        }
+      }
+      renderLineDigitInputs();
+    }
+
+    function getRandomNumber(digits) {
+      if (digits === 1) return Math.floor(Math.random() * 9) + 1;
+      const min = Math.pow(10, digits - 1);
+      const max = Math.pow(10, digits) - 1;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function generateWorksheet() {
+      const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
+      const answerOption = document.getElementById('answerOption').value;
+
+      problems = [];
+      for (let i = 0; i < questionsCount; i++) {
+        const top = getRandomNumber(currentLineDigits[0]);
+        const bottom = getRandomNumber(currentLineDigits[1]);
+        const product = top * bottom;
+        problems.push({ id: i + 1, top, bottom, product });
+      }
+
+      renderWorksheetDOM(answerOption);
+    }
+
+    function renderWorksheetDOM(answerOption) {
+      const container = document.getElementById('worksheetContainer');
+      container.innerHTML = '';
+
+      const problemsPerPage = 18;
+      const totalPages = Math.ceil(problems.length / problemsPerPage);
+
+      for (let page = 0; page < totalPages; page++) {
+        const pageProblems = problems.slice(page * problemsPerPage, (page + 1) * problemsPerPage);
+        
+        const mainSheet = document.createElement('div');
+        mainSheet.className = 'paper-sheet' + (page > 0 ? ' page-break' : '');
+        mainSheet.innerHTML = `
+          <div class="worksheet-header">
+            <div class="worksheet-title">Multiplication Worksheet ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
+            <div class="student-info">
+              <div>Name: _______________</div>
+              <div>Date: _______________</div>
+              <div>Score: ______</div>
+            </div>
+          </div>
+          <div class="problems-grid">
+            ${pageProblems.map(p => renderCard(p, answerOption === 'inline')).join('')}
+          </div>
+        `;
+        container.appendChild(mainSheet);
+      }
+    }
+
+    function updateCustomProblemInput(field, val) {
+      const num = parseInt(val);
+      const p = problems.find(item => item.id === 1);
+      if (p) {
+        if (field === 'top') p.top = isNaN(num) ? 0 : num;
+        if (field === 'bottom') p.bottom = isNaN(num) ? 0 : num;
+        p.product = p.top * p.bottom;
+
+        const stepsContainer = document.getElementById('card-1-steps-container');
+        if (stepsContainer) {
+          const answerOption = document.getElementById('answerOption').value;
+          stepsContainer.innerHTML = renderStepsContent(p, answerOption === 'inline');
+        }
+      }
+    }
+
+    function renderCard(p, showInline) {
+      const isEditableQ1 = (p.id === 1);
+      return `
+        <div class="problem-card" id="card-${p.id}">
+          <span class="problem-num">${p.id})</span>
+          ${renderCardContent(p, showInline, isEditableQ1)}
+        </div>
+      `;
+    }
+
+    function renderCardContent(p, showInline, isEditable) {
+      if (!showInline) {
+        if (isEditable) {
+          return `
+            <div class="math-block">
+              <div class="number-row"><input type="number" class="custom-input" value="${p.top}" oninput="this.style.width = ((this.value.length + 1) * 11) + 'px'; updateCustomProblemInput('top', this.value);" onfocus="this.select()" style="width: ${Math.max(String(p.top).length * 11, 25)}px;" /></div>
+              <div class="number-row bottom"><input type="number" class="custom-input" value="${p.bottom}" oninput="this.style.width = ((this.value.length + 1) * 11) + 'px'; updateCustomProblemInput('bottom', this.value);" onfocus="this.select()" style="width: ${Math.max(String(p.bottom).length * 11, 25)}px;" /></div>
+              <div class="answer-space"></div>
+            </div>
+          `;
+        } else {
+          return `
+            <div class="math-block">
+              <div class="number-row">${p.top}</div>
+              <div class="number-row bottom">${p.bottom}</div>
+              <div class="answer-space"></div>
+            </div>
+          `;
+        }
+      } else {
+        if (isEditable) {
+          return `
+            <div class="solution-block">
+              <div class="sol-row"><input type="number" class="custom-input" value="${p.top}" oninput="this.style.width = ((this.value.length + 1) * 11) + 'px'; updateCustomProblemInput('top', this.value);" onfocus="this.select()" style="width: ${Math.max(String(p.top).length * 11, 25)}px;" /></div>
+              <div class="sol-row bottom"><input type="number" class="custom-input" value="${p.bottom}" oninput="this.style.width = ((this.value.length + 1) * 11) + 'px'; updateCustomProblemInput('bottom', this.value);" onfocus="this.select()" style="width: ${Math.max(String(p.bottom).length * 11, 25)}px;" /></div>
+              <div id="card-1-steps-container" style="display:contents;">
+                ${renderStepsContent(p, true)}
+              </div>
+            </div>
+          `;
+        } else {
+          let stepsHtml = getStepsHtml(p);
+          return `
+            <div class="solution-block">
+              <div class="sol-row">${p.top}</div>
+              <div class="sol-row bottom">${p.bottom}</div>
+              ${stepsHtml}
+            </div>
+          `;
+        }
+      }
+    }
+
+    function renderStepsContent(p, showInline) {
+      if (!showInline) return '';
+      return getStepsHtml(p);
+    }
+
+    function getStepsHtml(p) {
+      const bottomStr = String(p.bottom);
+      const bottomLen = bottomStr.length;
+      
+      let stepsHtml = '';
+      if (bottomLen > 1) {
+        for (let i = bottomLen - 1; i >= 0; i--) {
+          const digit = parseInt(bottomStr[i]);
+          const subProduct = p.top * digit;
+          const power = bottomLen - 1 - i;
+          
+          let lineValStr = String(subProduct);
+          if (subProduct !== 0) {
+            for (let z = 0; z < power; z++) {
+              lineValStr += '0';
+            }
+          } else {
+            lineValStr = '0'.repeat(String(p.top).length) + '0'.repeat(power);
+          }
+
+          if (power > 0 && lineValStr.length >= power) {
+            const basePart = lineValStr.substring(0, lineValStr.length - power);
+            const crossSymbol = '×'.repeat(power);
+            lineValStr = basePart + crossSymbol;
+          }
+
+          const isLast = (i === 0);
+          let cName = 'sol-row partial-line';
+          if (isLast) cName += ' last-partial';
+          stepsHtml += `<div class="${cName}">${lineValStr}</div>`;
+        }
+
+        stepsHtml += `<div class="sol-final">${p.product}</div>`;
+      } else {
+        stepsHtml += `<div class="sol-final">${p.product}</div>`;
+      }
+      return stepsHtml;
+    }
+
+    async function downloadPDF() {
+      const element = document.getElementById('worksheetContainer');
+      document.body.classList.add('pdf-mode');
+
+      const opt = {
+        margin:       0,
+        filename:     'Multiplication_Worksheet.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak:    { mode: ['css', 'legacy'], before: '.page-break' }
+      };
+
+      try {
+        await html2pdf().set(opt).from(element).save();
+      } catch (err) {
+        console.error("PDF generation error:", err);
+      } finally {
+        document.body.classList.remove('pdf-mode');
+      }
+    }
+
+    window.onload = function() {
+      initQuestionDropdown();
+      loadSavedChoices();
+      generateWorksheet();
+    };
+  </script>
+</body>
+</html>

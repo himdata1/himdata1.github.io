@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Addition Worksheet Generator</title>
+  <!-- html2pdf Library for direct PDF Download -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <style>
+    :root {
+      --primary: #4f46e5;
+      --primary-hover: #4338ca;
+      --bg-workspace: #cbd5e1;
+      --text: #0f172a;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: var(--bg-workspace);
+      color: var(--text);
+      line-height: 1.4;
+      padding-bottom: 40px;
+      overflow-x: hidden;
+      width: 100%;
+    }
+
+    /* Top Controls Panel Header - Changed from sticky to normal flow */
+    .controls-panel {
+      background: #ffffff;
+      padding: 16px;
+      border-bottom: 2px solid #94a3b8;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      /* position: sticky; removed so it scrolls away */
+      /* top: 0; removed */
+      /* z-index: 100; removed */
+      width: 100%;
+      max-width: 100vw;
+    }
+
+    /* App Title inside Control Panel */
+    .app-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #0f172a;
+      text-align: center;
+      letter-spacing: -0.3px;
+      width: 100%;
+    }
+
+    /* Controls Grid Wrapper */
+    .controls-wrapper {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px 16px;
+      align-items: flex-end;
+      justify-content: center;
+      width: 100%;
+      max-width: 1000px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex: 1 1 auto;
+      min-width: 130px;
+    }
+
+    .form-group label.group-label {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #334155;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .form-group select {
+      padding: 8px 10px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      font-size: 0.88rem;
+      font-weight: 600;
+      outline: none;
+      background: #f8fafc;
+      color: #0f172a;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    .form-group select:focus {
+      border-color: var(--primary);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+    }
+
+    /* Dynamic Per-Line Digits Container */
+    .line-digits-group {
+      display: flex;
+      gap: 6px;
+      align-items: flex-end;
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 6px;
+      border: 1.5px solid #cbd5e1;
+      min-height: 38px;
+      flex-wrap: wrap;
+    }
+
+    .line-digit-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2px;
+      flex: 1;
+    }
+
+    .line-digit-item span {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #64748b;
+    }
+
+    .line-digit-item select {
+      min-width: 50px;
+      padding: 4px 2px;
+      text-align: center;
+      font-size: 0.82rem;
+      width: 100%;
+    }
+
+    /* Responsive Action Buttons */
+    .btn-group {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px 10px;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      max-width: 700px;
+      margin-top: 2px;
+    }
+
+    .btn {
+      flex: 1 1 calc(50% - 10px);
+      max-width: 180px;
+      min-width: 110px;
+      padding: 9px 12px;
+      border: none;
+      border-radius: 6px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      height: 38px;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    @media (min-width: 640px) {
+      .btn {
+        flex: 0 0 auto;
+        min-width: 120px;
+      }
+    }
+
+    .btn-generate { background: var(--primary); color: white; }
+    .btn-generate:hover { background: var(--primary-hover); }
+
+    .btn-reset { background: #64748b; color: white; }
+    .btn-reset:hover { background: #475569; }
+
+    .btn-pdf { background: #0284c7; color: white; }
+    .btn-pdf:hover { background: #0369a1; }
+
+    .btn-print { background: #059669; color: white; }
+    .btn-print:hover { background: #047857; }
+
+    /* A4 Paper Workspace Container */
+    #worksheetContainer {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      width: 100%;
+      padding: 10px 15px;
+    }
+
+    .paper-sheet {
+      width: 210mm;
+      max-width: 100%;
+      background: #ffffff;
+      padding: 15mm;
+      margin: 15px auto;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+      border-radius: 2px;
+      box-sizing: border-box;
+      position: relative;
+    }
+
+    .worksheet-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 10px;
+      margin-bottom: 25px;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .worksheet-title {
+      font-size: 1.4rem;
+      font-weight: 800;
+      letter-spacing: -0.5px;
+      color: #000;
+    }
+
+    .student-info {
+      display: flex;
+      gap: 18px;
+      font-weight: 700;
+      font-size: 0.85rem;
+      color: #000;
+      flex-wrap: wrap;
+    }
+
+    /* EXACT 3-COLUMN GRID */
+    .problems-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 28px 8px;
+      justify-items: center;
+      width: 100%;
+    }
+
+    .problem-card {
+      display: flex;
+      gap: 4px;
+      font-family: 'Courier New', Courier, monospace;
+      font-weight: 700;
+      width: 100%;
+      justify-content: flex-start;
+      color: #000;
+      padding-left: 2px;
+      box-sizing: border-box;
+    }
+
+    .problem-num {
+      font-size: 0.85rem;
+      color: #334155;
+      min-width: 22px;
+      padding-top: 2px;
+      flex-shrink: 0;
+    }
+
+    /* DYNAMIC AUTO-RESIZING MATH BLOCK */
+    .math-block {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: flex-end;
+      width: auto;
+      max-width: calc(100% - 24px);
+    }
+
+    /* Dynamic font sizes based on maximum digits */
+    .digits-1-3 { font-size: 1.3rem; }
+    .digits-4   { font-size: 1.15rem; }
+    .digits-5   { font-size: 1.05rem; }
+    .digits-6   { font-size: 0.95rem; }
+    .digits-7   { font-size: 0.88rem; }
+    .digits-8   { font-size: 0.80rem; }
+
+    .digits-1-3 .addend { letter-spacing: 2px; }
+    .digits-4 .addend   { letter-spacing: 1.5px; }
+    .digits-5 .addend   { letter-spacing: 1px; }
+    .digits-6 .addend   { letter-spacing: 0.5px; }
+    .digits-7 .addend   { letter-spacing: 0px; }
+    .digits-8 .addend   { letter-spacing: -0.5px; }
+
+    .addend {
+      text-align: right;
+      width: 100%;
+      padding-right: 2px;
+      white-space: nowrap;
+    }
+
+    .addend.last {
+      position: relative;
+      padding-left: 1.2em;
+      padding-bottom: 3px;
+      margin-bottom: 3px;
+      width: 100%;
+      border-bottom: 2px solid #000000;
+    }
+
+    .addend.last::before {
+      content: "+";
+      position: absolute;
+      left: 0;
+      bottom: 1px;
+      font-weight: bold;
+      font-size: 1.1em;
+      line-height: 1;
+    }
+
+    /* Answer Area with Top and Bottom Lines */
+    .answer {
+      color: #1d4ed8;
+      text-align: right;
+      width: 100%;
+      padding-right: 2px;
+      min-height: 1.3em;
+      font-weight: 800;
+      margin-top: 2px;
+      border-bottom: 2px solid #000000;
+      padding-bottom: 2px;
+      white-space: nowrap;
+    }
+
+    .answer.hidden {
+      color: transparent;
+    }
+
+    .page-break {
+      page-break-before: always;
+      break-before: page;
+    }
+
+    /* Mobile Tweaks */
+    @media (max-width: 640px) {
+      .app-title {
+        font-size: 1.15rem;
+      }
+      .paper-sheet {
+        padding: 10mm 6mm;
+      }
+      .worksheet-title {
+        font-size: 1.1rem;
+      }
+      .student-info {
+        font-size: 0.75rem;
+        gap: 8px;
+      }
+      .controls-panel {
+        padding: 12px 10px;
+      }
+    }
+
+    /* Strict PDF Mode for Download */
+    body.pdf-mode .paper-sheet {
+      width: 210mm !important;
+      max-width: none !important;
+      margin: 0 !important;
+      box-shadow: none !important;
+      border-radius: 0 !important;
+      min-height: auto !important;
+      height: auto !important;
+      padding: 12mm 15mm !important;
+    }
+
+    body.pdf-mode .page-break {
+      page-break-before: always !important;
+      break-before: page !important;
+    }
+
+    /* Print Formatting */
+    @media print {
+      .no-print { display: none !important; }
+      body {
+        background: #ffffff !important;
+        padding: 0 !important;
+      }
+      .paper-sheet {
+        width: 210mm !important;
+        max-width: none !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+        padding: 10mm !important;
+      }
+      .page-break {
+        page-break-before: always !important;
+        break-before: page !important;
+      }
+      .answer { color: #000000 !important; }
+      .problem-num { color: #000000 !important; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Controls Panel -->
+  <div class="controls-panel no-print">
+    
+    <!-- Title -->
+    <h1 class="app-title">Addition Worksheet Generator</h1>
+
+    <div class="controls-wrapper">
+      <!-- 1. No. of Lines Dropdown -->
+      <div class="form-group">
+        <label class="group-label" for="numLines">No. of Lines:</label>
+        <select id="numLines" onchange="onLinesChange()">
+          <option value="2" selected>2 Lines</option>
+          <option value="3">3 Lines</option>
+          <option value="4">4 Lines</option>
+          <option value="5">5 Lines</option>
+        </select>
+      </div>
+
+      <!-- 2. Digits Per Line Controls -->
+      <div class="form-group">
+        <label class="group-label">Digits Per Line:</label>
+        <div id="lineDigitsContainer" class="line-digits-group">
+          <!-- Dynamic per-line select elements -->
+        </div>
+      </div>
+
+      <!-- 3. Grouping / Carrying Dropdown -->
+      <div class="form-group">
+        <label class="group-label" for="groupingMode">Regrouping (Carry):</label>
+        <select id="groupingMode" onchange="saveAndGenerate()">
+          <option value="any" selected>Any (Mixed)</option>
+          <option value="no_carry">Without Carrying</option>
+          <option value="with_carry">With Carrying</option>
+        </select>
+      </div>
+
+      <!-- 4. Questions Count Dropdown -->
+      <div class="form-group">
+        <label class="group-label" for="numQuestions">No. of Questions:</label>
+        <select id="numQuestions" onchange="saveAndGenerate()">
+          <!-- Generated dynamically -->
+        </select>
+      </div>
+
+      <!-- 5. Answer Options Dropdown -->
+      <div class="form-group">
+        <label class="group-label" for="answerOption">Answer Options:</label>
+        <select id="answerOption" onchange="saveAndGenerate()">
+          <option value="no_answers" selected>No Answers</option>
+          <option value="inline">Show Answers Inline</option>
+          <option value="separate">Separate Answer Key Page</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Responsive Action Buttons without Icons -->
+    <div class="btn-group">
+      <button class="btn btn-generate" onclick="generateWorksheet()">Generate New</button>
+      <button class="btn btn-reset" onclick="resetToDefaults()">Reset</button>
+      <button class="btn btn-pdf" onclick="downloadPDF()">Download PDF</button>
+      <button class="btn btn-print" onclick="window.print()">Print Sheet</button>
+    </div>
+
+  </div>
+
+  <!-- Printable Container -->
+  <div id="worksheetContainer"></div>
+
+  <script>
+    let currentLineDigits = [2, 2];
+
+    function initQuestionDropdown() {
+      const qSelect = document.getElementById('numQuestions');
+      qSelect.innerHTML = '';
+      for (let i = 3; i <= 60; i += 3) {
+        const opt = document.createElement('option');
+        opt.value = i;
+        opt.textContent = `${i} Questions`;
+        if (i === 18) opt.selected = true;
+        qSelect.appendChild(opt);
+      }
+    }
+
+    function onLinesChange() {
+      const lineCount = parseInt(document.getElementById('numLines').value) || 2;
+      
+      while (currentLineDigits.length < lineCount) {
+        currentLineDigits.push(2);
+      }
+      if (currentLineDigits.length > lineCount) {
+        currentLineDigits = currentLineDigits.slice(0, lineCount);
+      }
+
+      renderLineDigitInputs();
+      saveAndGenerate();
+    }
+
+    function renderLineDigitInputs() {
+      const container = document.getElementById('lineDigitsContainer');
+      container.innerHTML = '';
+
+      currentLineDigits.forEach((digits, index) => {
+        const item = document.createElement('div');
+        item.className = 'line-digit-item';
+        
+        let optionsHtml = '';
+        for (let d = 1; d <= 7; d++) {
+          optionsHtml += `<option value="${d}" ${d === digits ? 'selected' : ''}>${d} Digit${d > 1 ? 's' : ''}</option>`;
+        }
+
+        item.innerHTML = `
+          <span>L${index + 1}</span>
+          <select onchange="updateLineDigitVal(${index}, this.value)">
+            ${optionsHtml}
+          </select>
+        `;
+        container.appendChild(item);
+      });
+    }
+
+    function updateLineDigitVal(index, value) {
+      const val = parseInt(value) || 1;
+      currentLineDigits[index] = val;
+      saveAndGenerator();
+    }
+
+    function resetToDefaults() {
+      document.getElementById('numLines').value = "2";
+      currentLineDigits = [2, 2];
+      document.getElementById('groupingMode').value = "any";
+      document.getElementById('numQuestions').value = "18";
+      document.getElementById('answerOption').value = "no_answers";
+      renderLineDigitInputs();
+      saveAndGenerate();
+    }
+
+    function saveAndGenerate() {
+      const settings = {
+        numLines: document.getElementById('numLines').value,
+        lineDigits: currentLineDigits,
+        groupingMode: document.getElementById('groupingMode').value,
+        numQuestions: document.getElementById('numQuestions').value,
+        answerOption: document.getElementById('answerOption').value
+      };
+      localStorage.setItem('addition_worksheet_dropdown_settings', JSON.stringify(settings));
+      generateWorksheet();
+    }
+
+    function loadSavedChoices() {
+      const saved = localStorage.getItem('addition_worksheet_dropdown_settings');
+      if (saved) {
+        try {
+          const settings = JSON.parse(saved);
+          if (settings.numLines) document.getElementById('numLines').value = settings.numLines;
+          if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
+          if (settings.groupingMode) document.getElementById('groupingMode').value = settings.groupingMode;
+          if (settings.numQuestions) document.getElementById('numQuestions').value = settings.numQuestions;
+          if (settings.answerOption) document.getElementById('answerOption').value = settings.answerOption;
+        } catch(e) {
+          console.error("Failed to load saved settings", e);
+        }
+      }
+      renderLineDigitInputs();
+    }
+
+    function getRandomNumber(digits) {
+      if (digits === 1) return Math.floor(Math.random() * 9) + 1;
+      const min = Math.pow(10, digits - 1);
+      const max = Math.pow(10, digits) - 1;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function hasRegrouping(addends) {
+      let carry = 0;
+      let temp = [...addends];
+      let maxDigits = Math.max(...temp.map(a => String(a).length));
+
+      for (let col = 0; col < maxDigits; col++) {
+        let colSum = carry;
+        for (let i = 0; i < temp.length; i++) {
+          colSum += temp[i] % 10;
+          temp[i] = Math.floor(temp[i] / 10);
+        }
+
+        let producesCarry = colSum >= 10;
+        
+        if (producesCarry && col < maxDigits - 1) {
+          return true;
+        }
+
+        carry = Math.floor(colSum / 10);
+      }
+      return false;
+    }
+
+    function generateProblemForMode(lineDigits, mode) {
+      if (mode === 'any') {
+        return lineDigits.map(d => getRandomNumber(d));
+      }
+
+      if (mode === 'no_carry') {
+        for (let attempt = 0; attempt < 400; attempt++) {
+          let addends = lineDigits.map(d => getRandomNumber(d));
+          if (!hasRegrouping(addends)) return addends;
+        }
+      }
+
+      if (mode === 'with_carry') {
+        for (let attempt = 0; attempt < 400; attempt++) {
+          let addends = lineDigits.map(d => getRandomNumber(d));
+          if (hasRegrouping(addends)) return addends;
+        }
+      }
+
+      return lineDigits.map(d => getRandomNumber(d));
+    }
+
+    function generateWorksheet() {
+      const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
+      const groupingMode = document.getElementById('groupingMode').value;
+      const answerOption = document.getElementById('answerOption').value;
+
+      const container = document.getElementById('worksheetContainer');
+      container.innerHTML = '';
+
+      const problems = [];
+      for (let i = 0; i < questionsCount; i++) {
+        const addends = generateProblemForMode(currentLineDigits, groupingMode);
+        const sum = addends.reduce((a, b) => a + b, 0);
+        problems.push({ id: i + 1, addends, sum });
+      }
+
+      const problemsPerPage = 18;
+      const totalPages = Math.ceil(problems.length / problemsPerPage);
+
+      for (let page = 0; page < totalPages; page++) {
+        const pageProblems = problems.slice(page * problemsPerPage, (page + 1) * problemsPerPage);
+        
+        const mainSheet = document.createElement('div');
+        mainSheet.className = 'paper-sheet' + (page > 0 ? ' page-break' : '');
+        mainSheet.innerHTML = `
+          <div class="worksheet-header">
+            <div class="worksheet-title">Addition Worksheet Generator ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
+            <div class="student-info">
+              <div>Name: _______________</div>
+              <div>Date: _______________</div>
+              <div>Score: ______</div>
+            </div>
+          </div>
+          <div class="problems-grid">
+            ${pageProblems.map(p => renderProblemCard(p, answerOption === 'inline')).join('')}
+          </div>
+        `;
+        container.appendChild(mainSheet);
+      }
+
+      if (answerOption === 'separate') {
+        for (let page = 0; page < totalPages; page++) {
+          const pageProblems = problems.slice(page * problemsPerPage, (page + 1) * problemsPerPage);
+          
+          const answerSheet = document.createElement('div');
+          answerSheet.className = 'paper-sheet page-break';
+          answerSheet.innerHTML = `
+            <div class="worksheet-header">
+              <div class="worksheet-title">Addition Worksheet Generator - Answer Key ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
+            </div>
+            <div class="problems-grid">
+              ${pageProblems.map(p => renderProblemCard(p, true)).join('')}
+            </div>
+          `;
+          container.appendChild(answerSheet);
+        }
+      }
+    }
+
+    function renderProblemCard(p, showAnswer) {
+      const maxLen = Math.max(...p.addends.map(num => String(num).length), String(p.sum).length);
+      
+      let sizeClass = 'digits-1-3';
+      if (maxLen === 4) sizeClass = 'digits-4';
+      else if (maxLen === 5) sizeClass = 'digits-5';
+      else if (maxLen === 6) sizeClass = 'digits-6';
+      else if (maxLen === 7) sizeClass = 'digits-7';
+      else if (maxLen >= 8) sizeClass = 'digits-8';
+
+      const addendLines = p.addends.map((num, idx) => {
+        const isLast = idx === p.addends.length - 1;
+        return `<div class="addend ${isLast ? 'last' : ''}">${num}</div>`;
+      }).join('');
+
+      return `
+        <div class="problem-card">
+          <span class="problem-num">${p.id})</span>
+          <div class="math-block ${sizeClass}">
+            ${addendLines}
+            <div class="answer ${showAnswer ? '' : 'hidden'}">${p.sum}</div>
+          </div>
+        </div>
+      `;
+    }
+
+    async function downloadPDF() {
+      const element = document.getElementById('worksheetContainer');
+      document.body.classList.add('pdf-mode');
+
+      const opt = {
+        margin:       0,
+        filename:     'Addition_Worksheet.pdf',
+        image:        { type: 'jpeg', quality: 0.98 },
+        html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
+        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
+        pagebreak:    { mode: ['css', 'legacy'], before: '.page-break' }
+      };
+
+      try {
+        await html2pdf().set(opt).from(element).save();
+      } catch (err) {
+        console.error("PDF generation error:", err);
+      } finally {
+        document.body.classList.remove('pdf-mode');
+      }
+    }
+
+    window.onload = function() {
+      initQuestionDropdown();
+      loadSavedChoices();
+      generateWorksheet();
+    };
+  </script>
+</body>
+</html>
