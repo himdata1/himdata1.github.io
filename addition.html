@@ -516,11 +516,11 @@
         answerOption: document.getElementById('answerOption').value,
         problems: currentProblems
       };
-      localStorage.setItem('addition_worksheet_state_v1', JSON.stringify(settings));
+      localStorage.setItem('addition_worksheet_state_v3', JSON.stringify(settings));
     }
 
     function loadSavedChoices() {
-      const saved = localStorage.getItem('addition_worksheet_state_v1');
+      const saved = localStorage.getItem('addition_worksheet_state_v3');
       if (saved) {
         try {
           const settings = JSON.parse(saved);
@@ -546,23 +546,83 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    /* ACCURATE REGROUPING/CARRY CHECK FOR MULTI-LINE / MULTI-DIGIT ADDITION */
     function hasRegrouping(addends) {
       let carry = 0;
-      let temp = [...addends];
-      let maxDigits = Math.max(...temp.map(a => String(a).length));
+      let strings = addends.map(a => String(a));
+      let maxDigits = Math.max(...strings.map(s => s.length));
 
       for (let col = 0; col < maxDigits; col++) {
         let colSum = carry;
-        for (let i = 0; i < temp.length; i++) {
-          colSum += temp[i] % 10;
-          temp[i] = Math.floor(temp[i] / 10);
+        for (let s of strings) {
+          let charIndex = s.length - 1 - col;
+          if (charIndex >= 0) {
+            colSum += parseInt(s[charIndex]);
+          }
         }
 
-        let producesCarry = colSum >= 10;
-        if (producesCarry && col < maxDigits - 1) return true;
+        // Agar kisi bhi column me total sum 10 ya usse jyada hai, to carry hai
+        if (colSum >= 10) {
+          return true;
+        }
         carry = Math.floor(colSum / 10);
       }
       return false;
+    }
+
+    /* DIRECT NO-CARRY NUMBER GENERATOR TO PREVENT FALLBACK BUGS */
+    function generateNoCarryAddends(lineDigits) {
+      let maxDigits = Math.max(...lineDigits);
+      let addendsStr = new Array(lineDigits.length).fill("");
+
+      for (let col = maxDigits - 1; col >= 0; col--) {
+        // Find how many lines are active in this column (from right)
+        let activeIndices = [];
+        for (let i = 0; i < lineDigits.length; i++) {
+          if (lineDigits[i] > col) {
+            activeIndices.push(i);
+          }
+        }
+
+        let isLeadingColFor = {};
+        for (let idx of activeIndices) {
+          if (lineDigits[idx] - 1 === col) {
+            isLeadingColFor[idx] = true;
+          }
+        }
+
+        let validCombinationFound = false;
+        for (let attempt = 0; attempt < 200; attempt++) {
+          let currentDigits = [];
+          let colSum = 0;
+
+          for (let idx of activeIndices) {
+            let minDigit = isLeadingColFor[idx] ? 1 : 0;
+            let digit = Math.floor(Math.random() * (9 - minDigit + 1)) + minDigit;
+            currentDigits.push({ idx, digit });
+            colSum += digit;
+          }
+
+          if (colSum < 10) {
+            for (let item of currentDigits) {
+              addendsStr[item.idx] += item.digit;
+            }
+            validCombinationFound = true;
+            break;
+          }
+        }
+
+        // Fallback for extreme cases (e.g. 5 lines)
+        if (!validCombinationFound) {
+          for (let idx of activeIndices) {
+            let minDigit = isLeadingColFor[idx] ? 1 : 0;
+            let safeDigit = minDigit; // Assign smallest safe digit (1 or 0)
+            addendsStr[idx] += safeDigit;
+          }
+        }
+      }
+
+      return addendsStr.map(str => parseInt(str));
     }
 
     function generateProblemForMode(lineDigits, mode) {
@@ -571,14 +631,11 @@
       }
 
       if (mode === 'no_carry') {
-        for (let attempt = 0; attempt < 400; attempt++) {
-          let addends = lineDigits.map(d => getRandomNumber(d));
-          if (!hasRegrouping(addends)) return addends;
-        }
+        return generateNoCarryAddends(lineDigits);
       }
 
       if (mode === 'with_carry') {
-        for (let attempt = 0; attempt < 400; attempt++) {
+        for (let attempt = 0; attempt < 1000; attempt++) {
           let addends = lineDigits.map(d => getRandomNumber(d));
           if (hasRegrouping(addends)) return addends;
         }
@@ -587,7 +644,6 @@
       return lineDigits.map(d => getRandomNumber(d));
     }
 
-    /* Generates fresh problems only on Generate New or Reset */
     function generateNewQuestions() {
       const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
       const groupingMode = document.getElementById('groupingMode').value;
@@ -603,13 +659,11 @@
       renderWorksheetDOM();
     }
 
-    /* Handles dropdown changes without regenerating current questions */
     function onSettingChange() {
       saveSettingsToStorage();
       renderWorksheetDOM();
     }
 
-    /* Toggles answer visibility instantly without rerendering entire sheet */
     function toggleAnswersOnly() {
       const showAnswers = document.getElementById('answerOption').value === 'inline';
       const answers = document.querySelectorAll('.answer');
