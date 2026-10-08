@@ -15,8 +15,8 @@
   --primary-hover: #4338ca;
   --bg-workspace: #cbd5e1;
 
-  /* Dynamically scaled digit cell width */
-  --digit-width: 24px;
+  /* Increased digit cell width for larger font */
+  --digit-width: 26px;
 }
 
 * {
@@ -143,14 +143,13 @@ body {
   padding: 10px 5px;
 }
 
-/* Margins reduced from 14mm to 8mm for extra display area */
 .paper-sheet {
   width: 210mm;
   min-height: 297mm;
   max-width: 100%;
   margin: 15px auto;
   background: #fff;
-  padding: 10mm 8mm;
+  padding: 8mm 6mm;
   box-shadow: 0 8px 20px rgba(0,0,0,.15);
 }
 
@@ -159,8 +158,8 @@ body {
   justify-content: space-between;
   align-items: flex-end;
   border-bottom: 2px solid #000;
-  padding-bottom: 8px;
-  margin-bottom: 18px;
+  padding-bottom: 6px;
+  margin-bottom: 12px;
   gap: 10px;
 }
 
@@ -177,12 +176,12 @@ body {
   white-space: nowrap;
 }
 
-/* Reduced column-gap to allow wider division containers */
+/* Reduced spacing between questions to remove blank gaps */
 .problems-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  column-gap: 15px;
-  row-gap: 20px;
+  column-gap: 10px;
+  row-gap: 12px;
   width: 100%;
   align-items: start;
 }
@@ -194,23 +193,23 @@ body {
   background: transparent;
   border: none;
   padding: 2px 0;
-  min-height: 225px;
+  min-height: auto;
   overflow: hidden;
 }
 
 .problem-num {
-  width: 20px;
+  width: 22px;
   flex-shrink: 0;
   font-family: Arial, sans-serif;
-  font-size: .9rem;
+  font-size: 1.05rem;
   font-weight: 700;
   padding-top: 4px;
 }
 
-/* Dynamic width & font sizing to fit high digit count */
+/* Larger font size for clear digit display */
 .long-division-container {
   font-family: "Courier New", Courier, monospace;
-  font-size: calc(var(--digit-width) * 0.72);
+  font-size: 1.15rem;
   font-weight: 700;
   line-height: 1;
   color: #000;
@@ -221,13 +220,13 @@ body {
 .division-header {
   position: relative;
   width: max-content;
-  height: 24px;
+  height: 26px;
 }
 
 .quotient-grid {
   position: absolute;
   top: 0;
-  height: 24px;
+  height: 26px;
   display: flex;
   white-space: nowrap;
   z-index: 2;
@@ -243,12 +242,12 @@ body {
 .division-line {
   display: flex;
   align-items: flex-start;
-  height: 26px;
+  height: 28px;
 }
 
 .divisor {
-  width: calc(var(--digit-width) * 1.6);
-  min-width: calc(var(--digit-width) * 1.6);
+  width: calc(var(--digit-width) * 1.8);
+  min-width: calc(var(--digit-width) * 1.8);
   color: #c2410c;
   text-align: right;
   padding-right: 4px;
@@ -259,12 +258,12 @@ body {
   position: relative;
   border-top: 2px solid #000;
   border-left: 2px solid #000;
-  height: 26px;
+  height: 28px;
 }
 
 .digit-grid {
   display: flex;
-  height: 24px;
+  height: 26px;
   white-space: nowrap;
 }
 
@@ -272,19 +271,19 @@ body {
   width: var(--digit-width);
   min-width: var(--digit-width);
   text-align: center;
-  height: 24px;
+  height: 26px;
 }
 
 .work-area {
   position: relative;
-  margin-left: calc(var(--digit-width) * 1.6);
+  margin-left: calc(var(--digit-width) * 1.8);
   width: calc(var(--digit-width) * 8);
-  min-height: 170px;
+  min-height: auto;
 }
 
 .work-row {
   position: relative;
-  height: 24px;
+  height: 26px;
   width: 100%;
 }
 
@@ -292,15 +291,15 @@ body {
   position: absolute;
   top: 0;
   display: flex;
-  height: 22px;
-  line-height: 22px;
+  height: 24px;
+  line-height: 24px;
 }
 
 .step-cell {
   width: var(--digit-width);
   min-width: var(--digit-width);
   text-align: center;
-  height: 22px;
+  height: 24px;
 }
 
 .work-row.subtraction-row .step-cells-container {
@@ -311,18 +310,18 @@ body {
 .work-row.subtraction-row .step-cells-container::before {
   content: "-";
   position: absolute;
-  left: -12px;
+  left: -14px;
   top: 0;
   font-weight: 700;
 }
 
 .solution-summary {
-  margin-top: 8px;
+  margin-top: 6px;
   font-family: Arial, sans-serif;
-  font-size: .8rem;
+  font-size: .85rem;
   font-weight: 700;
   color: #166534;
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .page-break {
@@ -340,9 +339,9 @@ body {
   outline: none;
   padding: 0 0 0 2px;
   margin: 0;
-  height: 24px;
-  line-height: 24px;
-  letter-spacing: calc(var(--digit-width) - 13px);
+  height: 26px;
+  line-height: 26px;
+  letter-spacing: calc(var(--digit-width) - 14px);
 }
 
 .editable-divisor {
@@ -357,8 +356,8 @@ body {
   margin: 0;
   text-align: right;
   width: 100%;
-  height: 24px;
-  line-height: 24px;
+  height: 26px;
+  line-height: 26px;
 }
 
 body.pdf-mode { background: #fff; }
@@ -367,7 +366,7 @@ body.pdf-mode .paper-sheet {
   min-height: 297mm !important;
   max-width: none !important;
   margin: 0 !important;
-  padding: 10mm 8mm !important;
+  padding: 8mm 6mm !important;
   box-shadow: none !important;
 }
 
@@ -379,7 +378,7 @@ body.pdf-mode .paper-sheet {
     width: 210mm !important;
     min-height: 297mm !important;
     margin: 0 !important;
-    padding: 10mm 8mm !important;
+    padding: 8mm 6mm !important;
     box-shadow: none !important;
   }
   .page-break { page-break-before: always !important; break-before: page !important; }
@@ -389,7 +388,7 @@ body.pdf-mode .paper-sheet {
 
 @media (max-width: 768px) {
   .problems-grid { grid-template-columns: 1fr; }
-  .paper-sheet { padding: 8mm; min-height: auto; }
+  .paper-sheet { padding: 6mm; min-height: auto; }
   .worksheet-header { flex-direction: column; align-items: flex-start; }
   .student-info { flex-wrap: wrap; }
 }
@@ -600,13 +599,14 @@ function loadStateFromLocalStorage() {
 }
 
 function renderWorksheetDOM() {
-  // Dynamically calculate cell width based on dividend digits
   const maxDigits = currentLineDigits[0] || 3;
+  
+  // Calculate best cell width to keep digits large yet readable
   let computedCellWidth = 26;
   if (maxDigits >= 7) {
-    computedCellWidth = 18;
-  } else if (maxDigits >= 5) {
     computedCellWidth = 21;
+  } else if (maxDigits >= 5) {
+    computedCellWidth = 24;
   }
   document.documentElement.style.setProperty('--digit-width', `${computedCellWidth}px`);
 
@@ -758,7 +758,9 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
       </div>
     `;
   } else {
-    html += `<div style="height: 175px;"></div>`;
+    /* Adaptive spacing when no answers are shown based on steps */
+    const emptyBoxHeight = Math.max(90, (p.steps.length * 40));
+    html += `<div style="height: ${emptyBoxHeight}px;"></div>`;
   }
 
   html += `</div>`;
