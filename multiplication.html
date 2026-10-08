@@ -448,7 +448,7 @@
       </div>
 
       <div class="form-group">
-        <label class="group-label" for="numQuestions" onchange="saveSettings()"></label>
+        <label class="group-label" for="numQuestions"></label>
         <select id="numQuestions" onchange="saveSettings()"></select>
       </div>
 
@@ -572,12 +572,18 @@
       const topDigits = String(top).split('').map(Number).reverse();
       const bottomDigits = String(bottom).split('').map(Number).reverse();
 
+      // 1. Single digit wise multiplication carrying check
       for (let b of bottomDigits) {
-        for (let a of topDigits) {
-          if (a * b >= 10) return true;
+        for (let i = 0; i < topDigits.length - 1; i++) {
+          // Agar aakhri digit se pehle koi bhi multiplication >= 10 hoti hai,
+          // tabhi next column me carry forward hoga.
+          if (topDigits[i] * b >= 10) {
+            return true;
+          }
         }
       }
 
+      // 2. Multi-line addition carrying check (2-digit or 3-digit bottom numbers ke liye)
       if (bottomDigits.length > 1) {
         let partials = bottomDigits.map((b, i) => top * b * Math.pow(10, i));
         let maxLen = Math.max(...partials.map(p => String(p).length));
@@ -589,8 +595,10 @@
             let digit = Math.floor(p / Math.pow(10, col)) % 10;
             colSum += digit;
           }
-          if (colSum >= 10 && col < maxLen - 1) return true;
           carry = Math.floor(colSum / 10);
+          if (colSum >= 10 && col < maxLen - 1) {
+            return true;
+          }
         }
       }
 
