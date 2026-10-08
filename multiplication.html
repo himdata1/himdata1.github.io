@@ -483,7 +483,7 @@
       saveSettings();
     }
 
-    function saveSettings() {
+    function persistState() {
       const settings = {
         lineDigits: currentLineDigits,
         groupingMode: document.getElementById('groupingMode').value,
@@ -492,7 +492,10 @@
         problems: problems
       };
       localStorage.setItem('multiplication_worksheet_settings_v22', JSON.stringify(settings));
-      
+    }
+
+    function saveSettings() {
+      persistState();
       const answerOption = document.getElementById('answerOption').value;
       renderWorksheetDOM(answerOption);
     }
@@ -635,7 +638,7 @@
       }
     }
 
-    function updateCustomProblemInput(field, val) {
+    function updateCustomProblemInput(field, val, inputEl) {
       const num = parseInt(val);
       const p = problems.find(item => item.id === 1);
       if (p) {
@@ -643,7 +646,18 @@
         if (field === 'bottom') p.bottom = isNaN(num) ? 0 : num;
         p.product = p.top * p.bottom;
 
-        saveSettings();
+        // Auto-adjust input element width dynamically without re-rendering DOM
+        if (inputEl) {
+          inputEl.style.width = Math.max((inputEl.value.length + 1) * 11, 25) + 'px';
+        }
+
+        // Update step calculation for inline answers selectively
+        const stepsContainer = document.getElementById('card-1-steps-container');
+        if (stepsContainer) {
+          stepsContainer.innerHTML = renderStepsContent(p, true);
+        }
+
+        persistState();
       }
     }
 
@@ -662,8 +676,8 @@
         if (isEditable) {
           return `
             <div class="math-block">
-              <div class="number-row"><input type="number" class="custom-input" value="${p.top}" oninput="this.style.width = ((this.value.length + 1) * 11) + 'px'; updateCustomProblemInput('top', this.value);" onfocus="this.select()" style="width: ${Math.max(String(p.top).length * 11, 25)}px;" /></div>
-              <div class="number-row bottom"><input type="number" class="custom-input" value="${p.bottom}" oninput="this.style.width = ((this.value.length + 1) * 11) + 'px'; updateCustomProblemInput('bottom', this.value);" onfocus="this.select()" style="width: ${Math.max(String(p.bottom).length * 11, 25)}px;" /></div>
+              <div class="number-row"><input type="number" class="custom-input" value="${p.top}" oninput="updateCustomProblemInput('top', this.value, this);" onfocus="this.select()" style="width: ${Math.max(String(p.top).length * 11, 25)}px;" /></div>
+              <div class="number-row bottom"><input type="number" class="custom-input" value="${p.bottom}" oninput="updateCustomProblemInput('bottom', this.value, this);" onfocus="this.select()" style="width: ${Math.max(String(p.bottom).length * 11, 25)}px;" /></div>
               <div class="answer-space"></div>
             </div>
           `;
@@ -680,8 +694,8 @@
         if (isEditable) {
           return `
             <div class="solution-block">
-              <div class="sol-row"><input type="number" class="custom-input" value="${p.top}" oninput="this.style.width = ((this.value.length + 1) * 11) + 'px'; updateCustomProblemInput('top', this.value);" onfocus="this.select()" style="width: ${Math.max(String(p.top).length * 11, 25)}px;" /></div>
-              <div class="sol-row bottom"><input type="number" class="custom-input" value="${p.bottom}" oninput="this.style.width = ((this.value.length + 1) * 11) + 'px'; updateCustomProblemInput('bottom', this.value);" onfocus="this.select()" style="width: ${Math.max(String(p.bottom).length * 11, 25)}px;" /></div>
+              <div class="sol-row"><input type="number" class="custom-input" value="${p.top}" oninput="updateCustomProblemInput('top', this.value, this);" onfocus="this.select()" style="width: ${Math.max(String(p.top).length * 11, 25)}px;" /></div>
+              <div class="sol-row bottom"><input type="number" class="custom-input" value="${p.bottom}" oninput="updateCustomProblemInput('bottom', this.value, this);" onfocus="this.select()" style="width: ${Math.max(String(p.bottom).length * 11, 25)}px;" /></div>
               <div id="card-1-steps-container" style="display:contents;">
                 ${renderStepsContent(p, true)}
               </div>

@@ -578,7 +578,14 @@ function loadStateFromLocalStorage() {
 }
 
 function renderWorksheetDOM() {
-  const maxDigits = currentLineDigits[0] || 3;
+  let maxDigits = currentLineDigits[0] || 3;
+  
+  // Calculate max digits including manually typed values
+  problems.forEach(p => {
+    if (p && p.dividend) {
+      maxDigits = Math.max(maxDigits, String(p.dividend).length);
+    }
+  });
   
   let computedCellWidth = 26;
   if (maxDigits >= 7) {
@@ -666,7 +673,6 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
 
     dividendHTML = `
       <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${dividendString}" 
-             maxlength="${currentLineDigits[0]}" 
              style="letter-spacing: ${letterSpacing.toFixed(2)}px; padding-left: ${paddingLeft.toFixed(2)}px;" 
              onclick="this.select()" 
              onfocus="this.select()" 
