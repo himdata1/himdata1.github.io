@@ -404,18 +404,18 @@ body.pdf-mode .paper-sheet {
     </div>
     <div class="form-group">
       <label class="group-label" for="numQuestions">No. of Questions:</label>
-      <select id="numQuestions" onchange="saveAndGenerate()"></select>
+      <select id="numQuestions" onchange="onSettingsChange()"></select>
     </div>
     <div class="form-group">
       <label class="group-label" for="answerOption">Answer Options:</label>
-      <select id="answerOption" onchange="saveAndGenerate()">
+      <select id="answerOption" onchange="onAnswerOptionChange()">
         <option value="no_answers" selected>No Answers</option>
-        <option value="show_answers">Show Full Solution Steps</option>
+        <option value="show_answers">Show Answers</option>
       </select>
     </div>
   </div>
   <div class="btn-group">
-    <button class="btn btn-generate" onclick="generateWorksheet()">Generate New</button>
+    <button class="btn btn-generate" onclick="generateNewQuestions()">Generate New</button>
     <button class="btn btn-reset" onclick="resetToDefaults()">Reset</button>
     <button class="btn btn-pdf" onclick="downloadPDF()">Download PDF</button>
     <button class="btn btn-print" onclick="window.print()">Print Sheet</button>
@@ -465,40 +465,7 @@ function renderLineDigitInputs() {
 function updateLineDigitVal(index, value) {
   currentLineDigits[index] = parseInt(value) || 1;
   renderLineDigitInputs();
-  saveAndGenerate();
-}
-
-function resetToDefaults() {
-  currentLineDigits = [3, 2];
-  document.getElementById("numQuestions").value = "12";
-  document.getElementById("answerOption").value = "no_answers";
-  renderLineDigitInputs();
-  saveAndGenerate();
-}
-
-function saveAndGenerate() {
-  const settings = {
-    lineDigits: currentLineDigits,
-    numQuestions: document.getElementById("numQuestions").value,
-    answerOption: document.getElementById("answerOption").value
-  };
-  localStorage.setItem("division_worksheet_settings_v18", JSON.stringify(settings));
-  generateWorksheet();
-}
-
-function loadSavedChoices() {
-  const saved = localStorage.getItem("division_worksheet_settings_v18");
-  if (saved) {
-    try {
-      const settings = JSON.parse(saved);
-      if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
-      if (settings.numQuestions) document.getElementById("numQuestions").value = settings.numQuestions;
-      if (settings.answerOption) document.getElementById("answerOption").value = settings.answerOption;
-    } catch (e) {
-      console.log("Settings load error", e);
-    }
-  }
-  renderLineDigitInputs();
+  saveStateToLocalStorage();
 }
 
 function computeLongDivisionSteps(dividend, divisor) {
@@ -543,9 +510,8 @@ function computeLongDivisionSteps(dividend, divisor) {
   };
 }
 
-function generateWorksheet() {
+function generateNewQuestions() {
   const questionsCount = parseInt(document.getElementById("numQuestions").value) || 12;
-  const answerOption = document.getElementById("answerOption").value;
   problems = [];
 
   const dividendDigits = currentLineDigits[0];
@@ -572,12 +538,61 @@ function generateWorksheet() {
     });
   }
 
-  renderWorksheetDOM(answerOption);
+  saveStateToLocalStorage();
+  renderWorksheetDOM();
 }
 
-function renderWorksheetDOM(answerOption) {
+function onAnswerOptionChange() {
+  saveStateToLocalStorage();
+  renderWorksheetDOM();
+}
+
+function onSettingsChange() {
+  saveStateToLocalStorage();
+}
+
+function resetToDefaults() {
+  currentLineDigits = [3, 2];
+  document.getElementById("numQuestions").value = "12";
+  document.getElementById("answerOption").value = "no_answers";
+  renderLineDigitInputs();
+  generateNewQuestions();
+}
+
+function saveStateToLocalStorage() {
+  const state = {
+    currentLineDigits: currentLineDigits,
+    numQuestions: document.getElementById("numQuestions").value,
+    answerOption: document.getElementById("answerOption").value,
+    problems: problems
+  };
+  localStorage.setItem("division_worksheet_state_v1", JSON.stringify(state));
+}
+
+function loadStateFromLocalStorage() {
+  const saved = localStorage.getItem("division_worksheet_state_v1");
+  if (saved) {
+    try {
+      const state = JSON.parse(saved);
+      if (Array.isArray(state.currentLineDigits)) currentLineDigits = state.currentLineDigits;
+      if (state.numQuestions) document.getElementById("numQuestions").value = state.numQuestions;
+      if (state.answerOption) document.getElementById("answerOption").value = state.answerOption;
+      if (Array.isArray(state.problems) && state.problems.length > 0) {
+        problems = state.problems;
+        return true;
+      }
+    } catch (e) {
+      console.error("Local storage load error:", e);
+    }
+  }
+  return false;
+}
+
+function renderWorksheetDOM() {
+  const answerOption = document.getElementById("answerOption").value;
   const container = document.getElementById("worksheetContainer");
   container.innerHTML = "";
+
   const problemsPerPage = 6;
   const totalPages = Math.ceil(problems.length / problemsPerPage);
 
@@ -749,8 +764,8 @@ function recomputeFirstProblem() {
   problems[0].remainder = details.remainder;
   problems[0].steps = details.steps;
 
-  const answerOption = document.getElementById("answerOption").value;
-  renderWorksheetDOM(answerOption);
+  saveStateToLocalStorage();
+  renderWorksheetDOM();
 }
 
 async function downloadPDF() {
@@ -778,8 +793,14 @@ async function downloadPDF() {
 
 window.onload = function() {
   initQuestionDropdown();
-  loadSavedChoices();
-  generateWorksheet();
+  const hasSavedState = loadStateFromLocalStorage();
+  renderLineDigitInputs();
+
+  if (hasSavedState) {
+    renderWorksheetDOM();
+  } else {
+    generateNewQuestions();
+  }
 };
 
 </script>

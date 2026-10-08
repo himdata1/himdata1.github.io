@@ -257,7 +257,7 @@
       flex-shrink: 0;
     }
 
-    /* Standard Problem Layout (No Answers / Blank) */
+    /* Standard Problem Layout */
     .math-block {
       display: inline-flex;
       flex-direction: column;
@@ -298,7 +298,7 @@
       width: 100%;
     }
 
-    /* Proper Step-by-Step Solution Layout */
+    /* Step-by-Step Solution Layout */
     .solution-block {
       display: inline-flex;
       flex-direction: column;
@@ -357,7 +357,7 @@
       border-bottom: 2px solid #000000;
     }
 
-    /* Invisible Borderless Editable Input for Question 1 */
+    /* Editable Input for Question 1 */
     .custom-input {
       font-family: 'Courier New', Courier, monospace;
       font-weight: 700;
@@ -440,7 +440,7 @@
       <!-- Regrouping / Carry Dropdown -->
       <div class="form-group">
         <label class="group-label" for="groupingMode">Regrouping (Carry):</label>
-        <select id="groupingMode" onchange="saveAndGenerate()">
+        <select id="groupingMode" onchange="saveSettings()">
           <option value="no_carry" selected>Without Carrying</option>
           <option value="with_carry">With Carrying</option>
           <option value="any">Mixed</option>
@@ -448,15 +448,15 @@
       </div>
 
       <div class="form-group">
-        <label class="group-label" for="numQuestions">No. of Questions:</label>
-        <select id="numQuestions" onchange="saveAndGenerate()"></select>
+        <label class="group-label" for="numQuestions" onchange="saveSettings()"></label>
+        <select id="numQuestions" onchange="saveSettings()"></select>
       </div>
 
       <div class="form-group">
         <label class="group-label" for="answerOption">Answer Options:</label>
-        <select id="answerOption" onchange="saveAndGenerate()">
+        <select id="answerOption" onchange="saveSettings()">
           <option value="no_answers" selected>No Answers</option>
-          <option value="inline">Show Answers Inline (With Step Solutions)</option>
+          <option value="inline">Show Answers</option>
         </select>
       </div>
     </div>
@@ -472,7 +472,6 @@
   <div id="worksheetContainer"></div>
 
   <script>
-    // Default set to Top: 2 digits, Bottom: 1 digit
     let currentLineDigits = [2, 1];
     let problems = [];
 
@@ -517,7 +516,40 @@
       const val = parseInt(value) || 1;
       currentLineDigits[index] = val;
       renderLineDigitInputs();
-      saveAndGenerate();
+      saveSettings();
+    }
+
+    function saveSettings() {
+      const settings = {
+        lineDigits: currentLineDigits,
+        groupingMode: document.getElementById('groupingMode').value,
+        numQuestions: document.getElementById('numQuestions').value,
+        answerOption: document.getElementById('answerOption').value,
+        problems: problems
+      };
+      localStorage.setItem('multiplication_worksheet_settings_v22', JSON.stringify(settings));
+      
+      const answerOption = document.getElementById('answerOption').value;
+      renderWorksheetDOM(answerOption);
+    }
+
+    function loadSavedChoices() {
+      const saved = localStorage.getItem('multiplication_worksheet_settings_v22');
+      if (saved) {
+        try {
+          const settings = JSON.parse(saved);
+          if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
+          if (settings.groupingMode) document.getElementById('groupingMode').value = settings.groupingMode;
+          if (settings.numQuestions) document.getElementById('numQuestions').value = settings.numQuestions;
+          if (settings.answerOption) document.getElementById('answerOption').value = settings.answerOption;
+          if (Array.isArray(settings.problems) && settings.problems.length > 0) {
+            problems = settings.problems;
+          }
+        } catch(e) {
+          console.error("Failed to load saved settings/problems", e);
+        }
+      }
+      renderLineDigitInputs();
     }
 
     function resetToDefaults() {
@@ -526,34 +558,7 @@
       document.getElementById('numQuestions').value = "18";
       document.getElementById('answerOption').value = "no_answers";
       renderLineDigitInputs();
-      saveAndGenerate();
-    }
-
-    function saveAndGenerate() {
-      const settings = {
-        lineDigits: currentLineDigits,
-        groupingMode: document.getElementById('groupingMode').value,
-        numQuestions: document.getElementById('numQuestions').value,
-        answerOption: document.getElementById('answerOption').value
-      };
-      localStorage.setItem('multiplication_worksheet_settings_v21', JSON.stringify(settings));
       generateWorksheet();
-    }
-
-    function loadSavedChoices() {
-      const saved = localStorage.getItem('multiplication_worksheet_settings_v21');
-      if (saved) {
-        try {
-          const settings = JSON.parse(saved);
-          if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
-          if (settings.groupingMode) document.getElementById('groupingMode').value = settings.groupingMode;
-          if (settings.numQuestions) document.getElementById('numQuestions').value = settings.numQuestions;
-          if (settings.answerOption) document.getElementById('answerOption').value = settings.answerOption;
-        } catch(e) {
-          console.error("Failed to load saved settings", e);
-        }
-      }
-      renderLineDigitInputs();
     }
 
     function getRandomNumber(digits) {
@@ -563,19 +568,16 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    // Helper function to check if multiplication requires carrying/regrouping
     function hasMultiplicationCarry(top, bottom) {
       const topDigits = String(top).split('').map(Number).reverse();
       const bottomDigits = String(bottom).split('').map(Number).reverse();
 
-      // Check carry in single-digit partial products
       for (let b of bottomDigits) {
         for (let a of topDigits) {
           if (a * b >= 10) return true;
         }
       }
 
-      // If bottom has more than 1 digit, check carry during addition of partial products
       if (bottomDigits.length > 1) {
         let partials = bottomDigits.map((b, i) => top * b * Math.pow(10, i));
         let maxLen = Math.max(...partials.map(p => String(p).length));
@@ -622,7 +624,6 @@
         }
       }
 
-      // Fallback
       const top = getRandomNumber(topDigits);
       const bottom = getRandomNumber(bottomDigits);
       return { top, bottom, product: top * bottom };
@@ -630,7 +631,6 @@
 
     function generateWorksheet() {
       const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
-      const answerOption = document.getElementById('answerOption').value;
       const groupingMode = document.getElementById('groupingMode').value;
 
       problems = [];
@@ -640,7 +640,7 @@
         problems.push(p);
       }
 
-      renderWorksheetDOM(answerOption);
+      saveSettings();
     }
 
     function renderWorksheetDOM(answerOption) {
@@ -680,11 +680,7 @@
         if (field === 'bottom') p.bottom = isNaN(num) ? 0 : num;
         p.product = p.top * p.bottom;
 
-        const stepsContainer = document.getElementById('card-1-steps-container');
-        if (stepsContainer) {
-          const answerOption = document.getElementById('answerOption').value;
-          stepsContainer.innerHTML = renderStepsContent(p, answerOption === 'inline');
-        }
+        saveSettings();
       }
     }
 
@@ -810,7 +806,11 @@
     window.onload = function() {
       initQuestionDropdown();
       loadSavedChoices();
-      generateWorksheet();
+      if (problems.length === 0) {
+        generateWorksheet();
+      } else {
+        renderWorksheetDOM(document.getElementById('answerOption').value);
+      }
     };
   </script>
 </body>

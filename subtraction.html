@@ -30,7 +30,7 @@
       width: 100%;
     }
 
-    /* Top Controls Panel Header - Scrollable (sticky removed) */
+    /* Top Controls Panel Header */
     .controls-panel {
       background: #ffffff;
       padding: 16px;
@@ -44,7 +44,6 @@
       max-width: 100vw;
     }
 
-    /* App Title inside Control Panel */
     .app-title {
       font-size: 1.4rem;
       font-weight: 800;
@@ -54,7 +53,6 @@
       width: 100%;
     }
 
-    /* Controls Grid Wrapper */
     .controls-wrapper {
       display: flex;
       flex-wrap: wrap;
@@ -100,7 +98,6 @@
       box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
     }
 
-    /* Dynamic Per-Line Digits Container */
     .line-digits-group {
       display: flex;
       gap: 6px;
@@ -135,7 +132,6 @@
       width: 100%;
     }
 
-    /* Action Buttons */
     .btn-group {
       display: flex;
       flex-wrap: wrap;
@@ -186,7 +182,6 @@
     .btn-print { background: #059669; color: white; }
     .btn-print:hover { background: #047857; }
 
-    /* A4 Paper Workspace Container */
     #worksheetContainer {
       display: flex;
       flex-direction: column;
@@ -234,7 +229,6 @@
       flex-wrap: wrap;
     }
 
-    /* 3-COLUMN GRID */
     .problems-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
@@ -263,7 +257,6 @@
       flex-shrink: 0;
     }
 
-    /* DYNAMIC AUTO-RESIZING MATH BLOCK */
     .math-block {
       display: inline-flex;
       flex-direction: column;
@@ -312,7 +305,6 @@
       line-height: 1;
     }
 
-    /* Answer Area with Top and Bottom Lines */
     .answer {
       color: #1d4ed8;
       text-align: right;
@@ -335,7 +327,6 @@
       break-before: page;
     }
 
-    /* Mobile Tweaks */
     @media (max-width: 640px) {
       .app-title { font-size: 1.15rem; }
       .paper-sheet { padding: 10mm 6mm; }
@@ -344,7 +335,6 @@
       .controls-panel { padding: 12px 10px; }
     }
 
-    /* Strict PDF Mode for Download */
     body.pdf-mode .paper-sheet {
       width: 210mm !important;
       max-width: none !important;
@@ -361,7 +351,6 @@
       break-before: page !important;
     }
 
-    /* Print Formatting */
     @media print {
       .no-print { display: none !important; }
       body { background: #ffffff !important; padding: 0 !important; }
@@ -389,46 +378,43 @@
     <h1 class="app-title">Subtraction Worksheet Generator</h1>
 
     <div class="controls-wrapper">
-      <!-- 1. Digits Per Line Controls -->
+      <!-- Digits Per Line Controls -->
       <div class="form-group">
         <label class="group-label">Digits Per Line:</label>
-        <div id="lineDigitsContainer" class="line-digits-group">
-          <!-- Dynamic per-line select elements -->
-        </div>
+        <div id="lineDigitsContainer" class="line-digits-group"></div>
       </div>
 
-      <!-- 2. Regrouping / Borrowing Dropdown -->
+      <!-- Regrouping Dropdown -->
       <div class="form-group">
         <label class="group-label" for="groupingMode">Regrouping (Borrow):</label>
-        <select id="groupingMode" onchange="saveAndGenerate()">
+        <select id="groupingMode" onchange="saveSettings()">
           <option value="no_borrow" selected>Without Borrowing</option>
           <option value="with_borrow">With Borrowing</option>
           <option value="any">Mixed</option>
         </select>
       </div>
 
-      <!-- 3. Questions Count Dropdown -->
+      <!-- Questions Count Dropdown -->
       <div class="form-group">
         <label class="group-label" for="numQuestions">No. of Questions:</label>
-        <select id="numQuestions" onchange="saveAndGenerate()">
-          <!-- Generated dynamically -->
+        <select id="numQuestions" onchange="saveSettings()">
+          <!-- Dynamic Options -->
         </select>
       </div>
 
-      <!-- 4. Answer Options Dropdown -->
+      <!-- Answer Options Dropdown (Updated: 3rd option removed) -->
       <div class="form-group">
         <label class="group-label" for="answerOption">Answer Options:</label>
-        <select id="answerOption" onchange="saveAndGenerate()">
+        <select id="answerOption" onchange="updateAnswerDisplay()">
           <option value="no_answers" selected>No Answers</option>
-          <option value="inline">Show Answers Inline</option>
-          <option value="separate">Separate Answer Key Page</option>
+          <option value="inline">Show Answers</option>
         </select>
       </div>
     </div>
 
-    <!-- Responsive Action Buttons -->
+    <!-- Action Buttons -->
     <div class="btn-group">
-      <button class="btn btn-generate" onclick="generateWorksheet()">Generate New</button>
+      <button class="btn btn-generate" onclick="generateNewQuestions()">Generate New</button>
       <button class="btn btn-reset" onclick="resetToDefaults()">Reset</button>
       <button class="btn btn-pdf" onclick="downloadPDF()">Download PDF</button>
       <button class="btn btn-print" onclick="window.print()">Print Sheet</button>
@@ -440,7 +426,8 @@
   <div id="worksheetContainer"></div>
 
   <script>
-    let currentLineDigits = [2, 2]; // Default 2 digits for top and bottom lines
+    let currentLineDigits = [2, 2];
+    let generatedProblems = [];
 
     function initQuestionDropdown() {
       const qSelect = document.getElementById('numQuestions');
@@ -487,25 +474,14 @@
     function updateLineDigitVal(index, value) {
       const val = parseInt(value) || 1;
       currentLineDigits[index] = val;
-      
       if (index === 0 && currentLineDigits[1] > currentLineDigits[0]) {
         currentLineDigits[1] = currentLineDigits[0];
       }
-
       renderLineDigitInputs();
-      saveAndGenerate();
+      saveSettings();
     }
 
-    function resetToDefaults() {
-      currentLineDigits = [2, 2];
-      document.getElementById('groupingMode').value = "no_borrow";
-      document.getElementById('numQuestions').value = "18";
-      document.getElementById('answerOption').value = "no_answers";
-      renderLineDigitInputs();
-      saveAndGenerate();
-    }
-
-    function saveAndGenerate() {
+    function saveSettings() {
       const settings = {
         lineDigits: currentLineDigits,
         groupingMode: document.getElementById('groupingMode').value,
@@ -513,7 +489,6 @@
         answerOption: document.getElementById('answerOption').value
       };
       localStorage.setItem('subtraction_worksheet_settings_v4', JSON.stringify(settings));
-      generateWorksheet();
     }
 
     function loadSavedChoices() {
@@ -524,7 +499,13 @@
           if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
           if (settings.groupingMode) document.getElementById('groupingMode').value = settings.groupingMode;
           if (settings.numQuestions) document.getElementById('numQuestions').value = settings.numQuestions;
-          if (settings.answerOption) document.getElementById('answerOption').value = settings.answerOption;
+          
+          // Safety fallback if old saved settings contained "separate" option
+          if (settings.answerOption && settings.answerOption !== 'separate') {
+            document.getElementById('answerOption').value = settings.answerOption;
+          } else {
+            document.getElementById('answerOption').value = 'no_answers';
+          }
         } catch(e) {
           console.error("Failed to load saved settings", e);
         }
@@ -560,9 +541,7 @@
         let top = getRandomNumber(topDigits);
         let bottom = getRandomNumber(bottomDigits);
 
-        if (top < bottom) {
-          [top, bottom] = [bottom, top];
-        }
+        if (top < bottom) [top, bottom] = [bottom, top];
 
         const isBorrow = requiresBorrowing(top, bottom);
 
@@ -585,15 +564,12 @@
       return str;
     }
 
-    function generateWorksheet() {
+    function generateNewQuestions() {
+      saveSettings();
       const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
       const groupingMode = document.getElementById('groupingMode').value;
-      const answerOption = document.getElementById('answerOption').value;
 
-      const container = document.getElementById('worksheetContainer');
-      container.innerHTML = '';
-
-      const problems = [];
+      generatedProblems = [];
       for (let i = 0; i < questionsCount; i++) {
         const { top, bottom } = generateProblemForMode(currentLineDigits, groupingMode);
         const diff = top - bottom;
@@ -603,14 +579,29 @@
         const paddedBottom = padZeroes(bottom, topLength);
         const paddedDiff = padZeroes(diff, topLength);
 
-        problems.push({ id: i + 1, top: paddedTop, bottom: paddedBottom, diff: paddedDiff });
+        generatedProblems.push({ id: i + 1, top: paddedTop, bottom: paddedBottom, diff: paddedDiff });
       }
 
+      renderWorksheetUI();
+    }
+
+    function updateAnswerDisplay() {
+      saveSettings();
+      renderWorksheetUI();
+    }
+
+    function renderWorksheetUI() {
+      const container = document.getElementById('worksheetContainer');
+      container.innerHTML = '';
+
+      if (generatedProblems.length === 0) return;
+
+      const answerOption = document.getElementById('answerOption').value;
       const problemsPerPage = 18;
-      const totalPages = Math.ceil(problems.length / problemsPerPage);
+      const totalPages = Math.ceil(generatedProblems.length / problemsPerPage);
 
       for (let page = 0; page < totalPages; page++) {
-        const pageProblems = problems.slice(page * problemsPerPage, (page + 1) * problemsPerPage);
+        const pageProblems = generatedProblems.slice(page * problemsPerPage, (page + 1) * problemsPerPage);
         
         const mainSheet = document.createElement('div');
         mainSheet.className = 'paper-sheet' + (page > 0 ? ' page-break' : '');
@@ -628,24 +619,6 @@
           </div>
         `;
         container.appendChild(mainSheet);
-      }
-
-      if (answerOption === 'separate') {
-        for (let page = 0; page < totalPages; page++) {
-          const pageProblems = problems.slice(page * problemsPerPage, (page + 1) * problemsPerPage);
-          
-          const answerSheet = document.createElement('div');
-          answerSheet.className = 'paper-sheet page-break';
-          answerSheet.innerHTML = `
-            <div class="worksheet-header">
-              <div class="worksheet-title">Subtraction Worksheet Generator - Answer Key ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
-            </div>
-            <div class="problems-grid">
-              ${pageProblems.map(p => renderProblemCard(p, true)).join('')}
-            </div>
-          `;
-          container.appendChild(answerSheet);
-        }
       }
     }
 
@@ -669,6 +642,15 @@
           </div>
         </div>
       `;
+    }
+
+    function resetToDefaults() {
+      currentLineDigits = [2, 2];
+      document.getElementById('groupingMode').value = "no_borrow";
+      document.getElementById('numQuestions').value = "18";
+      document.getElementById('answerOption').value = "no_answers";
+      renderLineDigitInputs();
+      generateNewQuestions();
     }
 
     async function downloadPDF() {
@@ -696,7 +678,7 @@
     window.onload = function() {
       initQuestionDropdown();
       loadSavedChoices();
-      generateWorksheet();
+      generateNewQuestions();
     };
   </script>
 </body>
