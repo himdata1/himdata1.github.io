@@ -181,7 +181,7 @@ body {
   border: none;
   padding: 2px 0;
   min-height: auto;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .problem-num {
@@ -247,12 +247,14 @@ body {
   border-top: 2px solid #000;
   border-left: 2px solid #000;
   height: 28px;
+  transition: width 0.05s ease-out;
 }
 
 .digit-grid {
   display: flex;
   height: 26px;
   white-space: nowrap;
+  transition: width 0.05s ease-out;
 }
 
 .digit-cell {
@@ -580,7 +582,6 @@ function loadStateFromLocalStorage() {
 function renderWorksheetDOM() {
   let maxDigits = currentLineDigits[0] || 3;
   
-  // Calculate max digits including manually typed values
   problems.forEach(p => {
     if (p && p.dividend) {
       maxDigits = Math.max(maxDigits, String(p.dividend).length);
@@ -665,17 +666,16 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   const dividendWidth = dividendString.length * cellWidth;
 
   if (isFirst) {
-    // Single input with precise letter-spacing calculation for perfect grid matching
-    // Courier New 1.15rem has ~11px character width.
     const charWidthEstimate = 11.04;
     const letterSpacing = cellWidth - charWidthEstimate;
-    const paddingLeft = (letterSpacing / 2);
+    const initialIndent = letterSpacing / 2;
 
     dividendHTML = `
       <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${dividendString}" 
-             style="letter-spacing: ${letterSpacing.toFixed(2)}px; padding-left: ${paddingLeft.toFixed(2)}px;" 
+             style="letter-spacing: ${letterSpacing.toFixed(2)}px; text-indent: ${initialIndent.toFixed(2)}px; padding: 0;" 
              onclick="this.select()" 
              onfocus="this.select()" 
+             oninput="handleDividendInput(this)"
              onchange="updateFirstDividend(this.value)">`;
   } else {
     for (let i = 0; i < dividendString.length; i++) {
@@ -688,8 +688,8 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
       <div class="division-header">${quotientDigits}</div>
       <div class="division-line">
         <div class="divisor">${divisorHTML}</div>
-        <div class="dividend-area" style="width: ${dividendWidth}px;">
-          <div class="digit-grid" style="width: ${dividendWidth}px;">${dividendHTML}</div>
+        <div id="first-dividend-area" class="dividend-area" style="width: ${dividendWidth}px;">
+          <div id="first-digit-grid" class="digit-grid" style="width: ${dividendWidth}px;">${dividendHTML}</div>
         </div>
       </div>
   `;
@@ -764,6 +764,25 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
 
   html += `</div>`;
   return html;
+}
+
+function handleDividendInput(input) {
+  const val = input.value;
+  const currentLength = Math.max(1, val.length);
+  const cellWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--digit-width')) || 26;
+  const newWidth = currentLength * cellWidth;
+
+  const area = document.getElementById("first-dividend-area");
+  const grid = document.getElementById("first-digit-grid");
+  if (area) area.style.width = newWidth + "px";
+  if (grid) grid.style.width = newWidth + "px";
+
+  const charWidthEstimate = 11.04;
+  const letterSpacing = cellWidth - charWidthEstimate;
+  const initialIndent = letterSpacing / 2;
+
+  input.style.letterSpacing = `${letterSpacing.toFixed(2)}px`;
+  input.style.textIndent = `${initialIndent.toFixed(2)}px`;
 }
 
 function updateFirstDivisor(val) {
