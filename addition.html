@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Addition Worksheet Generator</title>
-  <!-- html2pdf Library for direct PDF Download -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --primary: #4f46e5;
@@ -180,12 +178,6 @@
     .btn-reset { background: #64748b; color: white; }
     .btn-reset:hover { background: #475569; }
 
-    .btn-pdf { background: #0284c7; color: white; }
-    .btn-pdf:hover { background: #0369a1; }
-
-    .btn-print { background: #059669; color: white; }
-    .btn-print:hover { background: #047857; }
-
     /* A4 Paper Workspace Container */
     #worksheetContainer {
       display: flex;
@@ -223,15 +215,6 @@
       font-weight: 800;
       letter-spacing: -0.5px;
       color: #000;
-    }
-
-    .student-info {
-      display: flex;
-      gap: 18px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      color: #000;
-      flex-wrap: wrap;
     }
 
     /* 3-COLUMN GRID */
@@ -338,24 +321,7 @@
       .app-title { font-size: 1.15rem; }
       .paper-sheet { padding: 10mm 6mm; }
       .worksheet-title { font-size: 1.1rem; }
-      .student-info { font-size: 0.75rem; gap: 8px; }
       .controls-panel { padding: 12px 10px; }
-    }
-
-    body.pdf-mode .paper-sheet {
-      width: 210mm !important;
-      max-width: none !important;
-      margin: 0 !important;
-      box-shadow: none !important;
-      border-radius: 0 !important;
-      min-height: auto !important;
-      height: auto !important;
-      padding: 12mm 15mm !important;
-    }
-
-    body.pdf-mode .page-break {
-      page-break-before: always !important;
-      break-before: page !important;
     }
 
     @media print {
@@ -432,8 +398,6 @@
     <div class="btn-group">
       <button class="btn btn-generate" onclick="generateNewQuestions()">Generate New</button>
       <button class="btn btn-reset" onclick="resetToDefaults()">Reset</button>
-      <button class="btn btn-pdf" onclick="downloadPDF()">Download PDF</button>
-      <button class="btn btn-print" onclick="window.print()">Print Sheet</button>
     </div>
 
   </div>
@@ -561,7 +525,6 @@
           }
         }
 
-        // Agar kisi bhi column me total sum 10 ya usse jyada hai, to carry hai
         if (colSum >= 10) {
           return true;
         }
@@ -576,7 +539,6 @@
       let addendsStr = new Array(lineDigits.length).fill("");
 
       for (let col = maxDigits - 1; col >= 0; col--) {
-        // Find how many lines are active in this column (from right)
         let activeIndices = [];
         for (let i = 0; i < lineDigits.length; i++) {
           if (lineDigits[i] > col) {
@@ -612,11 +574,10 @@
           }
         }
 
-        // Fallback for extreme cases (e.g. 5 lines)
         if (!validCombinationFound) {
           for (let idx of activeIndices) {
             let minDigit = isLeadingColFor[idx] ? 1 : 0;
-            let safeDigit = minDigit; // Assign smallest safe digit (1 or 0)
+            let safeDigit = minDigit;
             addendsStr[idx] += safeDigit;
           }
         }
@@ -695,11 +656,6 @@
         mainSheet.innerHTML = `
           <div class="worksheet-header">
             <div class="worksheet-title">Addition Worksheet Generator ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
-            <div class="student-info">
-              <div>Name: _______________</div>
-              <div>Date: _______________</div>
-              <div>Score: ______</div>
-            </div>
           </div>
           <div class="problems-grid">
             ${pageProblems.map(p => renderProblemCard(p, answerOption === 'inline')).join('')}
@@ -733,28 +689,6 @@
           </div>
         </div>
       `;
-    }
-
-    async function downloadPDF() {
-      const element = document.getElementById('worksheetContainer');
-      document.body.classList.add('pdf-mode');
-
-      const opt = {
-        margin:       0,
-        filename:     'Addition_Worksheet.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak:    { mode: ['css', 'legacy'], before: '.page-break' }
-      };
-
-      try {
-        await html2pdf().set(opt).from(element).save();
-      } catch (err) {
-        console.error("PDF generation error:", err);
-      } finally {
-        document.body.classList.remove('pdf-mode');
-      }
     }
 
     window.onload = function() {

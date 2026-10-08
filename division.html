@@ -6,8 +6,6 @@
 
 <title>Long Division Worksheet Generator</title>
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <style>
 
 :root {
@@ -15,7 +13,7 @@
   --primary-hover: #4338ca;
   --bg-workspace: #cbd5e1;
 
-  /* Increased digit cell width for larger font */
+  /* Digit cell width */
   --digit-width: 26px;
 }
 
@@ -135,8 +133,6 @@ body {
 .btn-generate { background: var(--primary); }
 .btn-generate:hover { background: var(--primary-hover); }
 .btn-reset { background: #64748b; }
-.btn-pdf { background: #0284c7; }
-.btn-print { background: #059669; }
 
 #worksheetContainer {
   width: 100%;
@@ -168,15 +164,6 @@ body {
   font-weight: 800;
 }
 
-.student-info {
-  display: flex;
-  gap: 16px;
-  font-size: .82rem;
-  font-weight: 700;
-  white-space: nowrap;
-}
-
-/* Reduced spacing between questions to remove blank gaps */
 .problems-grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
@@ -203,10 +190,9 @@ body {
   font-family: Arial, sans-serif;
   font-size: 1.05rem;
   font-weight: 700;
-  padding-top: 4px;
+  padding-top: 28px;
 }
 
-/* Larger font size for clear digit display */
 .long-division-container {
   font-family: "Courier New", Courier, monospace;
   font-size: 1.15rem;
@@ -219,13 +205,15 @@ body {
 
 .division-header {
   position: relative;
-  width: max-content;
+  width: 100%;
   height: 26px;
+  margin-left: calc(var(--digit-width) * 1.8);
 }
 
 .quotient-grid {
   position: absolute;
   top: 0;
+  left: 0;
   height: 26px;
   display: flex;
   white-space: nowrap;
@@ -272,6 +260,7 @@ body {
   min-width: var(--digit-width);
   text-align: center;
   height: 26px;
+  line-height: 26px;
 }
 
 .work-area {
@@ -329,19 +318,22 @@ body {
   break-before: page;
 }
 
-.editable-input {
-  font-family: "Courier New", Courier, monospace;
-  font-size: inherit;
-  font-weight: 700;
-  color: inherit;
+/* Perfect Full-String Selection & Grid Alignment Style */
+.editable-full-dividend {
+  width: 100%;
+  height: 26px;
+  line-height: 26px;
   border: none;
   background: transparent;
   outline: none;
-  padding: 0 0 0 2px;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.15rem;
+  font-weight: 700;
+  color: inherit;
+  padding: 0;
   margin: 0;
-  height: 26px;
-  line-height: 26px;
-  letter-spacing: calc(var(--digit-width) - 14px);
+  box-sizing: border-box;
+  text-align: left;
 }
 
 .editable-divisor {
@@ -360,16 +352,6 @@ body {
   line-height: 26px;
 }
 
-body.pdf-mode { background: #fff; }
-body.pdf-mode .paper-sheet {
-  width: 210mm !important;
-  min-height: 297mm !important;
-  max-width: none !important;
-  margin: 0 !important;
-  padding: 8mm 6mm !important;
-  box-shadow: none !important;
-}
-
 @media print {
   .no-print { display: none !important; }
   body { background: #fff !important; padding: 0 !important; }
@@ -383,14 +365,13 @@ body.pdf-mode .paper-sheet {
   }
   .page-break { page-break-before: always !important; break-before: page !important; }
   .quotient-digit, .work-number.remainder, .divisor, .editable-divisor { color: #000 !important; }
-  .editable-input, .editable-divisor { border: none !important; background: transparent !important; }
+  .editable-full-dividend, .editable-divisor { border: none !important; background: transparent !important; }
 }
 
 @media (max-width: 768px) {
   .problems-grid { grid-template-columns: 1fr; }
   .paper-sheet { padding: 6mm; min-height: auto; }
   .worksheet-header { flex-direction: column; align-items: flex-start; }
-  .student-info { flex-wrap: wrap; }
 }
 
 </style>
@@ -420,8 +401,6 @@ body.pdf-mode .paper-sheet {
   <div class="btn-group">
     <button class="btn btn-generate" onclick="generateNewQuestions()">Generate New</button>
     <button class="btn btn-reset" onclick="resetToDefaults()">Reset</button>
-    <button class="btn btn-pdf" onclick="downloadPDF()">Download PDF</button>
-    <button class="btn btn-print" onclick="window.print()">Print Sheet</button>
   </div>
 </div>
 
@@ -429,13 +408,13 @@ body.pdf-mode .paper-sheet {
 
 <script>
 
-let currentLineDigits = [3, 2];
+let currentLineDigits = [3, 1];
 let problems = [];
 
 function initQuestionDropdown() {
   const select = document.getElementById("numQuestions");
   select.innerHTML = "";
-  for (let i = 2; i <= 16; i += 2) {
+  for (let i = 2; i <= 60; i += 2) {
     const option = document.createElement("option");
     option.value = i;
     option.textContent = `${i} Questions`;
@@ -562,7 +541,7 @@ function onSettingsChange() {
 }
 
 function resetToDefaults() {
-  currentLineDigits = [3, 2];
+  currentLineDigits = [3, 1];
   document.getElementById("numQuestions").value = "12";
   document.getElementById("answerOption").value = "no_answers";
   renderLineDigitInputs();
@@ -601,7 +580,6 @@ function loadStateFromLocalStorage() {
 function renderWorksheetDOM() {
   const maxDigits = currentLineDigits[0] || 3;
   
-  // Calculate best cell width to keep digits large yet readable
   let computedCellWidth = 26;
   if (maxDigits >= 7) {
     computedCellWidth = 21;
@@ -629,11 +607,6 @@ function renderWorksheetDOM() {
           Long Division Worksheet
           ${totalPages > 1 ? `<span style="font-size:.82rem; font-weight:600;"> Page ${page + 1}/${totalPages}</span>` : ""}
         </div>
-        <div class="student-info">
-          <div>Name: ______________</div>
-          <div>Date: ______________</div>
-          <div>Score: ______</div>
-        </div>
       </div>
       <div class="problems-grid">
         ${pageProblems.map((p, idx) => renderCard(p, answerOption === "show_answers", idx === 0 && page === 0, computedCellWidth)).join("")}
@@ -658,10 +631,18 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
 
   if (showAnswers) {
     const qString = String(p.quotient);
-    const qStartCol = dividendString.length - qString.length;
-    quotientDigits = `<div class="quotient-grid" style="left: ${qStartCol * cellWidth}px;">`;
-    for (let i = 0; i < qString.length; i++) {
-      quotientDigits += `<div class="quotient-digit">${qString[i]}</div>`;
+    quotientDigits = `<div class="quotient-grid">`;
+    
+    const totalCols = dividendString.length;
+    const qLen = qString.length;
+
+    for (let i = 0; i < totalCols; i++) {
+      if (i >= totalCols - qLen) {
+        const charIdx = i - (totalCols - qLen);
+        quotientDigits += `<div class="quotient-digit">${qString[charIdx]}</div>`;
+      } else {
+        quotientDigits += `<div class="quotient-digit"></div>`;
+      }
     }
     quotientDigits += `</div>`;
   }
@@ -675,8 +656,21 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
 
   let dividendHTML = "";
   const dividendWidth = dividendString.length * cellWidth;
+
   if (isFirst) {
-    dividendHTML = `<input type="text" class="editable-input" style="width: ${dividendWidth}px;" value="${p.dividend}" onclick="this.select()" onchange="updateFirstDividend(this.value)">`;
+    // Single input with precise letter-spacing calculation for perfect grid matching
+    // Courier New 1.15rem has ~11px character width.
+    const charWidthEstimate = 11.04;
+    const letterSpacing = cellWidth - charWidthEstimate;
+    const paddingLeft = (letterSpacing / 2);
+
+    dividendHTML = `
+      <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${dividendString}" 
+             maxlength="${currentLineDigits[0]}" 
+             style="letter-spacing: ${letterSpacing.toFixed(2)}px; padding-left: ${paddingLeft.toFixed(2)}px;" 
+             onclick="this.select()" 
+             onfocus="this.select()" 
+             onchange="updateFirstDividend(this.value)">`;
   } else {
     for (let i = 0; i < dividendString.length; i++) {
       dividendHTML += `<div class="digit-cell">${dividendString[i]}</div>`;
@@ -689,7 +683,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
       <div class="division-line">
         <div class="divisor">${divisorHTML}</div>
         <div class="dividend-area" style="width: ${dividendWidth}px;">
-          <div class="digit-grid" ${isFirst ? `style="width: ${dividendWidth}px;"` : ''}>${dividendHTML}</div>
+          <div class="digit-grid" style="width: ${dividendWidth}px;">${dividendHTML}</div>
         </div>
       </div>
   `;
@@ -758,7 +752,6 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
       </div>
     `;
   } else {
-    /* Adaptive spacing when no answers are shown based on steps */
     const emptyBoxHeight = Math.max(90, (p.steps.length * 40));
     html += `<div style="height: ${emptyBoxHeight}px;"></div>`;
   }
@@ -777,6 +770,7 @@ function updateFirstDivisor(val) {
 function updateFirstDividend(val) {
   let num = parseInt(val, 10);
   if (isNaN(num) || num <= 0) return;
+  
   problems[0].dividend = num;
   recomputeFirstProblem();
 }
@@ -789,58 +783,6 @@ function recomputeFirstProblem() {
 
   saveStateToLocalStorage();
   renderWorksheetDOM();
-}
-
-async function downloadPDF() {
-  const element = document.getElementById("worksheetContainer");
-  document.body.classList.add("pdf-mode");
-
-  const inputs = element.querySelectorAll('input.editable-input, input.editable-divisor');
-  const tempSpans = [];
-
-  inputs.forEach(input => {
-    const span = document.createElement('div');
-    span.style.display = 'inline-block';
-    
-    if (input.classList.contains('editable-input')) {
-      let cellsHTML = '';
-      const valStr = String(input.value);
-      for (let i = 0; i < valStr.length; i++) {
-        cellsHTML += `<div class="digit-cell">${valStr[i]}</div>`;
-      }
-      span.innerHTML = `<div class="digit-grid">${cellsHTML}</div>`;
-    } else if (input.classList.contains('editable-divisor')) {
-      span.textContent = input.value;
-      span.className = 'divisor';
-      span.style.color = '#000';
-    }
-
-    input.parentNode.insertBefore(span, input);
-    input.style.display = 'none';
-    tempSpans.push({ input, span });
-  });
-
-  const options = {
-    margin: 0,
-    filename: "Long_Division_Worksheet.pdf",
-    image: { type: "jpeg", quality: 0.98 },
-    html2canvas: { scale: 2, useCORS: true, scrollY: 0, backgroundColor: "#ffffff" },
-    jsPDF: { unit: "mm", format: "a4", orientation: "portrait" },
-    pagebreak: { mode: ["css", "legacy"], before: ".page-break" }
-  };
-
-  try {
-    await html2pdf().set(options).from(element).save();
-  } catch (error) {
-    console.error("PDF-generation error:", error);
-    alert("PDF generation failed.");
-  } finally {
-    tempSpans.forEach(({ input, span }) => {
-      input.style.display = '';
-      span.remove();
-    });
-    document.body.classList.remove("pdf-mode");
-  }
 }
 
 window.onload = function() {

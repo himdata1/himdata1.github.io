@@ -4,8 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Multiplication Worksheet Generator</title>
-  <!-- html2pdf Library for direct PDF Download -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
   <style>
     :root {
       --primary: #4f46e5;
@@ -176,12 +174,6 @@
     .btn-reset { background: #64748b; color: white; }
     .btn-reset:hover { background: #475569; }
 
-    .btn-pdf { background: #0284c7; color: white; }
-    .btn-pdf:hover { background: #0369a1; }
-
-    .btn-print { background: #059669; color: white; }
-    .btn-print:hover { background: #047857; }
-
     #worksheetContainer {
       display: flex;
       flex-direction: column;
@@ -218,15 +210,6 @@
       font-weight: 800;
       letter-spacing: -0.5px;
       color: #000;
-    }
-
-    .student-info {
-      display: flex;
-      gap: 18px;
-      font-weight: 700;
-      font-size: 0.85rem;
-      color: #000;
-      flex-wrap: wrap;
     }
 
     .problems-grid {
@@ -388,24 +371,7 @@
       .app-title { font-size: 1.15rem; }
       .paper-sheet { padding: 10mm 6mm; }
       .worksheet-title { font-size: 1.1rem; }
-      .student-info { font-size: 0.75rem; gap: 8px; }
       .controls-panel { padding: 12px 10px; }
-    }
-
-    body.pdf-mode .paper-sheet {
-      width: 210mm !important;
-      max-width: none !important;
-      margin: 0 !important;
-      box-shadow: none !important;
-      border-radius: 0 !important;
-      min-height: auto !important;
-      height: auto !important;
-      padding: 12mm 15mm !important;
-    }
-
-    body.pdf-mode .page-break {
-      page-break-before: always !important;
-      break-before: page !important;
     }
 
     @media print {
@@ -464,8 +430,6 @@
     <div class="btn-group">
       <button class="btn btn-generate" onclick="generateWorksheet()">Generate New</button>
       <button class="btn btn-reset" onclick="resetToDefaults()">Reset</button>
-      <button class="btn btn-pdf" onclick="downloadPDF()">Download PDF</button>
-      <button class="btn btn-print" onclick="window.print()">Print Sheet</button>
     </div>
   </div>
 
@@ -572,18 +536,14 @@
       const topDigits = String(top).split('').map(Number).reverse();
       const bottomDigits = String(bottom).split('').map(Number).reverse();
 
-      // 1. Single digit wise multiplication carrying check
       for (let b of bottomDigits) {
         for (let i = 0; i < topDigits.length - 1; i++) {
-          // Agar aakhri digit se pehle koi bhi multiplication >= 10 hoti hai,
-          // tabhi next column me carry forward hoga.
           if (topDigits[i] * b >= 10) {
             return true;
           }
         }
       }
 
-      // 2. Multi-line addition carrying check (2-digit or 3-digit bottom numbers ke liye)
       if (bottomDigits.length > 1) {
         let partials = bottomDigits.map((b, i) => top * b * Math.pow(10, i));
         let maxLen = Math.max(...partials.map(p => String(p).length));
@@ -666,11 +626,6 @@
         mainSheet.innerHTML = `
           <div class="worksheet-header">
             <div class="worksheet-title">Multiplication Worksheet ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
-            <div class="student-info">
-              <div>Name: _______________</div>
-              <div>Date: _______________</div>
-              <div>Score: ______</div>
-            </div>
           </div>
           <div class="problems-grid">
             ${pageProblems.map(p => renderCard(p, answerOption === 'inline')).join('')}
@@ -787,28 +742,6 @@
         stepsHtml += `<div class="sol-final">${p.product}</div>`;
       }
       return stepsHtml;
-    }
-
-    async function downloadPDF() {
-      const element = document.getElementById('worksheetContainer');
-      document.body.classList.add('pdf-mode');
-
-      const opt = {
-        margin:       0,
-        filename:     'Multiplication_Worksheet.pdf',
-        image:        { type: 'jpeg', quality: 0.98 },
-        html2canvas:  { scale: 2, useCORS: true, scrollY: 0 },
-        jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-        pagebreak:    { mode: ['css', 'legacy'], before: '.page-break' }
-      };
-
-      try {
-        await html2pdf().set(opt).from(element).save();
-      } catch (err) {
-        console.error("PDF generation error:", err);
-      } finally {
-        document.body.classList.remove('pdf-mode');
-      }
     }
 
     window.onload = function() {
