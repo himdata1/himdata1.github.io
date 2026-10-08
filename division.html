@@ -210,8 +210,9 @@ body {
   font-weight: 700;
   line-height: 1;
   color: #000;
-  width: 220px;
+  width: 260px;
   position: relative;
+  overflow-x: auto;
 }
 
 .division-header {
@@ -274,7 +275,7 @@ body {
 .work-area {
   position: relative;
   margin-left: 45px;
-  width: calc(var(--digit-width) * 6);
+  width: calc(var(--digit-width) * 8);
   min-height: 170px;
 }
 
@@ -448,8 +449,8 @@ function renderLineDigitInputs() {
   currentLineDigits.forEach((digits, index) => {
     const item = document.createElement("div");
     item.className = "line-digit-item";
-    const minLimit = index === 0 ? 2 : 1;
-    const maxLimit = index === 0 ? 4 : 3;
+    const minLimit = 1;
+    const maxLimit = index === 0 ? 7 : 3;
     let options = "";
     for (let d = minLimit; d <= maxLimit; d++) {
       options += `<option value="${d}" ${d === digits ? "selected" : ""}>${d} Digit${d > 1 ? "s" : ""}</option>`;
@@ -516,14 +517,22 @@ function generateNewQuestions() {
 
   const dividendDigits = currentLineDigits[0];
   const divisorDigits = currentLineDigits[1];
-  const minDivisor = Math.pow(10, divisorDigits - 1);
+  
+  const minDivisor = divisorDigits === 1 ? 1 : Math.pow(10, divisorDigits - 1);
   const maxDivisor = Math.pow(10, divisorDigits) - 1;
+  
+  const minDividend = dividendDigits === 1 ? 1 : Math.pow(10, dividendDigits - 1);
   const maxDividend = Math.pow(10, dividendDigits) - 1;
-  const minDividend = Math.pow(10, dividendDigits - 1);
 
   for (let i = 0; i < questionsCount; i++) {
     let divisor = Math.floor(Math.random() * (maxDivisor - minDivisor + 1)) + minDivisor;
     let minValidDividend = Math.max(minDividend, divisor + 1);
+    
+    // Fallback if maxDividend is smaller than minValidDividend
+    if (minValidDividend > maxDividend) {
+      minValidDividend = minDividend;
+    }
+
     let dividend = Math.floor(Math.random() * (maxDividend - minValidDividend + 1)) + minValidDividend;
 
     const details = computeLongDivisionSteps(dividend, divisor);
