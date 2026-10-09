@@ -8,7 +8,7 @@
     :root {
       --primary: #4f46e5;
       --primary-hover: #4338ca;
-      --bg-workspace: #cbd5e1;
+      --bg-workspace: #ffffff;
       --text: #0f172a;
     }
 
@@ -32,14 +32,13 @@
     .controls-panel {
       background: #ffffff;
       padding: 16px;
-      border-bottom: 2px solid #94a3b8;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      border-bottom: 2px solid #e2e8f0;
+      box-shadow: none;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 14px;
       width: 100%;
-      max-width: 100vw;
     }
 
     .app-title {
@@ -100,7 +99,7 @@
       display: flex;
       gap: 6px;
       align-items: flex-end;
-      background: #f1f5f9;
+      background: #f8fafc;
       padding: 4px 8px;
       border-radius: 6px;
       border: 1.5px solid #cbd5e1;
@@ -183,13 +182,14 @@
     }
 
     .paper-sheet {
-      width: 210mm;
-      max-width: 100%;
+      width: 100%;
+      max-width: 1200px;
       background: #ffffff;
       padding: 15mm;
-      margin: 15px auto;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      border-radius: 2px;
+      margin: 10px auto;
+      box-shadow: none;
+      border: 1px solid #e2e8f0;
+      border-radius: 4px;
       box-sizing: border-box;
       position: relative;
     }
@@ -212,10 +212,11 @@
       color: #000;
     }
 
+    /* Flexible Grid: Auto-fits more items in landscape mode */
     .problems-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px 8px;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 24px 16px;
       justify-items: center;
       width: 100%;
     }
@@ -317,15 +318,25 @@
       .controls-panel { padding: 12px 10px; }
     }
 
+    /* Print settings optimized for landscape and portrait with no background shadows */
     @media print {
+      @page {
+        size: auto;
+        margin: 10mm;
+      }
       .no-print { display: none !important; }
       body { background: #ffffff !important; padding: 0 !important; }
       .paper-sheet {
-        width: 210mm !important;
+        width: 100% !important;
         max-width: none !important;
         box-shadow: none !important;
+        border: none !important;
         margin: 0 !important;
-        padding: 10mm !important;
+        padding: 5mm !important;
+      }
+      .problems-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+        gap: 20px 12px;
       }
       .page-break {
         page-break-before: always !important;
@@ -400,7 +411,7 @@
         const opt = document.createElement('option');
         opt.value = i;
         opt.textContent = `${i} Questions`;
-        if (i === 18) opt.selected = true;
+        if (i === 24) opt.selected = true;
         qSelect.appendChild(opt);
       }
     }
@@ -529,7 +540,7 @@
 
     function generateNewQuestions() {
       saveSettings();
-      const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
+      const questionsCount = parseInt(document.getElementById('numQuestions').value) || 24;
       const groupingMode = document.getElementById('groupingMode').value;
 
       generatedProblems = [];
@@ -560,24 +571,18 @@
       if (generatedProblems.length === 0) return;
 
       const answerOption = document.getElementById('answerOption').value;
-      const problemsPerPage = 18;
-      const totalPages = Math.ceil(generatedProblems.length / problemsPerPage);
-
-      for (let page = 0; page < totalPages; page++) {
-        const pageProblems = generatedProblems.slice(page * problemsPerPage, (page + 1) * problemsPerPage);
-        
-        const mainSheet = document.createElement('div');
-        mainSheet.className = 'paper-sheet' + (page > 0 ? ' page-break' : '');
-        mainSheet.innerHTML = `
-          <div class="worksheet-header">
-            <div class="worksheet-title">Subtraction Worksheet Generator ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
-          </div>
-          <div class="problems-grid">
-            ${pageProblems.map(p => renderProblemCard(p, answerOption === 'inline')).join('')}
-          </div>
-        `;
-        container.appendChild(mainSheet);
-      }
+      
+      const mainSheet = document.createElement('div');
+      mainSheet.className = 'paper-sheet';
+      mainSheet.innerHTML = `
+        <div class="worksheet-header">
+          <div class="worksheet-title">Subtraction Worksheet Generator</div>
+        </div>
+        <div class="problems-grid">
+          ${generatedProblems.map(p => renderProblemCard(p, answerOption === 'inline')).join('')}
+        </div>
+      `;
+      container.appendChild(mainSheet);
     }
 
     function renderProblemCard(p, showAnswer) {
@@ -605,7 +610,7 @@
     function resetToDefaults() {
       currentLineDigits = [2, 2];
       document.getElementById('groupingMode').value = "no_borrow";
-      document.getElementById('numQuestions').value = "18";
+      document.getElementById('numQuestions').value = "24";
       document.getElementById('answerOption').value = "no_answers";
       renderLineDigitInputs();
       generateNewQuestions();

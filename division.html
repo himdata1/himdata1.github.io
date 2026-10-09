@@ -11,7 +11,7 @@
 :root {
   --primary: #4f46e5;
   --primary-hover: #4338ca;
-  --bg-workspace: #cbd5e1;
+  --bg-workspace: #ffffff; /* White background */
 
   /* Digit cell width */
   --digit-width: 26px;
@@ -25,7 +25,7 @@
 
 body {
   font-family: Arial, "Segoe UI", sans-serif;
-  background: var(--bg-workspace);
+  background: var(--bg-workspace); /* Plain White */
   color: #000;
   padding-bottom: 40px;
   overflow-x: hidden;
@@ -34,8 +34,8 @@ body {
 .controls-panel {
   background: #fff;
   padding: 16px;
-  border-bottom: 2px solid #94a3b8;
-  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  border-bottom: 1.5px solid #e2e8f0;
+  box-shadow: none; /* Shadow removed */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -139,14 +139,16 @@ body {
   padding: 10px 5px;
 }
 
+/* Landscape A4 Dimensions */
 .paper-sheet {
-  width: 210mm;
-  min-height: 297mm;
+  width: 297mm;
+  min-height: 210mm;
   max-width: 100%;
   margin: 15px auto;
   background: #fff;
-  padding: 8mm 6mm;
-  box-shadow: 0 8px 20px rgba(0,0,0,.15);
+  padding: 8mm 10mm;
+  box-shadow: none; /* Shadow removed */
+  border: 1px solid #e2e8f0;
 }
 
 .worksheet-header {
@@ -164,11 +166,12 @@ body {
   font-weight: 800;
 }
 
+/* 3 Column Grid for Landscape mode to fit more questions */
 .problems-grid {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  column-gap: 10px;
-  row-gap: 12px;
+  grid-template-columns: repeat(3, 1fr);
+  column-gap: 16px;
+  row-gap: 16px;
   width: 100%;
   align-items: start;
 }
@@ -320,7 +323,7 @@ body {
   break-before: page;
 }
 
-/* Perfect Full-String Selection & Grid Alignment Style */
+/* Editable Input Styles */
 .editable-full-dividend {
   width: 100%;
   height: 26px;
@@ -355,22 +358,31 @@ body {
 }
 
 @media print {
+  @page {
+    size: A4 landscape;
+    margin: 0;
+  }
   .no-print { display: none !important; }
   body { background: #fff !important; padding: 0 !important; }
   #worksheetContainer { padding: 0 !important; }
   .paper-sheet {
-    width: 210mm !important;
-    min-height: 297mm !important;
+    width: 297mm !important;
+    min-height: 210mm !important;
     margin: 0 !important;
-    padding: 8mm 6mm !important;
+    padding: 8mm 10mm !important;
     box-shadow: none !important;
+    border: none !important;
   }
   .page-break { page-break-before: always !important; break-before: page !important; }
   .quotient-digit, .work-number.remainder, .divisor, .editable-divisor { color: #000 !important; }
   .editable-full-dividend, .editable-divisor { border: none !important; background: transparent !important; }
 }
 
-@media (max-width: 768px) {
+@media (max-width: 900px) {
+  .problems-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
   .problems-grid { grid-template-columns: 1fr; }
   .paper-sheet { padding: 6mm; min-height: auto; }
   .worksheet-header { flex-direction: column; align-items: flex-start; }
@@ -600,7 +612,8 @@ function renderWorksheetDOM() {
   const container = document.getElementById("worksheetContainer");
   container.innerHTML = "";
 
-  const problemsPerPage = 6;
+  /* Landscape mode fits more problems per page (e.g. 9 or 12 depending on rows) */
+  const problemsPerPage = 9;
   const totalPages = Math.ceil(problems.length / problemsPerPage);
 
   for (let page = 0; page < totalPages; page++) {
