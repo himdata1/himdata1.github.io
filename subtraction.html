@@ -284,27 +284,27 @@
       font-size: 1.3rem;
     }
 
+    /* Top & bottom rows have left padding reserved for minus (-) sign alignment */
     .number-row {
       text-align: right;
       width: 100%;
+      padding-left: 1.5em; /* Space reserved on extreme left */
       padding-right: 2px;
       white-space: nowrap;
       letter-spacing: 2px;
+      position: relative;
     }
 
     .number-row.bottom {
-      position: relative;
-      padding-left: 1.2em;
       padding-bottom: 3px;
       margin-bottom: 3px;
-      width: 100%;
       border-bottom: 2px solid #000000;
     }
 
     .number-row.bottom::before {
       content: "-";
       position: absolute;
-      left: 0;
+      left: 0.3em;
       bottom: 1px;
       font-weight: bold;
       font-size: 1.2em;
@@ -315,6 +315,7 @@
       color: #1d4ed8;
       text-align: right;
       width: 100%;
+      padding-left: 1.5em; /* Matches top/bottom row alignment */
       padding-right: 2px;
       min-height: 1.3em;
       font-weight: 800;
