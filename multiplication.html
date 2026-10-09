@@ -460,7 +460,8 @@
         item.className = 'line-digit-item';
         
         let optionsHtml = '';
-        const maxLimit = (index === 0) ? 5 : 3;
+        // Updated maxLimit for index 0 (Top line) to 7
+        const maxLimit = (index === 0) ? 7 : 3;
         
         for (let d = 1; d <= maxLimit; d++) {
           optionsHtml += `<option value="${d}" ${d === digits ? 'selected' : ''}>${d} Digit${d > 1 ? 's' : ''}</option>`;
@@ -646,12 +647,10 @@
         if (field === 'bottom') p.bottom = isNaN(num) ? 0 : num;
         p.product = p.top * p.bottom;
 
-        // Auto-adjust input element width dynamically without re-rendering DOM
         if (inputEl) {
           inputEl.style.width = Math.max((inputEl.value.length + 1) * 11, 25) + 'px';
         }
 
-        // Update step calculation for inline answers selectively
         const stepsContainer = document.getElementById('card-1-steps-container');
         if (stepsContainer) {
           stepsContainer.innerHTML = renderStepsContent(p, true);
