@@ -95,6 +95,41 @@
       box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
     }
 
+    /* Checkbox Styles */
+    .checkbox-group {
+      justify-content: flex-end;
+    }
+
+    .checkbox-options-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      padding: 8px 10px;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      min-height: 38px;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
     .line-digits-group {
       display: flex;
       gap: 6px;
@@ -212,7 +247,6 @@
       color: #000;
     }
 
-    /* Flexible Grid: Auto-fits more items in landscape mode */
     .problems-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -235,7 +269,7 @@
 
     .problem-num {
       font-size: 0.85rem;
-      color: #334155;
+      color: #dc2626 !important; /* Made Red as requested */
       min-width: 22px;
       padding-top: 2px;
       flex-shrink: 0;
@@ -318,7 +352,6 @@
       .controls-panel { padding: 12px 10px; }
     }
 
-    /* Print settings optimized for landscape and portrait with no background shadows */
     @media print {
       @page {
         size: auto;
@@ -343,7 +376,7 @@
         break-before: page !important;
       }
       .answer { color: #000000 !important; }
-      .problem-num { color: #000000 !important; }
+      .problem-num { color: #dc2626 !important; } /* Ensure printed SR. No. stays red */
     }
   </style>
 </head>
@@ -361,31 +394,38 @@
         <div id="lineDigitsContainer" class="line-digits-group"></div>
       </div>
 
-      <!-- Regrouping Dropdown -->
+      <!-- Regrouping (Borrow) Checkboxes -->
       <div class="form-group">
-        <label class="group-label" for="groupingMode">Regrouping (Borrow):</label>
-        <select id="groupingMode" onchange="saveSettings()">
-          <option value="no_borrow" selected>Without Borrowing</option>
-          <option value="with_borrow">With Borrowing</option>
-          <option value="any">Mixed</option>
-        </select>
+        <label class="group-label">Regrouping (Borrow):</label>
+        <div class="checkbox-options-container">
+          <label class="checkbox-label">
+            <input type="checkbox" name="grouping" value="no_borrow" checked onchange="onGroupingCheckboxChange(this)">
+            Without Borrowing
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="grouping" value="with_borrow" onchange="onGroupingCheckboxChange(this)">
+            With Borrowing
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="grouping" value="any" onchange="onGroupingCheckboxChange(this)">
+            Mixed
+          </label>
+        </div>
       </div>
 
       <!-- Questions Count Dropdown -->
       <div class="form-group">
         <label class="group-label" for="numQuestions">No. of Questions:</label>
-        <select id="numQuestions" onchange="saveSettings()">
-          <!-- Dynamic Options -->
-        </select>
+        <select id="numQuestions" onchange="saveSettings()"></select>
       </div>
 
-      <!-- Answer Options Dropdown -->
-      <div class="form-group">
-        <label class="group-label" for="answerOption">Answer Options:</label>
-        <select id="answerOption" onchange="updateAnswerDisplay()">
-          <option value="no_answers" selected>No Answers</option>
-          <option value="inline">Show Answers</option>
-        </select>
+      <!-- Show Answers Checkbox -->
+      <div class="form-group checkbox-group">
+        <label class="group-label">&nbsp;</label>
+        <label class="checkbox-label" for="showAnswersCheckbox">
+          <input type="checkbox" id="showAnswersCheckbox" onchange="updateAnswerDisplay()">
+          Show Answers
+        </label>
       </div>
     </div>
 
@@ -404,6 +444,30 @@
     let currentLineDigits = [2, 2];
     let generatedProblems = [];
 
+    function getSelectedGroupingMode() {
+      const checked = document.querySelector('input[name="grouping"]:checked');
+      return checked ? checked.value : 'no_borrow';
+    }
+
+    function setSelectedGroupingMode(mode) {
+      const checkboxes = document.querySelectorAll('input[name="grouping"]');
+      checkboxes.forEach(cb => {
+        cb.checked = (cb.value === mode);
+      });
+    }
+
+    function onGroupingCheckboxChange(changedCb) {
+      if (changedCb.checked) {
+        const checkboxes = document.querySelectorAll('input[name="grouping"]');
+        checkboxes.forEach(cb => {
+          if (cb !== changedCb) cb.checked = false;
+        });
+      } else {
+        changedCb.checked = true;
+      }
+      saveSettings();
+    }
+
     function initQuestionDropdown() {
       const qSelect = document.getElementById('numQuestions');
       qSelect.innerHTML = '';
@@ -411,7 +475,7 @@
         const opt = document.createElement('option');
         opt.value = i;
         opt.textContent = `${i} Questions`;
-        if (i === 24) opt.selected = true;
+        if (i === 18) opt.selected = true; // Set default to 18 questions
         qSelect.appendChild(opt);
       }
     }
@@ -459,9 +523,9 @@
     function saveSettings() {
       const settings = {
         lineDigits: currentLineDigits,
-        groupingMode: document.getElementById('groupingMode').value,
+        groupingMode: getSelectedGroupingMode(),
         numQuestions: document.getElementById('numQuestions').value,
-        answerOption: document.getElementById('answerOption').value
+        showAnswers: document.getElementById('showAnswersCheckbox').checked
       };
       localStorage.setItem('subtraction_worksheet_settings_v4', JSON.stringify(settings));
     }
@@ -472,13 +536,10 @@
         try {
           const settings = JSON.parse(saved);
           if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
-          if (settings.groupingMode) document.getElementById('groupingMode').value = settings.groupingMode;
+          if (settings.groupingMode) setSelectedGroupingMode(settings.groupingMode);
           if (settings.numQuestions) document.getElementById('numQuestions').value = settings.numQuestions;
-          
-          if (settings.answerOption && settings.answerOption !== 'separate') {
-            document.getElementById('answerOption').value = settings.answerOption;
-          } else {
-            document.getElementById('answerOption').value = 'no_answers';
+          if (typeof settings.showAnswers !== 'undefined') {
+            document.getElementById('showAnswersCheckbox').checked = settings.showAnswers;
           }
         } catch(e) {
           console.error("Failed to load saved settings", e);
@@ -511,7 +572,7 @@
       const topDigits = digitsArr[0];
       const bottomDigits = digitsArr[1];
 
-      for (let attempt = 0; attempt < 500; attempt++) {
+      for (let attempt = 0; attempt < 1000; attempt++) {
         let top = getRandomNumber(topDigits);
         let bottom = getRandomNumber(bottomDigits);
 
@@ -519,7 +580,6 @@
 
         const isBorrow = requiresBorrowing(top, bottom);
 
-        if (mode === 'any') return { top, bottom };
         if (mode === 'no_borrow' && !isBorrow) return { top, bottom };
         if (mode === 'with_borrow' && isBorrow) return { top, bottom };
       }
@@ -540,12 +600,27 @@
 
     function generateNewQuestions() {
       saveSettings();
-      const questionsCount = parseInt(document.getElementById('numQuestions').value) || 24;
-      const groupingMode = document.getElementById('groupingMode').value;
+      const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
+      const groupingMode = getSelectedGroupingMode();
+
+      let modeList = [];
+      if (groupingMode === 'any') {
+        const half = Math.floor(questionsCount / 2);
+        for (let i = 0; i < half; i++) modeList.push('no_borrow');
+        for (let i = 0; i < questionsCount - half; i++) modeList.push('with_borrow');
+
+        for (let i = modeList.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [modeList[i], modeList[j]] = [modeList[j], modeList[i]];
+        }
+      } else {
+        modeList = new Array(questionsCount).fill(groupingMode);
+      }
 
       generatedProblems = [];
       for (let i = 0; i < questionsCount; i++) {
-        const { top, bottom } = generateProblemForMode(currentLineDigits, groupingMode);
+        const modeToUse = modeList[i];
+        const { top, bottom } = generateProblemForMode(currentLineDigits, modeToUse);
         const diff = top - bottom;
         
         const topLength = currentLineDigits[0];
@@ -570,7 +645,7 @@
 
       if (generatedProblems.length === 0) return;
 
-      const answerOption = document.getElementById('answerOption').value;
+      const showAnswers = document.getElementById('showAnswersCheckbox').checked;
       
       const mainSheet = document.createElement('div');
       mainSheet.className = 'paper-sheet';
@@ -579,7 +654,7 @@
           <div class="worksheet-title">Subtraction Worksheet Generator</div>
         </div>
         <div class="problems-grid">
-          ${generatedProblems.map(p => renderProblemCard(p, answerOption === 'inline')).join('')}
+          ${generatedProblems.map(p => renderProblemCard(p, showAnswers)).join('')}
         </div>
       `;
       container.appendChild(mainSheet);
@@ -609,9 +684,9 @@
 
     function resetToDefaults() {
       currentLineDigits = [2, 2];
-      document.getElementById('groupingMode').value = "no_borrow";
-      document.getElementById('numQuestions').value = "24";
-      document.getElementById('answerOption').value = "no_answers";
+      setSelectedGroupingMode("no_borrow");
+      document.getElementById('numQuestions').value = "18";
+      document.getElementById('showAnswersCheckbox').checked = false;
       renderLineDigitInputs();
       generateNewQuestions();
     }

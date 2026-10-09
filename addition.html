@@ -98,6 +98,41 @@
       box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
     }
 
+    /* Checkbox Group Layouts */
+    .checkbox-group {
+      justify-content: flex-end;
+    }
+
+    .checkbox-options-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      padding: 8px 10px;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      min-height: 38px;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
     /* Dynamic Per-Line Digits Container */
     .line-digits-group {
       display: flex;
@@ -218,7 +253,7 @@
       color: #000;
     }
 
-    /* FLEXIBLE RESPONSIVE GRID (Auto-adjusts for Landscape & Large Screen) */
+    /* FLEXIBLE RESPONSIVE GRID */
     .problems-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
@@ -241,7 +276,7 @@
 
     .problem-num {
       font-size: 0.85rem;
-      color: #334155;
+      color: #dc2626 !important; /* Made Red as requested */
       min-width: 22px;
       padding-top: 2px;
       flex-shrink: 0;
@@ -328,7 +363,7 @@
       }
     }
 
-    /* Print Styles for Landscape & Dynamic Widths */
+    /* Print Styles */
     @media print {
       @page {
         size: auto;
@@ -352,7 +387,7 @@
         break-before: page !important;
       }
       .answer { color: #000000 !important; }
-      .problem-num { color: #000000 !important; }
+      .problem-num { color: #dc2626 !important; /* Ensure printed SR. No. stays red */ }
     }
   </style>
 </head>
@@ -381,14 +416,23 @@
         <div id="lineDigitsContainer" class="line-digits-group"></div>
       </div>
 
-      <!-- 3. Grouping / Carrying Dropdown -->
+      <!-- 3. Regrouping (Carry) Checkboxes -->
       <div class="form-group">
-        <label class="group-label" for="groupingMode">Regrouping (Carry):</label>
-        <select id="groupingMode" onchange="onSettingChange()">
-          <option value="no_carry" selected>Without Carrying</option>
-          <option value="with_carry">With Carrying</option>
-          <option value="any">Mixed</option>
-        </select>
+        <label class="group-label">Regrouping (Carry):</label>
+        <div class="checkbox-options-container">
+          <label class="checkbox-label">
+            <input type="checkbox" name="grouping" value="no_carry" checked onchange="onGroupingCheckboxChange(this)">
+            Without Carrying
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="grouping" value="with_carry" onchange="onGroupingCheckboxChange(this)">
+            With Carrying
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="grouping" value="any" onchange="onGroupingCheckboxChange(this)">
+            Mixed
+          </label>
+        </div>
       </div>
 
       <!-- 4. Questions Count Dropdown -->
@@ -397,17 +441,17 @@
         <select id="numQuestions" onchange="onSettingChange()"></select>
       </div>
 
-      <!-- 5. Answer Options Dropdown -->
-      <div class="form-group">
-        <label class="group-label" for="answerOption">Answer Options:</label>
-        <select id="answerOption" onchange="toggleAnswersOnly()">
-          <option value="no_answers" selected>No Answers</option>
-          <option value="inline">Show Answers</option>
-        </select>
+      <!-- 5. Show Answers Checkbox -->
+      <div class="form-group checkbox-group">
+        <label class="group-label">&nbsp;</label>
+        <label class="checkbox-label" for="showAnswersCheckbox">
+          <input type="checkbox" id="showAnswersCheckbox" onchange="toggleAnswersOnly()">
+          Show Answers
+        </label>
       </div>
     </div>
 
-    <!-- Responsive Action Buttons -->
+    <!-- Action Buttons -->
     <div class="btn-group">
       <button class="btn btn-generate" onclick="generateNewQuestions()">Generate New</button>
       <button class="btn btn-reset" onclick="resetToDefaults()">Reset</button>
@@ -421,6 +465,30 @@
   <script>
     let currentLineDigits = [2, 2];
     let currentProblems = [];
+
+    function getSelectedGroupingMode() {
+      const checked = document.querySelector('input[name="grouping"]:checked');
+      return checked ? checked.value : 'no_carry';
+    }
+
+    function setSelectedGroupingMode(mode) {
+      const checkboxes = document.querySelectorAll('input[name="grouping"]');
+      checkboxes.forEach(cb => {
+        cb.checked = (cb.value === mode);
+      });
+    }
+
+    function onGroupingCheckboxChange(changedCb) {
+      if (changedCb.checked) {
+        const checkboxes = document.querySelectorAll('input[name="grouping"]');
+        checkboxes.forEach(cb => {
+          if (cb !== changedCb) cb.checked = false;
+        });
+      } else {
+        changedCb.checked = true;
+      }
+      onSettingChange();
+    }
 
     function initQuestionDropdown() {
       const qSelect = document.getElementById('numQuestions');
@@ -477,9 +545,9 @@
     function resetToDefaults() {
       document.getElementById('numLines').value = "2";
       currentLineDigits = [2, 2];
-      document.getElementById('groupingMode').value = "no_carry";
+      setSelectedGroupingMode("no_carry");
       document.getElementById('numQuestions').value = "18";
-      document.getElementById('answerOption').value = "no_answers";
+      document.getElementById('showAnswersCheckbox').checked = false;
       renderLineDigitInputs();
       generateNewQuestions();
     }
@@ -488,9 +556,9 @@
       const settings = {
         numLines: document.getElementById('numLines').value,
         lineDigits: currentLineDigits,
-        groupingMode: document.getElementById('groupingMode').value,
+        groupingMode: getSelectedGroupingMode(),
         numQuestions: document.getElementById('numQuestions').value,
-        answerOption: document.getElementById('answerOption').value,
+        showAnswers: document.getElementById('showAnswersCheckbox').checked,
         problems: currentProblems
       };
       localStorage.setItem('addition_worksheet_state_v3', JSON.stringify(settings));
@@ -503,9 +571,11 @@
           const settings = JSON.parse(saved);
           if (settings.numLines) document.getElementById('numLines').value = settings.numLines;
           if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
-          if (settings.groupingMode) document.getElementById('groupingMode').value = settings.groupingMode;
+          if (settings.groupingMode) setSelectedGroupingMode(settings.groupingMode);
           if (settings.numQuestions) document.getElementById('numQuestions').value = settings.numQuestions;
-          if (settings.answerOption) document.getElementById('answerOption').value = settings.answerOption;
+          if (typeof settings.showAnswers !== 'undefined') {
+            document.getElementById('showAnswersCheckbox').checked = settings.showAnswers;
+          }
           if (Array.isArray(settings.problems) && settings.problems.length > 0) {
             currentProblems = settings.problems;
           }
@@ -523,13 +593,13 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    /* ACCURATE REGROUPING/CARRY CHECK FOR MULTI-LINE / MULTI-DIGIT ADDITION */
+    /* ACCURATE REGROUPING / CARRY CHECK FOR N-DIGITS */
     function hasRegrouping(addends) {
       let carry = 0;
       let strings = addends.map(a => String(a));
       let maxDigits = Math.max(...strings.map(s => s.length));
 
-      for (let col = 0; col < maxDigits; col++) {
+      for (let col = 0; col < maxDigits - 1; col++) {
         let colSum = carry;
         for (let s of strings) {
           let charIndex = s.length - 1 - col;
@@ -546,64 +616,18 @@
       return false;
     }
 
-    /* DIRECT NO-CARRY NUMBER GENERATOR TO PREVENT FALLBACK BUGS */
+    /* DIRECT NO-CARRY NUMBER GENERATOR */
     function generateNoCarryAddends(lineDigits) {
-      let maxDigits = Math.max(...lineDigits);
-      let addendsStr = new Array(lineDigits.length).fill("");
-
-      for (let col = maxDigits - 1; col >= 0; col--) {
-        let activeIndices = [];
-        for (let i = 0; i < lineDigits.length; i++) {
-          if (lineDigits[i] > col) {
-            activeIndices.push(i);
-          }
-        }
-
-        let isLeadingColFor = {};
-        for (let idx of activeIndices) {
-          if (lineDigits[idx] - 1 === col) {
-            isLeadingColFor[idx] = true;
-          }
-        }
-
-        let validCombinationFound = false;
-        for (let attempt = 0; attempt < 200; attempt++) {
-          let currentDigits = [];
-          let colSum = 0;
-
-          for (let idx of activeIndices) {
-            let minDigit = isLeadingColFor[idx] ? 1 : 0;
-            let digit = Math.floor(Math.random() * (9 - minDigit + 1)) + minDigit;
-            currentDigits.push({ idx, digit });
-            colSum += digit;
-          }
-
-          if (colSum < 10) {
-            for (let item of currentDigits) {
-              addendsStr[item.idx] += item.digit;
-            }
-            validCombinationFound = true;
-            break;
-          }
-        }
-
-        if (!validCombinationFound) {
-          for (let idx of activeIndices) {
-            let minDigit = isLeadingColFor[idx] ? 1 : 0;
-            let safeDigit = minDigit;
-            addendsStr[idx] += safeDigit;
-          }
+      for (let attempt = 0; attempt < 1000; attempt++) {
+        let addends = lineDigits.map(d => getRandomNumber(d));
+        if (!hasRegrouping(addends)) {
+          return addends;
         }
       }
-
-      return addendsStr.map(str => parseInt(str));
+      return lineDigits.map(d => Math.pow(10, d - 1));
     }
 
     function generateProblemForMode(lineDigits, mode) {
-      if (mode === 'any') {
-        return lineDigits.map(d => getRandomNumber(d));
-      }
-
       if (mode === 'no_carry') {
         return generateNoCarryAddends(lineDigits);
       }
@@ -620,11 +644,28 @@
 
     function generateNewQuestions() {
       const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
-      const groupingMode = document.getElementById('groupingMode').value;
+      const groupingMode = getSelectedGroupingMode();
+
+      // Build sequence of modes
+      let modeList = [];
+      if (groupingMode === 'any') {
+        const half = Math.floor(questionsCount / 2);
+        for (let i = 0; i < half; i++) modeList.push('no_carry');
+        for (let i = 0; i < questionsCount - half; i++) modeList.push('with_carry');
+
+        // Fisher-Yates Shuffle for true random distribution without repetition bias
+        for (let i = modeList.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [modeList[i], modeList[j]] = [modeList[j], modeList[i]];
+        }
+      } else {
+        modeList = new Array(questionsCount).fill(groupingMode);
+      }
 
       currentProblems = [];
       for (let i = 0; i < questionsCount; i++) {
-        const addends = generateProblemForMode(currentLineDigits, groupingMode);
+        const modeToUse = modeList[i];
+        const addends = generateProblemForMode(currentLineDigits, modeToUse);
         const sum = addends.reduce((a, b) => a + b, 0);
         currentProblems.push({ id: i + 1, addends, sum });
       }
@@ -639,7 +680,7 @@
     }
 
     function toggleAnswersOnly() {
-      const showAnswers = document.getElementById('answerOption').value === 'inline';
+      const showAnswers = document.getElementById('showAnswersCheckbox').checked;
       const answers = document.querySelectorAll('.answer');
       answers.forEach(ans => {
         if (showAnswers) ans.classList.remove('hidden');
@@ -657,7 +698,7 @@
         return;
       }
 
-      const answerOption = document.getElementById('answerOption').value;
+      const showAnswers = document.getElementById('showAnswersCheckbox').checked;
       const problemsPerPage = 18;
       const totalPages = Math.ceil(currentProblems.length / problemsPerPage);
 
@@ -671,7 +712,7 @@
             <div class="worksheet-title">Addition Worksheet Generator ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
           </div>
           <div class="problems-grid">
-            ${pageProblems.map(p => renderProblemCard(p, answerOption === 'inline')).join('')}
+            ${pageProblems.map(p => renderProblemCard(p, showAnswers)).join('')}
           </div>
         `;
         container.appendChild(mainSheet);

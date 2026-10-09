@@ -96,6 +96,41 @@
       box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
     }
 
+    /* Checkbox Styles */
+    .checkbox-group {
+      justify-content: flex-end;
+    }
+
+    .checkbox-options-container {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #334155;
+      cursor: pointer;
+      padding: 8px 10px;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 6px;
+      min-height: 38px;
+      user-select: none;
+      white-space: nowrap;
+    }
+
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--primary);
+      cursor: pointer;
+    }
+
     .line-digits-group {
       display: flex;
       gap: 6px;
@@ -186,7 +221,8 @@
       width: 100%;
       max-width: 100%;
       background: #ffffff;
-      padding: 10mm 10mm 10mm 5mm;
+      /* Padding: Top 10mm, Right 0mm, Bottom 10mm, Left 4mm */
+      padding: 10mm 0mm 10mm 4mm;
       margin: 10px 0;
       box-shadow: none;
       border: none;
@@ -213,12 +249,11 @@
       color: #000;
     }
 
-    /* Flexible Grid System: Landscape ya wide view me jyada columns fit honge */
     .problems-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 28px 16px;
-      justify-items: start;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 28px 18px;
+      align-items: flex-start;
       width: 100%;
     }
 
@@ -227,28 +262,31 @@
       gap: 4px;
       font-family: 'Courier New', Courier, monospace;
       font-weight: 700;
-      width: 100%;
-      justify-content: flex-start;
       color: #000;
-      padding-left: 0px;
       box-sizing: border-box;
+      flex: 0 0 126px; 
+    }
+
+    .problem-card.q1-card {
+      flex: 0 1 auto;
+      min-width: 110px;
+      margin-left: 0; /* Fixed to align properly with left padding */
     }
 
     .problem-num {
       font-size: 0.85rem;
-      color: #334155;
+      color: #dc2626; /* Sr. No. Red */
       min-width: 22px;
       padding-top: 2px;
       flex-shrink: 0;
     }
 
-    /* Standard Problem Layout */
     .math-block {
       display: inline-flex;
       flex-direction: column;
       align-items: flex-end;
       width: auto;
-      max-width: calc(100% - 24px);
+      max-width: 100%;
     }
 
     .number-row {
@@ -283,13 +321,13 @@
       width: 100%;
     }
 
-    /* Step-by-Step Solution Layout */
     .solution-block {
       display: inline-flex;
       flex-direction: column;
       align-items: flex-end;
       width: auto;
       font-size: 0.9rem;
+      max-width: 100%;
     }
 
     .sol-row {
@@ -342,20 +380,19 @@
       border-bottom: 2px solid #000000;
     }
 
-    /* Editable Input for Question 1 */
     .custom-input {
       font-family: 'Courier New', Courier, monospace;
       font-weight: 700;
       font-size: inherit;
       text-align: right;
-      width: auto;
-      max-width: 110px;
       border: none;
       background: transparent;
       padding: 0;
       outline: none;
       color: inherit;
       letter-spacing: inherit;
+      width: 4ch;
+      max-width: 100%;
     }
 
     .custom-input:focus {
@@ -371,15 +408,12 @@
 
     @media (max-width: 640px) {
       .app-title { font-size: 1.15rem; }
-      .paper-sheet { padding: 10mm 4mm 10mm 2mm; }
+      .paper-sheet { padding: 10mm 0mm 10mm 4mm; }
       .worksheet-title { font-size: 1.1rem; }
       .controls-panel { padding: 12px 10px; }
-      .problems-grid {
-        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-      }
+      .problem-card { flex: 0 0 110px; }
     }
 
-    /* Print adjustments for Landscape & Flexibility */
     @media print {
       @page {
         size: auto;
@@ -392,17 +426,21 @@
         max-width: none !important;
         box-shadow: none !important;
         margin: 0 !important;
-        padding: 5mm 10mm 5mm 5mm !important;
+        padding: 10mm 0mm 10mm 4mm !important;
       }
       .problems-grid {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
-        gap: 20px 12px !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 20px 14px !important;
       }
+      .problem-card { flex: 0 0 126px !important; }
+      .problem-card.q1-card { flex: 0 1 auto !important; margin-left: 0 !important; }
       .page-break {
         page-break-before: always !important;
         break-before: page !important;
       }
       .sol-final { color: #000000 !important; }
+      .problem-num { color: #dc2626 !important; }
     }
   </style>
 </head>
@@ -417,27 +455,37 @@
         <div id="lineDigitsContainer" class="line-digits-group"></div>
       </div>
 
-      <!-- Regrouping / Carry Dropdown -->
+      <!-- Regrouping (Carry) Checkboxes -->
       <div class="form-group">
-        <label class="group-label" for="groupingMode">Regrouping (Carry):</label>
-        <select id="groupingMode" onchange="saveSettings()">
-          <option value="no_carry" selected>Without Carrying</option>
-          <option value="with_carry">With Carrying</option>
-          <option value="any">Mixed</option>
-        </select>
+        <label class="group-label">Regrouping (Carry):</label>
+        <div class="checkbox-options-container">
+          <label class="checkbox-label">
+            <input type="checkbox" name="grouping" value="no_carry" checked onchange="onGroupingCheckboxChange(this)">
+            Without Carrying
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="grouping" value="with_carry" onchange="onGroupingCheckboxChange(this)">
+            With Carrying
+          </label>
+          <label class="checkbox-label">
+            <input type="checkbox" name="grouping" value="any" onchange="onGroupingCheckboxChange(this)">
+            Mixed
+          </label>
+        </div>
       </div>
 
       <div class="form-group">
-        <label class="group-label" for="numQuestions"></label>
+        <label class="group-label" for="numQuestions">No. of Questions:</label>
         <select id="numQuestions" onchange="saveSettings()"></select>
       </div>
 
-      <div class="form-group">
-        <label class="group-label" for="answerOption">Answer Options:</label>
-        <select id="answerOption" onchange="saveSettings()">
-          <option value="no_answers" selected>No Answers</option>
-          <option value="inline">Show Answers</option>
-        </select>
+      <!-- Show Answers Checkbox -->
+      <div class="form-group checkbox-group">
+        <label class="group-label">&nbsp;</label>
+        <label class="checkbox-label" for="showAnswersCheckbox">
+          <input type="checkbox" id="showAnswersCheckbox" onchange="saveSettings()">
+          Show Answers
+        </label>
       </div>
     </div>
 
@@ -452,6 +500,30 @@
   <script>
     let currentLineDigits = [2, 1];
     let problems = [];
+
+    function getSelectedGroupingMode() {
+      const checked = document.querySelector('input[name="grouping"]:checked');
+      return checked ? checked.value : 'no_carry';
+    }
+
+    function setSelectedGroupingMode(mode) {
+      const checkboxes = document.querySelectorAll('input[name="grouping"]');
+      checkboxes.forEach(cb => {
+        cb.checked = (cb.value === mode);
+      });
+    }
+
+    function onGroupingCheckboxChange(changedCb) {
+      if (changedCb.checked) {
+        const checkboxes = document.querySelectorAll('input[name="grouping"]');
+        checkboxes.forEach(cb => {
+          if (cb !== changedCb) cb.checked = false;
+        });
+      } else {
+        changedCb.checked = true;
+      }
+      saveSettings();
+    }
 
     function initQuestionDropdown() {
       const qSelect = document.getElementById('numQuestions');
@@ -500,29 +572,31 @@
     function persistState() {
       const settings = {
         lineDigits: currentLineDigits,
-        groupingMode: document.getElementById('groupingMode').value,
+        groupingMode: getSelectedGroupingMode(),
         numQuestions: document.getElementById('numQuestions').value,
-        answerOption: document.getElementById('answerOption').value,
+        showAnswers: document.getElementById('showAnswersCheckbox').checked,
         problems: problems
       };
-      localStorage.setItem('multiplication_worksheet_settings_v22', JSON.stringify(settings));
+      localStorage.setItem('multiplication_worksheet_settings_v28', JSON.stringify(settings));
     }
 
     function saveSettings() {
       persistState();
-      const answerOption = document.getElementById('answerOption').value;
-      renderWorksheetDOM(answerOption);
+      const showAnswers = document.getElementById('showAnswersCheckbox').checked;
+      renderWorksheetDOM(showAnswers);
     }
 
     function loadSavedChoices() {
-      const saved = localStorage.getItem('multiplication_worksheet_settings_v22');
+      const saved = localStorage.getItem('multiplication_worksheet_settings_v28');
       if (saved) {
         try {
           const settings = JSON.parse(saved);
           if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
-          if (settings.groupingMode) document.getElementById('groupingMode').value = settings.groupingMode;
+          if (settings.groupingMode) setSelectedGroupingMode(settings.groupingMode);
           if (settings.numQuestions) document.getElementById('numQuestions').value = settings.numQuestions;
-          if (settings.answerOption) document.getElementById('answerOption').value = settings.answerOption;
+          if (typeof settings.showAnswers !== 'undefined') {
+            document.getElementById('showAnswersCheckbox').checked = settings.showAnswers;
+          }
           if (Array.isArray(settings.problems) && settings.problems.length > 0) {
             problems = settings.problems;
           }
@@ -535,9 +609,9 @@
 
     function resetToDefaults() {
       currentLineDigits = [2, 1];
-      document.getElementById('groupingMode').value = "no_carry";
+      setSelectedGroupingMode("no_carry");
       document.getElementById('numQuestions').value = "18";
-      document.getElementById('answerOption').value = "no_answers";
+      document.getElementById('showAnswersCheckbox').checked = false;
       renderLineDigitInputs();
       generateWorksheet();
     }
@@ -583,12 +657,6 @@
     }
 
     function generateSingleProblem(topDigits, bottomDigits, mode) {
-      if (mode === 'any') {
-        const top = getRandomNumber(topDigits);
-        const bottom = getRandomNumber(bottomDigits);
-        return { top, bottom, product: top * bottom };
-      }
-
       if (mode === 'no_carry') {
         for (let attempt = 0; attempt < 500; attempt++) {
           const top = getRandomNumber(topDigits);
@@ -616,11 +684,26 @@
 
     function generateWorksheet() {
       const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
-      const groupingMode = document.getElementById('groupingMode').value;
+      const groupingMode = getSelectedGroupingMode();
+
+      let modeList = [];
+      if (groupingMode === 'any') {
+        const half = Math.floor(questionsCount / 2);
+        for (let i = 0; i < half; i++) modeList.push('no_carry');
+        for (let i = 0; i < questionsCount - half; i++) modeList.push('with_carry');
+
+        for (let i = modeList.length - 1; i > 0; i--) {
+          const j = Math.floor(Math.random() * (i + 1));
+          [modeList[i], modeList[j]] = [modeList[j], modeList[i]];
+        }
+      } else {
+        modeList = new Array(questionsCount).fill(groupingMode);
+      }
 
       problems = [];
       for (let i = 0; i < questionsCount; i++) {
-        const p = generateSingleProblem(currentLineDigits[0], currentLineDigits[1], groupingMode);
+        const modeToUse = modeList[i];
+        const p = generateSingleProblem(currentLineDigits[0], currentLineDigits[1], modeToUse);
         p.id = i + 1;
         problems.push(p);
       }
@@ -628,7 +711,7 @@
       saveSettings();
     }
 
-    function renderWorksheetDOM(answerOption) {
+    function renderWorksheetDOM(showAnswers) {
       const container = document.getElementById('worksheetContainer');
       container.innerHTML = '';
 
@@ -644,8 +727,8 @@
           <div class="worksheet-header">
             <div class="worksheet-title">Multiplication Worksheet ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
           </div>
-          <div class="problems-grid">
-            ${pageProblems.map(p => renderCard(p, answerOption === 'inline')).join('')}
+          <div class="problems-grid" id="grid-${page}">
+            ${pageProblems.map(p => renderCard(p, showAnswers)).join('')}
           </div>
         `;
         container.appendChild(mainSheet);
@@ -661,7 +744,8 @@
         p.product = p.top * p.bottom;
 
         if (inputEl) {
-          inputEl.style.width = Math.max((inputEl.value.length + 1) * 11, 25) + 'px';
+          const len = Math.max(String(val).length, 1);
+          inputEl.style.width = (len + 1.2) + 'ch';
         }
 
         const stepsContainer = document.getElementById('card-1-steps-container');
@@ -676,7 +760,7 @@
     function renderCard(p, showInline) {
       const isEditableQ1 = (p.id === 1);
       return `
-        <div class="problem-card" id="card-${p.id}">
+        <div class="problem-card ${isEditableQ1 ? 'q1-card' : ''}" id="card-${p.id}">
           <span class="problem-num">${p.id})</span>
           ${renderCardContent(p, showInline, isEditableQ1)}
         </div>
@@ -684,12 +768,15 @@
     }
 
     function renderCardContent(p, showInline, isEditable) {
+      const topLen = Math.max(String(p.top).length, 1);
+      const bottomLen = Math.max(String(p.bottom).length, 1);
+
       if (!showInline) {
         if (isEditable) {
           return `
             <div class="math-block">
-              <div class="number-row"><input type="number" class="custom-input" value="${p.top}" oninput="updateCustomProblemInput('top', this.value, this);" onfocus="this.select()" style="width: ${Math.max(String(p.top).length * 11, 25)}px;" /></div>
-              <div class="number-row bottom"><input type="number" class="custom-input" value="${p.bottom}" oninput="updateCustomProblemInput('bottom', this.value, this);" onfocus="this.select()" style="width: ${Math.max(String(p.bottom).length * 11, 25)}px;" /></div>
+              <div class="number-row"><input type="number" class="custom-input" value="${p.top}" oninput="updateCustomProblemInput('top', this.value, this);" onfocus="this.select()" style="width: ${topLen + 1.2}ch;" /></div>
+              <div class="number-row bottom"><input type="number" class="custom-input" value="${p.bottom}" oninput="updateCustomProblemInput('bottom', this.value, this);" onfocus="this.select()" style="width: ${bottomLen + 1.2}ch;" /></div>
               <div class="answer-space"></div>
             </div>
           `;
@@ -706,8 +793,8 @@
         if (isEditable) {
           return `
             <div class="solution-block">
-              <div class="sol-row"><input type="number" class="custom-input" value="${p.top}" oninput="updateCustomProblemInput('top', this.value, this);" onfocus="this.select()" style="width: ${Math.max(String(p.top).length * 11, 25)}px;" /></div>
-              <div class="sol-row bottom"><input type="number" class="custom-input" value="${p.bottom}" oninput="updateCustomProblemInput('bottom', this.value, this);" onfocus="this.select()" style="width: ${Math.max(String(p.bottom).length * 11, 25)}px;" /></div>
+              <div class="sol-row"><input type="number" class="custom-input" value="${p.top}" oninput="updateCustomProblemInput('top', this.value, this);" onfocus="this.select()" style="width: ${topLen + 1.2}ch;" /></div>
+              <div class="sol-row bottom"><input type="number" class="custom-input" value="${p.bottom}" oninput="updateCustomProblemInput('bottom', this.value, this);" onfocus="this.select()" style="width: ${bottomLen + 1.2}ch;" /></div>
               <div id="card-1-steps-container" style="display:contents;">
                 ${renderStepsContent(p, true)}
               </div>
@@ -776,7 +863,7 @@
       if (problems.length === 0) {
         generateWorksheet();
       } else {
-        renderWorksheetDOM(document.getElementById('answerOption').value);
+        renderWorksheetDOM(document.getElementById('showAnswersCheckbox').checked);
       }
     };
   </script>
