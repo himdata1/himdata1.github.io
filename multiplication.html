@@ -8,7 +8,7 @@
     :root {
       --primary: #4f46e5;
       --primary-hover: #4338ca;
-      --bg-workspace: #cbd5e1;
+      --bg-workspace: #ffffff;
       --text: #0f172a;
     }
 
@@ -32,7 +32,7 @@
       background: #ffffff;
       padding: 16px;
       border-bottom: 2px solid #94a3b8;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
       display: flex;
       flex-direction: column;
       align-items: center;
@@ -177,19 +177,20 @@
     #worksheetContainer {
       display: flex;
       flex-direction: column;
-      align-items: center;
+      align-items: flex-start;
       width: 100%;
-      padding: 10px 15px;
+      padding: 10px 5px;
     }
 
     .paper-sheet {
-      width: 210mm;
+      width: 100%;
       max-width: 100%;
       background: #ffffff;
-      padding: 15mm;
-      margin: 15px auto;
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
-      border-radius: 2px;
+      padding: 10mm 10mm 10mm 5mm;
+      margin: 10px 0;
+      box-shadow: none;
+      border: none;
+      border-radius: 0;
       box-sizing: border-box;
       position: relative;
     }
@@ -212,11 +213,12 @@
       color: #000;
     }
 
+    /* Flexible Grid System: Landscape ya wide view me jyada columns fit honge */
     .problems-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 28px 8px;
-      justify-items: center;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 28px 16px;
+      justify-items: start;
       width: 100%;
     }
 
@@ -228,7 +230,7 @@
       width: 100%;
       justify-content: flex-start;
       color: #000;
-      padding-left: 2px;
+      padding-left: 0px;
       box-sizing: border-box;
     }
 
@@ -369,20 +371,32 @@
 
     @media (max-width: 640px) {
       .app-title { font-size: 1.15rem; }
-      .paper-sheet { padding: 10mm 6mm; }
+      .paper-sheet { padding: 10mm 4mm 10mm 2mm; }
       .worksheet-title { font-size: 1.1rem; }
       .controls-panel { padding: 12px 10px; }
+      .problems-grid {
+        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+      }
     }
 
+    /* Print adjustments for Landscape & Flexibility */
     @media print {
+      @page {
+        size: auto;
+        margin: 5mm;
+      }
       .no-print { display: none !important; }
       body { background: #ffffff !important; padding: 0 !important; }
       .paper-sheet {
-        width: 210mm !important;
+        width: 100% !important;
         max-width: none !important;
         box-shadow: none !important;
         margin: 0 !important;
-        padding: 10mm !important;
+        padding: 5mm 10mm 5mm 5mm !important;
+      }
+      .problems-grid {
+        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
+        gap: 20px 12px !important;
       }
       .page-break {
         page-break-before: always !important;
@@ -460,7 +474,6 @@
         item.className = 'line-digit-item';
         
         let optionsHtml = '';
-        // Updated maxLimit for index 0 (Top line) to 7
         const maxLimit = (index === 0) ? 7 : 3;
         
         for (let d = 1; d <= maxLimit; d++) {
