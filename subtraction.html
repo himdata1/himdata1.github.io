@@ -269,7 +269,7 @@
 
     .problem-num {
       font-size: 0.85rem;
-      color: #dc2626 !important; /* Made Red as requested */
+      color: #dc2626 !important;
       min-width: 22px;
       padding-top: 2px;
       flex-shrink: 0;
@@ -281,27 +281,15 @@
       align-items: flex-end;
       width: auto;
       max-width: calc(100% - 24px);
+      font-size: 1.3rem;
     }
-
-    .digits-1-3 { font-size: 1.3rem; }
-    .digits-4   { font-size: 1.15rem; }
-    .digits-5   { font-size: 1.05rem; }
-    .digits-6   { font-size: 0.95rem; }
-    .digits-7   { font-size: 0.88rem; }
-    .digits-8   { font-size: 0.80rem; }
-
-    .digits-1-3 .number-row { letter-spacing: 2px; }
-    .digits-4 .number-row   { letter-spacing: 1.5px; }
-    .digits-5 .number-row   { letter-spacing: 1px; }
-    .digits-6 .number-row   { letter-spacing: 0.5px; }
-    .digits-7 .number-row   { letter-spacing: 0px; }
-    .digits-8 .number-row   { letter-spacing: -0.5px; }
 
     .number-row {
       text-align: right;
       width: 100%;
       padding-right: 2px;
       white-space: nowrap;
+      letter-spacing: 2px;
     }
 
     .number-row.bottom {
@@ -334,6 +322,7 @@
       border-bottom: 2px solid #000000;
       padding-bottom: 2px;
       white-space: nowrap;
+      letter-spacing: 2px;
     }
 
     .answer.hidden {
@@ -376,7 +365,7 @@
         break-before: page !important;
       }
       .answer { color: #000000 !important; }
-      .problem-num { color: #dc2626 !important; } /* Ensure printed SR. No. stays red */
+      .problem-num { color: #dc2626 !important; }
     }
   </style>
 </head>
@@ -475,7 +464,7 @@
         const opt = document.createElement('option');
         opt.value = i;
         opt.textContent = `${i} Questions`;
-        if (i === 18) opt.selected = true; // Set default to 18 questions
+        if (i === 18) opt.selected = true;
         qSelect.appendChild(opt);
       }
     }
@@ -625,10 +614,13 @@
         
         const topLength = currentLineDigits[0];
         const paddedTop = padZeroes(top, topLength);
-        const paddedBottom = padZeroes(bottom, topLength);
+        
+        // Bottom number par leading zeroes nahi lagane hain taaki actual digits hi rahein
+        const rawBottom = String(bottom);
+        
         const paddedDiff = padZeroes(diff, topLength);
 
-        generatedProblems.push({ id: i + 1, top: paddedTop, bottom: paddedBottom, diff: paddedDiff });
+        generatedProblems.push({ id: i + 1, top: paddedTop, bottom: rawBottom, diff: paddedDiff });
       }
 
       renderWorksheetUI();
@@ -661,19 +653,10 @@
     }
 
     function renderProblemCard(p, showAnswer) {
-      const maxLen = Math.max(String(p.top).length, String(p.bottom).length, String(p.diff).length);
-      
-      let sizeClass = 'digits-1-3';
-      if (maxLen === 4) sizeClass = 'digits-4';
-      else if (maxLen === 5) sizeClass = 'digits-5';
-      else if (maxLen === 6) sizeClass = 'digits-6';
-      else if (maxLen === 7) sizeClass = 'digits-7';
-      else if (maxLen >= 8) sizeClass = 'digits-8';
-
       return `
         <div class="problem-card">
           <span class="problem-num">${p.id})</span>
-          <div class="math-block ${sizeClass}">
+          <div class="math-block">
             <div class="number-row">${p.top}</div>
             <div class="number-row bottom">${p.bottom}</div>
             <div class="answer ${showAnswer ? '' : 'hidden'}">${p.diff}</div>

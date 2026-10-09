@@ -14,7 +14,7 @@
   --bg-workspace: #ffffff; /* White background */
 
   /* Digit cell width */
-  --digit-width: 26px;
+  --digit-width: 28px;
 }
 
 * {
@@ -196,7 +196,7 @@ body {
   justify-content: space-between;
   align-items: flex-end;
   border-bottom: 2px solid #000;
-  padding-bottom: 6px;
+  padding-bottom: 6mm;
   margin-bottom: 12px;
   gap: 10px;
 }
@@ -211,7 +211,7 @@ body {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   column-gap: 16px;
-  row-gap: 16px;
+  row-gap: 24px;
   width: 100%;
   align-items: start;
 }
@@ -239,7 +239,7 @@ body {
 
 .long-division-container {
   font-family: "Courier New", Courier, monospace;
-  font-size: 1.15rem;
+  font-size: 1.3rem !important; /* Updated font size to 1.3rem */
   font-weight: 700;
   line-height: 1;
   color: #000;
@@ -250,7 +250,7 @@ body {
 .division-header {
   position: relative;
   width: 100%;
-  height: 26px;
+  height: 30px;
   margin-left: calc(var(--digit-width) * 1.8);
 }
 
@@ -258,7 +258,7 @@ body {
   position: absolute;
   top: 0;
   left: 0;
-  height: 26px;
+  height: 30px;
   display: flex;
   white-space: nowrap;
   z-index: 2;
@@ -274,7 +274,7 @@ body {
 .division-line {
   display: flex;
   align-items: flex-start;
-  height: 28px;
+  height: 32px;
 }
 
 .divisor {
@@ -290,13 +290,13 @@ body {
   position: relative;
   border-top: 2px solid #000;
   border-left: 2px solid #000;
-  height: 28px;
+  height: 32px;
   transition: width 0.05s ease-out;
 }
 
 .digit-grid {
   display: flex;
-  height: 26px;
+  height: 30px;
   white-space: nowrap;
   transition: width 0.05s ease-out;
 }
@@ -305,8 +305,8 @@ body {
   width: var(--digit-width);
   min-width: var(--digit-width);
   text-align: center;
-  height: 26px;
-  line-height: 26px;
+  height: 30px;
+  line-height: 30px;
 }
 
 .work-area {
@@ -318,7 +318,7 @@ body {
 
 .work-row {
   position: relative;
-  height: 26px;
+  height: 28px;
   width: 100%;
 }
 
@@ -326,15 +326,15 @@ body {
   position: absolute;
   top: 0;
   display: flex;
-  height: 24px;
-  line-height: 24px;
+  height: 26px;
+  line-height: 26px;
 }
 
 .step-cell {
   width: var(--digit-width);
   min-width: var(--digit-width);
   text-align: center;
-  height: 24px;
+  height: 26px;
 }
 
 .work-row.subtraction-row .step-cells-container {
@@ -367,13 +367,13 @@ body {
 /* Editable Input Styles */
 .editable-full-dividend {
   width: 100%;
-  height: 26px;
-  line-height: 26px;
+  height: 30px;
+  line-height: 30px;
   border: none;
   background: transparent;
   outline: none;
   font-family: "Courier New", Courier, monospace;
-  font-size: 1.15rem;
+  font-size: 1.3rem !important;
   font-weight: 700;
   color: inherit;
   padding: 0;
@@ -394,8 +394,8 @@ body {
   margin: 0;
   text-align: right;
   width: 100%;
-  height: 26px;
-  line-height: 26px;
+  height: 30px;
+  line-height: 30px;
 }
 
 @media print {
@@ -648,11 +648,11 @@ function renderWorksheetDOM() {
     }
   });
   
-  let computedCellWidth = 26;
+  let computedCellWidth = 28;
   if (maxDigits >= 7) {
-    computedCellWidth = 21;
+    computedCellWidth = 23;
   } else if (maxDigits >= 5) {
-    computedCellWidth = 24;
+    computedCellWidth = 26;
   }
   document.documentElement.style.setProperty('--digit-width', `${computedCellWidth}px`);
 
@@ -660,7 +660,6 @@ function renderWorksheetDOM() {
   const container = document.getElementById("worksheetContainer");
   container.innerHTML = "";
 
-  /* Landscape mode fits more problems per page (e.g. 9 or 12 depending on rows) */
   const problemsPerPage = 9;
   const totalPages = Math.ceil(problems.length / problemsPerPage);
 
@@ -727,7 +726,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   const dividendWidth = dividendString.length * cellWidth;
 
   if (isFirst) {
-    const charWidthEstimate = 11.04;
+    const charWidthEstimate = 12.5;
     const letterSpacing = cellWidth - charWidthEstimate;
     const initialIndent = letterSpacing / 2;
 
@@ -830,7 +829,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
 function handleDividendInput(input) {
   const val = input.value;
   const currentLength = Math.max(1, val.length);
-  const cellWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--digit-width')) || 26;
+  const cellWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--digit-width')) || 28;
   const newWidth = currentLength * cellWidth;
 
   const area = document.getElementById("first-dividend-area");
@@ -838,7 +837,7 @@ function handleDividendInput(input) {
   if (area) area.style.width = newWidth + "px";
   if (grid) grid.style.width = newWidth + "px";
 
-  const charWidthEstimate = 11.04;
+  const charWidthEstimate = 12.5;
   const letterSpacing = cellWidth - charWidthEstimate;
   const initialIndent = letterSpacing / 2;
 
