@@ -254,18 +254,34 @@
       color: #000;
     }
 
-    /* FLEXIBLE RESPONSIVE GRID */
+    /* RESPONSIVE GRID: Default 2 columns (Portrait), more columns on Landscape/Wider screens */
     .problems-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-      gap: 28px 16px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 20px 16px;
       justify-items: start;
       width: 100%;
     }
 
+    /* Tablet & Small Landscape Screens: 3 Columns */
+    @media (min-width: 768px) {
+      .problems-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px 20px;
+      }
+    }
+
+    /* Desktop & Large Landscape Screens: 4 Columns */
+    @media (min-width: 1100px) {
+      .problems-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px 24px;
+      }
+    }
+
     .problem-card {
       display: flex;
-      gap: 4px;
+      gap: 6px;
       font-family: 'Courier New', Courier, monospace;
       font-weight: 700;
       width: 100%;
@@ -289,7 +305,7 @@
       flex-direction: column;
       align-items: flex-end;
       width: auto;
-      max-width: calc(100% - 24px);
+      max-width: calc(100% - 28px);
       font-size: 1.3rem !important;
     }
 
@@ -349,9 +365,6 @@
       .paper-sheet { padding: 10mm 4mm 10mm 2mm; }
       .worksheet-title { font-size: 1.1rem; }
       .controls-panel { padding: 10px 8px; }
-      .problems-grid {
-        grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
-      }
     }
 
     /* Print Styles */
@@ -370,8 +383,8 @@
         padding: 5mm 10mm 5mm 5mm !important;
       }
       .problems-grid {
-        grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)) !important;
-        gap: 20px 12px !important;
+        grid-template-columns: repeat(3, 1fr) !important;
+        gap: 20px 16px !important;
       }
       .page-break {
         page-break-before: always !important;
