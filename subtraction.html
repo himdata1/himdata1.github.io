@@ -238,6 +238,7 @@
       margin-bottom: 25px;
       flex-wrap: wrap;
       gap: 10px;
+      padding-right: 20px;
     }
 
     .worksheet-title {
@@ -245,6 +246,15 @@
       font-weight: 800;
       letter-spacing: -0.5px;
       color: #000;
+    }
+
+    /* Page number on right side with proper offset */
+    .worksheet-page-num {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #000;
+      margin-left: auto;
+      margin-right: 15px;
     }
 
     .problems-grid {
@@ -284,11 +294,10 @@
       font-size: 1.3rem;
     }
 
-    /* Top & bottom rows have left padding reserved for minus (-) sign alignment */
     .number-row {
       text-align: right;
       width: 100%;
-      padding-left: 1.5em; /* Space reserved on extreme left */
+      padding-left: 1.5em;
       padding-right: 2px;
       white-space: nowrap;
       letter-spacing: 2px;
@@ -315,7 +324,7 @@
       color: #1d4ed8;
       text-align: right;
       width: 100%;
-      padding-left: 1.5em; /* Matches top/bottom row alignment */
+      padding-left: 1.5em;
       padding-right: 2px;
       min-height: 1.3em;
       font-weight: 800;
@@ -340,6 +349,7 @@
       .paper-sheet { padding: 10mm 2mm; }
       .worksheet-title { font-size: 1.1rem; }
       .controls-panel { padding: 12px 10px; }
+      .worksheet-page-num { margin-right: 5px; }
     }
 
     @media print {
@@ -356,6 +366,9 @@
         border: none !important;
         margin: 0 !important;
         padding: 5mm !important;
+      }
+      .worksheet-header {
+        padding-right: 15mm !important;
       }
       .problems-grid {
         grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
@@ -378,13 +391,11 @@
     <h1 class="app-title">Subtraction Worksheet Generator</h1>
 
     <div class="controls-wrapper">
-      <!-- Digits Per Line Controls -->
       <div class="form-group">
         <label class="group-label">Digits Per Line:</label>
         <div id="lineDigitsContainer" class="line-digits-group"></div>
       </div>
 
-      <!-- Regrouping (Borrow) Checkboxes -->
       <div class="form-group">
         <label class="group-label">Regrouping (Borrow):</label>
         <div class="checkbox-options-container">
@@ -403,13 +414,11 @@
         </div>
       </div>
 
-      <!-- Questions Count Dropdown -->
       <div class="form-group">
         <label class="group-label" for="numQuestions">No. of Questions:</label>
         <select id="numQuestions" onchange="saveSettings()"></select>
       </div>
 
-      <!-- Show Answers Checkbox -->
       <div class="form-group checkbox-group">
         <label class="group-label">&nbsp;</label>
         <label class="checkbox-label" for="showAnswersCheckbox">
@@ -419,7 +428,6 @@
       </div>
     </div>
 
-    <!-- Action Buttons -->
     <div class="btn-group">
       <button class="btn btn-generate" onclick="generateNewQuestions()">Generate New</button>
       <button class="btn btn-reset" onclick="resetToDefaults()">Reset</button>
@@ -427,7 +435,6 @@
 
   </div>
 
-  <!-- Printable Container -->
   <div id="worksheetContainer"></div>
 
   <script>
@@ -517,11 +524,11 @@
         numQuestions: document.getElementById('numQuestions').value,
         showAnswers: document.getElementById('showAnswersCheckbox').checked
       };
-      localStorage.setItem('subtraction_worksheet_settings_v4', JSON.stringify(settings));
+      localStorage.setItem('subtraction_worksheet_settings_v5', JSON.stringify(settings));
     }
 
     function loadSavedChoices() {
-      const saved = localStorage.getItem('subtraction_worksheet_settings_v4');
+      const saved = localStorage.getItem('subtraction_worksheet_settings_v5');
       if (saved) {
         try {
           const settings = JSON.parse(saved);
@@ -615,10 +622,7 @@
         
         const topLength = currentLineDigits[0];
         const paddedTop = padZeroes(top, topLength);
-        
-        // Bottom number par leading zeroes nahi lagane hain taaki actual digits hi rahein
         const rawBottom = String(bottom);
-        
         const paddedDiff = padZeroes(diff, topLength);
 
         generatedProblems.push({ id: i + 1, top: paddedTop, bottom: rawBottom, diff: paddedDiff });
@@ -639,18 +643,25 @@
       if (generatedProblems.length === 0) return;
 
       const showAnswers = document.getElementById('showAnswersCheckbox').checked;
-      
-      const mainSheet = document.createElement('div');
-      mainSheet.className = 'paper-sheet';
-      mainSheet.innerHTML = `
-        <div class="worksheet-header">
-          <div class="worksheet-title">Subtraction Worksheet Generator</div>
-        </div>
-        <div class="problems-grid">
-          ${generatedProblems.map(p => renderProblemCard(p, showAnswers)).join('')}
-        </div>
-      `;
-      container.appendChild(mainSheet);
+      const problemsPerPage = 18;
+      const totalPages = Math.ceil(generatedProblems.length / problemsPerPage);
+
+      for (let page = 0; page < totalPages; page++) {
+        const pageProblems = generatedProblems.slice(page * problemsPerPage, (page + 1) * problemsPerPage);
+        
+        const mainSheet = document.createElement('div');
+        mainSheet.className = 'paper-sheet' + (page > 0 ? ' page-break' : '');
+        mainSheet.innerHTML = `
+          <div class="worksheet-header">
+            <div class="worksheet-title">Subtraction Worksheet</div>
+            <div class="worksheet-page-num">${totalPages > 1 ? `Page ${page + 1}/${totalPages}` : ''}</div>
+          </div>
+          <div class="problems-grid">
+            ${pageProblems.map(p => renderProblemCard(p, showAnswers)).join('')}
+          </div>
+        `;
+        container.appendChild(mainSheet);
+      }
     }
 
     function renderProblemCard(p, showAnswer) {

@@ -254,6 +254,14 @@
       color: #000;
     }
 
+    /* Page number right side styling */
+    .worksheet-page-num {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #000;
+      margin-left: auto;
+    }
+
     /* BALANCED AUTO-FIT GRID: 3+ questions per row with comfortable spacing */
     .problems-grid {
       display: grid;
@@ -292,11 +300,10 @@
       font-size: 1.3rem !important;
     }
 
-    /* Reserve 2-character width space on the left for all addend rows to align digits */
     .addend {
       text-align: right;
       width: 100%;
-      padding-left: 1.5em; /* Extreme left spacing reserve */
+      padding-left: 1.5em;
       padding-right: 2px;
       font-size: 1.3rem !important;
       letter-spacing: 1px;
@@ -729,7 +736,8 @@
         mainSheet.className = 'paper-sheet' + (page > 0 ? ' page-break' : '');
         mainSheet.innerHTML = `
           <div class="worksheet-header">
-            <div class="worksheet-title">Addition Worksheet Generator ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
+            <div class="worksheet-title">Addition Worksheet Generator</div>
+            <div class="worksheet-page-num">${totalPages > 1 ? `Page ${page + 1}/${totalPages}` : ''}</div>
           </div>
           <div class="problems-grid">
             ${pageProblems.map(p => renderProblemCard(p, showAnswers)).join('')}

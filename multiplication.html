@@ -221,7 +221,6 @@
       width: 100%;
       max-width: 100%;
       background: #ffffff;
-      /* Padding: Top 10mm, Right 0mm, Bottom 10mm, Left 4mm */
       padding: 10mm 0mm 10mm 4mm;
       margin: 10px 0;
       box-shadow: none;
@@ -240,6 +239,7 @@
       margin-bottom: 25px;
       flex-wrap: wrap;
       gap: 10px;
+      padding-right: 20px; /* Right side padding so it doesn't touch extreme edge */
     }
 
     .worksheet-title {
@@ -247,6 +247,15 @@
       font-weight: 800;
       letter-spacing: -0.5px;
       color: #000;
+    }
+
+    /* Page number with offset from extreme right */
+    .worksheet-page-num {
+      font-size: 1.1rem;
+      font-weight: 700;
+      color: #000;
+      margin-left: auto;
+      margin-right: 15px; /* Shifted slightly to the left */
     }
 
     .problems-grid {
@@ -261,7 +270,7 @@
       display: flex;
       gap: 4px;
       font-family: 'Courier New', Courier, monospace;
-      font-size: 1.3rem; /* Questions font size */
+      font-size: 1.3rem;
       font-weight: 700;
       color: #000;
       box-sizing: border-box;
@@ -271,12 +280,12 @@
     .problem-card.q1-card {
       flex: 0 1 auto;
       min-width: 110px;
-      margin-left: 0; /* Fixed to align properly with left padding */
+      margin-left: 0;
     }
 
     .problem-num {
       font-size: 1.3rem;
-      color: #dc2626; /* Sr. No. Red */
+      color: #dc2626;
       min-width: 22px;
       padding-top: 2px;
       flex-shrink: 0;
@@ -413,6 +422,7 @@
       .worksheet-title { font-size: 1.1rem; }
       .controls-panel { padding: 12px 10px; }
       .problem-card { flex: 0 0 110px; }
+      .worksheet-page-num { margin-right: 5px; }
     }
 
     @media print {
@@ -428,6 +438,9 @@
         box-shadow: none !important;
         margin: 0 !important;
         padding: 10mm 0mm 10mm 4mm !important;
+      }
+      .worksheet-header {
+        padding-right: 15mm !important; /* Print standard offset */
       }
       .problems-grid {
         display: flex !important;
@@ -456,7 +469,6 @@
         <div id="lineDigitsContainer" class="line-digits-group"></div>
       </div>
 
-      <!-- Regrouping (Carry) Checkboxes -->
       <div class="form-group">
         <label class="group-label">Regrouping (Carry):</label>
         <div class="checkbox-options-container">
@@ -480,7 +492,6 @@
         <select id="numQuestions" onchange="saveSettings()"></select>
       </div>
 
-      <!-- Show Answers Checkbox -->
       <div class="form-group checkbox-group">
         <label class="group-label">&nbsp;</label>
         <label class="checkbox-label" for="showAnswersCheckbox">
@@ -726,7 +737,8 @@
         mainSheet.className = 'paper-sheet' + (page > 0 ? ' page-break' : '');
         mainSheet.innerHTML = `
           <div class="worksheet-header">
-            <div class="worksheet-title">Multiplication Worksheet ${totalPages > 1 ? `(Page ${page + 1}/${totalPages})` : ''}</div>
+            <div class="worksheet-title">Multiplication Worksheet</div>
+            <div class="worksheet-page-num">${totalPages > 1 ? `Page ${page + 1}/${totalPages}` : ''}</div>
           </div>
           <div class="problems-grid" id="grid-${page}">
             ${pageProblems.map(p => renderCard(p, showAnswers)).join('')}

@@ -766,8 +766,8 @@ function renderWorksheetDOM() {
       <div class="worksheet-header">
         <div class="worksheet-title">
           Long Division Worksheet
-          ${totalPages > 1 ? `<span style="font-size:.82rem; font-weight:600;"> Page ${page + 1}/${totalPages}</span>` : ""}
         </div>
+        ${totalPages > 1 ? `<div style="font-size:.9rem; font-weight:700;">Page ${page + 1}/${totalPages}</div>` : ""}
       </div>
       <div class="problems-grid">
         ${pageProblems.map((p, idx) => renderCard(p, showAnswers, idx === 0 && page === 0, computedCellWidth)).join("")}
@@ -807,10 +807,11 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
   const decList = p.decimalQuotientList || [];
   const decStepsCount = p.decimalSteps ? p.decimalSteps.length : 0;
+  const hasIntegerQuotient = p.quotientDigitsList && p.quotientDigitsList.length > 0;
 
   if (showAnswers) {
     quotientDigits = `<div class="quotient-grid">`;
-    const totalCols = dividendString.length + (allowDecimal && decList.length > 0 ? decList.length + 1 : 0);
+    const totalCols = dividendString.length + (allowDecimal && decList.length > 0 ? decList.length + 1 : (!hasIntegerQuotient && allowDecimal ? 2 : 0));
 
     let qMap = {};
     if (p.quotientDigitsList) {
@@ -819,20 +820,28 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
       });
     }
 
-    for (let i = 0; i < totalCols; i++) {
-      if (qMap[i] !== undefined) {
-        quotientDigits += `<div class="quotient-digit">${qMap[i]}</div>`;
-      } else if (i === dividendString.length && allowDecimal && decList.length > 0) {
-        quotientDigits += `<div class="quotient-digit">.</div>`;
-      } else if (allowDecimal && decList.length > 0 && i > dividendString.length) {
-        let decIndex = i - dividendString.length - 1;
-        if (decIndex < decList.length) {
-          quotientDigits += `<div class="quotient-digit">${decList[decIndex]}</div>`;
+    if (!hasIntegerQuotient && allowDecimal) {
+      quotientDigits += `<div class="quotient-digit">0</div>`;
+      quotientDigits += `<div class="quotient-digit">.</div>`;
+      for (let i = 0; i < decList.length; i++) {
+        quotientDigits += `<div class="quotient-digit">${decList[i]}</div>`;
+      }
+    } else {
+      for (let i = 0; i < totalCols; i++) {
+        if (qMap[i] !== undefined) {
+          quotientDigits += `<div class="quotient-digit">${qMap[i]}</div>`;
+        } else if (i === dividendString.length && allowDecimal && decList.length > 0) {
+          quotientDigits += `<div class="quotient-digit">.</div>`;
+        } else if (allowDecimal && decList.length > 0 && i > dividendString.length) {
+          let decIndex = i - dividendString.length - 1;
+          if (decIndex < decList.length) {
+            quotientDigits += `<div class="quotient-digit">${decList[decIndex]}</div>`;
+          } else {
+            quotientDigits += `<div class="quotient-digit"></div>`;
+          }
         } else {
           quotientDigits += `<div class="quotient-digit"></div>`;
         }
-      } else {
-        quotientDigits += `<div class="quotient-digit"></div>`;
       }
     }
     quotientDigits += `</div>`;
@@ -844,6 +853,9 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
     const initialWidth = Math.max(3, divisorStr.length) * 16;
     divisorHTML = `<input type="text" class="editable-divisor" value="${divisorStr}" 
                    style="width: ${initialWidth}px;"
+                   inputmode="numeric" 
+                   pattern="[0-9]*" 
+                   onkeypress="return event.charCode >= 48 && event.charCode <= 57"
                    onclick="this.select()" 
                    onfocus="this.select()" 
                    oninput="handleDivisorInput(this)"
@@ -862,6 +874,9 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   if (isFirst) {
     dividendHTML = `
       <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${displayVal}" 
+             inputmode="numeric" 
+             pattern="[0-9]*" 
+             onkeypress="return event.charCode >= 48 && event.charCode <= 57"
              onclick="this.select()" 
              onfocus="this.select()" 
              oninput="handleDividendInput(this, ${cellWidth})" 
@@ -991,11 +1006,15 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
     }
 
     let fullQuotientStr = "";
-    if (p.quotientDigitsList) {
+    if (hasIntegerQuotient && p.quotientDigitsList) {
       p.quotientDigitsList.forEach(item => { fullQuotientStr += item.digit; });
     }
     if (allowDecimal && decList.length > 0) {
-      fullQuotientStr += "." + decList.join("");
+      if (!hasIntegerQuotient) {
+        fullQuotientStr = "0." + decList.join("");
+      } else {
+        fullQuotientStr += "." + decList.join("");
+      }
     }
 
     html += `
@@ -1015,6 +1034,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
 }
 
 function handleDivisorInput(input) {
+  input.value = input.value.replace(/[^0-9]/g, '');
   const val = input.value;
   const length = Math.max(3, val.length);
   input.style.width = (length * 15) + "px";
@@ -1033,7 +1053,7 @@ function handleDivisorInput(input) {
 }
 
 function updateDividendInputStyles(input, cellWidth) {
-  const val = input.value.replace(/[^0-9.]/g, '');
+  const val = input.value.replace(/[^0-9]/g, '');
   const currentLength = val.length || 1;
   const newWidth = currentLength * cellWidth;
 
@@ -1052,9 +1072,10 @@ function updateDividendInputStyles(input, cellWidth) {
 }
 
 function handleDividendInput(input, cellWidth) {
+  input.value = input.value.replace(/[^0-9]/g, '');
   updateDividendInputStyles(input, cellWidth);
 
-  let val = input.value.replace(/[^0-9]/g, '');
+  let val = input.value;
   let num = parseInt(val, 10);
   if (!isNaN(num) && num > 0 && problems.length > 0) {
     problems[0].dividend = num;
@@ -1062,7 +1083,8 @@ function handleDividendInput(input, cellWidth) {
 }
 
 function handleDividendChange(input, cellWidth) {
-  let val = input.value.replace(/[^0-9]/g, '');
+  input.value = input.value.replace(/[^0-9]/g, '');
+  let val = input.value;
   let num = parseInt(val, 10);
   if (!isNaN(num) && num > 0 && problems.length > 0) {
     problems[0].dividend = num;
