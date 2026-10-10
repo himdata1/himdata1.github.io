@@ -323,7 +323,7 @@ body {
 
 .work-area {
   position: relative;
-  width: calc(var(--digit-width) * 14);
+  width: calc(var(--digit-width) * 16);
   min-height: auto;
 }
 
@@ -583,12 +583,16 @@ function computeLongDivisionSteps(dividend, divisor, allowDecimal = false) {
       const remainder = broughtDown - product;
 
       decimalQuotientList.push(String(q));
+      
+      let prodStr = String(product);
+      let prodStartCol = colIndex - prodStr.length + 1;
+
       decimalSteps.push({
         broughtDown: broughtDown,
         product: product,
         remainder: remainder,
         col: colIndex,
-        startCol: colIndex - 1
+        startCol: prodStartCol
       });
 
       curRem = remainder;
@@ -698,11 +702,11 @@ function saveStateToLocalStorage() {
     decimalDivision: document.getElementById("decimalDivisionCheckbox").checked,
     problems: problems
   };
-  localStorage.setItem("division_worksheet_state_v25", JSON.stringify(state));
+  localStorage.setItem("division_worksheet_state_v27", JSON.stringify(state));
 }
 
 function loadStateFromLocalStorage() {
-  const saved = localStorage.getItem("division_worksheet_state_v25");
+  const saved = localStorage.getItem("division_worksheet_state_v27");
   if (saved) {
     try {
       const state = JSON.parse(saved);
@@ -941,7 +945,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
     if (allowDecimal && p.decimalSteps && p.decimalSteps.length > 0) {
       p.decimalSteps.forEach((dStep, dIdx) => {
         const broughtDownVal = String(dStep.broughtDown);
-        let bdStartCol = dStep.startCol;
+        let bdStartCol = dStep.col - broughtDownVal.length + 1;
         let bdCellsHTML = "";
         for (let c = 0; c < broughtDownVal.length; c++) {
           bdCellsHTML += `<div class="step-cell">${broughtDownVal[c]}</div>`;
@@ -955,7 +959,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
         `;
 
         const prodStr = String(dStep.product || 0);
-        let prodStartCol = dStep.col - prodStr.length + 1;
+        let prodStartCol = dStep.startCol;
         let prodCellsHTML = "";
         for (let c = 0; c < prodStr.length; c++) {
           prodCellsHTML += `<div class="step-cell">${prodStr[c]}</div>`;
