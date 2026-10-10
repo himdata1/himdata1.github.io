@@ -52,7 +52,7 @@ body {
   align-items: center;
   justify-content: center;
   width: 100%;
-  max-width: 600px;
+  max-width: 650px;
 }
 
 .controls-row {
@@ -302,7 +302,6 @@ body {
   line-height: 30px;
 }
 
-/* Single full editable input for 1st dividend with spaced characters to match grid */
 .editable-full-dividend {
   position: absolute;
   top: 0;
@@ -324,7 +323,7 @@ body {
 
 .work-area {
   position: relative;
-  width: calc(var(--digit-width) * 8);
+  width: calc(var(--digit-width) * 14);
   min-height: auto;
 }
 
@@ -442,6 +441,20 @@ body {
     <div class="controls-row">
       <div class="form-group checkbox-group">
         <label class="group-label">&nbsp;</label>
+        <label class="checkbox-label" for="withoutDecimalCheckbox">
+          <input type="checkbox" id="withoutDecimalCheckbox" checked onchange="handleExclusiveOption('withoutDecimal')">
+          Division without Decimal
+        </label>
+      </div>
+      <div class="form-group checkbox-group">
+        <label class="group-label">&nbsp;</label>
+        <label class="checkbox-label" for="decimalDivisionCheckbox">
+          <input type="checkbox" id="decimalDivisionCheckbox" onchange="handleExclusiveOption('decimal')">
+          Division with Decimal
+        </label>
+      </div>
+      <div class="form-group checkbox-group">
+        <label class="group-label">&nbsp;</label>
         <label class="checkbox-label" for="showAnswersCheckbox">
           <input type="checkbox" id="showAnswersCheckbox" onchange="onAnswerOptionChange()">
           Show Answers
@@ -496,15 +509,35 @@ function renderLineDigitInputs() {
 }
 
 function updateLineDigitVal(index, value) {
-  currentLineDigits[index] = parseInt(value) || 1;
+  currentLineDigits[index] = parseInt(value, 10) || 1;
   renderLineDigitInputs();
   saveStateToLocalStorage();
 }
 
-function computeLongDivisionSteps(dividend, divisor) {
+function handleExclusiveOption(type) {
+  const withoutDecCheckbox = document.getElementById("withoutDecimalCheckbox");
+  const decCheckbox = document.getElementById("decimalDivisionCheckbox");
+
+  if (type === 'withoutDecimal') {
+    if (withoutDecCheckbox.checked) {
+      decCheckbox.checked = false;
+    } else {
+      withoutDecCheckbox.checked = true;
+    }
+  } else if (type === 'decimal') {
+    if (decCheckbox.checked) {
+      withoutDecCheckbox.checked = false;
+    } else {
+      withoutDecCheckbox.checked = true;
+    }
+  }
+  recomputeAllProblems();
+}
+
+function computeLongDivisionSteps(dividend, divisor, allowDecimal = false) {
   const digits = String(dividend).split("").map(Number);
   let current = 0;
-  let quotient = "";
+  let quotientDigitsList = [];
   let steps = [];
   let started = false;
 
@@ -519,7 +552,7 @@ function computeLongDivisionSteps(dividend, divisor) {
     const product = q * divisor;
     const remainder = current - product;
 
-    quotient += q;
+    quotientDigitsList.push({ digit: String(q), col: i });
     started = true;
 
     steps.push({
@@ -534,50 +567,105 @@ function computeLongDivisionSteps(dividend, divisor) {
     current = remainder;
   }
 
-  quotient = quotient.replace(/^0+/, "") || "0";
+  let decimalSteps = [];
+  let decimalQuotientList = [];
+  let finalRemainder = current;
+
+  if (allowDecimal && finalRemainder > 0) {
+    let decCount = 0;
+    let curRem = finalRemainder;
+    let colIndex = digits.length;
+
+    while (curRem > 0 && decCount < 4) {
+      let broughtDown = curRem * 10;
+      const q = Math.floor(broughtDown / divisor);
+      const product = q * divisor;
+      const remainder = broughtDown - product;
+
+      decimalQuotientList.push(String(q));
+      decimalSteps.push({
+        broughtDown: broughtDown,
+        product: product,
+        remainder: remainder,
+        col: colIndex,
+        startCol: colIndex - 1
+      });
+
+      curRem = remainder;
+      colIndex++;
+      decCount++;
+    }
+    finalRemainder = curRem;
+  }
 
   return {
-    quotient: parseInt(quotient, 10),
-    remainder: current,
-    steps: steps
+    quotientDigitsList: quotientDigitsList,
+    decimalQuotientList: decimalQuotientList,
+    remainder: finalRemainder,
+    steps: steps,
+    decimalSteps: decimalSteps
   };
 }
 
 function generateNewQuestions() {
-  const questionsCount = parseInt(document.getElementById("numQuestions").value) || 12;
+  const questionsCount = parseInt(document.getElementById("numQuestions").value, 10) || 12;
+  const withoutDecimal = document.getElementById("withoutDecimalCheckbox").checked;
+  const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
   problems = [];
 
   const dividendDigits = currentLineDigits[0];
   const divisorDigits = currentLineDigits[1];
   
-  const minDivisor = divisorDigits === 1 ? 1 : Math.pow(10, divisorDigits - 1);
+  const minDivisor = Math.pow(10, divisorDigits - 1);
   const maxDivisor = Math.pow(10, divisorDigits) - 1;
   
-  const minDividend = dividendDigits === 1 ? 1 : Math.pow(10, dividendDigits - 1);
+  const minDividend = Math.pow(10, dividendDigits - 1);
   const maxDividend = Math.pow(10, dividendDigits) - 1;
 
   for (let i = 0; i < questionsCount; i++) {
     let divisor = Math.floor(Math.random() * (maxDivisor - minDivisor + 1)) + minDivisor;
-    let minValidDividend = Math.max(minDividend, divisor + 1);
-    
-    if (minValidDividend > maxDividend) {
-      minValidDividend = minDividend;
-    }
+    let dividend = 0;
 
-    let dividend = Math.floor(Math.random() * (maxDividend - minValidDividend + 1)) + minValidDividend;
+    let attempts = 0;
+    do {
+      dividend = Math.floor(Math.random() * (maxDividend - minDividend + 1)) + minDividend;
+      
+      attempts++;
+      if (withoutDecimal) {
+        if (dividend % divisor === 0) break;
+      } else {
+        if (dividend % divisor !== 0) break;
+      }
+    } while (attempts < 100);
 
-    const details = computeLongDivisionSteps(dividend, divisor);
+    const details = computeLongDivisionSteps(dividend, divisor, allowDecimal);
 
     problems.push({
       id: i + 1,
       dividend: dividend,
       divisor: divisor,
-      quotient: details.quotient,
-      remainder: details.remainder,
-      steps: details.steps
+      quotientDigitsList: details.quotientDigitsList || [],
+      decimalQuotientList: details.decimalQuotientList || [],
+      remainder: details.remainder || 0,
+      steps: details.steps || [],
+      decimalSteps: details.decimalSteps || []
     });
   }
 
+  saveStateToLocalStorage();
+  renderWorksheetDOM();
+}
+
+function recomputeAllProblems() {
+  const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
+  problems.forEach(p => {
+    const details = computeLongDivisionSteps(p.dividend, p.divisor, allowDecimal);
+    p.quotientDigitsList = details.quotientDigitsList || [];
+    p.decimalQuotientList = details.decimalQuotientList || [];
+    p.remainder = details.remainder || 0;
+    p.steps = details.steps || [];
+    p.decimalSteps = details.decimalSteps || [];
+  });
   saveStateToLocalStorage();
   renderWorksheetDOM();
 }
@@ -595,6 +683,8 @@ function resetToDefaults() {
   currentLineDigits = [3, 1];
   document.getElementById("numQuestions").value = "12";
   document.getElementById("showAnswersCheckbox").checked = false;
+  document.getElementById("withoutDecimalCheckbox").checked = true;
+  document.getElementById("decimalDivisionCheckbox").checked = false;
   renderLineDigitInputs();
   generateNewQuestions();
 }
@@ -604,13 +694,15 @@ function saveStateToLocalStorage() {
     currentLineDigits: currentLineDigits,
     numQuestions: document.getElementById("numQuestions").value,
     showAnswers: document.getElementById("showAnswersCheckbox").checked,
+    withoutDecimal: document.getElementById("withoutDecimalCheckbox").checked,
+    decimalDivision: document.getElementById("decimalDivisionCheckbox").checked,
     problems: problems
   };
-  localStorage.setItem("division_worksheet_state_v1", JSON.stringify(state));
+  localStorage.setItem("division_worksheet_state_v25", JSON.stringify(state));
 }
 
 function loadStateFromLocalStorage() {
-  const saved = localStorage.getItem("division_worksheet_state_v1");
+  const saved = localStorage.getItem("division_worksheet_state_v25");
   if (saved) {
     try {
       const state = JSON.parse(saved);
@@ -618,6 +710,12 @@ function loadStateFromLocalStorage() {
       if (state.numQuestions) document.getElementById("numQuestions").value = state.numQuestions;
       if (typeof state.showAnswers !== "undefined") {
         document.getElementById("showAnswersCheckbox").checked = state.showAnswers;
+      }
+      if (typeof state.withoutDecimal !== "undefined") {
+        document.getElementById("withoutDecimalCheckbox").checked = state.withoutDecimal;
+      }
+      if (typeof state.decimalDivision !== "undefined") {
+        document.getElementById("decimalDivisionCheckbox").checked = state.decimalDivision;
       }
       if (Array.isArray(state.problems) && state.problems.length > 0) {
         problems = state.problems;
@@ -693,7 +791,7 @@ function renderWorksheetDOM() {
 function renderCard(p, showAnswers, isFirst, cellWidth) {
   return `
     <div class="problem-card">
-      <div class="problem-num">${p.id}.</div>
+      <div class="problem-num">${p.id || 1}.</div>
       <div style="flex-grow: 1;">${renderCardContent(p, showAnswers, isFirst, cellWidth)}</div>
     </div>
   `;
@@ -702,18 +800,33 @@ function renderCard(p, showAnswers, isFirst, cellWidth) {
 function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   const dividendString = String(p.dividend);
   let quotientDigits = "";
+  const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
+  const decList = p.decimalQuotientList || [];
+  const decStepsCount = p.decimalSteps ? p.decimalSteps.length : 0;
 
   if (showAnswers) {
-    const qString = String(p.quotient);
     quotientDigits = `<div class="quotient-grid">`;
-    
-    const totalCols = dividendString.length;
-    const qLen = qString.length;
+    const totalCols = dividendString.length + (allowDecimal && decList.length > 0 ? decList.length + 1 : 0);
+
+    let qMap = {};
+    if (p.quotientDigitsList) {
+      p.quotientDigitsList.forEach(item => {
+        qMap[item.col] = item.digit;
+      });
+    }
 
     for (let i = 0; i < totalCols; i++) {
-      if (i >= totalCols - qLen) {
-        const charIdx = i - (totalCols - qLen);
-        quotientDigits += `<div class="quotient-digit">${qString[charIdx]}</div>`;
+      if (qMap[i] !== undefined) {
+        quotientDigits += `<div class="quotient-digit">${qMap[i]}</div>`;
+      } else if (i === dividendString.length && allowDecimal && decList.length > 0) {
+        quotientDigits += `<div class="quotient-digit">.</div>`;
+      } else if (allowDecimal && decList.length > 0 && i > dividendString.length) {
+        let decIndex = i - dividendString.length - 1;
+        if (decIndex < decList.length) {
+          quotientDigits += `<div class="quotient-digit">${decList[decIndex]}</div>`;
+        } else {
+          quotientDigits += `<div class="quotient-digit"></div>`;
+        }
       } else {
         quotientDigits += `<div class="quotient-digit"></div>`;
       }
@@ -736,17 +849,22 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   }
 
   let dividendHTML = "";
-  const dividendWidth = Math.max(3, dividendString.length) * cellWidth;
+  let displayVal = dividendString;
+  if (allowDecimal && decStepsCount > 0) {
+    displayVal += "." + "0".repeat(decStepsCount);
+  }
+  const totalDividendWidth = displayVal.length * cellWidth;
 
   if (isFirst) {
     dividendHTML = `
-      <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${dividendString}" 
+      <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${displayVal}" 
              onclick="this.select()" 
              onfocus="this.select()" 
-             oninput="handleDividendInput(this, ${cellWidth})" />`;
+             oninput="handleDividendInput(this, ${cellWidth})" 
+             onchange="handleDividendChange(this, ${cellWidth})" />`;
   } else {
-    for (let i = 0; i < dividendString.length; i++) {
-      dividendHTML += `<div class="digit-cell">${dividendString[i]}</div>`;
+    for (let i = 0; i < displayVal.length; i++) {
+      dividendHTML += `<div class="digit-cell">${displayVal[i]}</div>`;
     }
   }
 
@@ -755,8 +873,8 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
       <div class="division-header">${quotientDigits}</div>
       <div class="division-line">
         <div class="divisor">${divisorHTML}</div>
-        <div id="first-dividend-area" class="dividend-area" style="width: ${dividendWidth}px;">
-          <div id="first-digit-grid" class="digit-grid" style="width: ${dividendWidth}px;">${dividendHTML}</div>
+        <div id="first-dividend-area" class="dividend-area" style="width: ${totalDividendWidth}px;">
+          <div id="first-digit-grid" class="digit-grid" style="width: ${totalDividendWidth}px;">${dividendHTML}</div>
         </div>
       </div>
   `;
@@ -764,68 +882,127 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   if (showAnswers) {
     html += `<div class="work-area">`;
 
-    p.steps.forEach((step) => {
-      const productString = String(step.product);
-      const productStart = step.startColumn;
+    if (p.steps) {
+      p.steps.forEach((step) => {
+        const productString = String(step.product);
+        const productStart = step.startColumn;
 
-      let productCellsHTML = "";
-      for (let c = 0; c < productString.length; c++) {
-        productCellsHTML += `<div class="step-cell">${productString[c]}</div>`;
-      }
-
-      html += `
-        <div class="work-row subtraction-row">
-          <div class="step-cells-container" style="left: ${productStart * cellWidth}px;">
-            ${productCellsHTML}
-          </div>
-        </div>
-      `;
-
-      if (step.nextDigit !== null) {
-        const nextValue = step.remainder * 10 + step.nextDigit;
-        const nextString = String(nextValue);
-        const nextStart = step.nextColumn - nextString.length + 1;
-
-        let nextCellsHTML = "";
-        for (let c = 0; c < nextString.length; c++) {
-          nextCellsHTML += `<div class="step-cell">${nextString[c]}</div>`;
+        let productCellsHTML = "";
+        for (let c = 0; c < productString.length; c++) {
+          productCellsHTML += `<div class="step-cell">${productString[c]}</div>`;
         }
 
         html += `
-          <div class="work-row">
-            <div class="step-cells-container" style="left: ${nextStart * cellWidth}px;">
-              ${nextCellsHTML}
+          <div class="work-row subtraction-row">
+            <div class="step-cells-container" style="left: ${productStart * cellWidth}px;">
+              ${productCellsHTML}
             </div>
           </div>
         `;
-      } else {
-        const remainderString = String(step.remainder);
-        const remainderStart = dividendString.length - remainderString.length;
 
-        let remCellsHTML = "";
-        for (let c = 0; c < remainderString.length; c++) {
-          remCellsHTML += `<div class="step-cell" style="color: #2563eb;">${remainderString[c]}</div>`;
+        if (step.nextDigit !== null && step.nextDigit !== undefined) {
+          const combinedVal = String(step.remainder) + String(step.nextDigit);
+          const combinedStart = step.endColumn - String(step.remainder).length + 1;
+
+          let combinedCellsHTML = "";
+          for (let c = 0; c < combinedVal.length; c++) {
+            combinedCellsHTML += `<div class="step-cell">${combinedVal[c]}</div>`;
+          }
+
+          html += `
+            <div class="work-row">
+              <div class="step-cells-container" style="left: ${combinedStart * cellWidth}px;">
+                ${combinedCellsHTML}
+              </div>
+            </div>
+          `;
+        } else {
+          if (!allowDecimal || !p.decimalSteps || p.decimalSteps.length === 0) {
+            const remainderString = String(step.remainder);
+            const remainderStart = step.endColumn - remainderString.length + 1;
+
+            let remCellsHTML = "";
+            for (let c = 0; c < remainderString.length; c++) {
+              remCellsHTML += `<div class="step-cell" style="color: #2563eb;">${remainderString[c]}</div>`;
+            }
+
+            html += `
+              <div class="work-row">
+                <div class="step-cells-container" style="left: ${remainderStart * cellWidth}px;">
+                  ${remCellsHTML}
+                </div>
+              </div>
+            `;
+          }
         }
+      });
+    }
 
+    if (allowDecimal && p.decimalSteps && p.decimalSteps.length > 0) {
+      p.decimalSteps.forEach((dStep, dIdx) => {
+        const broughtDownVal = String(dStep.broughtDown);
+        let bdStartCol = dStep.startCol;
+        let bdCellsHTML = "";
+        for (let c = 0; c < broughtDownVal.length; c++) {
+          bdCellsHTML += `<div class="step-cell">${broughtDownVal[c]}</div>`;
+        }
         html += `
           <div class="work-row">
-            <div class="step-cells-container" style="left: ${remainderStart * cellWidth}px;">
-              ${remCellsHTML}
+            <div class="step-cells-container" style="left: ${bdStartCol * cellWidth}px;">
+              ${bdCellsHTML}
             </div>
           </div>
         `;
-      }
-    });
+
+        const prodStr = String(dStep.product || 0);
+        let prodStartCol = dStep.col - prodStr.length + 1;
+        let prodCellsHTML = "";
+        for (let c = 0; c < prodStr.length; c++) {
+          prodCellsHTML += `<div class="step-cell">${prodStr[c]}</div>`;
+        }
+        html += `
+          <div class="work-row subtraction-row">
+            <div class="step-cells-container" style="left: ${prodStartCol * cellWidth}px;">
+              ${prodCellsHTML}
+            </div>
+          </div>
+        `;
+
+        if (dIdx === p.decimalSteps.length - 1) {
+          const remStr = String(dStep.remainder || 0);
+          let remStartCol = dStep.col - remStr.length + 1;
+          let remCellsHTML = "";
+          for (let c = 0; c < remStr.length; c++) {
+            remCellsHTML += `<div class="step-cell" style="color: #2563eb;">${remStr[c]}</div>`;
+          }
+          html += `
+            <div class="work-row">
+              <div class="step-cells-container" style="left: ${remStartCol * cellWidth}px;">
+                ${remCellsHTML}
+              </div>
+            </div>
+          `;
+        }
+      });
+    }
+
+    let fullQuotientStr = "";
+    if (p.quotientDigitsList) {
+      p.quotientDigitsList.forEach(item => { fullQuotientStr += item.digit; });
+    }
+    if (allowDecimal && decList.length > 0) {
+      fullQuotientStr += "." + decList.join("");
+    }
 
     html += `
       </div>
       <div class="solution-summary">
-        <div>Quotient = ${p.quotient}</div>
-        <div>Remainder = ${p.remainder}</div>
+        <div>Quotient = ${fullQuotientStr}</div>
       </div>
     `;
   } else {
-    const emptyBoxHeight = Math.max(90, (p.steps.length * 40));
+    const stepCount = p.steps ? p.steps.length : 1;
+    const emptyBoxHeight = Math.max(90, (stepCount * 40) + (allowDecimal && p.decimalSteps ? p.decimalSteps.length * 40 : 0));
     html += `<div style="height: ${emptyBoxHeight}px;"></div>`;
   }
 
@@ -852,8 +1029,8 @@ function handleDivisorInput(input) {
 }
 
 function updateDividendInputStyles(input, cellWidth) {
-  const val = input.value.replace(/[^0-9]/g, '');
-  const currentLength = Math.max(3, val.length);
+  const val = input.value.replace(/[^0-9.]/g, '');
+  const currentLength = val.length || 1;
   const newWidth = currentLength * cellWidth;
 
   const area = document.getElementById("first-dividend-area");
@@ -875,28 +1052,38 @@ function handleDividendInput(input, cellWidth) {
 
   let val = input.value.replace(/[^0-9]/g, '');
   let num = parseInt(val, 10);
-  if (!isNaN(num) && num > 0) {
+  if (!isNaN(num) && num > 0 && problems.length > 0) {
     problems[0].dividend = num;
-    const details = computeLongDivisionSteps(problems[0].dividend, problems[0].divisor);
-    problems[0].quotient = details.quotient;
-    problems[0].remainder = details.remainder;
-    problems[0].steps = details.steps;
-    saveStateToLocalStorage();
+  }
+}
+
+function handleDividendChange(input, cellWidth) {
+  let val = input.value.replace(/[^0-9]/g, '');
+  let num = parseInt(val, 10);
+  if (!isNaN(num) && num > 0 && problems.length > 0) {
+    problems[0].dividend = num;
+    recomputeFirstProblem();
   }
 }
 
 function updateFirstDivisor(val) {
   let num = parseInt(val, 10);
   if (isNaN(num) || num <= 0) return;
-  problems[0].divisor = num;
-  recomputeFirstProblem();
+  if (problems.length > 0) {
+    problems[0].divisor = num;
+    recomputeFirstProblem();
+  }
 }
 
 function recomputeFirstProblem() {
-  const details = computeLongDivisionSteps(problems[0].dividend, problems[0].divisor);
-  problems[0].quotient = details.quotient;
-  problems[0].remainder = details.remainder;
-  problems[0].steps = details.steps;
+  if (problems.length === 0) return;
+  const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
+  const details = computeLongDivisionSteps(problems[0].dividend, problems[0].divisor, allowDecimal);
+  problems[0].quotientDigitsList = details.quotientDigitsList || [];
+  problems[0].decimalQuotientList = details.decimalQuotientList || [];
+  problems[0].remainder = details.remainder || 0;
+  problems[0].steps = details.steps || [];
+  problems[0].decimalSteps = details.decimalSteps || [];
 
   saveStateToLocalStorage();
   renderWorksheetDOM();
