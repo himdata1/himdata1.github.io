@@ -11,9 +11,7 @@
 :root {
   --primary: #4f46e5;
   --primary-hover: #4338ca;
-  --bg-workspace: #ffffff; /* White background */
-
-  /* Digit cell width */
+  --bg-workspace: #ffffff;
   --digit-width: 28px;
 }
 
@@ -25,7 +23,7 @@
 
 body {
   font-family: Arial, "Segoe UI", sans-serif;
-  background: var(--bg-workspace); /* Plain White */
+  background: var(--bg-workspace);
   color: #000;
   padding-bottom: 40px;
   overflow-x: hidden;
@@ -35,7 +33,6 @@ body {
   background: #fff;
   padding: 16px;
   border-bottom: 1.5px solid #e2e8f0;
-  box-shadow: none; /* Shadow removed */
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -179,7 +176,6 @@ body {
   padding: 10px 5px;
 }
 
-/* Landscape A4 Dimensions */
 .paper-sheet {
   width: 297mm;
   min-height: 210mm;
@@ -187,7 +183,6 @@ body {
   margin: 15px auto;
   background: #fff;
   padding: 8mm 10mm;
-  box-shadow: none; /* Shadow removed */
   border: 1px solid #e2e8f0;
 }
 
@@ -206,7 +201,6 @@ body {
   font-weight: 800;
 }
 
-/* 3 Column Grid for Landscape mode to fit more questions */
 .problems-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -223,7 +217,6 @@ body {
   background: transparent;
   border: none;
   padding: 2px 0;
-  min-height: auto;
   overflow: visible;
 }
 
@@ -234,12 +227,12 @@ body {
   font-size: 1.3rem;
   font-weight: 700;
   padding-top: 28px;
-  color: #dc2626 !important; /* Made Red as requested */
+  color: #dc2626 !important;
 }
 
 .long-division-container {
   font-family: "Courier New", Courier, monospace;
-  font-size: 1.3rem !important; /* Updated font size to 1.3rem */
+  font-size: 1.3rem !important;
   font-weight: 700;
   line-height: 1;
   color: #000;
@@ -251,7 +244,6 @@ body {
   position: relative;
   width: 100%;
   height: 30px;
-  margin-left: calc(var(--digit-width) * 1.8);
 }
 
 .quotient-grid {
@@ -278,12 +270,15 @@ body {
 }
 
 .divisor {
-  width: calc(var(--digit-width) * 1.8);
   min-width: calc(var(--digit-width) * 1.8);
+  width: auto;
   color: #c2410c;
   text-align: right;
   padding-right: 4px;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
 }
 
 .dividend-area {
@@ -291,14 +286,12 @@ body {
   border-top: 2px solid #000;
   border-left: 2px solid #000;
   height: 32px;
-  transition: width 0.05s ease-out;
 }
 
 .digit-grid {
   display: flex;
   height: 30px;
   white-space: nowrap;
-  transition: width 0.05s ease-out;
 }
 
 .digit-cell {
@@ -309,9 +302,28 @@ body {
   line-height: 30px;
 }
 
+/* Single full editable input for 1st dividend with spaced characters to match grid */
+.editable-full-dividend {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 30px;
+  line-height: 30px;
+  border: none;
+  background: transparent;
+  outline: none;
+  font-family: "Courier New", Courier, monospace;
+  font-size: 1.3rem !important;
+  font-weight: 700;
+  color: #dc2626;
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+  text-align: left;
+}
+
 .work-area {
   position: relative;
-  margin-left: calc(var(--digit-width) * 1.8);
   width: calc(var(--digit-width) * 8);
   min-height: auto;
 }
@@ -364,24 +376,6 @@ body {
   break-before: page;
 }
 
-/* Editable Input Styles */
-.editable-full-dividend {
-  width: 100%;
-  height: 30px;
-  line-height: 30px;
-  border: none;
-  background: transparent;
-  outline: none;
-  font-family: "Courier New", Courier, monospace;
-  font-size: 1.3rem !important;
-  font-weight: 700;
-  color: inherit;
-  padding: 0;
-  margin: 0;
-  box-sizing: border-box;
-  text-align: left;
-}
-
 .editable-divisor {
   font-family: "Courier New", Courier, monospace;
   font-size: inherit;
@@ -393,7 +387,6 @@ body {
   padding: 0;
   margin: 0;
   text-align: right;
-  width: 100%;
   height: 30px;
   line-height: 30px;
 }
@@ -411,13 +404,12 @@ body {
     min-height: 210mm !important;
     margin: 0 !important;
     padding: 8mm 10mm !important;
-    box-shadow: none !important;
     border: none !important;
   }
-  .page-break { page-break-before: always !important; break-before: page !important; }
-  .quotient-digit, .work-number.remainder, .divisor, .editable-divisor { color: #000 !important; }
-  .problem-num { color: #dc2626 !important; } /* Ensure printed SR. No. stays red */
-  .editable-full-dividend, .editable-divisor { border: none !important; background: transparent !important; }
+  .page-break { page-break-before: always !important; }
+  .quotient-digit, .divisor, .editable-divisor { color: #000 !important; }
+  .problem-num { color: #dc2626 !important; }
+  .editable-full-dividend { color: #000 !important; }
 }
 
 @media (max-width: 900px) {
@@ -427,7 +419,6 @@ body {
 @media (max-width: 600px) {
   .problems-grid { grid-template-columns: 1fr; }
   .paper-sheet { padding: 6mm; min-height: auto; }
-  .worksheet-header { flex-direction: column; align-items: flex-start; }
 }
 
 </style>
@@ -491,7 +482,7 @@ function renderLineDigitInputs() {
     const item = document.createElement("div");
     item.className = "line-digit-item";
     const minLimit = 1;
-    const maxLimit = index === 0 ? 7 : 3;
+    const maxLimit = index === 0 ? 7 : 4;
     let options = "";
     for (let d = minLimit; d <= maxLimit; d++) {
       options += `<option value="${d}" ${d === digits ? "selected" : ""}>${d} Digit${d > 1 ? "s" : ""}</option>`;
@@ -682,6 +673,21 @@ function renderWorksheetDOM() {
     `;
     container.appendChild(sheet);
   }
+  
+  setTimeout(() => {
+    document.querySelectorAll('.long-division-container').forEach(card => {
+      const divisorEl = card.querySelector('.divisor');
+      if (divisorEl) {
+        const divisorWidth = divisorEl.getBoundingClientRect().width;
+        const headerEl = card.querySelector('.division-header');
+        const workAreaEl = card.querySelector('.work-area');
+        if (headerEl) headerEl.style.marginLeft = `${divisorWidth}px`;
+        if (workAreaEl) workAreaEl.style.marginLeft = `${divisorWidth}px`;
+      }
+    });
+    const firstInput = document.getElementById("first-dividend-input");
+    if (firstInput) updateDividendInputStyles(firstInput, computedCellWidth);
+  }, 50);
 }
 
 function renderCard(p, showAnswers, isFirst, cellWidth) {
@@ -717,26 +723,27 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
 
   let divisorHTML = '';
   if (isFirst) {
-    divisorHTML = `<input type="text" class="editable-divisor" value="${p.divisor}" onclick="this.select()" onchange="updateFirstDivisor(this.value)">`;
+    const divisorStr = String(p.divisor);
+    const initialWidth = Math.max(3, divisorStr.length) * 16;
+    divisorHTML = `<input type="text" class="editable-divisor" value="${divisorStr}" 
+                   style="width: ${initialWidth}px;"
+                   onclick="this.select()" 
+                   onfocus="this.select()" 
+                   oninput="handleDivisorInput(this)"
+                   onchange="updateFirstDivisor(this.value)">`;
   } else {
     divisorHTML = p.divisor;
   }
 
   let dividendHTML = "";
-  const dividendWidth = dividendString.length * cellWidth;
+  const dividendWidth = Math.max(3, dividendString.length) * cellWidth;
 
   if (isFirst) {
-    const charWidthEstimate = 12.5;
-    const letterSpacing = cellWidth - charWidthEstimate;
-    const initialIndent = letterSpacing / 2;
-
     dividendHTML = `
       <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${dividendString}" 
-             style="letter-spacing: ${letterSpacing.toFixed(2)}px; text-indent: ${initialIndent.toFixed(2)}px; padding: 0;" 
              onclick="this.select()" 
              onfocus="this.select()" 
-             oninput="handleDividendInput(this)"
-             onchange="updateFirstDividend(this.value)">`;
+             oninput="handleDividendInput(this, ${cellWidth})" />`;
   } else {
     for (let i = 0; i < dividendString.length; i++) {
       dividendHTML += `<div class="digit-cell">${dividendString[i]}</div>`;
@@ -826,10 +833,27 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   return html;
 }
 
-function handleDividendInput(input) {
+function handleDivisorInput(input) {
   const val = input.value;
-  const currentLength = Math.max(1, val.length);
-  const cellWidth = parseInt(getComputedStyle(document.documentElement).getPropertyValue('--digit-width')) || 28;
+  const length = Math.max(3, val.length);
+  input.style.width = (length * 15) + "px";
+
+  const container = input.closest('.long-division-container');
+  if (container) {
+    const divisorEl = container.querySelector('.divisor');
+    if (divisorEl) {
+      const divisorWidth = divisorEl.getBoundingClientRect().width;
+      const headerEl = container.querySelector('.division-header');
+      const workAreaEl = container.querySelector('.work-area');
+      if (headerEl) headerEl.style.marginLeft = `${divisorWidth}px`;
+      if (workAreaEl) workAreaEl.style.marginLeft = `${divisorWidth}px`;
+    }
+  }
+}
+
+function updateDividendInputStyles(input, cellWidth) {
+  const val = input.value.replace(/[^0-9]/g, '');
+  const currentLength = Math.max(3, val.length);
   const newWidth = currentLength * cellWidth;
 
   const area = document.getElementById("first-dividend-area");
@@ -837,26 +861,34 @@ function handleDividendInput(input) {
   if (area) area.style.width = newWidth + "px";
   if (grid) grid.style.width = newWidth + "px";
 
-  const charWidthEstimate = 12.5;
+  const charWidthEstimate = cellWidth * 0.554;
   const letterSpacing = cellWidth - charWidthEstimate;
   const initialIndent = letterSpacing / 2;
 
   input.style.letterSpacing = `${letterSpacing.toFixed(2)}px`;
   input.style.textIndent = `${initialIndent.toFixed(2)}px`;
+  input.style.width = newWidth + "px";
+}
+
+function handleDividendInput(input, cellWidth) {
+  updateDividendInputStyles(input, cellWidth);
+
+  let val = input.value.replace(/[^0-9]/g, '');
+  let num = parseInt(val, 10);
+  if (!isNaN(num) && num > 0) {
+    problems[0].dividend = num;
+    const details = computeLongDivisionSteps(problems[0].dividend, problems[0].divisor);
+    problems[0].quotient = details.quotient;
+    problems[0].remainder = details.remainder;
+    problems[0].steps = details.steps;
+    saveStateToLocalStorage();
+  }
 }
 
 function updateFirstDivisor(val) {
   let num = parseInt(val, 10);
   if (isNaN(num) || num <= 0) return;
   problems[0].divisor = num;
-  recomputeFirstProblem();
-}
-
-function updateFirstDividend(val) {
-  let num = parseInt(val, 10);
-  if (isNaN(num) || num <= 0) return;
-  
-  problems[0].dividend = num;
   recomputeFirstProblem();
 }
 
