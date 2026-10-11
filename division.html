@@ -557,11 +557,18 @@ function computeLongDivisionSteps(dividend, divisor, allowDecimal = false) {
     quotientDigitsList.push({ digit: String(q), col: i });
     started = true;
 
+    let productStr = String(product);
+    let chunkStrLength = String(current).length;
+    // Ensure product string matches chunk length if needed for alignment, but keep inner values correct
+    let paddedRemainderStr = String(remainder).padStart(productStr.length, '0');
+
     steps.push({
-      startColumn: i - String(product).length + 1,
+      startColumn: i - productStr.length + 1,
       endColumn: i,
       product: product,
+      productStr: productStr,
       remainder: remainder,
+      paddedRemainderStr: paddedRemainderStr,
       nextDigit: i + 1 < digits.length ? digits[i + 1] : null,
       nextColumn: i + 1
     });
@@ -906,7 +913,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
     if (p.steps) {
       p.steps.forEach((step) => {
         const productString = String(step.product);
-        const productStart = step.startColumn;
+        const productStart = step.endColumn - productString.length + 1;
 
         let productCellsHTML = "";
         for (let c = 0; c < productString.length; c++) {
@@ -922,8 +929,10 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
         `;
 
         if (step.nextDigit !== null && step.nextDigit !== undefined) {
-          const combinedVal = String(step.remainder) + String(step.nextDigit);
-          const combinedStart = step.endColumn - String(step.remainder).length + 1;
+          // Use paddedRemainderStr to preserve leading zeros when multiple digits are involved
+          const remStr = step.paddedRemainderStr !== undefined ? step.paddedRemainderStr : String(step.remainder);
+          const combinedVal = remStr + String(step.nextDigit);
+          const combinedStart = step.endColumn - remStr.length + 1;
 
           let combinedCellsHTML = "";
           for (let c = 0; c < combinedVal.length; c++) {
@@ -939,7 +948,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
           `;
         } else {
           if (!allowDecimal || !p.decimalSteps || p.decimalSteps.length === 0) {
-            const remainderString = String(step.remainder);
+            const remainderString = step.paddedRemainderStr !== undefined ? step.paddedRemainderStr : String(step.remainder);
             const remainderStart = step.endColumn - remainderString.length + 1;
 
             let remCellsHTML = "";
