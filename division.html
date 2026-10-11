@@ -319,6 +319,8 @@ body {
   margin: 0;
   box-sizing: border-box;
   text-align: left;
+  overflow: hidden;
+  white-space: nowrap;
 }
 
 .work-area {
@@ -875,8 +877,8 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
     dividendHTML = `
       <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${displayVal}" 
              inputmode="numeric" 
-             pattern="[0-9]*" 
-             onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+             pattern="[0-9.]*" 
+             onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46"
              onclick="this.select()" 
              onfocus="this.select()" 
              oninput="handleDividendInput(this, ${cellWidth})" 
@@ -1053,7 +1055,7 @@ function handleDivisorInput(input) {
 }
 
 function updateDividendInputStyles(input, cellWidth) {
-  const val = input.value.replace(/[^0-9]/g, '');
+  const val = input.value;
   const currentLength = val.length || 1;
   const newWidth = currentLength * cellWidth;
 
@@ -1062,20 +1064,22 @@ function updateDividendInputStyles(input, cellWidth) {
   if (area) area.style.width = newWidth + "px";
   if (grid) grid.style.width = newWidth + "px";
 
-  const charWidthEstimate = cellWidth * 0.554;
+  const charWidthEstimate = cellWidth * 0.56;
   const letterSpacing = cellWidth - charWidthEstimate;
   const initialIndent = letterSpacing / 2;
 
   input.style.letterSpacing = `${letterSpacing.toFixed(2)}px`;
-  input.style.textIndent = `${initialIndent.toFixed(2)}px`;
-  input.style.width = newWidth + "px";
+  input.style.paddingLeft = `${initialIndent.toFixed(2)}px`;
+  input.style.textIndent = `0px`;
+  input.style.width = `${newWidth + 4}px`;
+  input.scrollLeft = 0;
 }
 
 function handleDividendInput(input, cellWidth) {
-  input.value = input.value.replace(/[^0-9]/g, '');
+  input.value = input.value.replace(/[^0-9.]/g, '');
   updateDividendInputStyles(input, cellWidth);
 
-  let val = input.value;
+  let val = input.value.replace(/\./g, '');
   let num = parseInt(val, 10);
   if (!isNaN(num) && num > 0 && problems.length > 0) {
     problems[0].dividend = num;
@@ -1083,8 +1087,8 @@ function handleDividendInput(input, cellWidth) {
 }
 
 function handleDividendChange(input, cellWidth) {
-  input.value = input.value.replace(/[^0-9]/g, '');
-  let val = input.value;
+  input.value = input.value.replace(/[^0-9.]/g, '');
+  let val = input.value.replace(/\./g, '');
   let num = parseInt(val, 10);
   if (!isNaN(num) && num > 0 && problems.length > 0) {
     problems[0].dividend = num;
