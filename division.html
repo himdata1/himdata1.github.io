@@ -592,6 +592,7 @@ function handleRemainderOption(type) {
   if (type === 'withRemainder') {
     if (withRemCheckbox.checked) {
       withoutRemCheckbox.checked = false;
+      withoutRemCheckbox.disabled = false;
     } else {
       withoutRemCheckbox.checked = true;
     }
@@ -1117,7 +1118,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
     }
 
     let summaryText = `Quotient = ${fullQuotientStr}`;
-    if (withRemainder && p.remainder > 0) {
+    if (!allowDecimal && withRemainder && p.remainder > 0) {
       summaryText += `, Remainder = ${p.remainder}`;
     }
 
