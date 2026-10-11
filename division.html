@@ -443,6 +443,22 @@ body {
     <div class="controls-row">
       <div class="form-group checkbox-group">
         <label class="group-label">&nbsp;</label>
+        <label class="checkbox-label" for="withoutRemainderCheckbox">
+          <input type="checkbox" id="withoutRemainderCheckbox" checked onchange="handleRemainderOption('withoutRemainder')">
+          Division without Remainder
+        </label>
+      </div>
+      <div class="form-group checkbox-group">
+        <label class="group-label">&nbsp;</label>
+        <label class="checkbox-label" for="withRemainderCheckbox">
+          <input type="checkbox" id="withRemainderCheckbox" onchange="handleRemainderOption('withRemainder')">
+          Division with Remainder
+        </label>
+      </div>
+    </div>
+    <div class="controls-row">
+      <div class="form-group checkbox-group">
+        <label class="group-label">&nbsp;</label>
         <label class="checkbox-label" for="withoutDecimalCheckbox">
           <input type="checkbox" id="withoutDecimalCheckbox" checked onchange="handleExclusiveOption('withoutDecimal')">
           Division without Decimal
@@ -536,6 +552,26 @@ function handleExclusiveOption(type) {
   recomputeAllProblems();
 }
 
+function handleRemainderOption(type) {
+  const withRemCheckbox = document.getElementById("withRemainderCheckbox");
+  const withoutRemCheckbox = document.getElementById("withoutRemainderCheckbox");
+
+  if (type === 'withRemainder') {
+    if (withRemCheckbox.checked) {
+      withoutRemCheckbox.checked = false;
+    } else {
+      withRemCheckbox.checked = true;
+    }
+  } else if (type === 'withoutRemainder') {
+    if (withoutRemCheckbox.checked) {
+      withRemCheckbox.checked = false;
+    } else {
+      withRemCheckbox.checked = true;
+    }
+  }
+  generateNewQuestions();
+}
+
 function computeLongDivisionSteps(dividend, divisor, allowDecimal = false) {
   const digits = String(dividend).split("").map(Number);
   let current = 0;
@@ -559,7 +595,6 @@ function computeLongDivisionSteps(dividend, divisor, allowDecimal = false) {
 
     let productStr = String(product);
     let chunkStrLength = String(current).length;
-    // Ensure product string matches chunk length if needed for alignment, but keep inner values correct
     let paddedRemainderStr = String(remainder).padStart(productStr.length, '0');
 
     steps.push({
@@ -624,6 +659,7 @@ function generateNewQuestions() {
   const questionsCount = parseInt(document.getElementById("numQuestions").value, 10) || 12;
   const withoutDecimal = document.getElementById("withoutDecimalCheckbox").checked;
   const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
+  const withRemainder = document.getElementById("withRemainderCheckbox").checked;
   problems = [];
 
   const dividendDigits = currentLineDigits[0];
@@ -645,7 +681,11 @@ function generateNewQuestions() {
       
       attempts++;
       if (withoutDecimal) {
-        if (dividend % divisor === 0) break;
+        if (withRemainder) {
+          if (dividend % divisor !== 0) break;
+        } else {
+          if (dividend % divisor === 0) break;
+        }
       } else {
         if (dividend % divisor !== 0) break;
       }
@@ -698,6 +738,8 @@ function resetToDefaults() {
   document.getElementById("showAnswersCheckbox").checked = false;
   document.getElementById("withoutDecimalCheckbox").checked = true;
   document.getElementById("decimalDivisionCheckbox").checked = false;
+  document.getElementById("withRemainderCheckbox").checked = false;
+  document.getElementById("withoutRemainderCheckbox").checked = true;
   renderLineDigitInputs();
   generateNewQuestions();
 }
@@ -709,6 +751,8 @@ function saveStateToLocalStorage() {
     showAnswers: document.getElementById("showAnswersCheckbox").checked,
     withoutDecimal: document.getElementById("withoutDecimalCheckbox").checked,
     decimalDivision: document.getElementById("decimalDivisionCheckbox").checked,
+    withRemainder: document.getElementById("withRemainderCheckbox").checked,
+    withoutRemainder: document.getElementById("withoutRemainderCheckbox").checked,
     problems: problems
   };
   localStorage.setItem("division_worksheet_state_v27", JSON.stringify(state));
@@ -729,6 +773,12 @@ function loadStateFromLocalStorage() {
       }
       if (typeof state.decimalDivision !== "undefined") {
         document.getElementById("decimalDivisionCheckbox").checked = state.decimalDivision;
+      }
+      if (typeof state.withRemainder !== "undefined") {
+        document.getElementById("withRemainderCheckbox").checked = state.withRemainder;
+      }
+      if (typeof state.withoutRemainder !== "undefined") {
+        document.getElementById("withoutRemainderCheckbox").checked = state.withoutRemainder;
       }
       if (Array.isArray(state.problems) && state.problems.length > 0) {
         problems = state.problems;
@@ -814,6 +864,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   const dividendString = String(p.dividend);
   let quotientDigits = "";
   const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
+  const withRemainder = document.getElementById("withRemainderCheckbox").checked;
   const decList = p.decimalQuotientList || [];
   const decStepsCount = p.decimalSteps ? p.decimalSteps.length : 0;
   const hasIntegerQuotient = p.quotientDigitsList && p.quotientDigitsList.length > 0;
@@ -929,7 +980,6 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
         `;
 
         if (step.nextDigit !== null && step.nextDigit !== undefined) {
-          // Use paddedRemainderStr to preserve leading zeros when multiple digits are involved
           const remStr = step.paddedRemainderStr !== undefined ? step.paddedRemainderStr : String(step.remainder);
           const combinedVal = remStr + String(step.nextDigit);
           const combinedStart = step.endColumn - remStr.length + 1;
@@ -1028,10 +1078,15 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
       }
     }
 
+    let summaryText = `Quotient = ${fullQuotientStr}`;
+    if (withRemainder && p.remainder > 0) {
+      summaryText += `, Remainder = ${p.remainder}`;
+    }
+
     html += `
       </div>
       <div class="solution-summary">
-        <div>Quotient = ${fullQuotientStr}</div>
+        <div>${summaryText}</div>
       </div>
     `;
   } else {
