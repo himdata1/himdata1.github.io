@@ -116,6 +116,16 @@ body {
   cursor: pointer;
 }
 
+.checkbox-label.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  background: #f1f5f9;
+}
+
+.checkbox-label.disabled input[type="checkbox"] {
+  cursor: not-allowed;
+}
+
 .line-digits-group {
   display: flex;
   gap: 7px;
@@ -466,7 +476,7 @@ body {
       </div>
       <div class="form-group checkbox-group">
         <label class="group-label">&nbsp;</label>
-        <label class="checkbox-label" for="decimalDivisionCheckbox">
+        <label class="checkbox-label" id="decimalDivisionLabel" for="decimalDivisionCheckbox">
           <input type="checkbox" id="decimalDivisionCheckbox" onchange="handleExclusiveOption('decimal')">
           Division with Decimal
         </label>
@@ -532,15 +542,38 @@ function updateLineDigitVal(index, value) {
   saveStateToLocalStorage();
 }
 
+function updateDecimalStateUI() {
+  const withoutRemCheckbox = document.getElementById("withoutRemainderCheckbox");
+  const decCheckbox = document.getElementById("decimalDivisionCheckbox");
+  const withoutDecCheckbox = document.getElementById("withoutDecimalCheckbox");
+  const decLabel = document.getElementById("decimalDivisionLabel");
+
+  if (withoutRemCheckbox.checked) {
+    decCheckbox.checked = false;
+    decCheckbox.disabled = true;
+    decLabel.classList.add("disabled");
+    withoutDecCheckbox.checked = true;
+    withoutDecCheckbox.disabled = false;
+  } else {
+    decCheckbox.disabled = false;
+    decLabel.classList.remove("disabled");
+  }
+}
+
 function handleExclusiveOption(type) {
   const withoutDecCheckbox = document.getElementById("withoutDecimalCheckbox");
   const decCheckbox = document.getElementById("decimalDivisionCheckbox");
+  const withoutRemCheckbox = document.getElementById("withoutRemainderCheckbox");
 
   if (type === 'withoutDecimal') {
+    if (withoutRemCheckbox.checked) {
+      withoutDecCheckbox.checked = true;
+      return;
+    }
     if (withoutDecCheckbox.checked) {
       decCheckbox.checked = false;
     } else {
-      withoutDecCheckbox.checked = true;
+      decCheckbox.checked = true;
     }
   } else if (type === 'decimal') {
     if (decCheckbox.checked) {
@@ -560,7 +593,7 @@ function handleRemainderOption(type) {
     if (withRemCheckbox.checked) {
       withoutRemCheckbox.checked = false;
     } else {
-      withRemCheckbox.checked = true;
+      withoutRemCheckbox.checked = true;
     }
   } else if (type === 'withoutRemainder') {
     if (withoutRemCheckbox.checked) {
@@ -569,6 +602,8 @@ function handleRemainderOption(type) {
       withRemCheckbox.checked = true;
     }
   }
+
+  updateDecimalStateUI();
   generateNewQuestions();
 }
 
@@ -740,6 +775,7 @@ function resetToDefaults() {
   document.getElementById("decimalDivisionCheckbox").checked = false;
   document.getElementById("withRemainderCheckbox").checked = false;
   document.getElementById("withoutRemainderCheckbox").checked = true;
+  updateDecimalStateUI();
   renderLineDigitInputs();
   generateNewQuestions();
 }
@@ -782,12 +818,14 @@ function loadStateFromLocalStorage() {
       }
       if (Array.isArray(state.problems) && state.problems.length > 0) {
         problems = state.problems;
+        updateDecimalStateUI();
         return true;
       }
     } catch (e) {
       console.error("Local storage load error:", e);
     }
   }
+  updateDecimalStateUI();
   return false;
 }
 
