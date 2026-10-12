@@ -634,8 +634,6 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
-    // Only checks if individual digit multiplication produces a carry (>= 10)
-    // Ignores partial products addition carries as requested.
     function hasMultiplicationCarry(top, bottom) {
       const topDigits = String(top).split('').map(Number);
       const bottomDigits = String(bottom).split('').map(Number);
@@ -650,38 +648,69 @@
       return false;
     }
 
-    function generateSingleProblem(topDigits, bottomDigits, mode) {
-      if (mode === 'no_carry') {
-        for (let attempt = 0; attempt < 1000; attempt++) {
-          // Generate bottom digits first
+    function generateNoCarryWithStrategy(topDigits, bottomDigits, prioritizeTop) {
+      if (prioritizeTop) {
+        // Try large top first
+        for (let attempt = 0; attempt < 800; attempt++) {
+          let tList = [];
+          for (let i = 0; i < topDigits; i++) {
+            let minV = (i === 0) ? 1 : 0;
+            tList.push(Math.floor(Math.random() * 9) + minV);
+          }
+          let maxT = Math.max(...tList);
+          let maxB = maxT > 0 ? Math.floor(9 / maxT) : 9;
+
+          let bList = [];
+          let possible = true;
+          for (let i = 0; i < bottomDigits; i++) {
+            let minV = (i === 0) ? 1 : 0;
+            if (maxB < minV) { possible = false; break; }
+            bList.push(Math.floor(Math.random() * (maxB - minV + 1)) + minV);
+          }
+
+          if (!possible) continue;
+          let top = parseInt(tList.join(''));
+          let bottom = parseInt(bList.join(''));
+          if (!hasMultiplicationCarry(top, bottom)) {
+            return { top, bottom, product: top * bottom };
+          }
+        }
+        // Fallback to large bottom strategy if top strategy didn't hit within attempts
+        return generateNoCarryWithStrategy(topDigits, bottomDigits, false);
+      } else {
+        // Try large bottom first
+        for (let attempt = 0; attempt < 800; attempt++) {
           let bList = [];
           for (let i = 0; i < bottomDigits; i++) {
             let minV = (i === 0) ? 1 : 0;
-            bList.push(Math.floor(Math.random() * (10 - minV)) + minV);
+            bList.push(Math.floor(Math.random() * 9) + minV);
           }
           let maxB = Math.max(...bList);
-          let maxTopD = maxB > 0 ? Math.floor(9 / maxB) : 9;
+          let maxT = maxB > 0 ? Math.floor(9 / maxB) : 9;
 
           let tList = [];
           let possible = true;
           for (let i = 0; i < topDigits; i++) {
             let minV = (i === 0) ? 1 : 0;
-            if (maxTopD < minV) {
-              possible = false;
-              break;
-            }
-            tList.push(Math.floor(Math.random() * (maxTopD - minV + 1)) + minV);
+            if (maxT < minV) { possible = false; break; }
+            tList.push(Math.floor(Math.random() * (maxT - minV + 1)) + minV);
           }
 
           if (!possible) continue;
-
           let top = parseInt(tList.join(''));
           let bottom = parseInt(bList.join(''));
-
           if (!hasMultiplicationCarry(top, bottom)) {
             return { top, bottom, product: top * bottom };
           }
         }
+        // Fallback to large top strategy
+        return generateNoCarryWithStrategy(topDigits, bottomDigits, true);
+      }
+    }
+
+    function generateSingleProblem(topDigits, bottomDigits, mode, prioritizeTop = true) {
+      if (mode === 'no_carry') {
+        return generateNoCarryWithStrategy(topDigits, bottomDigits, prioritizeTop);
       }
 
       if (mode === 'with_carry') {
@@ -708,19 +737,40 @@
         const half = Math.floor(questionsCount / 2);
         for (let i = 0; i < half; i++) modeList.push('no_carry');
         for (let i = 0; i < questionsCount - half; i++) modeList.push('with_carry');
-
-        for (let i = modeList.length - 1; i > 0; i--) {
-          const j = Math.floor(Math.random() * (i + 1));
-          [modeList[i], modeList[j]] = [modeList[j], modeList[i]];
-        }
       } else {
         modeList = new Array(questionsCount).fill(groupingMode);
       }
 
+      // Shuffle modeList
+      for (let i = modeList.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [modeList[i], modeList[j]] = [modeList[j], modeList[i]];
+      }
+
+      // Create a strict 50-50 split of strategies for no_carry problems (true = large top, false = large bottom)
+      const noCarryCount = modeList.filter(m => m === 'no_carry').length;
+      let strategies = [];
+      const halfNoCarry = Math.floor(noCarryCount / 2);
+      for (let i = 0; i < halfNoCarry; i++) strategies.push(true);
+      for (let i = 0; i < noCarryCount - halfNoCarry; i++) strategies.push(false);
+      
+      // Shuffle strategies array
+      for (let i = strategies.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [strategies[i], strategies[j]] = [strategies[j], strategies[i]];
+      }
+
+      let stratIndex = 0;
       problems = [];
       for (let i = 0; i < questionsCount; i++) {
         const modeToUse = modeList[i];
-        const p = generateSingleProblem(currentLineDigits[0], currentLineDigits[1], modeToUse);
+        let p;
+        if (modeToUse === 'no_carry') {
+          const prioritizeTop = strategies[stratIndex++];
+          p = generateSingleProblem(currentLineDigits[0], currentLineDigits[1], modeToUse, prioritizeTop);
+        } else {
+          p = generateSingleProblem(currentLineDigits[0], currentLineDigits[1], modeToUse, true);
+        }
         p.id = i + 1;
         problems.push(p);
       }
