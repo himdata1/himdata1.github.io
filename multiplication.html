@@ -550,6 +550,7 @@
 
     function renderLineDigitInputs() {
       const container = document.getElementById('lineDigitsContainer');
+      if (!container) return;
       container.innerHTML = '';
 
       currentLineDigits.forEach((digits, index) => {
@@ -581,11 +582,13 @@
     }
 
     function persistState() {
+      const numQuestionsEl = document.getElementById('numQuestions');
+      const showAnswersEl = document.getElementById('showAnswersCheckbox');
       const settings = {
         lineDigits: currentLineDigits,
         groupingMode: getSelectedGroupingMode(),
-        numQuestions: document.getElementById('numQuestions').value,
-        showAnswers: document.getElementById('showAnswersCheckbox').checked,
+        numQuestions: numQuestionsEl ? numQuestionsEl.value : "18",
+        showAnswers: showAnswersEl ? showAnswersEl.checked : false,
         problems: problems
       };
       localStorage.setItem('multiplication_worksheet_settings_v28', JSON.stringify(settings));
@@ -593,8 +596,8 @@
 
     function saveSettings() {
       persistState();
-      const showAnswers = document.getElementById('showAnswersCheckbox').checked;
-      renderWorksheetDOM(showAnswers);
+      const showAnswersEl = document.getElementById('showAnswersCheckbox');
+      renderWorksheetDOM(showAnswersEl ? showAnswersEl.checked : false);
     }
 
     function loadSavedChoices() {
@@ -604,9 +607,11 @@
           const settings = JSON.parse(saved);
           if (Array.isArray(settings.lineDigits)) currentLineDigits = settings.lineDigits;
           if (settings.groupingMode) setSelectedGroupingMode(settings.groupingMode);
-          if (settings.numQuestions) document.getElementById('numQuestions').value = settings.numQuestions;
-          if (typeof settings.showAnswers !== 'undefined') {
-            document.getElementById('showAnswersCheckbox').checked = settings.showAnswers;
+          const numQuestionsEl = document.getElementById('numQuestions');
+          if (settings.numQuestions && numQuestionsEl) numQuestionsEl.value = settings.numQuestions;
+          const showAnswersEl = document.getElementById('showAnswersCheckbox');
+          if (typeof settings.showAnswers !== 'undefined' && showAnswersEl) {
+            showAnswersEl.checked = settings.showAnswers;
           }
           if (Array.isArray(settings.problems) && settings.problems.length > 0) {
             problems = settings.problems;
@@ -621,8 +626,10 @@
     function resetToDefaults() {
       currentLineDigits = [2, 1];
       setSelectedGroupingMode("no_carry");
-      document.getElementById('numQuestions').value = "18";
-      document.getElementById('showAnswersCheckbox').checked = false;
+      const numQuestionsEl = document.getElementById('numQuestions');
+      if (numQuestionsEl) numQuestionsEl.value = "18";
+      const showAnswersEl = document.getElementById('showAnswersCheckbox');
+      if (showAnswersEl) showAnswersEl.checked = false;
       renderLineDigitInputs();
       generateWorksheet();
     }
@@ -635,29 +642,58 @@
     }
 
     function hasMultiplicationCarry(top, bottom) {
-      const topDigits = String(top).split('').map(Number);
-      const bottomDigits = String(bottom).split('').map(Number);
+      const bottomStr = String(bottom);
+      const topStr = String(top);
+      const bottomDigits = bottomStr.split('').map(Number).reverse();
+      const topDigits = topStr.split('').map(Number).reverse();
+
+      if (bottomDigits.length === 1) {
+        let b = bottomDigits[0];
+        for (let i = 0; i < topDigits.length - 1; i++) {
+          if (topDigits[i] * b >= 10) {
+            return true;
+          }
+        }
+        return false;
+      }
 
       for (let b of bottomDigits) {
-        for (let d of topDigits) {
-          if (d * b >= 10) {
+        for (let i = 0; i < topDigits.length - 1; i++) {
+          if (topDigits[i] * b >= 10) {
             return true;
           }
         }
       }
+
+      let partials = bottomDigits.map((b, i) => top * b * Math.pow(10, i));
+      let maxLen = Math.max(...partials.map(p => String(p).length));
+      let carry = 0;
+      
+      for (let col = 0; col < maxLen + 2; col++) {
+        let colSum = carry;
+        for (let p of partials) {
+          let digit = Math.floor(p / Math.pow(10, col)) % 10;
+          colSum += digit;
+        }
+        carry = Math.floor(colSum / 10);
+        if (colSum >= 10 && col < maxLen) {
+          return true;
+        }
+      }
+
       return false;
     }
 
-    function generateNoCarryWithStrategy(topDigits, bottomDigits, prioritizeTop) {
+    function generateBalancedNoCarry(topDigits, bottomDigits, prioritizeTop) {
       if (prioritizeTop) {
-        // Try large top first
         for (let attempt = 0; attempt < 800; attempt++) {
           let tList = [];
           for (let i = 0; i < topDigits; i++) {
             let minV = (i === 0) ? 1 : 0;
             tList.push(Math.floor(Math.random() * 9) + minV);
           }
-          let maxT = Math.max(...tList);
+          let subSlice = tList.slice(0, tList.length - 1);
+          let maxT = subSlice.length > 0 ? Math.max(...subSlice) : tList[0];
           let maxB = maxT > 0 ? Math.floor(9 / maxT) : 9;
 
           let bList = [];
@@ -675,17 +711,14 @@
             return { top, bottom, product: top * bottom };
           }
         }
-        // Fallback to large bottom strategy if top strategy didn't hit within attempts
-        return generateNoCarryWithStrategy(topDigits, bottomDigits, false);
       } else {
-        // Try large bottom first
         for (let attempt = 0; attempt < 800; attempt++) {
           let bList = [];
           for (let i = 0; i < bottomDigits; i++) {
             let minV = (i === 0) ? 1 : 0;
             bList.push(Math.floor(Math.random() * 9) + minV);
           }
-          let maxB = Math.max(...bList);
+          let maxB = bList.length > 0 ? Math.max(...bList) : 1;
           let maxT = maxB > 0 ? Math.floor(9 / maxB) : 9;
 
           let tList = [];
@@ -703,14 +736,16 @@
             return { top, bottom, product: top * bottom };
           }
         }
-        // Fallback to large top strategy
-        return generateNoCarryWithStrategy(topDigits, bottomDigits, true);
       }
+
+      const top = getRandomNumber(topDigits);
+      const bottom = 1;
+      return { top, bottom, product: top * bottom };
     }
 
     function generateSingleProblem(topDigits, bottomDigits, mode, prioritizeTop = true) {
       if (mode === 'no_carry') {
-        return generateNoCarryWithStrategy(topDigits, bottomDigits, prioritizeTop);
+        return generateBalancedNoCarry(topDigits, bottomDigits, prioritizeTop);
       }
 
       if (mode === 'with_carry') {
@@ -729,7 +764,8 @@
     }
 
     function generateWorksheet() {
-      const questionsCount = parseInt(document.getElementById('numQuestions').value) || 18;
+      const qSelect = document.getElementById('numQuestions');
+      const questionsCount = qSelect ? parseInt(qSelect.value) || 18 : 18;
       const groupingMode = getSelectedGroupingMode();
 
       let modeList = [];
@@ -741,20 +777,17 @@
         modeList = new Array(questionsCount).fill(groupingMode);
       }
 
-      // Shuffle modeList
       for (let i = modeList.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [modeList[i], modeList[j]] = [modeList[j], modeList[i]];
       }
 
-      // Create a strict 50-50 split of strategies for no_carry problems (true = large top, false = large bottom)
       const noCarryCount = modeList.filter(m => m === 'no_carry').length;
       let strategies = [];
       const halfNoCarry = Math.floor(noCarryCount / 2);
       for (let i = 0; i < halfNoCarry; i++) strategies.push(true);
       for (let i = 0; i < noCarryCount - halfNoCarry; i++) strategies.push(false);
       
-      // Shuffle strategies array
       for (let i = strategies.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
         [strategies[i], strategies[j]] = [strategies[j], strategies[i]];
@@ -780,6 +813,7 @@
 
     function renderWorksheetDOM(showAnswers) {
       const container = document.getElementById('worksheetContainer');
+      if (!container) return;
       container.innerHTML = '';
 
       const problemsPerPage = 18;
@@ -931,7 +965,8 @@
       if (problems.length === 0) {
         generateWorksheet();
       } else {
-        renderWorksheetDOM(document.getElementById('showAnswersCheckbox').checked);
+        const showAnswersEl = document.getElementById('showAnswersCheckbox');
+        renderWorksheetDOM(showAnswersEl ? showAnswersEl.checked : false);
       }
     };
   </script>
