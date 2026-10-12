@@ -12,7 +12,8 @@
   --primary: #4f46e5;
   --primary-hover: #4338ca;
   --bg-workspace: #ffffff;
-  --digit-width: 28px;
+  --digit-width: 22px;
+  --text: #0f172a;
 }
 
 * {
@@ -22,54 +23,54 @@
 }
 
 body {
-  font-family: Arial, "Segoe UI", sans-serif;
-  background: var(--bg-workspace);
-  color: #000;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: var(--bg-workspace);
+  color: var(--text);
+  line-height: 1.4;
   padding-bottom: 40px;
   overflow-x: hidden;
+  width: 100%;
 }
 
 .controls-panel {
-  background: #fff;
+  background: #ffffff;
   padding: 16px;
-  border-bottom: 1.5px solid #e2e8f0;
+  border-bottom: 2px solid #94a3b8;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 14px;
+  z-index: 100;
+  width: 100%;
+  max-width: 100vw;
 }
 
 .app-title {
   font-size: 1.4rem;
   font-weight: 800;
+  color: #0f172a;
   text-align: center;
+  letter-spacing: -0.3px;
+  width: 100%;
 }
 
 .controls-wrapper {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  align-items: center;
-  justify-content: center;
-  width: 100%;
-  max-width: 650px;
-}
-
-.controls-row {
   display: flex;
   flex-wrap: wrap;
   gap: 12px 16px;
   align-items: flex-end;
   justify-content: center;
   width: 100%;
+  max-width: 1000px;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 4px;
-  min-width: 150px;
-  flex: 1 1 200px;
+  flex: 1 1 auto;
+  min-width: 130px;
 }
 
 .group-label {
@@ -77,6 +78,7 @@ body {
   font-weight: 700;
   color: #334155;
   text-transform: uppercase;
+  letter-spacing: 0.5px;
 }
 
 .form-group select {
@@ -85,7 +87,17 @@ body {
   border-radius: 6px;
   font-size: .88rem;
   font-weight: 600;
+  outline: none;
   background: #f8fafc;
+  color: #0f172a;
+  cursor: pointer;
+  width: 100%;
+}
+
+.form-group select:focus {
+  border-color: var(--primary);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }
 
 .checkbox-group {
@@ -128,12 +140,14 @@ body {
 
 .line-digits-group {
   display: flex;
-  gap: 7px;
+  gap: 6px;
   align-items: flex-end;
   background: #f1f5f9;
-  padding: 5px 8px;
+  padding: 4px 8px;
   border-radius: 6px;
   border: 1.5px solid #cbd5e1;
+  min-height: 38px;
+  flex-wrap: wrap;
 }
 
 .line-digit-item {
@@ -145,15 +159,15 @@ body {
 }
 
 .line-digit-item span {
-  font-size: .65rem;
+  font-size: .68rem;
   font-weight: 700;
   color: #64748b;
 }
 
 .line-digit-item select {
-  min-width: 75px;
-  padding: 4px;
-  font-size: .78rem;
+  min-width: 50px;
+  padding: 4px 2px;
+  font-size: .82rem;
   text-align: center;
   width: 100%;
 }
@@ -161,72 +175,118 @@ body {
 .btn-group {
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 8px 10px;
+  align-items: center;
   justify-content: center;
+  width: 100%;
+  max-width: 700px;
+  margin-top: 2px;
 }
 
 .btn {
-  min-width: 125px;
-  height: 38px;
-  padding: 8px 12px;
+  flex: 1 1 calc(50% - 10px);
+  max-width: 180px;
+  min-width: 110px;
+  padding: 9px 12px;
   border: none;
   border-radius: 6px;
   color: white;
   font-weight: 700;
-  font-size: .84rem;
+  font-size: .85rem;
+  letter-spacing: 0.5px;
   cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+@media (min-width: 640px) {
+  .btn {
+    flex: 0 0 auto;
+    min-width: 120px;
+  }
 }
 
 .btn-generate { background: var(--primary); }
 .btn-generate:hover { background: var(--primary-hover); }
 .btn-reset { background: #64748b; }
+.btn-reset:hover { background: #475569; }
 
 #worksheetContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
   width: 100%;
   padding: 10px 5px;
 }
 
 .paper-sheet {
-  width: 297mm;
-  min-height: 210mm;
+  width: 100%;
   max-width: 100%;
-  margin: 15px auto;
-  background: #fff;
-  padding: 8mm 10mm;
-  border: 1px solid #e2e8f0;
+  background: #ffffff;
+  padding: 10mm 0mm 10mm 4mm;
+  margin: 10px 0;
+  box-shadow: none;
+  border: none;
+  border-radius: 0;
+  box-sizing: border-box;
+  position: relative;
 }
 
 .worksheet-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-end;
-  border-bottom: 2px solid #000;
-  padding-bottom: 6mm;
-  margin-bottom: 12px;
+  border-bottom: 2px solid #000000;
+  padding-bottom: 10px;
+  margin-bottom: 25px;
+  flex-wrap: wrap;
   gap: 10px;
+  padding-right: 20px;
 }
 
 .worksheet-title {
-  font-size: 1.35rem;
+  font-size: 1.4rem;
   font-weight: 800;
+  letter-spacing: -0.5px;
+  color: #000;
+}
+
+.worksheet-page-num {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #000;
+  margin-left: auto;
+  margin-right: 15px;
 }
 
 .problems-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  column-gap: 16px;
-  row-gap: 24px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px 50px;
+  align-items: flex-start;
   width: 100%;
-  align-items: start;
 }
 
 .problem-card {
   display: flex;
-  width: 100%;
   gap: 4px;
   background: transparent;
   border: none;
   padding: 2px 0;
+  overflow: visible;
+  box-sizing: border-box;
+  flex: 0 0 126px;
+}
+
+.problem-card.q1-card {
+  flex: 0 1 auto;
+  min-width: 110px;
+  margin-left: 0;
   overflow: visible;
 }
 
@@ -236,7 +296,7 @@ body {
   font-family: Arial, sans-serif;
   font-size: 1.3rem;
   font-weight: 700;
-  padding-top: 28px;
+  padding-top: 24px;
   color: #dc2626 !important;
 }
 
@@ -248,19 +308,21 @@ body {
   color: #000;
   width: 100%;
   position: relative;
+  overflow: visible;
 }
 
 .division-header {
   position: relative;
   width: 100%;
-  height: 30px;
+  height: 26px;
+  overflow: visible;
 }
 
 .quotient-grid {
   position: absolute;
   top: 0;
   left: 0;
-  height: 30px;
+  height: 26px;
   display: flex;
   white-space: nowrap;
   z-index: 2;
@@ -276,15 +338,16 @@ body {
 .division-line {
   display: flex;
   align-items: flex-start;
-  height: 32px;
+  height: 28px;
+  overflow: visible;
 }
 
 .divisor {
-  min-width: calc(var(--digit-width) * 1.8);
+  min-width: calc(var(--digit-width) * 1.2);
   width: auto;
   color: #c2410c;
   text-align: right;
-  padding-right: 4px;
+  padding-right: 3px;
   white-space: nowrap;
   display: flex;
   align-items: center;
@@ -295,29 +358,31 @@ body {
   position: relative;
   border-top: 2px solid #000;
   border-left: 2px solid #000;
-  height: 32px;
+  height: 28px;
+  overflow: visible;
 }
 
 .digit-grid {
   display: flex;
-  height: 30px;
+  height: 26px;
   white-space: nowrap;
+  overflow: visible;
 }
 
 .digit-cell {
   width: var(--digit-width);
   min-width: var(--digit-width);
   text-align: center;
-  height: 30px;
-  line-height: 30px;
+  height: 26px;
+  line-height: 26px;
 }
 
 .editable-full-dividend {
   position: absolute;
   top: 0;
   left: 0;
-  height: 30px;
-  line-height: 30px;
+  height: 26px;
+  line-height: 26px;
   border: none;
   background: transparent;
   outline: none;
@@ -335,13 +400,13 @@ body {
 
 .work-area {
   position: relative;
-  width: calc(var(--digit-width) * 16);
+  width: calc(var(--digit-width) * 12);
   min-height: auto;
 }
 
 .work-row {
   position: relative;
-  height: 28px;
+  height: 24px;
   width: 100%;
 }
 
@@ -349,15 +414,15 @@ body {
   position: absolute;
   top: 0;
   display: flex;
-  height: 26px;
-  line-height: 26px;
+  height: 22px;
+  line-height: 22px;
 }
 
 .step-cell {
   width: var(--digit-width);
   min-width: var(--digit-width);
   text-align: center;
-  height: 26px;
+  height: 22px;
 }
 
 .work-row.subtraction-row .step-cells-container {
@@ -368,7 +433,7 @@ body {
 .work-row.subtraction-row .step-cells-container::before {
   content: "-";
   position: absolute;
-  left: -14px;
+  left: -12px;
   top: 0;
   font-weight: 700;
 }
@@ -398,38 +463,48 @@ body {
   padding: 0;
   margin: 0;
   text-align: right;
-  height: 30px;
-  line-height: 30px;
+  height: 26px;
+  line-height: 26px;
+}
+
+@media (max-width: 640px) {
+  .app-title { font-size: 1.15rem; }
+  .paper-sheet { padding: 10mm 0mm 10mm 4mm; }
+  .worksheet-title { font-size: 1.1rem; }
+  .controls-panel { padding: 12px 10px; }
+  .problem-card { flex: 0 0 110px; }
+  .worksheet-page-num { margin-right: 5px; }
 }
 
 @media print {
   @page {
-    size: A4 landscape;
-    margin: 0;
+    size: auto;
+    margin: 5mm;
   }
   .no-print { display: none !important; }
-  body { background: #fff !important; padding: 0 !important; }
-  #worksheetContainer { padding: 0 !important; }
+  body { background: #ffffff !important; padding: 0 !important; }
   .paper-sheet {
-    width: 297mm !important;
-    min-height: 210mm !important;
+    width: 100% !important;
+    max-width: none !important;
     margin: 0 !important;
-    padding: 8mm 10mm !important;
+    padding: 10mm 0mm 10mm 4mm !important;
     border: none !important;
+    box-shadow: none !important;
   }
+  .worksheet-header {
+    padding-right: 15mm !important;
+  }
+  .problems-grid {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 20px 14px !important;
+  }
+  .problem-card { flex: 0 0 126px !important; }
+  .problem-card.q1-card { flex: 0 1 auto !important; margin-left: 0 !important; }
   .page-break { page-break-before: always !important; }
   .quotient-digit, .divisor, .editable-divisor { color: #000 !important; }
   .problem-num { color: #dc2626 !important; }
   .editable-full-dividend { color: #000 !important; }
-}
-
-@media (max-width: 900px) {
-  .problems-grid { grid-template-columns: repeat(2, 1fr); }
-}
-
-@media (max-width: 600px) {
-  .problems-grid { grid-template-columns: 1fr; }
-  .paper-sheet { padding: 6mm; min-height: auto; }
 }
 
 </style>
@@ -440,56 +515,53 @@ body {
 <div class="controls-panel no-print">
   <h1 class="app-title">Long Division Worksheet Generator</h1>
   <div class="controls-wrapper">
-    <div class="controls-row">
-      <div class="form-group">
-        <label class="group-label">Digits Config:</label>
-        <div id="lineDigitsContainer" class="line-digits-group"></div>
-      </div>
-      <div class="form-group">
-        <label class="group-label" for="numQuestions">No. of Questions:</label>
-        <select id="numQuestions" onchange="onSettingsChange()"></select>
-      </div>
+    <div class="form-group">
+      <label class="group-label">Digits Config:</label>
+      <div id="lineDigitsContainer" class="line-digits-group"></div>
     </div>
-    <div class="controls-row">
-      <div class="form-group checkbox-group">
-        <label class="group-label">&nbsp;</label>
-        <label class="checkbox-label" for="withoutRemainderCheckbox">
-          <input type="checkbox" id="withoutRemainderCheckbox" checked onchange="handleRemainderOption('withoutRemainder')">
-          Division without Remainder
-        </label>
-      </div>
-      <div class="form-group checkbox-group">
-        <label class="group-label">&nbsp;</label>
-        <label class="checkbox-label" for="withRemainderCheckbox">
-          <input type="checkbox" id="withRemainderCheckbox" onchange="handleRemainderOption('withRemainder')">
-          Division with Remainder
-        </label>
-      </div>
+    <div class="form-group">
+      <label class="group-label" for="numQuestions">No. of Questions:</label>
+      <select id="numQuestions" onchange="onSettingsChange()"></select>
     </div>
-    <div class="controls-row">
-      <div class="form-group checkbox-group">
-        <label class="group-label">&nbsp;</label>
-        <label class="checkbox-label" for="withoutDecimalCheckbox">
-          <input type="checkbox" id="withoutDecimalCheckbox" checked onchange="handleExclusiveOption('withoutDecimal')">
-          Division without Decimal
-        </label>
-      </div>
-      <div class="form-group checkbox-group">
-        <label class="group-label">&nbsp;</label>
-        <label class="checkbox-label" id="decimalDivisionLabel" for="decimalDivisionCheckbox">
-          <input type="checkbox" id="decimalDivisionCheckbox" onchange="handleExclusiveOption('decimal')">
-          Division with Decimal
-        </label>
-      </div>
-      <div class="form-group checkbox-group">
-        <label class="group-label">&nbsp;</label>
-        <label class="checkbox-label" for="showAnswersCheckbox">
-          <input type="checkbox" id="showAnswersCheckbox" onchange="onAnswerOptionChange()">
-          Show Answers
-        </label>
-      </div>
+
+    <div class="form-group checkbox-group">
+      <label class="group-label">&nbsp;</label>
+      <label class="checkbox-label" for="withoutRemainderCheckbox">
+        <input type="checkbox" id="withoutRemainderCheckbox" checked onchange="handleRemainderOption('withoutRemainder')">
+        Division without Remainder
+      </label>
+    </div>
+    <div class="form-group checkbox-group">
+      <label class="group-label">&nbsp;</label>
+      <label class="checkbox-label" for="withRemainderCheckbox">
+        <input type="checkbox" id="withRemainderCheckbox" onchange="handleRemainderOption('withRemainder')">
+        Division with Remainder
+      </label>
+    </div>
+
+    <div class="form-group checkbox-group">
+      <label class="group-label">&nbsp;</label>
+      <label class="checkbox-label" for="withoutDecimalCheckbox">
+        <input type="checkbox" id="withoutDecimalCheckbox" checked onchange="handleExclusiveOption('withoutDecimal')">
+        Division without Decimal
+      </label>
+    </div>
+    <div class="form-group checkbox-group">
+      <label class="group-label">&nbsp;</label>
+      <label class="checkbox-label" id="decimalDivisionLabel" for="decimalDivisionCheckbox">
+        <input type="checkbox" id="decimalDivisionCheckbox" onchange="handleExclusiveOption('decimal')">
+        Division with Decimal
+      </label>
+    </div>
+    <div class="form-group checkbox-group">
+      <label class="group-label">&nbsp;</label>
+      <label class="checkbox-label" for="showAnswersCheckbox">
+        <input type="checkbox" id="showAnswersCheckbox" onchange="onAnswerOptionChange()">
+        Show Answers
+      </label>
     </div>
   </div>
+
   <div class="btn-group">
     <button class="btn btn-generate" onclick="generateNewQuestions()">Generate New</button>
     <button class="btn btn-reset" onclick="resetToDefaults()">Reset</button>
@@ -506,11 +578,11 @@ let problems = [];
 function initQuestionDropdown() {
   const select = document.getElementById("numQuestions");
   select.innerHTML = "";
-  for (let i = 2; i <= 60; i += 2) {
+  for (let i = 3; i <= 60; i += 3) {
     const option = document.createElement("option");
     option.value = i;
     option.textContent = `${i} Questions`;
-    if (i === 12) option.selected = true;
+    if (i === 18) option.selected = true;
     select.appendChild(option);
   }
 }
@@ -630,7 +702,6 @@ function computeLongDivisionSteps(dividend, divisor, allowDecimal = false) {
     started = true;
 
     let productStr = String(product);
-    let chunkStrLength = String(current).length;
     let paddedRemainderStr = String(remainder).padStart(productStr.length, '0');
 
     steps.push({
@@ -692,7 +763,7 @@ function computeLongDivisionSteps(dividend, divisor, allowDecimal = false) {
 }
 
 function generateNewQuestions() {
-  const questionsCount = parseInt(document.getElementById("numQuestions").value, 10) || 12;
+  const questionsCount = parseInt(document.getElementById("numQuestions").value, 10) || 18;
   const withoutDecimal = document.getElementById("withoutDecimalCheckbox").checked;
   const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
   const withRemainder = document.getElementById("withRemainderCheckbox").checked;
@@ -770,7 +841,7 @@ function onSettingsChange() {
 
 function resetToDefaults() {
   currentLineDigits = [3, 1];
-  document.getElementById("numQuestions").value = "12";
+  document.getElementById("numQuestions").value = "18";
   document.getElementById("showAnswersCheckbox").checked = false;
   document.getElementById("withoutDecimalCheckbox").checked = true;
   document.getElementById("decimalDivisionCheckbox").checked = false;
@@ -792,11 +863,11 @@ function saveStateToLocalStorage() {
     withoutRemainder: document.getElementById("withoutRemainderCheckbox").checked,
     problems: problems
   };
-  localStorage.setItem("division_worksheet_state_v27", JSON.stringify(state));
+  localStorage.setItem("division_worksheet_state_v31", JSON.stringify(state));
 }
 
 function loadStateFromLocalStorage() {
-  const saved = localStorage.getItem("division_worksheet_state_v27");
+  const saved = localStorage.getItem("division_worksheet_state_v31");
   if (saved) {
     try {
       const state = JSON.parse(saved);
@@ -831,14 +902,14 @@ function loadStateFromLocalStorage() {
 }
 
 function renderWorksheetDOM() {
-  const computedCellWidth = 28;
+  const computedCellWidth = 22;
   document.documentElement.style.setProperty('--digit-width', `${computedCellWidth}px`);
 
   const showAnswers = document.getElementById("showAnswersCheckbox").checked;
   const container = document.getElementById("worksheetContainer");
   container.innerHTML = "";
 
-  const problemsPerPage = 9;
+  const problemsPerPage = 18;
   const totalPages = Math.ceil(problems.length / problemsPerPage);
 
   for (let page = 0; page < totalPages; page++) {
@@ -852,7 +923,7 @@ function renderWorksheetDOM() {
         <div class="worksheet-title">
           Long Division Worksheet
         </div>
-        ${totalPages > 1 ? `<div style="font-size:.9rem; font-weight:700;">Page ${page + 1}/${totalPages}</div>` : ""}
+        <div class="worksheet-page-num">${totalPages > 1 ? `Page ${page + 1}/${totalPages}` : ""}</div>
       </div>
       <div class="problems-grid">
         ${pageProblems.map((p, idx) => renderCard(p, showAnswers, idx === 0 && page === 0, computedCellWidth)).join("")}
@@ -879,7 +950,7 @@ function renderWorksheetDOM() {
 
 function renderCard(p, showAnswers, isFirst, cellWidth) {
   return `
-    <div class="problem-card">
+    <div class="problem-card ${isFirst ? 'q1-card' : ''}">
       <div class="problem-num">${p.id || 1}.</div>
       <div style="flex-grow: 1; overflow: visible;">${renderCardContent(p, showAnswers, isFirst, cellWidth)}</div>
     </div>
@@ -936,7 +1007,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   let divisorHTML = '';
   if (isFirst) {
     const divisorStr = String(p.divisor);
-    const initialWidth = Math.max(3, divisorStr.length) * 16;
+    const initialWidth = Math.max(2, divisorStr.length) * 14;
     divisorHTML = `<input type="text" class="editable-divisor" value="${divisorStr}" 
                    style="width: ${initialWidth}px;"
                    inputmode="numeric" 
@@ -1117,7 +1188,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
     `;
   } else {
     const stepCount = p.steps ? p.steps.length : 1;
-    const emptyBoxHeight = Math.max(90, (stepCount * 40) + (allowDecimal && p.decimalSteps ? p.decimalSteps.length * 40 : 0));
+    const emptyBoxHeight = Math.max(80, (stepCount * 36) + (allowDecimal && p.decimalSteps ? p.decimalSteps.length * 36 : 0));
     html += `<div style="height: ${emptyBoxHeight}px;"></div>`;
   }
 
@@ -1128,8 +1199,8 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
 function handleDivisorInput(input) {
   input.value = input.value.replace(/[^0-9]/g, '');
   const val = input.value;
-  const length = Math.max(3, val.length);
-  input.style.width = (length * 15) + "px";
+  const length = Math.max(2, val.length);
+  input.style.width = (length * 14) + "px";
 
   const container = input.closest('.long-division-container');
   if (container) {
@@ -1147,21 +1218,22 @@ function handleDivisorInput(input) {
 function updateDividendInputStyles(input, cellWidth) {
   const val = input.value;
   const currentLength = val.length || 1;
-  const newWidth = (currentLength * cellWidth) + 10;
+  const contentWidth = (currentLength * cellWidth) + 20;
+  const inputWidth = contentWidth + 40;
 
   const area = document.getElementById("first-dividend-area");
   const grid = document.getElementById("first-digit-grid");
-  if (area) area.style.width = newWidth + "px";
-  if (grid) grid.style.width = newWidth + "px";
+  if (area) area.style.width = contentWidth + "px";
+  if (grid) grid.style.width = contentWidth + "px";
 
-  const charWidthEstimate = cellWidth * 0.46;
+  const charWidthEstimate = cellWidth * 0.60;
   const letterSpacing = cellWidth - charWidthEstimate;
   const initialIndent = letterSpacing / 2;
 
   input.style.letterSpacing = `${letterSpacing.toFixed(2)}px`;
   input.style.paddingLeft = `${initialIndent.toFixed(2)}px`;
   input.style.textIndent = `0px`;
-  input.style.width = `${newWidth + 4}px`;
+  input.style.width = `${inputWidth}px`;
   input.scrollLeft = 0;
 }
 
