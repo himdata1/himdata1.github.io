@@ -239,7 +239,7 @@
       margin-bottom: 25px;
       flex-wrap: wrap;
       gap: 10px;
-      padding-right: 20px; /* Right side padding so it doesn't touch extreme edge */
+      padding-right: 20px;
     }
 
     .worksheet-title {
@@ -249,13 +249,12 @@
       color: #000;
     }
 
-    /* Page number with offset from extreme right */
     .worksheet-page-num {
       font-size: 1.1rem;
       font-weight: 700;
       color: #000;
       margin-left: auto;
-      margin-right: 15px; /* Shifted slightly to the left */
+      margin-right: 15px;
     }
 
     .problems-grid {
@@ -440,7 +439,7 @@
         padding: 10mm 0mm 10mm 4mm !important;
       }
       .worksheet-header {
-        padding-right: 15mm !important; /* Print standard offset */
+        padding-right: 15mm !important;
       }
       .problems-grid {
         display: flex !important;
@@ -635,44 +634,50 @@
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
+    // Only checks if individual digit multiplication produces a carry (>= 10)
+    // Ignores partial products addition carries as requested.
     function hasMultiplicationCarry(top, bottom) {
-      const topDigits = String(top).split('').map(Number).reverse();
-      const bottomDigits = String(bottom).split('').map(Number).reverse();
+      const topDigits = String(top).split('').map(Number);
+      const bottomDigits = String(bottom).split('').map(Number);
 
       for (let b of bottomDigits) {
-        for (let i = 0; i < topDigits.length - 1; i++) {
-          if (topDigits[i] * b >= 10) {
+        for (let d of topDigits) {
+          if (d * b >= 10) {
             return true;
           }
         }
       }
-
-      if (bottomDigits.length > 1) {
-        let partials = bottomDigits.map((b, i) => top * b * Math.pow(10, i));
-        let maxLen = Math.max(...partials.map(p => String(p).length));
-        let carry = 0;
-        
-        for (let col = 0; col < maxLen; col++) {
-          let colSum = carry;
-          for (let p of partials) {
-            let digit = Math.floor(p / Math.pow(10, col)) % 10;
-            colSum += digit;
-          }
-          carry = Math.floor(colSum / 10);
-          if (colSum >= 10 && col < maxLen - 1) {
-            return true;
-          }
-        }
-      }
-
       return false;
     }
 
     function generateSingleProblem(topDigits, bottomDigits, mode) {
       if (mode === 'no_carry') {
-        for (let attempt = 0; attempt < 500; attempt++) {
-          const top = getRandomNumber(topDigits);
-          const bottom = getRandomNumber(bottomDigits);
+        for (let attempt = 0; attempt < 1000; attempt++) {
+          // Generate bottom digits first
+          let bList = [];
+          for (let i = 0; i < bottomDigits; i++) {
+            let minV = (i === 0) ? 1 : 0;
+            bList.push(Math.floor(Math.random() * (10 - minV)) + minV);
+          }
+          let maxB = Math.max(...bList);
+          let maxTopD = maxB > 0 ? Math.floor(9 / maxB) : 9;
+
+          let tList = [];
+          let possible = true;
+          for (let i = 0; i < topDigits; i++) {
+            let minV = (i === 0) ? 1 : 0;
+            if (maxTopD < minV) {
+              possible = false;
+              break;
+            }
+            tList.push(Math.floor(Math.random() * (maxTopD - minV + 1)) + minV);
+          }
+
+          if (!possible) continue;
+
+          let top = parseInt(tList.join(''));
+          let bottom = parseInt(bList.join(''));
+
           if (!hasMultiplicationCarry(top, bottom)) {
             return { top, bottom, product: top * bottom };
           }
