@@ -329,7 +329,7 @@ body {
   margin: 0;
   box-sizing: border-box;
   text-align: left;
-  overflow: hidden;
+  overflow: visible;
   white-space: nowrap;
 }
 
@@ -600,7 +600,7 @@ function handleRemainderOption(type) {
     if (withoutRemCheckbox.checked) {
       withRemCheckbox.checked = false;
     } else {
-      withRemCheckbox.checked = true;
+      withoutRemCheckbox.checked = true;
     }
   }
 
@@ -831,20 +831,7 @@ function loadStateFromLocalStorage() {
 }
 
 function renderWorksheetDOM() {
-  let maxDigits = currentLineDigits[0] || 3;
-  
-  problems.forEach(p => {
-    if (p && p.dividend) {
-      maxDigits = Math.max(maxDigits, String(p.dividend).length);
-    }
-  });
-  
-  let computedCellWidth = 28;
-  if (maxDigits >= 7) {
-    computedCellWidth = 23;
-  } else if (maxDigits >= 5) {
-    computedCellWidth = 26;
-  }
+  const computedCellWidth = 28;
   document.documentElement.style.setProperty('--digit-width', `${computedCellWidth}px`);
 
   const showAnswers = document.getElementById("showAnswersCheckbox").checked;
@@ -894,7 +881,7 @@ function renderCard(p, showAnswers, isFirst, cellWidth) {
   return `
     <div class="problem-card">
       <div class="problem-num">${p.id || 1}.</div>
-      <div style="flex-grow: 1;">${renderCardContent(p, showAnswers, isFirst, cellWidth)}</div>
+      <div style="flex-grow: 1; overflow: visible;">${renderCardContent(p, showAnswers, isFirst, cellWidth)}</div>
     </div>
   `;
 }
@@ -968,7 +955,7 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   if (allowDecimal && decStepsCount > 0) {
     displayVal += "." + "0".repeat(decStepsCount);
   }
-  const totalDividendWidth = displayVal.length * cellWidth;
+  const totalDividendWidth = displayVal.length * cellWidth + 10;
 
   if (isFirst) {
     dividendHTML = `
@@ -1160,14 +1147,14 @@ function handleDivisorInput(input) {
 function updateDividendInputStyles(input, cellWidth) {
   const val = input.value;
   const currentLength = val.length || 1;
-  const newWidth = currentLength * cellWidth;
+  const newWidth = (currentLength * cellWidth) + 10;
 
   const area = document.getElementById("first-dividend-area");
   const grid = document.getElementById("first-digit-grid");
   if (area) area.style.width = newWidth + "px";
   if (grid) grid.style.width = newWidth + "px";
 
-  const charWidthEstimate = cellWidth * 0.50;
+  const charWidthEstimate = cellWidth * 0.46;
   const letterSpacing = cellWidth - charWidthEstimate;
   const initialIndent = letterSpacing / 2;
 
