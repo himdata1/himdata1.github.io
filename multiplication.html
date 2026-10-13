@@ -538,6 +538,7 @@
 
     function initQuestionDropdown() {
       const qSelect = document.getElementById('numQuestions');
+      if (!qSelect) return;
       qSelect.innerHTML = '';
       for (let i = 3; i <= 60; i += 3) {
         const opt = document.createElement('option');
@@ -634,10 +635,50 @@
       generateWorksheet();
     }
 
-    function getRandomNumber(digits) {
+    function getTopNumber(digits) {
       if (digits === 1) return Math.floor(Math.random() * 9) + 1;
       const min = Math.pow(10, digits - 1);
       const max = Math.pow(10, digits) - 1;
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    function getBottomNumber(digits) {
+      if (digits === 1) {
+        if (Math.random() < 0.05) return 1;
+        return Math.floor(Math.random() * 8) + 2;
+      }
+      
+      const min = Math.pow(10, digits - 1);
+      const max = Math.pow(10, digits) - 1;
+      
+      for (let attempt = 0; attempt < 50; attempt++) {
+        let val;
+        if (digits === 2) {
+          if (Math.random() < 0.05) {
+            val = Math.floor(Math.random() * 20) + 10; // 10 to 29
+          } else {
+            val = Math.floor(Math.random() * 70) + 30; // 30 to 99
+          }
+        } else if (digits === 3) {
+          if (Math.random() < 0.05) {
+            val = Math.floor(Math.random() * 200) + 100; // 100 to 299
+          } else {
+            val = Math.floor(Math.random() * 700) + 300; // 300 to 999
+          }
+        } else {
+          val = Math.floor(Math.random() * (max - min + 1)) + min;
+        }
+
+        let valStr = String(val);
+        let leadingDigit = parseInt(valStr[0]);
+        let hasTrailingZero = valStr.endsWith('0');
+        
+        let skip = false;
+        if ((leadingDigit === 1 || leadingDigit === 2) && Math.random() > 0.05) skip = true;
+        if (hasTrailingZero && Math.random() > 0.05) skip = true;
+        
+        if (!skip) return val;
+      }
       return Math.floor(Math.random() * (max - min + 1)) + min;
     }
 
@@ -686,12 +727,20 @@
 
     function generateBalancedNoCarry(topDigits, bottomDigits, prioritizeTop) {
       if (prioritizeTop) {
-        for (let attempt = 0; attempt < 800; attempt++) {
+        for (let attempt = 0; attempt < 1000; attempt++) {
+          let maxTopLimit = 9;
+          if (topDigits >= 5 && bottomDigits === 1 && Math.random() < 0.8) {
+            maxTopLimit = 4;
+          }
+
           let tList = [];
           for (let i = 0; i < topDigits; i++) {
             let minV = (i === 0) ? 1 : 0;
-            tList.push(Math.floor(Math.random() * 9) + minV);
+            let currentLimit = (i === 0) ? 9 : maxTopLimit;
+            let val = Math.floor(Math.random() * (currentLimit - minV + 1)) + minV;
+            tList.push(val);
           }
+
           let subSlice = tList.slice(0, tList.length - 1);
           let maxT = subSlice.length > 0 ? Math.max(...subSlice) : tList[0];
           let maxB = maxT > 0 ? Math.floor(9 / maxT) : 9;
@@ -699,25 +748,56 @@
           let bList = [];
           let possible = true;
           for (let i = 0; i < bottomDigits; i++) {
-            let minV = (i === 0) ? 1 : 0;
-            if (maxB < minV) { possible = false; break; }
-            bList.push(Math.floor(Math.random() * (maxB - minV + 1)) + minV);
+            let minV = (i === 0) ? 2 : 0;
+            if (i === 0 && bottomDigits === 1 && Math.random() < 0.05) {
+              minV = 1;
+            }
+            if (minV > maxB) {
+              minV = 1;
+            }
+
+            let candidateDigits = [];
+            for (let d = minV; d <= maxB; d++) {
+              candidateDigits.push(d);
+            }
+            if (candidateDigits.length === 0) {
+              possible = false;
+              break;
+            }
+            let chosen = candidateDigits[Math.floor(Math.random() * candidateDigits.length)];
+            bList.push(chosen);
           }
 
           if (!possible) continue;
           let top = parseInt(tList.join(''));
           let bottom = parseInt(bList.join(''));
+          
+          let bottomStr = String(bottom);
+          if (bottomDigits === 1 && bottom === 1 && Math.random() > 0.05) continue;
+          if (bottomDigits === 2 && (bottom < 30) && Math.random() > 0.05) continue;
+          if (bottomDigits === 3 && (bottom < 300) && Math.random() > 0.05) continue;
+          if (bottomStr.includes('0') && Math.random() > 0.05) continue;
+
           if (!hasMultiplicationCarry(top, bottom)) {
             return { top, bottom, product: top * bottom };
           }
         }
       } else {
-        for (let attempt = 0; attempt < 800; attempt++) {
+        for (let attempt = 0; attempt < 1000; attempt++) {
           let bList = [];
           for (let i = 0; i < bottomDigits; i++) {
-            let minV = (i === 0) ? 1 : 0;
-            bList.push(Math.floor(Math.random() * 9) + minV);
+            let minV = (i === 0) ? 2 : 0;
+            if (i === 0 && bottomDigits === 1 && Math.random() < 0.05) {
+              minV = 1;
+            }
+            let candidateDigits = [];
+            for (let d = minV; d <= 9; d++) {
+              candidateDigits.push(d);
+            }
+            if (candidateDigits.length === 0) candidateDigits.push(1);
+            bList.push(candidateDigits[Math.floor(Math.random() * candidateDigits.length)]);
           }
+
           let maxB = bList.length > 0 ? Math.max(...bList) : 1;
           let maxT = maxB > 0 ? Math.floor(9 / maxB) : 9;
 
@@ -732,14 +812,21 @@
           if (!possible) continue;
           let top = parseInt(tList.join(''));
           let bottom = parseInt(bList.join(''));
+          
+          let bottomStr = String(bottom);
+          if (bottomDigits === 1 && bottom === 1 && Math.random() > 0.05) continue;
+          if (bottomDigits === 2 && (bottom < 30) && Math.random() > 0.05) continue;
+          if (bottomDigits === 3 && (bottom < 300) && Math.random() > 0.05) continue;
+          if (bottomStr.includes('0') && Math.random() > 0.05) continue;
+
           if (!hasMultiplicationCarry(top, bottom)) {
             return { top, bottom, product: top * bottom };
           }
         }
       }
 
-      const top = getRandomNumber(topDigits);
-      const bottom = 1;
+      const top = getTopNumber(topDigits);
+      const bottom = getBottomNumber(bottomDigits);
       return { top, bottom, product: top * bottom };
     }
 
@@ -750,16 +837,23 @@
 
       if (mode === 'with_carry') {
         for (let attempt = 0; attempt < 500; attempt++) {
-          const top = getRandomNumber(topDigits);
-          const bottom = getRandomNumber(bottomDigits);
+          const top = getTopNumber(topDigits);
+          const bottom = getBottomNumber(bottomDigits);
+          
+          let bottomStr = String(bottom);
+          if (bottomDigits === 1 && bottom === 1 && Math.random() > 0.05) continue;
+          if (bottomDigits === 2 && (bottom < 30) && Math.random() > 0.05) continue;
+          if (bottomDigits === 3 && (bottom < 300) && Math.random() > 0.05) continue;
+          if (bottomStr.includes('0') && Math.random() > 0.05) continue;
+
           if (hasMultiplicationCarry(top, bottom)) {
             return { top, bottom, product: top * bottom };
           }
         }
       }
 
-      const top = getRandomNumber(topDigits);
-      const bottom = getRandomNumber(bottomDigits);
+      const top = getTopNumber(topDigits);
+      const bottom = getBottomNumber(bottomDigits);
       return { top, bottom, product: top * bottom };
     }
 
