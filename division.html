@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>Long Division Worksheet Generator</title>
+<title>Division Worksheet Generator</title>
 
 <style>
 
@@ -513,7 +513,7 @@ body {
 <body>
 
 <div class="controls-panel no-print">
-  <h1 class="app-title">Long Division Worksheet Generator</h1>
+  <h1 class="app-title">Division Worksheet Generator</h1>
   <div class="controls-wrapper">
     <div class="form-group">
       <label class="group-label">Digits Config:</label>
@@ -654,8 +654,8 @@ function handleExclusiveOption(type) {
       withoutDecCheckbox.checked = true;
     }
   }
-  // Regenerate questions when decimal division state changes to ensure divisor != 1 for 1-digit divisors
-  generateNewQuestions();
+  // Recompute existing problems instead of generating new ones when decimal division state changes
+  recomputeAllProblems();
 }
 
 function handleRemainderOption(type) {
@@ -773,7 +773,6 @@ function generateNewQuestions() {
   const dividendDigits = currentLineDigits[0];
   const divisorDigits = currentLineDigits[1];
   
-  // Ensure divisor cannot be 1 when decimal division is allowed and divisor digits config is 1
   const minDivisor = (allowDecimal && divisorDigits === 1) ? 2 : Math.pow(10, divisorDigits - 1);
   const maxDivisor = Math.pow(10, divisorDigits) - 1;
   
@@ -821,7 +820,6 @@ function generateNewQuestions() {
 function recomputeAllProblems() {
   const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
   problems.forEach(p => {
-    // If decimal is active and divisor is 1, correct divisor to 2
     if (allowDecimal && p.divisor === 1) {
       p.divisor = 2;
     }
@@ -927,7 +925,7 @@ function renderWorksheetDOM() {
     sheet.innerHTML = `
       <div class="worksheet-header">
         <div class="worksheet-title">
-          Long Division Worksheet
+          Division Worksheet
         </div>
         <div class="worksheet-page-num">${totalPages > 1 ? `Page ${page + 1}/${totalPages}` : ""}</div>
       </div>
