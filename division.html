@@ -654,7 +654,8 @@ function handleExclusiveOption(type) {
       withoutDecCheckbox.checked = true;
     }
   }
-  recomputeAllProblems();
+  // Regenerate questions when decimal division state changes to ensure divisor != 1 for 1-digit divisors
+  generateNewQuestions();
 }
 
 function handleRemainderOption(type) {
@@ -672,7 +673,7 @@ function handleRemainderOption(type) {
     if (withoutRemCheckbox.checked) {
       withRemCheckbox.checked = false;
     } else {
-      withoutRemCheckbox.checked = true;
+      withRemCheckbox.checked = true;
     }
   }
 
@@ -772,7 +773,8 @@ function generateNewQuestions() {
   const dividendDigits = currentLineDigits[0];
   const divisorDigits = currentLineDigits[1];
   
-  const minDivisor = Math.pow(10, divisorDigits - 1);
+  // Ensure divisor cannot be 1 when decimal division is allowed and divisor digits config is 1
+  const minDivisor = (allowDecimal && divisorDigits === 1) ? 2 : Math.pow(10, divisorDigits - 1);
   const maxDivisor = Math.pow(10, divisorDigits) - 1;
   
   const minDividend = Math.pow(10, dividendDigits - 1);
@@ -819,6 +821,10 @@ function generateNewQuestions() {
 function recomputeAllProblems() {
   const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
   problems.forEach(p => {
+    // If decimal is active and divisor is 1, correct divisor to 2
+    if (allowDecimal && p.divisor === 1) {
+      p.divisor = 2;
+    }
     const details = computeLongDivisionSteps(p.dividend, p.divisor, allowDecimal);
     p.quotientDigitsList = details.quotientDigitsList || [];
     p.decimalQuotientList = details.decimalQuotientList || [];
@@ -965,7 +971,6 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   const decList = p.decimalQuotientList || [];
   const hasIntegerQuotient = p.quotientDigitsList && p.quotientDigitsList.length > 0;
 
-  // Append decimal point and zeros to dividend if decimal division is active and decimal steps exist
   let displayVal = dividendString;
   if (allowDecimal && decList.length > 0) {
     displayVal += "." + "0".repeat(decList.length);
@@ -1262,6 +1267,15 @@ function handleDividendChange(input, cellWidth) {
 function updateFirstDivisor(val) {
   let num = parseInt(val, 10);
   if (isNaN(num) || num <= 0) return;
+  const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
+  if (allowDecimal && num === 1) {
+    alert("Divisor cannot be 1 when Division with Decimal is selected.");
+    const inputEl = document.querySelector('.editable-divisor');
+    if (inputEl) {
+      inputEl.value = "2";
+      num = 2;
+    }
+  }
   if (problems.length > 0) {
     problems[0].divisor = num;
     recomputeFirstProblem();
