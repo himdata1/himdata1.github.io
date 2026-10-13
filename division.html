@@ -654,7 +654,6 @@ function handleExclusiveOption(type) {
       withoutDecCheckbox.checked = true;
     }
   }
-  // Recompute existing problems instead of generating new ones when decimal division state changes
   recomputeAllProblems();
 }
 
@@ -1033,15 +1032,26 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   const totalDividendWidth = displayVal.length * cellWidth + 10;
 
   if (isFirst) {
+    let decimalPartHTML = "";
+    let intWidth = dividendString.length * cellWidth;
+    if (allowDecimal && decList.length > 0) {
+      let decDisplayStr = "." + "0".repeat(decList.length);
+      decimalPartHTML = `<div id="first-dividend-decimal-part" style="position: absolute; left: ${intWidth}px; top: 0; display: flex; height: 26px;">`;
+      for (let c = 0; c < decDisplayStr.length; c++) {
+        decimalPartHTML += `<div class="digit-cell" style="color: #dc2626;">${decDisplayStr[c]}</div>`;
+      }
+      decimalPartHTML += `</div>`;
+    }
+
     dividendHTML = `
-      <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${displayVal}" 
+      <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${dividendString}" 
              inputmode="numeric" 
-             pattern="[0-9.]*" 
-             onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46"
+             pattern="[0-9]*" 
+             onkeypress="return event.charCode >= 48 && event.charCode <= 57"
              onclick="this.select()" 
              onfocus="this.select()" 
              oninput="handleDividendInput(this, ${cellWidth})" 
-             onchange="handleDividendChange(this, ${cellWidth})" />`;
+             onchange="handleDividendChange(this, ${cellWidth})" />${decimalPartHTML}`;
   } else {
     for (let i = 0; i < displayVal.length; i++) {
       dividendHTML += `<div class="digit-cell">${displayVal[i]}</div>`;
@@ -1221,9 +1231,17 @@ function handleDivisorInput(input) {
 
 function updateDividendInputStyles(input, cellWidth) {
   const val = input.value;
-  const currentLength = val.length || 1;
-  const contentWidth = (currentLength * cellWidth) + 20;
-  const inputWidth = contentWidth + 40;
+  const intLen = val.length || 1;
+  const intWidth = intLen * cellWidth;
+
+  const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
+  const decList = (problems.length > 0 && problems[0].decimalQuotientList) ? problems[0].decimalQuotientList : [];
+  const hasDec = allowDecimal && decList.length > 0;
+  const decLen = hasDec ? decList.length + 1 : 0;
+
+  const totalLen = intLen + decLen;
+  const contentWidth = totalLen * cellWidth + 10;
+  const inputWidth = intWidth + 40;
 
   const area = document.getElementById("first-dividend-area");
   const grid = document.getElementById("first-digit-grid");
@@ -1239,10 +1257,15 @@ function updateDividendInputStyles(input, cellWidth) {
   input.style.textIndent = `0px`;
   input.style.width = `${inputWidth}px`;
   input.scrollLeft = 0;
+
+  const decPartEl = document.getElementById("first-dividend-decimal-part");
+  if (decPartEl) {
+    decPartEl.style.left = `${intWidth}px`;
+  }
 }
 
 function handleDividendInput(input, cellWidth) {
-  input.value = input.value.replace(/[^0-9.]/g, '');
+  input.value = input.value.replace(/[^0-9]/g, '');
   updateDividendInputStyles(input, cellWidth);
 
   let val = input.value;
@@ -1253,7 +1276,7 @@ function handleDividendInput(input, cellWidth) {
 }
 
 function handleDividendChange(input, cellWidth) {
-  input.value = input.value.replace(/[^0-9.]/g, '');
+  input.value = input.value.replace(/[^0-9]/g, '');
   let val = input.value;
   let num = parseInt(val, 10);
   if (!isNaN(num) && num > 0 && problems.length > 0) {
