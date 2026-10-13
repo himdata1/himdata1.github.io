@@ -963,7 +963,6 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
   const allowDecimal = document.getElementById("decimalDivisionCheckbox").checked;
   const withRemainder = document.getElementById("withRemainderCheckbox").checked;
   const decList = p.decimalQuotientList || [];
-  const decStepsCount = p.decimalSteps ? p.decimalSteps.length : 0;
   const hasIntegerQuotient = p.quotientDigitsList && p.quotientDigitsList.length > 0;
 
   if (showAnswers) {
@@ -1023,17 +1022,14 @@ function renderCardContent(p, showAnswers, isFirst, cellWidth) {
 
   let dividendHTML = "";
   let displayVal = dividendString;
-  if (allowDecimal && decStepsCount > 0) {
-    displayVal += "." + "0".repeat(decStepsCount);
-  }
   const totalDividendWidth = displayVal.length * cellWidth + 10;
 
   if (isFirst) {
     dividendHTML = `
       <input type="text" id="first-dividend-input" class="editable-full-dividend" value="${displayVal}" 
              inputmode="numeric" 
-             pattern="[0-9.]*" 
-             onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode === 46"
+             pattern="[0-9]*" 
+             onkeypress="return event.charCode >= 48 && event.charCode <= 57"
              onclick="this.select()" 
              onfocus="this.select()" 
              oninput="handleDividendInput(this, ${cellWidth})" 
@@ -1238,10 +1234,10 @@ function updateDividendInputStyles(input, cellWidth) {
 }
 
 function handleDividendInput(input, cellWidth) {
-  input.value = input.value.replace(/[^0-9.]/g, '');
+  input.value = input.value.replace(/[^0-9]/g, '');
   updateDividendInputStyles(input, cellWidth);
 
-  let val = input.value.replace(/\./g, '');
+  let val = input.value;
   let num = parseInt(val, 10);
   if (!isNaN(num) && num > 0 && problems.length > 0) {
     problems[0].dividend = num;
@@ -1249,8 +1245,8 @@ function handleDividendInput(input, cellWidth) {
 }
 
 function handleDividendChange(input, cellWidth) {
-  input.value = input.value.replace(/[^0-9.]/g, '');
-  let val = input.value.replace(/\./g, '');
+  input.value = input.value.replace(/[^0-9]/g, '');
+  let val = input.value;
   let num = parseInt(val, 10);
   if (!isNaN(num) && num > 0 && problems.length > 0) {
     problems[0].dividend = num;
