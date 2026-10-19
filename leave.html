@@ -80,11 +80,11 @@
             font-size: 13px;
             color: #374151;
             line-height: 1.3;
-            padding-right: 12px; /* Extra gap between label & colon */
+            padding-right: 12px;
             word-wrap: break-word;
         }
         .colon-separator {
-            width: 25px; /* Increased separator width */
+            width: 25px;
             flex-shrink: 0;
             font-size: 13px;
             font-weight: bold;
@@ -93,7 +93,7 @@
         }
         .form-field {
             flex-grow: 1;
-            margin-left: 12px; /* Increased gap between colon & input box */
+            margin-left: 12px;
         }
         .form-field input, .form-field select {
             width: 100%;
@@ -139,7 +139,6 @@
             height: 2px;
         }
         
-        /* Gap between Signature & Print button removed */
         .button-container {
             text-align: center;
             margin-top: -25px; 
@@ -159,7 +158,6 @@
             background-color: #1d4ed8;
         }
 
-        /* Responsive View for Mobile Screens */
         @media screen and (max-width: 600px) {
             .form-row {
                 flex-direction: column;
@@ -180,7 +178,6 @@
             }
         }
 
-        /* UNIVERSAL SINGLE-PAGE PRINT SCALING (A4, A5, A6 FIT LOGIC) */
         @page {
             margin: 0;
             size: auto;
@@ -217,7 +214,6 @@
                 justify-content: space-between !important;
             }
 
-            /* Print Heading Size & Perfect Wrapping */
             .heading-input {
                 font-size: 2.5vh !important;
                 width: 100% !important;
@@ -325,7 +321,7 @@
             <div class="form-label">Total No. of <span class="editable-label plural-label">Casual Leaves</span> in the Year</div>
             <div class="colon-separator">:</div>
             <div class="form-field">
-                <input type="text" class="save-storage" value="12 days" onfocus="this.select()">
+                <input type="text" id="total-leaves" class="save-storage calc-trigger" value="12" onfocus="this.select()">
             </div>
         </div>
 
@@ -333,7 +329,7 @@
             <div class="form-label"><span class="editable-label plural-label">Casual Leaves</span> already availed</div>
             <div class="colon-separator">:</div>
             <div class="form-field">
-                <input type="text" class="save-storage" value="4 days" onfocus="this.select()">
+                <input type="text" id="availed-leaves" class="save-storage calc-trigger" value="4" onfocus="this.select()">
             </div>
         </div>
 
@@ -341,7 +337,7 @@
             <div class="form-label"><span class="editable-label plural-label">Casual Leaves</span> available</div>
             <div class="colon-separator">:</div>
             <div class="form-field">
-                <input type="text" class="save-storage" value="8 days" onfocus="this.select()">
+                <input type="text" id="available-leaves" readonly tabindex="-1" value="8 days">
             </div>
         </div>
 
@@ -349,7 +345,7 @@
             <div class="form-label" style="font-weight: bold;"><span class="editable-label plural-label">Casual Leaves</span> required</div>
             <div class="colon-separator">:</div>
             <div class="form-field">
-                <input type="text" class="save-storage" value="1 day" style="font-weight: bold;" onfocus="this.select()">
+                <input type="text" id="required-leaves" class="save-storage calc-trigger" value="1" style="font-weight: bold;" onfocus="this.select()">
             </div>
         </div>
 
@@ -365,7 +361,7 @@
             <div class="form-label">Balance of <span class="editable-label plural-label">Casual Leaves</span></div>
             <div class="colon-separator">:</div>
             <div class="form-field">
-                <input type="text" class="save-storage" value="7 days" onfocus="this.select()">
+                <input type="text" id="balance-leaves" readonly tabindex="-1" value="7 days">
             </div>
         </div>
 
@@ -441,20 +437,49 @@
         const singularLabels = document.querySelectorAll(".singular-label");
         const pluralLabels = document.querySelectorAll(".plural-label");
 
+        const totalInput = document.getElementById("total-leaves");
+        const availedInput = document.getElementById("availed-leaves");
+        const availableInput = document.getElementById("available-leaves");
+        const requiredInput = document.getElementById("required-leaves");
+        const balanceInput = document.getElementById("balance-leaves");
+
+        // Helper function to extract only numbers from string
+        function extractNumber(val) {
+            if (!val) return 0;
+            const num = parseFloat(val.toString().replace(/[^0-9.-]/g, ''));
+            return isNaN(num) ? 0 : num;
+        }
+
+        // Function to calculate and update automatic fields with automatic day/days suffix
+        function calculateFields() {
+            let total = extractNumber(totalInput.value);
+            let availed = extractNumber(availedInput.value);
+            let required = extractNumber(requiredInput.value);
+
+            let available = total - availed;
+            let balance = available - required;
+
+            let availSuffix = (available === 1) ? "day" : "days";
+            let balanceSuffix = (balance === 1) ? "day" : "days";
+
+            availableInput.value = available + " " + availSuffix;
+            balanceInput.value = balance + " " + balanceSuffix;
+
+            localStorage.setItem("leave_form_available_calc", availableInput.value);
+            localStorage.setItem("leave_form_balance_calc", balanceInput.value);
+        }
+
         // Function to update and sync all labels based on leave type span
         function updateFormLabels() {
             let leaveType = leaveTypeSpan.innerText.trim();
             if (!leaveType) leaveType = "Casual Leave";
 
-            // Determine singular and plural forms
             let singularText = leaveType.replace(/s$/i, '').trim();
-            // If user typed something ending with 's' or general plural
             let pluralText = leaveType.endsWith('s') || leaveType.endsWith('S') ? leaveType : leaveType + "s";
 
             singularLabels.forEach(el => { el.innerText = singularText; });
             pluralLabels.forEach(el => { el.innerText = pluralText; });
 
-            // Save heading type to localStorage
             localStorage.setItem("leave_form_heading_type", leaveTypeSpan.innerText);
         }
 
@@ -465,28 +490,59 @@
             updateFormLabels();
         }
 
-        // Listen to input changes on leave type span
-        leaveTypeSpan.addEventListener("input", () => {
-            updateFormLabels();
-        });
-
-        // Handle standard input/select fields with localStorage
+        // Handle standard input/select fields with localStorage and auto-suffix formatting
         const fields = document.querySelectorAll(".save-storage");
         fields.forEach((field, index) => {
-            const storageKey = "leave_form_field_v5_" + index;
+            const storageKey = "leave_form_field_v8_" + index;
             const savedValue = localStorage.getItem(storageKey);
             
             if (savedValue !== null) {
-                if (field.tagName === "SELECT" || field.tagName === "INPUT") {
+                if (field.tagName === "SELECT") {
+                    field.value = savedValue;
+                } else if (field.tagName === "INPUT") {
                     field.value = savedValue;
                 }
             }
 
+            // On load, format calc-trigger fields to ensure suffix is always displayed
+            if (field.classList.contains("calc-trigger")) {
+                let num = extractNumber(field.value);
+                let suffix = (num === 1) ? "day" : "days";
+                field.value = num + " " + suffix;
+            }
+
             const eventType = field.tagName === "SELECT" ? "change" : "input";
             field.addEventListener(eventType, () => {
-                const valueToSave = field.value;
+                let valueToSave = field.value;
                 localStorage.setItem(storageKey, valueToSave);
+                if (field.classList.contains("calc-trigger")) {
+                    calculateFields();
+                }
             });
+
+            // When user focuses, strip suffix so they can edit the number easily
+            if (field.classList.contains("calc-trigger")) {
+                field.addEventListener("focus", () => {
+                    let num = extractNumber(field.value);
+                    field.value = num;
+                    field.select();
+                });
+                // When user clicks away (blur), re-add the suffix
+                field.addEventListener("blur", () => {
+                    let num = extractNumber(field.value);
+                    let suffix = (num === 1) ? "day" : "days";
+                    field.value = num + " " + suffix;
+                    localStorage.setItem(storageKey, field.value);
+                });
+            }
+        });
+
+        // Initial calculation trigger on load
+        calculateFields();
+
+        // Listen to input changes on leave type span
+        leaveTypeSpan.addEventListener("input", () => {
+            updateFormLabels();
         });
 
         // Auto select/highlight text when clicking the leave type span inside the heading
