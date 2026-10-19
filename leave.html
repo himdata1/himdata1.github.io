@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Application for Leave</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 15px;
+            background-color: #ffffff;
+            color: #333;
+            display: flex;
+            justify-content: center;
+        }
+        .form-container {
+            width: 100%;
+            max-width: 800px;
+            background: #ffffff;
+            padding: 25px 20px;
+            margin: 0 auto;
+            border: none;
+            border-radius: 0;
+            box-shadow: none;
+            box-sizing: border-box;
+            container-type: inline-size;
+        }
+        
+        /* Editable Wrapping Heading & Label Style */
+        .heading-input {
+            font-size: 16px;
+            font-weight: bold;
+            color: #111827;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            border: none;
+            background-color: transparent;
+            padding: 4px;
+            outline: none;
+            width: 100%;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            margin-top: 0;
+            margin-bottom: 20px;
+        }
+
+        .heading-input:focus, .editable-label:focus {
+            background-color: #f3f4f6;
+            border-radius: 3px;
+        }
+
+        #leave-type-span {
+            cursor: pointer;
+        }
+
+        #leave-type-span:focus {
+            cursor: text;
+        }
+
+        .editable-label {
+            outline: none;
+            padding: 2px 4px;
+            border-radius: 2px;
+            display: inline-block;
+        }
+
+        .form-row {
+            display: flex;
+            margin-bottom: 10px;
+            align-items: center;
+            flex-wrap: nowrap;
+        }
+        .form-label {
+            width: 260px;
+            flex-shrink: 0;
+            font-weight: 500;
+            font-size: 13px;
+            color: #374151;
+            line-height: 1.3;
+            padding-right: 12px; /* Extra gap between label & colon */
+            word-wrap: break-word;
+        }
+        .colon-separator {
+            width: 25px; /* Increased separator width */
+            flex-shrink: 0;
+            font-size: 13px;
+            font-weight: bold;
+            color: #374151;
+            text-align: center;
+        }
+        .form-field {
+            flex-grow: 1;
+            margin-left: 12px; /* Increased gap between colon & input box */
+        }
+        .form-field input, .form-field select {
+            width: 100%;
+            padding: 6px 10px;
+            border: 1px solid #9ca3af;
+            background-color: #ffffff;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #111827;
+            line-height: 1.3;
+            box-sizing: border-box;
+            outline: none;
+            font-family: Arial, sans-serif;
+        }
+        .form-field input:focus, .form-field select:focus {
+            background-color: #ffffff;
+            border-color: #2563eb;
+            box-shadow: none;
+        }
+        
+        /* Disabled / Non-editable style */
+        .form-field input[readonly] {
+            background-color: #f9fafb;
+            cursor: not-allowed;
+            user-select: none;
+        }
+
+        .stamp-sign-section {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+            padding-top: 10px;
+        }
+        .stamp-box, .sign-box {
+            text-align: center;
+            width: 45%;
+            font-size: 12px;
+            color: #374151;
+        }
+        .sign-line {
+            margin-top: 20px;
+            border-top: none;
+            height: 2px;
+        }
+        
+        /* Gap between Signature & Print button removed */
+        .button-container {
+            text-align: center;
+            margin-top: -25px; 
+        }
+        .btn {
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            margin: 0 6px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .btn:hover {
+            background-color: #1d4ed8;
+        }
+
+        /* Responsive View for Mobile Screens */
+        @media screen and (max-width: 600px) {
+            .form-row {
+                flex-direction: column;
+                align-items: flex-start;
+                margin-bottom: 12px;
+            }
+            .form-label {
+                width: 100%;
+                margin-bottom: 4px;
+                padding-right: 0;
+            }
+            .colon-separator {
+                display: none;
+            }
+            .form-field {
+                width: 100%;
+                margin-left: 0;
+            }
+        }
+
+        /* UNIVERSAL SINGLE-PAGE PRINT SCALING (A4, A5, A6 FIT LOGIC) */
+        @page {
+            margin: 0;
+            size: auto;
+        }
+
+        @media print {
+            html, body {
+                width: 100% !important;
+                height: 100% !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                background: #ffffff !important;
+                display: flex !important;
+                justify-content: center !important;
+                align-items: flex-start !important;
+                overflow: hidden !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            .button-container {
+                display: none !important;
+            }
+
+            .form-container {
+                width: 100vw !important;
+                height: 100vh !important;
+                max-width: 100vw !important;
+                padding: 4vh 6vw !important;
+                margin: 0 auto !important;
+                box-sizing: border-box !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+            }
+
+            /* Print Heading Size & Perfect Wrapping */
+            .heading-input {
+                font-size: 2.5vh !important;
+                width: 100% !important;
+                border: none !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                color: #000000 !important;
+                word-break: break-word !important;
+                overflow-wrap: break-word !important;
+                margin-bottom: 2vh !important;
+                text-align: center !important;
+                display: block !important;
+            }
+
+            .form-row {
+                display: flex !important;
+                flex-direction: row !important;
+                margin-bottom: 1.4vh !important;
+                align-items: flex-start !important;
+                page-break-inside: avoid !important;
+            }
+
+            .form-label {
+                font-size: 1.8vh !important;
+                width: 40% !important;
+                line-height: 1.2 !important;
+                margin-bottom: 0 !important;
+                padding-right: 0 !important;
+                color: #000000 !important;
+            }
+
+            .colon-separator {
+                display: block !important;
+                font-size: 1.8vh !important;
+                width: 5% !important;
+                color: #000000 !important;
+            }
+
+            .form-field {
+                width: 55% !important;
+                flex-grow: 1 !important;
+                margin-left: 0 !important;
+            }
+
+            .form-field input, .form-field select {
+                font-size: 1.8vh !important;
+                border: none !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                box-shadow: none !important;
+                color: #000000 !important;
+                line-height: 1.2 !important;
+                -webkit-appearance: none !important;
+                -moz-appearance: none !important;
+                appearance: none !important;
+            }
+
+            .stamp-sign-section {
+                margin-top: auto !important;
+                padding-top: 2vh !important;
+                page-break-inside: avoid !important;
+            }
+
+            .stamp-box, .sign-box {
+                font-size: 1.6vh !important;
+                color: #000000 !important;
+            }
+
+            .sign-line {
+                margin-top: 3vh !important;
+                border-top: 1px dashed #000000 !important;
+            }
+
+            .editable-label {
+                padding: 0 !important;
+                background: transparent !important;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <div>
+        <h2 class="heading-input" id="form-heading" spellcheck="false">Application for <span contenteditable="true" id="leave-type-span" style="outline: none;">Casual Leave</span></h2>
+        
+        <div class="form-row">
+            <div class="form-label">Name and Designation of the Applicant</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="Abc, JBT" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">Name of the School</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="GPS " onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">Total No. of <span class="editable-label plural-label">Casual Leaves</span> in the Year</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="12 days" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label"><span class="editable-label plural-label">Casual Leaves</span> already availed</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="4 days" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label"><span class="editable-label plural-label">Casual Leaves</span> available</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="8 days" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label" style="font-weight: bold;"><span class="editable-label plural-label">Casual Leaves</span> required</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="1 day" style="font-weight: bold;" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label" style="font-weight: bold;">Date of <span class="editable-label singular-label">Casual Leave</span></div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="21/10/2026" style="font-weight: bold;" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">Balance of <span class="editable-label plural-label">Casual Leaves</span></div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="7 days" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">Reason for <span class="editable-label singular-label">Casual Leave</span></div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="Urgent work" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">Whether Station Leave required</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <select class="save-storage">
+                    <option value="Yes" selected>Yes</option>
+                    <option value="No">No</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">Period of Station Leave</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="21/10/2026" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">Incharge of the School</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="Xyz, JBT" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">Date of Application</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" class="save-storage" value="19/10/2026" onfocus="this.select()">
+            </div>
+        </div>
+
+        <div class="form-row">
+            <div class="form-label">Signature of the Applicant</div>
+            <div class="colon-separator">:</div>
+            <div class="form-field">
+                <input type="text" value="" readonly tabindex="-1">
+            </div>
+        </div>
+    </div>
+
+    <div class="stamp-sign-section">
+        <div class="stamp-box">
+            <div class="sign-line"></div>
+        </div>
+        <div class="stamp-box">
+            <div class="sign-line"></div>
+        </div>
+    </div>
+
+    <div class="button-container">
+        <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const leaveTypeSpan = document.getElementById("leave-type-span");
+        const singularLabels = document.querySelectorAll(".singular-label");
+        const pluralLabels = document.querySelectorAll(".plural-label");
+
+        // Function to update and sync all labels based on leave type span
+        function updateFormLabels() {
+            let leaveType = leaveTypeSpan.innerText.trim();
+            if (!leaveType) leaveType = "Casual Leave";
+
+            // Determine singular and plural forms
+            let singularText = leaveType.replace(/s$/i, '').trim();
+            // If user typed something ending with 's' or general plural
+            let pluralText = leaveType.endsWith('s') || leaveType.endsWith('S') ? leaveType : leaveType + "s";
+
+            singularLabels.forEach(el => { el.innerText = singularText; });
+            pluralLabels.forEach(el => { el.innerText = pluralText; });
+
+            // Save heading type to localStorage
+            localStorage.setItem("leave_form_heading_type", leaveTypeSpan.innerText);
+        }
+
+        // Load saved leave type from localStorage on startup
+        const savedHeadingType = localStorage.getItem("leave_form_heading_type");
+        if (savedHeadingType !== null) {
+            leaveTypeSpan.innerText = savedHeadingType;
+            updateFormLabels();
+        }
+
+        // Listen to input changes on leave type span
+        leaveTypeSpan.addEventListener("input", () => {
+            updateFormLabels();
+        });
+
+        // Handle standard input/select fields with localStorage
+        const fields = document.querySelectorAll(".save-storage");
+        fields.forEach((field, index) => {
+            const storageKey = "leave_form_field_v5_" + index;
+            const savedValue = localStorage.getItem(storageKey);
+            
+            if (savedValue !== null) {
+                if (field.tagName === "SELECT" || field.tagName === "INPUT") {
+                    field.value = savedValue;
+                }
+            }
+
+            const eventType = field.tagName === "SELECT" ? "change" : "input";
+            field.addEventListener(eventType, () => {
+                const valueToSave = field.value;
+                localStorage.setItem(storageKey, valueToSave);
+            });
+        });
+
+        // Auto select/highlight text when clicking the leave type span inside the heading
+        leaveTypeSpan.addEventListener("focus", () => {
+            const range = document.createRange();
+            range.selectNodeContents(leaveTypeSpan);
+            const sel = window.getSelection();
+            sel.removeAllRanges();
+            sel.addRange(range);
+        });
+    });
+</script>
+
+</body>
+</html>
