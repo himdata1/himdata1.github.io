@@ -385,7 +385,7 @@
             <div class="form-label">Total No. of <span class="editable-label plural-label">Casual Leaves</span> in the Year</div>
             <div class="colon-separator">:</div>
             <div class="form-field">
-                <input type="text" id="total-leaves" class="save-storage calc-trigger" value="12" onfocus="this.select()">
+                <input type="text" id="total-leaves" class="save-storage calc-trigger" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" value="12" onfocus="this.select()">
             </div>
         </div>
 
@@ -393,7 +393,7 @@
             <div class="form-label"><span class="editable-label plural-label">Casual Leaves</span> already availed</div>
             <div class="colon-separator">:</div>
             <div class="form-field">
-                <input type="text" id="availed-leaves" class="save-storage calc-trigger" value="4" onfocus="this.select()">
+                <input type="text" id="availed-leaves" class="save-storage calc-trigger" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" value="4" onfocus="this.select()">
             </div>
         </div>
 
@@ -409,7 +409,7 @@
             <div class="form-label" style="font-weight: bold;"><span class="editable-label plural-label">Casual Leaves</span> required</div>
             <div class="colon-separator">:</div>
             <div class="form-field">
-                <input type="text" id="required-leaves" class="save-storage calc-trigger" value="1" style="font-weight: bold;" onfocus="this.select()">
+                <input type="text" id="required-leaves" class="save-storage calc-trigger" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" value="1" style="font-weight: bold;" onfocus="this.select()">
             </div>
         </div>
 
@@ -560,8 +560,8 @@
             let available = total - availed;
             let balance = available - required;
 
-            let availSuffix = (available === 1) ? "day" : "days";
-            let balanceSuffix = (balance === 1) ? "day" : "days";
+            let availSuffix = (Math.abs(available - 1) < 0.001) ? "day" : "days";
+            let balanceSuffix = (Math.abs(balance - 1) < 0.001) ? "day" : "days";
 
             availableInput.value = available + " " + availSuffix;
             balanceInput.value = balance + " " + balanceSuffix;
@@ -606,12 +606,30 @@
 
             if (field.classList.contains("calc-trigger")) {
                 let num = extractNumber(field.value);
-                let suffix = (num === 1) ? "day" : "days";
+                let suffix = (Math.abs(num - 1) < 0.001) ? "day" : "days";
                 field.value = num + " " + suffix;
             }
 
             const eventType = field.tagName === "SELECT" ? "change" : "input";
             field.addEventListener(eventType, () => {
+                // Strict enforcement for calc-trigger fields: allow only digits and one dot
+                if (field.classList.contains("calc-trigger")) {
+                    let cursorPos = field.selectionStart;
+                    let val = field.value;
+                    // Remove anything except numbers and decimal point
+                    let cleaned = val.replace(/[^0-9.]/g, '');
+                    // Ensure only a single decimal point is allowed
+                    const parts = cleaned.split('.');
+                    if (parts.length > 2) {
+                        cleaned = parts[0] + '.' + parts.slice(1).join('');
+                    }
+                    if (val !== cleaned) {
+                        field.value = cleaned;
+                        cursorPos = Math.max(0, cursorPos - 1);
+                    }
+                    try { field.setSelectionRange(cursorPos, cursorPos); } catch(e) {}
+                }
+
                 let valueToSave = field.value;
                 localStorage.setItem(storageKey, valueToSave);
                 if (field.classList.contains("calc-trigger")) {
@@ -627,7 +645,7 @@
                 });
                 field.addEventListener("blur", () => {
                     let num = extractNumber(field.value);
-                    let suffix = (num === 1) ? "day" : "days";
+                    let suffix = (Math.abs(num - 1) < 0.001) ? "day" : "days";
                     field.value = num + " " + suffix;
                     localStorage.setItem(storageKey, field.value);
                 });
