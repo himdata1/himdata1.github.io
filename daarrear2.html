@@ -657,12 +657,19 @@
                 }
                 const nextMonth = monthsList[nextMIndex];
 
+                // Check if the newly added row is October 2026 or later
+                let nextPrevDA = lastItem ? lastItem.prevDA : 45;
+                let nextRevDA = lastItem ? lastItem.revDA : 63;
+                if (nextYear > 2026 || (nextYear === 2026 && nextMIndex >= 9)) { // October is index 9
+                    nextPrevDA = 50;
+                }
+
                 rawData.push({
                     month: nextMonth,
                     year: nextYear,
-                    basic: lastItem ? lastItem.basic : 49300,
-                    prevDA: lastItem ? lastItem.prevDA : 34,
-                    revDA: lastItem ? lastItem.revDA : 38
+                    basic: lastItem ? lastItem.basic : 55500,
+                    prevDA: nextPrevDA,
+                    revDA: nextRevDA
                 });
             }
 
