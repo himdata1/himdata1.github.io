@@ -3,9 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Hindi Word Learning Grid - हिंदी शब्द ग्रिड</title>
+    <title>Word Learning Grid - शब्द सीखें</title>
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23007bff'/><text x='50' y='52' font-size='68' fill='white' font-family='Verdana, sans-serif' font-weight='900' text-anchor='middle' dominant-baseline='central'>W</text></svg>">
-<link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23007bff'/><text x='50' y='52' font-size='68' fill='white' font-family='Verdana, sans-serif' font-weight='900' text-anchor='middle' dominant-baseline='central'>W</text></svg>">
+    <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23007bff'/><text x='50' y='52' font-size='68' fill='white' font-family='Verdana, sans-serif' font-weight='900' text-anchor='middle' dominant-baseline='central'>W</text></svg>">
     <style>
         * {
             box-sizing: border-box;
@@ -134,6 +134,23 @@
             background-color: #e68a00;
         }
 
+        .btn-rhyme {
+            background-color: #8e24aa;
+            color: white;
+        }
+
+        .btn-rhyme:hover {
+            background-color: #6a1b9a;
+        }
+
+        .btn-rhyme:disabled {
+            background-color: #e0e0e0 !important;
+            color: #9e9e9e !important;
+            cursor: not-allowed;
+            opacity: 0.7;
+            box-shadow: none;
+        }
+
         .btn-active {
             outline: 3px solid #ff9800;
         }
@@ -152,6 +169,13 @@
             border: 1px solid #ccc;
             font-size: 13px;
             outline: none;
+        }
+
+        .lang-select {
+            font-weight: bold;
+            background-color: #e8f5e9;
+            border: 1.5px solid #2e7d32 !important;
+            color: #1b5e20;
         }
 
         /* Grid Layout */
@@ -252,6 +276,7 @@
             border-radius: 4px;
             outline: none;
             padding-right: 18px;
+            text-transform: lowercase;
         }
 
         .delete-card-btn {
@@ -286,10 +311,18 @@
 </head>
 <body>
 
-    <h1>हिंदी शब्द उच्चारण अभ्यास</h1>
-    <p class="subtitle">किसी भी शब्द पर क्लिक करके उच्चारण सुनें</p>
+    <h1 id="appTitle">हिंदी शब्द उच्चारण अभ्यास</h1>
+    <p id="appSubtitle" class="subtitle">किसी भी शब्द पर क्लिक करके उच्चारण सुनें</p>
 
     <div class="controls">
+        <div class="setting-group">
+            <label for="langSelect"><b>🌐 Lang:</b></label>
+            <select id="langSelect" class="lang-select" onchange="changeLanguage()">
+                <option value="hi" selected>Hindi (हिंदी)</option>
+                <option value="en">English</option>
+            </select>
+        </div>
+
         <button id="modeToggleBtn" class="btn btn-primary" onclick="toggleEditMode()">
             ✏️ Edit Mode: OFF
         </button>
@@ -314,7 +347,8 @@
             </select>
         </div>
 
-        <div class="setting-group">
+        <!-- Hindi Matra Filter -->
+        <div class="setting-group" id="matraGroup">
             <select id="matraSelect">
                 <option value="no_matra">बिना मात्रा</option>
                 <option value="aa_matra">आ (ा)</option>
@@ -331,6 +365,22 @@
                 <option value="ah_matra">अः (ः)</option>
             </select>
         </div>
+
+        <!-- English Alphabets Count Filter -->
+        <div class="setting-group" id="alphabetGroup" style="display: none;">
+            <select id="alphabetSelect" onchange="checkRhymeButtonState()">
+                <option value="2" selected>2 Alphabets</option>
+                <option value="3">3 Alphabets</option>
+                <option value="4">4 Alphabets</option>
+                <option value="5">5 Alphabets</option>
+                <option value="6">6 Alphabets</option>
+            </select>
+        </div>
+
+        <!-- English Same Sound / Rhyme Button -->
+        <button id="rhymeBtn" class="btn btn-rhyme" style="display: none;" disabled onclick="generateRhymingWords()">
+            🎵 Same Sound
+        </button>
 
         <button class="btn btn-random" onclick="generateRandomWords()">
             🎲 Random
@@ -365,19 +415,32 @@
     <div id="gridContainer" class="grid-container"></div>
 
     <script>
-        const defaultWords = [
+        const defaultWordsHindi = [
             ["कल", "तप", "चढ़", "जग", "कब", "पल"],
             ["मग", "वक", "गप", "चर", "जब", "फल"],
             ["हल", "नल", "तल", "मन", "अब", "उस"],
             ["सब", "यज्ञ", "घन", "छल", "दस", "छत"],
-            ["यश", "डर", "पढ़", "خत", "नस", "एक"],
+            ["यश", "डर", "पढ़", "खत", "नस", "एक"],
             ["इत्र", "नग", "पर", "बल", "दल", "नथ"],
             ["टब", "ठग", "तन", "थन", "दम", "बस"],
             ["धन", "भग", "रस", "लट", "हम", "कर"],
             ["मत", "नभ", "चख", "सच", "नच", "गज"]
         ];
 
-        const wordDictionary = {
+        // English default words expanded to exactly 9 rows
+        const defaultWordsEnglish = [
+            ["am", "an", "as", "at", "by", "do"],
+            ["go", "he", "hi", "in", "is", "it"],
+            ["me", "my", "no", "on", "or", "so"],
+            ["to", "up", "us", "we", "am", "an"],
+            ["if", "be", "of", "oh", "ok", "on"],
+            ["at", "by", "do", "go", "he", "in"],
+            ["an", "as", "at", "by", "do", "go"],
+            ["he", "hi", "in", "is", "it", "me"],
+            ["my", "no", "on", "or", "so", "to"]
+        ];
+
+        const hindiDictionary = {
             no_matra: ["कल", "तप", "चढ़", "जग", "कब", "पल", "मग", "वक", "गप", "चर", "जब", "फल", "हल", "नल", "तल", "मन", "अब", "उस", "सब", "यज्ञ", "घन", "छल", "दस", "छत", "यश", "डर", "पढ़", "खत", "नस", "एक", "इत्र", "नग", "पर", "बल", "दल", "नथ", "टब", "ठग", "तन", "थन", "दम", "बस", "धन", "भग", "रस", "लट", "हम", "कर", "मत", "नभ", "चख", "सच", "नच", "गज"],
             aa_matra: ["आम", "नाम", "काम", "धाम", "राम", "शाम", "काका", "मामा", "पापा", "नाना", "बाबा", "दाल", "गाल", "बाल", "खाल", "छाल", "जाल", "हाल", "रात", "बात", "जात", "मात", "सात", "हाथ", "कान", "पान", "दान", "मान", "थान", "छाता", "माता", "राजा", "बाजा", "ताजा", "मजा", "आना", "जाना", "खाना", "गाना", "लाना", "सोना", "चावल", "बादल", "काजल", "पागल"],
             i_matra: ["दिन", "गिन", "पिन", "बिन", "छिन", "सिर", "फिर", "दिल", "मिल", "खिल", "तिल", "बिल", "कवि", "रवि", "छवि", "गति", "पति", "मति", "अति", "किताब", "हिसाब", "किसान", "विमान", "शिकार", "सितार", "गिटार", "मित्र", "चित्र", "शिक्षा", "नियम", "किरण", "हिरण", "दिशा"],
@@ -393,9 +456,19 @@
             ah_matra: ["स्वतः", "प्रायः", "नमः", "अंततः", "मूलतः", "विशेषतः", "पूर्णतः", "क्रमशः", "दुःख", "निःसंकोच", "निःस्वार्थ"]
         };
 
+        const englishDictionary = {
+            2: ["am", "an", "as", "at", "by", "do", "go", "he", "hi", "in", "is", "it", "me", "my", "no", "on", "or", "so", "to", "up", "us", "we", "if", "be", "of", "oh", "ok"],
+            3: ["cat", "dog", "bat", "sun", "boy", "pen", "cup", "bag", "box", "fan", "man", "run", "van", "toy", "hat", "bus", "map", "pig", "bed", "red", "big", "hot", "cow", "jam"],
+            4: ["book", "ball", "bird", "fish", "tree", "milk", "moon", "star", "door", "lion", "king", "duck", "frog", "cake", "ring", "park", "ship", "wind", "rain", "desk"],
+            5: ["apple", "mango", "water", "house", "train", "chair", "table", "plant", "clock", "paper", "grapes", "smile", "light", "bread", "river", "horse", "tiger", "flower"],
+            6: ["banana", "orange", "pencil", "school", "animal", "flower", "monkey", "parrot", "rabbit", "doctor", "window", "garden", "summer", "winter", "mother", "father"]
+        };
+
+        let currentLang = 'hi';
         let wordData = [];
         let isEditMode = false;
-        let selectedVoice = null;
+        let selectedVoiceHindi = null;
+        let selectedVoiceEnglish = null;
 
         let isPlaying = false;
         let isPaused = false;
@@ -408,28 +481,71 @@
 
         function initSpeech() {
             if ('speechSynthesis' in window) {
-                window.speechSynthesis.onvoiceschanged = () => {
+                const loadVoices = () => {
                     const voices = window.speechSynthesis.getVoices();
-                    selectedVoice = voices.find(voice => voice.lang.includes('hi') || voice.lang.includes('HI')) || null;
+                    selectedVoiceHindi = voices.find(v => v.lang.includes('hi') || v.lang.includes('HI')) || null;
+                    selectedVoiceEnglish = voices.find(v => v.lang.includes('en-GB') || v.lang.includes('en-US') || v.lang.includes('en')) || null;
                 };
+                loadVoices();
+                window.speechSynthesis.onvoiceschanged = loadVoices;
             }
         }
 
+        function checkRhymeButtonState() {
+            const alphabetSelect = document.getElementById('alphabetSelect');
+            const rhymeBtn = document.getElementById('rhymeBtn');
+            if (currentLang === 'en' && alphabetSelect.value === '3') {
+                rhymeBtn.removeAttribute('disabled');
+            } else {
+                rhymeBtn.setAttribute('disabled', 'true');
+            }
+        }
+
+        function changeLanguage() {
+            stopPlayback();
+            currentLang = document.getElementById('langSelect').value;
+            const matraGroup = document.getElementById('matraGroup');
+            const alphabetGroup = document.getElementById('alphabetGroup');
+            const rhymeBtn = document.getElementById('rhymeBtn');
+            const appTitle = document.getElementById('appTitle');
+            const appSubtitle = document.getElementById('appSubtitle');
+
+            if (currentLang === 'hi') {
+                matraGroup.style.display = 'flex';
+                alphabetGroup.style.display = 'none';
+                rhymeBtn.style.display = 'none';
+                appTitle.innerText = "हिंदी शब्द उच्चारण अभ्यास";
+                appSubtitle.innerText = "किसी भी शब्द पर क्लिक करके उच्चारण सुनें";
+            } else {
+                matraGroup.style.display = 'none';
+                alphabetGroup.style.display = 'flex';
+                rhymeBtn.style.display = 'inline-flex';
+                checkRhymeButtonState();
+                appTitle.innerText = "English Word Pronunciation Practice";
+                appSubtitle.innerText = "Click on any word to listen to its pronunciation";
+            }
+
+            loadWords();
+            renderGrid();
+        }
+
         function loadWords() {
-            const saved = localStorage.getItem('hindi_words_grid');
+            const storageKey = 'grid_words_' + currentLang;
+            const saved = localStorage.getItem(storageKey);
             if (saved) {
                 try {
                     wordData = JSON.parse(saved);
                 } catch (e) {
-                    wordData = JSON.parse(JSON.stringify(defaultWords));
+                    wordData = JSON.parse(JSON.stringify(currentLang === 'hi' ? defaultWordsHindi : defaultWordsEnglish));
                 }
             } else {
-                wordData = JSON.parse(JSON.stringify(defaultWords));
+                wordData = JSON.parse(JSON.stringify(currentLang === 'hi' ? defaultWordsHindi : defaultWordsEnglish));
             }
         }
 
         function saveWords() {
-            localStorage.setItem('hindi_words_grid', JSON.stringify(wordData));
+            const storageKey = 'grid_words_' + currentLang;
+            localStorage.setItem(storageKey, JSON.stringify(wordData));
         }
 
         function renderGrid() {
@@ -445,6 +561,8 @@
                     const cardEl = document.createElement('div');
                     cardEl.className = 'card';
 
+                    const displayWord = (currentLang === 'en' && typeof word === 'string') ? word.toLowerCase() : word;
+
                     if (isEditMode) {
                         const wrapper = document.createElement('div');
                         wrapper.className = 'card-input-wrapper';
@@ -452,12 +570,14 @@
                         const inputEl = document.createElement('input');
                         inputEl.type = 'text';
                         inputEl.className = 'card-input';
-                        inputEl.value = word;
+                        inputEl.value = displayWord;
                         
                         inputEl.onfocus = () => inputEl.select();
                         
                         inputEl.oninput = (e) => {
-                            wordData[rowIndex][colIndex] = e.target.value;
+                            let val = e.target.value;
+                            if (currentLang === 'en') val = val.toLowerCase();
+                            wordData[rowIndex][colIndex] = val;
                             saveWords();
                         };
 
@@ -476,15 +596,15 @@
                         wrapper.appendChild(delBtn);
                         cardEl.appendChild(wrapper);
                     } else {
-                        cardEl.textContent = word;
+                        cardEl.textContent = displayWord;
                         cardEl.onclick = () => {
                             stopPlayback();
-                            speakSingleWord(word, cardEl);
+                            speakSingleWord(displayWord, cardEl);
                         };
                     }
 
                     rowEl.appendChild(cardEl);
-                    flatCards.push({ element: cardEl, word: word });
+                    flatCards.push({ element: cardEl, word: displayWord });
                 });
 
                 container.appendChild(rowEl);
@@ -506,11 +626,12 @@
             window.speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'hi-IN';
+            utterance.lang = currentLang === 'hi' ? 'hi-IN' : 'en-US';
             utterance.rate = parseFloat(document.getElementById('speedSelect').value) || 0.8;
 
-            if (selectedVoice) {
-                utterance.voice = selectedVoice;
+            const voice = currentLang === 'hi' ? selectedVoiceHindi : selectedVoiceEnglish;
+            if (voice) {
+                utterance.voice = voice;
             }
 
             currentUtterance = utterance;
@@ -562,18 +683,16 @@
             const pauseBtn = document.getElementById('pauseBtn');
 
             if (isPlaying && !isPaused) {
-                // Pause current playback
                 isPlaying = false;
                 isPaused = true;
                 if (playbackTimer) clearTimeout(playbackTimer);
                 window.speechSynthesis.cancel();
                 pauseBtn.innerHTML = '▶️ Resume';
             } else if (!isPlaying && isPaused) {
-                // Resume from saved playIndex - 1 (current word)
                 isPlaying = true;
                 isPaused = false;
                 pauseBtn.innerHTML = '⏸️ Pause';
-                if (playIndex > 0) playIndex--; // Rewind index by 1 to re-read current word
+                if (playIndex > 0) playIndex--;
                 playNextInSequence();
             }
         }
@@ -618,11 +737,12 @@
             window.speechSynthesis.cancel();
 
             const utterance = new SpeechSynthesisUtterance(text);
-            utterance.lang = 'hi-IN';
+            utterance.lang = currentLang === 'hi' ? 'hi-IN' : 'en-US';
             utterance.rate = parseFloat(document.getElementById('speedSelect').value) || 0.8;
 
-            if (selectedVoice) {
-                utterance.voice = selectedVoice;
+            const voice = currentLang === 'hi' ? selectedVoiceHindi : selectedVoiceEnglish;
+            if (voice) {
+                utterance.voice = voice;
             }
 
             currentUtterance = utterance;
@@ -641,16 +761,12 @@
                 if (callback) callback();
             };
 
-            utterance.onend = done;
-            utterance.onerror = done;
-
             const estimatedDuration = Math.max(500, (text.length * 350) / utterance.rate);
             const fallbackTimeout = setTimeout(done, estimatedDuration + 600);
 
-            const originalDone = done;
             const safeDone = () => {
                 clearTimeout(fallbackTimeout);
-                originalDone();
+                done();
             };
             utterance.onend = safeDone;
             utterance.onerror = safeDone;
@@ -704,19 +820,47 @@
 
         function generateRandomWords() {
             stopPlayback();
-            const selectedMatra = document.getElementById('matraSelect').value;
-            const pool = wordDictionary[selectedMatra] || wordDictionary.no_matra;
+            let pool = [];
+
+            if (currentLang === 'hi') {
+                const selectedMatra = document.getElementById('matraSelect').value;
+                pool = hindiDictionary[selectedMatra] || hindiDictionary.no_matra;
+            } else {
+                const selectedLength = document.getElementById('alphabetSelect').value;
+                pool = englishDictionary[selectedLength] || englishDictionary[2];
+            }
 
             let shuffled = [...pool].sort(() => 0.5 - Math.random());
 
             let wordIndex = 0;
             for (let r = 0; r < wordData.length; r++) {
                 for (let c = 0; c < 6; c++) {
-                    wordData[r][c] = shuffled[wordIndex % shuffled.length];
+                    let w = shuffled[wordIndex % shuffled.length];
+                    wordData[r][c] = (currentLang === 'en') ? w.toLowerCase() : w;
                     wordIndex++;
                 }
             }
 
+            saveWords();
+            renderGrid();
+        }
+
+        function generateRhymingWords() {
+            stopPlayback();
+            const alphabetSelect = document.getElementById('alphabetSelect');
+            if (currentLang !== 'en' || alphabetSelect.value !== '3') return;
+
+            wordData = JSON.parse(JSON.stringify([
+                ["cat", "bat", "rat", "mat", "hat", "fat"],
+                ["not", "hot", "dot", "pot", "cot", "rot"],
+                ["man", "pan", "ran", "van", "fan", "can"],
+                ["sun", "bun", "fun", "run", "pun", "gun"],
+                ["big", "dig", "fig", "pig", "wig", "jig"],
+                ["jet", "net", "pet", "set", "wet", "vet"],
+                ["mop", "pop", "top", "hop", "cop", "sop"],
+                ["bin", "fin", "pin", "sin", "tin", "win"],
+                ["den", "hen", "men", "pen", "ten", "zen"]
+            ]));
             saveWords();
             renderGrid();
         }
@@ -738,7 +882,7 @@
 
         function resetToDefault() {
             stopPlayback();
-            wordData = JSON.parse(JSON.stringify(defaultWords));
+            wordData = JSON.parse(JSON.stringify(currentLang === 'hi' ? defaultWordsHindi : defaultWordsEnglish));
             saveWords();
             renderGrid();
         }
@@ -747,6 +891,7 @@
             initSpeech();
             loadWords();
             renderGrid();
+            checkRhymeButtonState();
         };
     </script>
 </body>
