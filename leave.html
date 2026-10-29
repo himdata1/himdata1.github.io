@@ -486,7 +486,7 @@
             </div>
         </div>
 
-        <!-- Interchanged Row 1: Reason / Occasion of Leave -->
+        <!-- Reason / Occasion of Leave -->
         <div class="form-row">
             <div class="form-label"><span id="reason-prefix">Reason for </span><span class="editable-label singular-label">Casual Leave</span></div>
             <div class="colon-separator">:</div>
@@ -495,7 +495,7 @@
             </div>
         </div>
 
-        <!-- Interchanged Row 2: Balance of Leave -->
+        <!-- Balance of Leave -->
         <div class="form-row">
             <div class="form-label">Balance of <span class="editable-label plural-label">Casual Leaves</span></div>
             <div class="colon-separator">:</div>
@@ -635,11 +635,14 @@
             availableInput.value = available + " " + availSuffix;
             balanceInput.value = balance + " " + balanceSuffix;
 
-            localStorage.setItem("leave_form_available_calc", availableInput.value);
-            localStorage.setItem("leave_form_balance_calc", balanceInput.value);
+            let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
+            localStorage.setItem("leave_form_available_calc_" + currentLeaveTypeKey, availableInput.value);
+            localStorage.setItem("leave_form_balance_calc_" + currentLeaveTypeKey, balanceInput.value);
         }
 
-        function updateFormLabels() {
+        function loadFormData() {
+            let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
+
             let leaveType = leaveTypeSelect.value.trim();
             if (!leaveType) leaveType = "Casual Leave";
 
@@ -663,44 +666,51 @@
             singularLabels.forEach(el => { el.innerText = singularText; });
             pluralLabels.forEach(el => { el.innerText = pluralText; });
 
-            localStorage.setItem("leave_form_heading_type", leaveTypeSelect.value);
+            const fields = document.querySelectorAll(".save-storage");
+            fields.forEach((field, index) => {
+                const storageKey = "leave_form_field_v16_" + currentLeaveTypeKey + "_" + index;
+                const savedValue = localStorage.getItem(storageKey);
+                
+                if (savedValue !== null) {
+                    if (field.tagName === "SELECT" || field.tagName === "INPUT") {
+                        field.value = savedValue;
+                    }
+                } else {
+                    if (field.id === "app-date-input") {
+                        field.value = getTodayFormatted();
+                    }
+                }
+
+                if (field.classList.contains("calc-trigger")) {
+                    let num = extractNumber(field.value);
+                    let suffix = (Math.abs(num - 1) < 0.001) ? "day" : "days";
+                    field.value = num + " " + suffix;
+                }
+            });
+
+            toggleInchargeField();
+            calculateFields();
         }
 
         const savedHeadingType = localStorage.getItem("leave_form_heading_type");
         if (savedHeadingType !== null) {
             leaveTypeSelect.value = savedHeadingType;
-            updateFormLabels();
-        } else {
-            updateFormLabels();
         }
 
+        loadFormData();
+
         leaveTypeSelect.addEventListener("change", () => {
-            updateFormLabels();
+            localStorage.setItem("leave_form_heading_type", leaveTypeSelect.value);
+            loadFormData();
         });
 
         const fields = document.querySelectorAll(".save-storage");
         fields.forEach((field, index) => {
-            const storageKey = "leave_form_field_v15_" + index;
-            const savedValue = localStorage.getItem(storageKey);
-            
-            if (savedValue !== null) {
-                if (field.tagName === "SELECT" || field.tagName === "INPUT") {
-                    field.value = savedValue;
-                }
-            } else {
-                if (field.id === "app-date-input" && !field.value) {
-                    field.value = getTodayFormatted();
-                }
-            }
-
-            if (field.classList.contains("calc-trigger")) {
-                let num = extractNumber(field.value);
-                let suffix = (Math.abs(num - 1) < 0.001) ? "day" : "days";
-                field.value = num + " " + suffix;
-            }
-
             const eventType = field.tagName === "SELECT" ? "change" : "input";
             field.addEventListener(eventType, () => {
+                let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
+                const storageKey = "leave_form_field_v16_" + currentLeaveTypeKey + "_" + index;
+
                 // Strict enforcement for calc-trigger fields: allow only digits and one dot
                 if (field.classList.contains("calc-trigger")) {
                     let cursorPos = field.selectionStart;
@@ -734,15 +744,12 @@
                     let num = extractNumber(field.value);
                     let suffix = (Math.abs(num - 1) < 0.001) ? "day" : "days";
                     field.value = num + " " + suffix;
+                    let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
+                    const storageKey = "leave_form_field_v16_" + currentLeaveTypeKey + "_" + index;
                     localStorage.setItem(storageKey, field.value);
                 });
             }
         });
-
-        // Initialize toggle on page load
-        toggleInchargeField();
-
-        calculateFields();
     });
 </script>
 
