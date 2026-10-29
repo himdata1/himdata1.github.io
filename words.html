@@ -77,6 +77,16 @@
             background-color: #1b5e20;
         }
 
+        .btn-lang-toggle {
+            background-color: #2e7d32;
+            color: white;
+            border: 1.5px solid #1b5e20;
+        }
+
+        .btn-lang-toggle:hover {
+            background-color: #1b5e20;
+        }
+
         .btn-play {
             background-color: #0288d1;
             color: white;
@@ -169,13 +179,6 @@
             border: 1px solid #ccc;
             font-size: 13px;
             outline: none;
-        }
-
-        .lang-select {
-            font-weight: bold;
-            background-color: #e8f5e9;
-            border: 1.5px solid #2e7d32 !important;
-            color: #1b5e20;
         }
 
         /* Grid Layout */
@@ -315,13 +318,10 @@
     <p id="appSubtitle" class="subtitle">किसी भी शब्द पर क्लिक करके उच्चारण सुनें</p>
 
     <div class="controls">
-        <div class="setting-group">
-            <label for="langSelect"><b>🌐 Lang:</b></label>
-            <select id="langSelect" class="lang-select" onchange="changeLanguage()">
-                <option value="hi" selected>Hindi (हिंदी)</option>
-                <option value="en">English</option>
-            </select>
-        </div>
+        <!-- Language Toggle Button -->
+        <button id="langToggleBtn" class="btn btn-lang-toggle" onclick="toggleLanguage()">
+            🌐 Lang: हिंदी (HI)
+        </button>
 
         <button id="modeToggleBtn" class="btn btn-primary" onclick="toggleEditMode()">
             ✏️ Edit Mode: OFF
@@ -427,7 +427,6 @@
             ["मत", "नभ", "चख", "सच", "नच", "गज"]
         ];
 
-        // English default words expanded to exactly 9 rows
         const defaultWordsEnglish = [
             ["am", "an", "as", "at", "by", "do"],
             ["go", "he", "hi", "in", "is", "it"],
@@ -501,9 +500,16 @@
             }
         }
 
-        function changeLanguage() {
+        function toggleLanguage() {
             stopPlayback();
-            currentLang = document.getElementById('langSelect').value;
+            currentLang = (currentLang === 'hi') ? 'en' : 'hi';
+            updateLanguageUI();
+            loadWords();
+            renderGrid();
+        }
+
+        function updateLanguageUI() {
+            const langBtn = document.getElementById('langToggleBtn');
             const matraGroup = document.getElementById('matraGroup');
             const alphabetGroup = document.getElementById('alphabetGroup');
             const rhymeBtn = document.getElementById('rhymeBtn');
@@ -511,12 +517,14 @@
             const appSubtitle = document.getElementById('appSubtitle');
 
             if (currentLang === 'hi') {
+                langBtn.innerHTML = '🌐 Lang: हिंदी (HI)';
                 matraGroup.style.display = 'flex';
                 alphabetGroup.style.display = 'none';
                 rhymeBtn.style.display = 'none';
                 appTitle.innerText = "हिंदी शब्द उच्चारण अभ्यास";
                 appSubtitle.innerText = "किसी भी शब्द पर क्लिक करके उच्चारण सुनें";
             } else {
+                langBtn.innerHTML = '🌐 Lang: English (EN)';
                 matraGroup.style.display = 'none';
                 alphabetGroup.style.display = 'flex';
                 rhymeBtn.style.display = 'inline-flex';
@@ -524,9 +532,6 @@
                 appTitle.innerText = "English Word Pronunciation Practice";
                 appSubtitle.innerText = "Click on any word to listen to its pronunciation";
             }
-
-            loadWords();
-            renderGrid();
         }
 
         function loadWords() {
@@ -850,16 +855,23 @@
             const alphabetSelect = document.getElementById('alphabetSelect');
             if (currentLang !== 'en' || alphabetSelect.value !== '3') return;
 
+            // Updated with 2 rows per Vowel family (A, E, I, O, U)
             wordData = JSON.parse(JSON.stringify([
+                // Vowel 'A' families (2 rows)
                 ["cat", "bat", "rat", "mat", "hat", "fat"],
-                ["not", "hot", "dot", "pot", "cot", "rot"],
-                ["man", "pan", "ran", "van", "fan", "can"],
-                ["sun", "bun", "fun", "run", "pun", "gun"],
+                ["pat", "sat", "man", "pan", "ran", "van"],
+                // Vowel 'E' families (2 rows)
+                ["pen", "men", "ten", "hen", "den", "zen"],
+                ["net", "pet", "set", "wet", "vet", "jet"],
+                // Vowel 'I' families (2 rows)
+                ["pin", "bin", "fin", "sin", "tin", "win"],
                 ["big", "dig", "fig", "pig", "wig", "jig"],
-                ["jet", "net", "pet", "set", "wet", "vet"],
-                ["mop", "pop", "top", "hop", "cop", "sop"],
-                ["bin", "fin", "pin", "sin", "tin", "win"],
-                ["den", "hen", "men", "pen", "ten", "zen"]
+                // Vowel 'O' families (2 rows)
+                ["pot", "cot", "hot", "dot", "not", "rot"],
+                ["mop", "pop", "top", "hop", "cop", "dog"],
+                // Vowel 'U' families (2 rows)
+                ["sun", "bun", "fun", "run", "pun", "gun"],
+                ["cup", "pup", "jug", "mug", "bug", "rug"]
             ]));
             saveWords();
             renderGrid();
@@ -889,6 +901,7 @@
 
         window.onload = () => {
             initSpeech();
+            updateLanguageUI();
             loadWords();
             renderGrid();
             checkRhymeButtonState();
