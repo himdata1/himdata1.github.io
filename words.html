@@ -490,6 +490,22 @@
             }
         }
 
+        // Reliable user-gesture trigger to instantly wake up mobile / webview speech synthesis engine
+        function warmUpTTS() {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const dummy = new SpeechSynthesisUtterance('');
+                dummy.volume = 0;
+                window.speechSynthesis.speak(dummy);
+            }
+            // Remove listeners after first user tap/click
+            document.removeEventListener('click', warmUpTTS);
+            document.removeEventListener('touchstart', warmUpTTS);
+        }
+
+        document.addEventListener('click', warmUpTTS);
+        document.addEventListener('touchstart', warmUpTTS);
+
         function checkRhymeButtonState() {
             const alphabetSelect = document.getElementById('alphabetSelect');
             const rhymeBtn = document.getElementById('rhymeBtn');
@@ -857,26 +873,20 @@
             renderGrid();
         }
 
-        // Same Sound / Rhyming words button generator (2 rows per Vowel family A, E, I, O, U)
         function generateRhymingWords() {
             stopPlayback();
             const alphabetSelect = document.getElementById('alphabetSelect');
             if (currentLang !== 'en' || alphabetSelect.value !== '3') return;
 
             wordData = JSON.parse(JSON.stringify([
-                // Vowel 'A' families (2 rows)
                 ["cat", "bat", "rat", "mat", "hat", "fat"],
                 ["pat", "sat", "man", "pan", "ran", "van"],
-                // Vowel 'E' families (2 rows)
                 ["pen", "men", "ten", "hen", "den", "zen"],
                 ["net", "pet", "set", "wet", "vet", "jet"],
-                // Vowel 'I' families (2 rows)
                 ["pin", "bin", "fin", "sin", "tin", "win"],
                 ["big", "dig", "fig", "pig", "wig", "jig"],
-                // Vowel 'O' families (2 rows)
                 ["pot", "cot", "hot", "dot", "not", "rot"],
                 ["mop", "pop", "top", "hop", "cop", "dog"],
-                // Vowel 'U' families (2 rows)
                 ["sun", "bun", "fun", "run", "pun", "gun"],
                 ["cup", "pup", "jug", "mug", "bug", "rug"]
             ]));
