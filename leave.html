@@ -7,6 +7,10 @@
     <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23007bff'/><text x='50' y='52' font-size='68' fill='white' font-family='Verdana, sans-serif' font-weight='900' text-anchor='middle' dominant-baseline='central'>L</text></svg>">
     <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23007bff'/><text x='50' y='52' font-size='68' fill='white' font-family='Verdana, sans-serif' font-weight='900' text-anchor='middle' dominant-baseline='central'>L</text></svg>">
     <style>
+        :root {
+            --print-row-margin: 14pt;
+        }
+
         body {
             font-family: Arial, sans-serif;
             margin: 0;
@@ -29,7 +33,12 @@
             container-type: inline-size;
         }
         
-        /* Editable Wrapping Heading & Label Style */
+        /* Editable Wrapping Heading & Subtitle Style */
+        .heading-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
         .heading-input {
             font-size: 20px;
             font-weight: bold;
@@ -44,21 +53,50 @@
             word-break: break-word;
             overflow-wrap: break-word;
             margin-top: 0;
-            margin-bottom: 20px;
+            margin-bottom: 2px;
         }
 
-        .heading-input:focus, .editable-label:focus {
+        .subtitle-input {
+            font-size: 14px;
+            font-weight: normal;
+            color: #4b5563;
+            font-family: Arial, sans-serif;
+            text-align: center;
+            border: none;
+            background-color: transparent;
+            padding: 0;
+            outline: none;
+            width: 100%;
+            word-break: break-word;
+            overflow-wrap: break-word;
+            margin: 0;
+            display: none; /* Hidden by default */
+        }
+
+        .heading-input:focus, .subtitle-input:focus, .editable-label:focus {
             background-color: #f3f4f6;
             border-radius: 3px;
         }
 
-        #leave-type-span {
+        #leave-type-select {
             cursor: pointer;
             color: #2563eb;
+            font-size: inherit;
+            font-weight: inherit;
+            font-family: inherit;
+            border: none;
+            background-color: transparent;
+            outline: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+            padding: 0 4px;
+            border-radius: 2px;
         }
 
-        #leave-type-span:focus {
-            cursor: text;
+        #leave-type-select:focus {
+            background-color: #f3f4f6;
+            border-radius: 3px;
         }
 
         .editable-label {
@@ -179,7 +217,7 @@
         
         .button-container {
             text-align: center;
-            margin-top: 20px; 
+            margin-top: -30px; 
         }
         .btn {
             background-color: #2563eb;
@@ -244,6 +282,10 @@
                 box-sizing: border-box !important;
             }
 
+            .heading-container {
+                margin-bottom: 20pt !important;
+            }
+
             .heading-input {
                 font-size: 22pt !important;
                 width: 100% !important;
@@ -252,20 +294,34 @@
                 padding: 0 !important;
                 box-shadow: none !important;
                 color: #000000 !important;
-                margin-bottom: 20pt !important;
+                margin-bottom: 2pt !important;
                 text-align: center !important;
                 display: block !important;
                 line-height: 1.1 !important;
             }
 
-            #leave-type-span {
+            .subtitle-input {
+                font-size: 14pt !important;
+                width: 100% !important;
+                border: none !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                box-shadow: none !important;
                 color: #000000 !important;
+                margin: 0 !important;
+                text-align: center !important;
+                line-height: 1.1 !important;
+            }
+
+            #leave-type-select {
+                color: #000000 !important;
+                background: transparent !important;
             }
 
             .form-row {
                 display: flex !important;
                 flex-direction: row !important;
-                margin-bottom: 14pt !important;
+                margin-bottom: var(--print-row-margin) !important;
                 align-items: flex-start !important;
                 page-break-inside: avoid !important;
             }
@@ -321,7 +377,7 @@
                 padding: 0 !important;
                 box-shadow: none !important;
                 color: #000000 !important;
-                line-height: 1.2 !important;
+                line-height: 1.1 !important;
                 -webkit-appearance: none !important;
                 -moz-appearance: none !important;
                 appearance: none !important;
@@ -363,7 +419,16 @@
 
 <div class="form-container">
     <div>
-        <h2 class="heading-input" id="form-heading" spellcheck="false">Application for <span contenteditable="true" id="leave-type-span" style="outline: none;">Casual Leave</span></h2>
+        <div class="heading-container">
+            <h2 class="heading-input" id="form-heading" spellcheck="false">Application for 
+                <select id="leave-type-select">
+                    <option value="Casual Leave" selected>Casual Leave</option>
+                    <option value="Restricted Holiday">Restricted Holiday</option>
+                    <option value="Compensatory Leave">Compensatory Leave</option>
+                </select>
+            </h2>
+            <input type="text" id="form-subtitle" class="subtitle-input save-storage" value="(In Lieu of Election Duty Performed on Holidays)" spellcheck="false" onfocus="this.select()">
+        </div>
         
         <div class="form-row">
             <div class="form-label">Name and Designation of the Applicant</div>
@@ -430,7 +495,7 @@
         </div>
 
         <div class="form-row">
-            <div class="form-label">Reason for <span class="editable-label singular-label">Casual Leave</span></div>
+            <div class="form-label"><span id="reason-prefix">Reason for </span><span class="editable-label singular-label">Casual Leave</span></div>
             <div class="colon-separator">:</div>
             <div class="form-field">
                 <input type="text" class="save-storage" value="Urgent work" onfocus="this.select()">
@@ -511,9 +576,11 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const leaveTypeSpan = document.getElementById("leave-type-span");
+        const leaveTypeSelect = document.getElementById("leave-type-select");
+        const subtitleInput = document.getElementById("form-subtitle");
         const singularLabels = document.querySelectorAll(".singular-label");
         const pluralLabels = document.querySelectorAll(".plural-label");
+        const reasonPrefix = document.getElementById("reason-prefix");
 
         const totalInput = document.getElementById("total-leaves");
         const availedInput = document.getElementById("availed-leaves");
@@ -571,8 +638,22 @@
         }
 
         function updateFormLabels() {
-            let leaveType = leaveTypeSpan.innerText.trim();
+            let leaveType = leaveTypeSelect.value.trim();
             if (!leaveType) leaveType = "Casual Leave";
+
+            if (leaveType === "Restricted Holiday") {
+                reasonPrefix.innerText = "Occasion of ";
+                document.documentElement.style.setProperty('--print-row-margin', '10pt');
+                subtitleInput.style.display = "none";
+            } else if (leaveType === "Compensatory Leave") {
+                reasonPrefix.innerText = "Reason for ";
+                document.documentElement.style.setProperty('--print-row-margin', '7pt');
+                subtitleInput.style.display = "block";
+            } else {
+                reasonPrefix.innerText = "Reason for ";
+                document.documentElement.style.setProperty('--print-row-margin', '14pt');
+                subtitleInput.style.display = "none";
+            }
 
             let singularText = leaveType.replace(/s$/i, '').trim();
             let pluralText = leaveType.endsWith('s') || leaveType.endsWith('S') ? leaveType : leaveType + "s";
@@ -580,14 +661,20 @@
             singularLabels.forEach(el => { el.innerText = singularText; });
             pluralLabels.forEach(el => { el.innerText = pluralText; });
 
-            localStorage.setItem("leave_form_heading_type", leaveTypeSpan.innerText);
+            localStorage.setItem("leave_form_heading_type", leaveTypeSelect.value);
         }
 
         const savedHeadingType = localStorage.getItem("leave_form_heading_type");
         if (savedHeadingType !== null) {
-            leaveTypeSpan.innerText = savedHeadingType;
+            leaveTypeSelect.value = savedHeadingType;
+            updateFormLabels();
+        } else {
             updateFormLabels();
         }
+
+        leaveTypeSelect.addEventListener("change", () => {
+            updateFormLabels();
+        });
 
         const fields = document.querySelectorAll(".save-storage");
         fields.forEach((field, index) => {
@@ -616,9 +703,7 @@
                 if (field.classList.contains("calc-trigger")) {
                     let cursorPos = field.selectionStart;
                     let val = field.value;
-                    // Remove anything except numbers and decimal point
                     let cleaned = val.replace(/[^0-9.]/g, '');
-                    // Ensure only a single decimal point is allowed
                     const parts = cleaned.split('.');
                     if (parts.length > 2) {
                         cleaned = parts[0] + '.' + parts.slice(1).join('');
@@ -656,18 +741,6 @@
         toggleInchargeField();
 
         calculateFields();
-
-        leaveTypeSpan.addEventListener("input", () => {
-            updateFormLabels();
-        });
-
-        leaveTypeSpan.addEventListener("focus", () => {
-            const range = document.createRange();
-            range.selectNodeContents(leaveTypeSpan);
-            const sel = window.getSelection();
-            sel.removeAllRanges();
-            sel.addRange(range);
-        });
     });
 </script>
 
