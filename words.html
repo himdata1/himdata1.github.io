@@ -318,7 +318,6 @@
     <p id="appSubtitle" class="subtitle">किसी भी शब्द पर क्लिक करके उच्चारण सुनें</p>
 
     <div class="controls">
-        <!-- Language Toggle Button -->
         <button id="langToggleBtn" class="btn btn-lang-toggle" onclick="toggleLanguage()">
             🌐 Lang: हिंदी (HI)
         </button>
@@ -347,7 +346,6 @@
             </select>
         </div>
 
-        <!-- Hindi Matra Filter -->
         <div class="setting-group" id="matraGroup">
             <select id="matraSelect" onchange="onFilterChange()">
                 <option value="no_matra">बिना मात्रा</option>
@@ -366,7 +364,6 @@
             </select>
         </div>
 
-        <!-- English Alphabets Count Filter -->
         <div class="setting-group" id="alphabetGroup" style="display: none;">
             <select id="alphabetSelect" onchange="onFilterChange()">
                 <option value="2" selected>2 Alphabets</option>
@@ -377,7 +374,6 @@
             </select>
         </div>
 
-        <!-- English Same Sound / Rhyme Button -->
         <button id="rhymeBtn" class="btn btn-rhyme" style="display: none;" disabled onclick="generateRhymingWords()">
             🎵 Same Sound
         </button>
@@ -625,12 +621,35 @@
             });
         }
 
+        // उच्चारण को और स्पष्ट करने के लिए विशेष फ़िल्टर (औ और ओ मात्रा के लिए)
+        function getSpeechOptimizedText(text) {
+            if (currentLang !== 'hi' || !text) return text;
+            
+            // कुछ खास शब्दों के लिए जो ब्राउज़र में गलत pronounce होते हैं, उन्हें सही फोनेटिक रूप देना
+            const corrections = {
+                "नौका": "नौ-का",
+                "मौका": "मौ-का",
+                "फौज": "फौज",
+                "मौज": "मौज",
+                "चौका": "चौ-का",
+                "कौआ": "कौ-आ",
+                "दौलत": "दौलत",
+                "चौपाल": "चौ-पाल",
+                "पकौड़ी": "पकौड़ी",
+                "हथौड़ा": "हथौड़ा",
+                "खिलौना": "खिलौना"
+            };
+
+            return corrections[text.trim()] || text;
+        }
+
         function speakSingleWord(text, cardElement) {
             if (!text || text.trim() === '' || isEditMode) return;
 
             window.speechSynthesis.cancel();
 
-            const utterance = new SpeechSynthesisUtterance(text);
+            const optimizedText = getSpeechOptimizedText(text);
+            const utterance = new SpeechSynthesisUtterance(optimizedText);
             utterance.lang = currentLang === 'hi' ? 'hi-IN' : 'en-US';
             utterance.rate = parseFloat(document.getElementById('speedSelect').value) || 0.8;
 
@@ -741,7 +760,8 @@
 
             window.speechSynthesis.cancel();
 
-            const utterance = new SpeechSynthesisUtterance(text);
+            const optimizedText = getSpeechOptimizedText(text);
+            const utterance = new SpeechSynthesisUtterance(optimizedText);
             utterance.lang = currentLang === 'hi' ? 'hi-IN' : 'en-US';
             utterance.rate = parseFloat(document.getElementById('speedSelect').value) || 0.8;
 
@@ -823,7 +843,6 @@
             renderGrid();
         }
 
-        // Automatic generation when filter changes
         function onFilterChange() {
             stopPlayback();
             checkRhymeButtonState();
@@ -857,26 +876,20 @@
             renderGrid();
         }
 
-        // Same Sound / Rhyming words button generator (2 rows per Vowel family A, E, I, O, U)
         function generateRhymingWords() {
             stopPlayback();
             const alphabetSelect = document.getElementById('alphabetSelect');
             if (currentLang !== 'en' || alphabetSelect.value !== '3') return;
 
             wordData = JSON.parse(JSON.stringify([
-                // Vowel 'A' families (2 rows)
                 ["cat", "bat", "rat", "mat", "hat", "fat"],
                 ["pat", "sat", "man", "pan", "ran", "van"],
-                // Vowel 'E' families (2 rows)
                 ["pen", "men", "ten", "hen", "den", "zen"],
                 ["net", "pet", "set", "wet", "vet", "jet"],
-                // Vowel 'I' families (2 rows)
                 ["pin", "bin", "fin", "sin", "tin", "win"],
                 ["big", "dig", "fig", "pig", "wig", "jig"],
-                // Vowel 'O' families (2 rows)
                 ["pot", "cot", "hot", "dot", "not", "rot"],
                 ["mop", "pop", "top", "hop", "cop", "dog"],
-                // Vowel 'U' families (2 rows)
                 ["sun", "bun", "fun", "run", "pun", "gun"],
                 ["cup", "pup", "jug", "mug", "bug", "rug"]
             ]));
