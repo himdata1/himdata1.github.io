@@ -349,7 +349,7 @@
 
         <!-- Hindi Matra Filter -->
         <div class="setting-group" id="matraGroup">
-            <select id="matraSelect">
+            <select id="matraSelect" onchange="onFilterChange()">
                 <option value="no_matra">बिना मात्रा</option>
                 <option value="aa_matra">आ (ा)</option>
                 <option value="i_matra">इ (ि)</option>
@@ -368,7 +368,7 @@
 
         <!-- English Alphabets Count Filter -->
         <div class="setting-group" id="alphabetGroup" style="display: none;">
-            <select id="alphabetSelect" onchange="checkRhymeButtonState()">
+            <select id="alphabetSelect" onchange="onFilterChange()">
                 <option value="2" selected>2 Alphabets</option>
                 <option value="3">3 Alphabets</option>
                 <option value="4">4 Alphabets</option>
@@ -823,6 +823,67 @@
             renderGrid();
         }
 
+        // Automatic generation when filter changes
+        function onFilterChange() {
+            stopPlayback();
+            checkRhymeButtonState();
+            let pool = [];
+
+            if (currentLang === 'hi') {
+                const selectedMatra = document.getElementById('matraSelect').value;
+                pool = hindiDictionary[selectedMatra] || hindiDictionary.no_matra;
+                let shuffled = [...pool].sort(() => 0.5 - Math.random());
+                let wordIndex = 0;
+                for (let r = 0; r < wordData.length; r++) {
+                    for (let c = 0; c < 6; c++) {
+                        wordData[r][c] = shuffled[wordIndex % shuffled.length];
+                        wordIndex++;
+                    }
+                }
+            } else {
+                const selectedLength = document.getElementById('alphabetSelect').value;
+                pool = englishDictionary[selectedLength] || englishDictionary[2];
+                let shuffled = [...pool].sort(() => 0.5 - Math.random());
+                let wordIndex = 0;
+                for (let r = 0; r < wordData.length; r++) {
+                    for (let c = 0; c < 6; c++) {
+                        wordData[r][c] = shuffled[wordIndex % shuffled.length].toLowerCase();
+                        wordIndex++;
+                    }
+                }
+            }
+
+            saveWords();
+            renderGrid();
+        }
+
+        // Same Sound / Rhyming words button generator (2 rows per Vowel family A, E, I, O, U)
+        function generateRhymingWords() {
+            stopPlayback();
+            const alphabetSelect = document.getElementById('alphabetSelect');
+            if (currentLang !== 'en' || alphabetSelect.value !== '3') return;
+
+            wordData = JSON.parse(JSON.stringify([
+                // Vowel 'A' families (2 rows)
+                ["cat", "bat", "rat", "mat", "hat", "fat"],
+                ["pat", "sat", "man", "pan", "ran", "van"],
+                // Vowel 'E' families (2 rows)
+                ["pen", "men", "ten", "hen", "den", "zen"],
+                ["net", "pet", "set", "wet", "vet", "jet"],
+                // Vowel 'I' families (2 rows)
+                ["pin", "bin", "fin", "sin", "tin", "win"],
+                ["big", "dig", "fig", "pig", "wig", "jig"],
+                // Vowel 'O' families (2 rows)
+                ["pot", "cot", "hot", "dot", "not", "rot"],
+                ["mop", "pop", "top", "hop", "cop", "dog"],
+                // Vowel 'U' families (2 rows)
+                ["sun", "bun", "fun", "run", "pun", "gun"],
+                ["cup", "pup", "jug", "mug", "bug", "rug"]
+            ]));
+            saveWords();
+            renderGrid();
+        }
+
         function generateRandomWords() {
             stopPlayback();
             let pool = [];
@@ -846,33 +907,6 @@
                 }
             }
 
-            saveWords();
-            renderGrid();
-        }
-
-        function generateRhymingWords() {
-            stopPlayback();
-            const alphabetSelect = document.getElementById('alphabetSelect');
-            if (currentLang !== 'en' || alphabetSelect.value !== '3') return;
-
-            // Updated with 2 rows per Vowel family (A, E, I, O, U)
-            wordData = JSON.parse(JSON.stringify([
-                // Vowel 'A' families (2 rows)
-                ["cat", "bat", "rat", "mat", "hat", "fat"],
-                ["pat", "sat", "man", "pan", "ran", "van"],
-                // Vowel 'E' families (2 rows)
-                ["pen", "men", "ten", "hen", "den", "zen"],
-                ["net", "pet", "set", "wet", "vet", "jet"],
-                // Vowel 'I' families (2 rows)
-                ["pin", "bin", "fin", "sin", "tin", "win"],
-                ["big", "dig", "fig", "pig", "wig", "jig"],
-                // Vowel 'O' families (2 rows)
-                ["pot", "cot", "hot", "dot", "not", "rot"],
-                ["mop", "pop", "top", "hop", "cop", "dog"],
-                // Vowel 'U' families (2 rows)
-                ["sun", "bun", "fun", "run", "pun", "gun"],
-                ["cup", "pup", "jug", "mug", "bug", "rug"]
-            ]));
             saveWords();
             renderGrid();
         }
