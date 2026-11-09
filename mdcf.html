@@ -1016,7 +1016,7 @@
         updateRegisterSummary();
     }
 
-    function calcMMBPAY() {
+        function calcMMBPAY() {
         var preOpen = num('mm_pre_open');
         var preRec = num('mm_pre_rec');
         var preTot = preOpen + preRec;
@@ -1026,12 +1026,13 @@
 
         var priOpen = num('mm_pri_open');
         var priRec = num('mm_pri_rec');
-        var priTot = preOpen + preRec;
+        var priTot = priOpen + priRec; // Yahan pehle galti se preOpen + preRec tha
         var priExp = num('mm_pri_exp');
         setVal('mm_pri_tot', priTot, 2);
         setVal('mm_pri_close', priTot - priExp, 2);
         updateRegisterSummary();
     }
+
 
     function updateRegisterSummary() {
         document.getElementById('reg_month').innerText = document.getElementById('select_month').value;
