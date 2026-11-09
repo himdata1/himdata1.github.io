@@ -32,12 +32,14 @@
         background-color: #007bff;
         color: #fff;
         border: none;
-        padding: 10px 18px;
-        font-size: 14px;
+        padding: 5px 12px;
+        font-size: 16px;
         font-weight: bold;
         border-radius: 4px;
         cursor: pointer;
         box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        min-width: 170px; /* Print button ki length yahan badhayi gayi hai */
+        text-align: center;
     }
 
     .btn:hover {
@@ -46,6 +48,7 @@
 
     .btn-success {
         background-color: #28a745;
+        min-width: auto; /* Carry forward button apne content ke hisaab se rahega */
     }
 
     .btn-success:hover {
@@ -969,7 +972,6 @@
         setVal('fg_pri_tot', priTot, 3);
         setVal('fg_pri_close', priClose, 3);
 
-        // Calculate Transportation Expenditure and Round to nearest integer during calculation, format as 0.00
         var totalRiceRecKg = num('fg_pre_rec') + num('fg_pri_rec');
         var totalRiceRecMetricTon = totalRiceRecKg / 1000.0;
         var trExpVal = Math.round(totalRiceRecMetricTon * 268);
@@ -983,7 +985,6 @@
         var mealsPre = num('meals_pre');
         var mealsPri = num('meals_pri');
 
-        // Calculate Cooking cost and Round to nearest Rupee (Math.round), displayed as 0.00
         var preExp = Math.round(mealsPre * 6.78);
         var priExp = Math.round(mealsPri * 6.78);
 
@@ -1156,6 +1157,7 @@
         const trRec = num('tr_rec');
         const trExp = num('tr_exp');
         const trClose = num('tr_close');
+        document.getElementById('reg_tr_open').innerText = trOpen.toFixed(2);
         document.getElementById('reg_tr_open').innerText = trOpen.toFixed(2);
         document.getElementById('reg_tr_rec').innerText = trRec.toFixed(2);
         document.getElementById('reg_tr_exp').innerText = trExp.toFixed(2);
