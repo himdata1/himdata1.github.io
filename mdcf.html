@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>School Monthly Data Capture Format (MDCF)</title>
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #e0e0e0;
+        margin: 0;
+        padding: 20px;
+        color: #000;
+    }
+    
+    .toolbar {
+        width: 210mm;
+        margin: 0 auto 15px auto;
+        display: flex;
+        justify-content: flex-end;
+        gap: 10px;
+    }
+
+    .btn {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        padding: 10px 18px;
+        font-size: 14px;
+        font-weight: bold;
+        border-radius: 4px;
+        cursor: pointer;
+        box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+
+    .btn:hover {
+        background-color: #0056b3;
+    }
+
+    .page {
+        background-color: #fff;
+        width: 210mm;
+        height: 297mm; /* Fixed A4 height for Page 1 & 2 */
+        padding: 10mm 12mm;
+        margin: 0 auto 20px auto;
+        box-shadow: 0 0 10px rgba(0,0,0,0.15);
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        overflow: hidden;
+    }
+
+    /* Page 3 specifically set to 12.8 cm height */
+    .page.register-page {
+        height: 12.8cm !important;
+        min-height: 12.8cm !important;
+        padding: 6mm 10mm !important;
+        justify-content: flex-start !important;
+    }
+
+    .page-content {
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    h1 {
+        text-align: center;
+        font-size: 20px;
+        text-decoration: underline;
+        margin-top: 0;
+        margin-bottom: 10px;
+    }
+
+    .section-title {
+        font-weight: bold;
+        font-size: 14px;
+        margin-top: 8px;
+        margin-bottom: 4px;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-bottom: 6px;
+        font-size: 13px;
+    }
+
+    th, td {
+        border: 1px solid #000;
+        padding: 6px 6px;
+        text-align: center;
+        vertical-align: middle;
+    }
+
+    th {
+        font-weight: bold;
+        background-color: #f9f9f9;
+    }
+
+    /* Compact tables for Page 3 to fit 12.8 cm height */
+    .register-page table {
+        font-size: 11px;
+        margin-bottom: 4px;
+    }
+
+    .register-page th, .register-page td {
+        padding: 3.5px 5px;
+    }
+
+    .register-header {
+        display: flex;
+        justify-content: space-between;
+        font-weight: bold;
+        font-size: 12px;
+        margin-bottom: 4px;
+    }
+
+    .register-section-title {
+        font-weight: bold;
+        font-size: 12px;
+        margin-top: 5px;
+        margin-bottom: 3px;
+    }
+
+    .expand-table th, .expand-table td {
+        padding: 10px 6px;
+    }
+    
+    .expand-table-lg th, .expand-table-lg td {
+        padding: 14px 6px;
+    }
+
+    input[type="text"], input[type="number"], select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 2px;
+        padding: 2px 4px;
+        font-family: inherit;
+        font-size: 13px;
+        text-align: inherit;
+        background-color: #fff8dc;
+    }
+
+    .month-year-container {
+        display: flex;
+        gap: 4px;
+        width: 100%;
+    }
+
+    .month-year-container select {
+        flex: 1;
+        cursor: pointer;
+        height: 25px;
+    }
+
+    input[type="number"] {
+        -moz-appearance: textfield;
+    }
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+        margin: 0;
+    }
+
+    input.calc-field {
+        background-color: #f0f0f0 !important;
+        font-weight: bold;
+        border: 1px solid #aaa;
+    }
+
+    .text-left { text-align: left; }
+    .text-center { text-align: center; }
+    .text-red, input.text-red { color: #d9534f; font-weight: bold; }
+
+    .signatures {
+        margin-top: 15px;
+        display: flex;
+        justify-content: space-between;
+        font-size: 13px;
+        font-weight: bold;
+    }
+
+    .sig-box {
+        width: 45%;
+        min-height: 120px;
+        border-top: 1px dashed #000;
+        text-align: center;
+        padding-top: 8px;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .stamp-space {
+        font-size: 11px;
+        color: #777;
+        font-weight: normal;
+        margin-top: 50px;
+    }
+
+    @media print {
+        @page {
+            size: A4 portrait;
+            margin: 0;
+        }
+        html, body {
+            margin: 0;
+            padding: 0;
+            background-color: #fff;
+        }
+        .toolbar {
+            display: none !important;
+        }
+        .page {
+            box-shadow: none;
+            margin: 0;
+            width: 210mm;
+            height: 297mm;
+            padding: 10mm 12mm;
+            page-break-after: always;
+            page-break-inside: avoid;
+            box-sizing: border-box;
+        }
+        .page.register-page {
+            height: 12.8cm !important;
+            min-height: 12.8cm !important;
+            padding: 6mm 10mm !important;
+            page-break-after: always;
+            page-break-inside: avoid;
+        }
+        input, select {
+            border: none !important;
+            background-color: transparent !important;
+            padding: 0 !important;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            appearance: none;
+        }
+        input.calc-field {
+            background-color: transparent !important;
+        }
+    }
+</style>
+</head>
+<body>
+
+<div class="toolbar">
+    <button class="btn" onclick="window.print()">Print / Save as PDF</button>
+</div>
+
+<!-- PAGE 1 -->
+<div class="page">
+    <div class="page-content">
+        <div>
+            <h1>School Monthly Data Capture Format (MDCF)</h1>
+
+            <!-- 1. School Details -->
+            <div class="section-title">1. School Details</div>
+            <table class="expand-table">
+                <tr>
+                    <th class="text-left" style="width: 18%;">School Name</th>
+                    <td class="text-left" style="width: 24%;"><input type="text" id="school_name" value="GPS Abc"></td>
+                    <th style="width: 30%;">Wing</th>
+                    <th style="width: 9%;">Boys</th>
+                    <th style="width: 9%;">Girls</th>
+                    <th class="text-red" style="width: 10%;">Total</th>
+                </tr>
+                <tr>
+                    <th class="text-left">Month/ Year</th>
+                    <td class="text-left">
+                        <div class="month-year-container">
+                            <select id="select_month">
+                                <option value="January">January</option>
+                                <option value="February">February</option>
+                                <option value="March">March</option>
+                                <option value="April">April</option>
+                                <option value="May">May</option>
+                                <option value="June">June</option>
+                                <option value="July">July</option>
+                                <option value="August">August</option>
+                                <option value="September">September</option>
+                                <option value="October" selected>October</option>
+                                <option value="November">November</option>
+                                <option value="December">December</option>
+                            </select>
+                            <select id="select_year">
+                                <option value="2026" selected>2026</option>
+                                <option value="2027">2027</option>
+                                <option value="2028">2028</option>
+                                <option value="2029">2029</option>
+                                <option value="2030">2030</option>
+                            </select>
+                        </div>
+                    </td>
+                    <th class="text-left">Total Enrollment Pre-Primary</th>
+                    <td><input type="number" id="pre_b" value="0" oninput="calcTotals()"></td>
+                    <td><input type="number" id="pre_g" value="3" oninput="calcTotals()"></td>
+                    <td><input type="number" id="pre_tot" class="calc-field text-red" readonly value="3"></td>
+                </tr>
+                <tr>
+                    <th class="text-left">UDISE Code</th>
+                    <td class="text-left"><input type="text" id="udise_code" value="00000000000"></td>
+                    <th class="text-left">Total Enrollment Primary (1st to 5th)</th>
+                    <td><input type="number" id="pri_b" value="7" oninput="calcTotals()"></td>
+                    <td><input type="number" id="pri_g" value="9" oninput="calcTotals()"></td>
+                    <td><input type="number" id="pri_tot" class="calc-field text-red" readonly value="16"></td>
+                </tr>
+            </table>
+
+            <!-- 2. Meal Availed Status -->
+            <div class="section-title">2. Meal Availed Status</div>
+            <table class="expand-table">
+                <thead>
+                    <tr>
+                        <th style="width: 64%;"></th>
+                        <th style="width: 18%;">Pre-Primary</th>
+                        <th style="width: 18%;">Primary</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-left">i) Number of School days during the month</td>
+                        <td><input type="number" id="days_pre" value="22" class="text-center"></td>
+                        <td><input type="number" id="days_pri" value="22" class="text-center"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">ii) Actual number of days Mid-Day Meal served</td>
+                        <td><input type="number" id="mdm_days_pre" value="22" class="text-center"></td>
+                        <td><input type="number" id="mdm_days_pri" value="22" class="text-center"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">iii) Total Meals served during the month</td>
+                        <td><input type="number" id="meals_pre" value="66" class="text-center"></td>
+                        <td><input type="number" id="meals_pri" value="332" class="text-center"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 3. Details of food grains (in Kgs.) -->
+            <table style="margin-top: 8px; margin-bottom: 0;">
+                <thead>
+                    <tr>
+                        <th class="text-left" style="width: 45%;">3. Details of food grains (in Kgs.)</th>
+                        <th class="text-left" style="width: 55%; font-weight: normal;">(100 gms to Pre-Primary and 1st to 5th per student)</th>
+                    </tr>
+                </thead>
+            </table>
+            <table class="expand-table">
+                <thead>
+                    <tr>
+                        <th style="width: 16%;">Wing</th>
+                        <th style="width: 16%;">Opening balance</th>
+                        <th style="width: 22%;">Food grains received during the month</th>
+                        <th style="width: 14%;">Total</th>
+                        <th style="width: 18%;">Consumption during the month</th>
+                        <th style="width: 14%;">Closing balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Pre-Primary</th>
+                        <td><input type="number" step="0.001" id="fg_pre_open" value="17.500" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pre_rec" value="30.000" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pre_tot" class="calc-field" readonly value="47.500"></td>
+                        <td><input type="number" step="0.001" id="fg_pre_con" value="6.600" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pre_close" class="calc-field" readonly value="40.900"></td>
+                    </tr>
+                    <tr>
+                        <th>Primary</th>
+                        <td><input type="number" step="0.001" id="fg_pri_open" value="14.500" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pri_rec" value="100.000" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pri_tot" class="calc-field" readonly value="114.500"></td>
+                        <td><input type="number" step="0.001" id="fg_pri_con" value="33.200" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pri_close" class="calc-field" readonly value="81.300"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 4. Material cost Details -->
+            <table style="margin-top: 8px; margin-bottom: 0;">
+                <thead>
+                    <tr>
+                        <th class="text-left" style="width: 45%;">4. Material cost Details</th>
+                        <th class="text-left" style="width: 55%; font-weight: normal;">(Rs.6.78 to Pre-Primary and 1st to 5th per student)</th>
+                    </tr>
+                </thead>
+            </table>
+            <table>
+                <thead>
+                    <tr>
+                        <th style="width: 18%;">Wing</th>
+                        <th style="width: 14%;">Category</th>
+                        <th style="width: 17%;">Opening Balance</th>
+                        <th style="width: 17%;">Amount received during the month</th>
+                        <th style="width: 17%;">Expenditure during the month</th>
+                        <th style="width: 17%;">Closing balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-left">Pre-Primary</td>
+                        <td>Cooking cost</td>
+                        <td><input type="number" step="0.01" id="mc_pre_open" value="3163.00" class="fmt-2" oninput="calcMaterialCost()"></td>
+                        <td><input type="number" step="0.01" id="mc_pre_rec" value="0.00" class="fmt-2" oninput="calcMaterialCost()"></td>
+                        <td><input type="number" step="0.01" id="mc_pre_exp" value="447.00" class="fmt-2" oninput="calcMaterialCost()"></td>
+                        <td><input type="number" step="0.01" id="mc_pre_close" class="calc-field" readonly value="2716.00"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left">Primary (1st to 5th)</td>
+                        <td>Cooking cost</td>
+                        <td><input type="number" step="0.01" id="mc_pri_open" value="8594.80" class="fmt-2" oninput="calcMaterialCost()"></td>
+                        <td><input type="number" step="0.01" id="mc_pri_rec" value="0.00" class="fmt-2" oninput="calcMaterialCost()"></td>
+                        <td><input type="number" step="0.01" id="mc_pri_exp" value="2251.00" class="fmt-2" oninput="calcMaterialCost()"></td>
+                        <td><input type="number" step="0.01" id="mc_pri_close" class="calc-field" readonly value="6343.80"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left text-red">Total</td>
+                        <td class="text-red">Cooking cost</td>
+                        <td><input type="number" step="0.01" id="mc_tot_open" class="calc-field text-red" readonly value="11757.80"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_rec" class="calc-field text-red" readonly value="0.00"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_exp" class="calc-field text-red" readonly value="2698.00"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_close" class="calc-field text-red" readonly value="9059.80"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left" colspan="2">School MME Expenses</td>
+                        <td><input type="number" step="0.01" id="mme_open" value="0.00" class="fmt-2" oninput="calcOtherCost('mme')"></td>
+                        <td><input type="number" step="0.01" id="mme_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('mme')"></td>
+                        <td><input type="number" step="0.01" id="mme_exp" value="0.00" class="fmt-2" oninput="calcOtherCost('mme')"></td>
+                        <td><input type="number" step="0.01" id="mme_close" class="calc-field" readonly value="0.00"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left" colspan="2">Bank Interest</td>
+                        <td><input type="number" step="0.01" id="bi_open" value="556.00" class="fmt-2" oninput="calcOtherCost('bi')"></td>
+                        <td><input type="number" step="0.01" id="bi_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('bi')"></td>
+                        <td><input type="number" step="0.01" id="bi_exp" value="0.00" class="fmt-2" oninput="calcOtherCost('bi')"></td>
+                        <td><input type="number" step="0.01" id="bi_close" class="calc-field" readonly value="556.00"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left" colspan="2">Transportation (@ ₹268 per Metric Ton)</td>
+                        <td><input type="number" step="0.01" id="tr_open" value="-73.00" class="fmt-2" oninput="calcOtherCost('tr')"></td>
+                        <td><input type="number" step="0.01" id="tr_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('tr')"></td>
+                        <td><input type="number" step="0.01" id="tr_exp" value="35.00" class="fmt-2" oninput="calcOtherCost('tr')"></td>
+                        <td><input type="number" step="0.01" id="tr_close" class="calc-field" readonly value="-108.00"></td>
+                    </tr>
+                    <tr>
+                        <td class="text-left" colspan="2">LPG Subsidy</td>
+                        <td><input type="number" step="0.01" id="lpg_open" value="183.00" class="fmt-2" oninput="calcOtherCost('lpg')"></td>
+                        <td><input type="number" step="0.01" id="lpg_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('lpg')"></td>
+                        <td><input type="number" step="0.01" id="lpg_exp" value="0.00" class="fmt-2" oninput="calcOtherCost('lpg')"></td>
+                        <td><input type="number" step="0.01" id="lpg_close" class="calc-field" readonly value="183.00"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 5. Supplementary Nutrition Items -->
+            <div class="section-title">5. Supplementary Nutrition Items (Mukhya Mantri Bal Paushtik Aahar Yojna (MMBPAY))</div>
+            <table class="expand-table">
+                <thead>
+                    <tr>
+                        <th style="width: 14%;">Wing</th>
+                        <th style="width: 22%;">No. of students eaten eggs & fruits in the month</th>
+                        <th style="width: 10%;">No. of Weeks</th>
+                        <th style="width: 12%;">Opening balance</th>
+                        <th style="width: 12%;">Amount received</th>
+                        <th style="width: 10%;">Total</th>
+                        <th style="width: 10%;">Expenditure</th>
+                        <th style="width: 10%;">Closing balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Pre-Primary</th>
+                        <td><input type="number" id="mm_stud_pre" value="3" class="text-center"></td>
+                        <td><input type="number" step="0.1" id="mm_wk_pre" value="4.5" class="text-center"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_open" value="648.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_rec" value="0.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_tot" class="calc-field" readonly value="648.00"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_exp" value="189.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_close" class="calc-field" readonly value="459.00"></td>
+                    </tr>
+                    <tr>
+                        <th>Primary</th>
+                        <td><input type="number" id="mm_stud_pri" value="16" class="text-center"></td>
+                        <td><input type="number" step="0.1" id="mm_wk_pri" value="4.5" class="text-center"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_open" value="2137.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_rec" value="0.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_tot" class="calc-field" readonly value="2137.00"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_exp" value="952.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_close" class="calc-field" readonly value="1185.00"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 2 -->
+<div class="page">
+    <div class="page-content">
+        <div>
+            <!-- 6. Cook-cum-Helper payment Details -->
+            <div class="section-title">6. Cook-cum-Helper payment Details</div>
+            <table id="cookTable" class="expand-table-lg">
+                <thead>
+                    <tr>
+                        <th style="width: 8%;">Sr. No.</th>
+                        <th style="width: 27%;">Name of Cook</th>
+                        <th style="width: 12%;">Gender<br>M/F</th>
+                        <th style="width: 18%;">Category<br>SC/ ST/ OBC/ Gen.</th>
+                        <th style="width: 18%;">Amount received during the month</th>
+                        <th style="width: 17%;">Payment Mode<br>Cash/ Bank</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>1</td>
+                        <td><input type="text" id="cook_1_name" value="Babita Kumari" class="text-center"></td>
+                        <td><input type="text" id="cook_1_gender" value="F" class="text-center"></td>
+                        <td><input type="text" id="cook_1_cat" value="OBC" class="text-center"></td>
+                        <td><input type="text" id="cook_1_amt" value="-" class="text-center"></td>
+                        <td><input type="text" id="cook_1_mode" value="Bank" class="text-center"></td>
+                    </tr>
+                    <tr>
+                        <td>2</td>
+                        <td><input type="text" id="cook_2_name" value="" class="text-center"></td>
+                        <td><input type="text" id="cook_2_gender" value="" class="text-center"></td>
+                        <td><input type="text" id="cook_2_cat" value="" class="text-center"></td>
+                        <td><input type="text" id="cook_2_amt" value="" class="text-center"></td>
+                        <td><input type="text" id="cook_2_mode" value="" class="text-center"></td>
+                    </tr>
+                    <tr>
+                        <td>3</td>
+                        <td><input type="text" id="cook_3_name" value="" class="text-center"></td>
+                        <td><input type="text" id="cook_3_gender" value="" class="text-center"></td>
+                        <td><input type="text" id="cook_3_cat" value="" class="text-center"></td>
+                        <td><input type="text" id="cook_3_amt" value="" class="text-center"></td>
+                        <td><input type="text" id="cook_3_mode" value="" class="text-center"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 7. School Inspection -->
+            <div class="section-title" style="margin-top: 15px;">7. School Inspection</div>
+            <table class="expand-table-lg">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width: 22%;">Inspected by<br>(In numbers)</th>
+                        <th style="width: 18%;">Member of Task Force</th>
+                        <th style="width: 22%;">District Officials</th>
+                        <th style="width: 20%;">Block/ Taluka level officials</th>
+                        <th style="width: 18%;">SMC Members</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th></th>
+                        <th>Yes</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td><input type="text" id="insp_tf" class="text-center"></td>
+                        <td><input type="text" id="insp_dist" class="text-center"></td>
+                        <td><input type="text" id="insp_block" class="text-center"></td>
+                        <td><input type="number" id="insp_smc" value="5" class="text-center"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 8. Name of MDM Incharge -->
+            <div class="section-title" style="margin-top: 15px;">8. Name of MDM Incharge</div>
+            <table class="expand-table-lg">
+                <thead>
+                    <tr>
+                        <th class="text-left" style="width: 40%;">Name of MDM Incharge</th>
+                        <th class="text-left" style="width: 60%;">Contact Number</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-left"><input type="text" id="incharge_name" value="Neelam Kumari"></td>
+                        <td class="text-left"><input type="text" id="incharge_contact" value="9816545995"></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <!-- 9. Health Checkup and IFA Tablets Details -->
+            <div class="section-title" style="margin-top: 15px;">9. Health Checkup and IFA Tablets Details</div>
+            <table class="expand-table">
+                <thead>
+                    <tr>
+                        <th rowspan="2" style="width: 12%;">Wing</th>
+                        <th colspan="2" style="width: 18%;">Health checkup carried out<br>(No. of students)</th>
+                        <th rowspan="2" style="width: 18%;">Date of Health Checkup</th>
+                        <th colspan="2" style="width: 16%;">IFA Tablets<br>(No. of students covered)</th>
+                        <th colspan="2" style="width: 18%;">Deworming tablets<br>(No. of students covered)</th>
+                        <th colspan="2" style="width: 18%;">No. of children received Vitamin A supplementation</th>
+                    </tr>
+                    <tr>
+                        <th>Boys</th>
+                        <th>Girls</th>
+                        <th>Boys</th>
+                        <th>Girls</th>
+                        <th>Boys</th>
+                        <th>Girls</th>
+                        <th>Boys</th>
+                        <th>Girls</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Pre-Primary</th>
+                        <td><input type="text" id="hc_pre_b" value="-" class="text-center"></td>
+                        <td><input type="text" id="hc_pre_g" value="-" class="text-center"></td>
+                        <td rowspan="2"><input type="text" id="hc_date" value="-" class="text-center" style="height: 100%;"></td>
+                        <td><input type="number" id="ifa_pre_b" value="0" class="text-center"></td>
+                        <td><input type="number" id="ifa_pre_g" value="1" class="text-center"></td>
+                        <td><input type="text" id="dw_pre_b" value="-" class="text-center"></td>
+                        <td><input type="text" id="dw_pre_g" value="-" class="text-center"></td>
+                        <td><input type="text" id="vit_pre_b" value="-" class="text-center"></td>
+                        <td><input type="text" id="vit_pre_g" value="-" class="text-center"></td>
+                    </tr>
+                    <tr>
+                        <th>Primary</th>
+                        <td><input type="text" id="hc_pri_b" value="-" class="text-center"></td>
+                        <td><input type="text" id="hc_pri_g" value="-" class="text-center"></td>
+                        <td><input type="number" id="ifa_pri_b" value="7" class="text-center"></td>
+                        <td><input type="number" id="ifa_pri_g" value="9" class="text-center"></td>
+                        <td><input type="text" id="dw_pri_b" value="-" class="text-center"></td>
+                        <td><input type="text" id="dw_pri_g" value="-" class="text-center"></td>
+                        <td><input type="text" id="vit_pri_b" value="-" class="text-center"></td>
+                        <td><input type="text" id="vit_pri_g" value="-" class="text-center"></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Signatures & Stamp Space -->
+        <div class="signatures">
+            <div class="sig-box">
+                <div class="stamp-space">[ Seal / Stamp Here ]</div>
+                <div>Signature of SMC Chairperson/ Gram Pradhan</div>
+            </div>
+            <div class="sig-box">
+                <div class="stamp-space">[ Seal / Stamp Here ]</div>
+                <div>Signature of Head Teacher/ MDM Incharge</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- PAGE 3 (Register Summary Page - Non Editable Auto-Synced, Height = 12.8 cm) -->
+<div class="page register-page">
+    <div style="width: 100%;">
+        <!-- Rice Section Header -->
+        <div class="register-header">
+            <span>Rice</span>
+            <span>No. of working days= <span id="reg_days">22</span></span>
+            <span><span id="reg_month">October</span> <span id="reg_year">2026</span></span>
+        </div>
+
+        <!-- Rice Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 16%;">Wing</th>
+                    <th style="width: 12%;">Diets</th>
+                    <th style="width: 14%;">Opening Bal.</th>
+                    <th style="width: 14%;">Received</th>
+                    <th style="width: 14%;">Total</th>
+                    <th style="width: 16%;">Consumption</th>
+                    <th style="width: 14%;">Closing Bal.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th class="text-left">Pre-Primary</th>
+                    <td id="r_pre_diet">66</td>
+                    <td id="r_pre_open">17.500</td>
+                    <td id="r_pre_rec">30.000</td>
+                    <td id="r_pre_tot">47.500</td>
+                    <td id="r_pre_con">6.600</td>
+                    <td id="r_pre_close">40.900</td>
+                </tr>
+                <tr>
+                    <th class="text-left">Primary</th>
+                    <td id="r_pri_diet">332</td>
+                    <td id="r_pri_open">14.500</td>
+                    <td id="r_pri_rec">100.000</td>
+                    <td id="r_pri_tot">114.500</td>
+                    <td id="r_pri_con">33.200</td>
+                    <td id="r_pri_close">81.300</td>
+                </tr>
+                <tr>
+                    <th class="text-red text-left">Total</th>
+                    <td id="r_tot_diet" class="text-red">398</td>
+                    <td id="r_tot_open" class="text-red">32.000</td>
+                    <td id="r_tot_rec" class="text-red">130.000</td>
+                    <td id="r_tot_tot" class="text-red">162.000</td>
+                    <td id="r_tot_con" class="text-red">39.800</td>
+                    <td id="r_tot_close" class="text-red">122.200</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <!-- Cooking Cost Header -->
+        <div class="register-section-title">Cooking Cost</div>
+
+        <!-- Cooking Cost & Other Expenses Table -->
+        <table>
+            <thead>
+                <tr>
+                    <th style="width: 22%;">Wing</th>
+                    <th style="width: 10%;">Diets</th>
+                    <th style="width: 18%;">Category</th>
+                    <th style="width: 12%;">Opening Bal.</th>
+                    <th style="width: 12%;">Received</th>
+                    <th style="width: 14%;">Expenditure</th>
+                    <th style="width: 12%;">Closing Bal.</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th class="text-left">Pre-Primary</th>
+                    <td id="cc_pre_diet">66</td>
+                    <td>Cooking Cost</td>
+                    <td id="cc_pre_open">3163.00</td>
+                    <td id="cc_pre_rec">0.00</td>
+                    <td id="cc_pre_exp">447.00</td>
+                    <td id="cc_pre_close">2716.00</td>
+                </tr>
+                <tr>
+                    <th class="text-left">Primary</th>
+                    <td id="cc_pri_diet">332</td>
+                    <td>Cooking Cost</td>
+                    <td id="cc_pri_open">8594.80</td>
+                    <td id="cc_pri_rec">0.00</td>
+                    <td id="cc_pri_exp">2251.00</td>
+                    <td id="cc_pri_close">6343.80</td>
+                </tr>
+                <tr>
+                    <th class="text-red text-left">Total</th>
+                    <td id="cc_tot_diet" class="text-red">398</td>
+                    <td class="text-red">Cooking Cost</td>
+                    <td id="cc_tot_open" class="text-red">11757.80</td>
+                    <td id="cc_tot_rec" class="text-red">0.00</td>
+                    <td id="cc_tot_exp" class="text-red">2698.00</td>
+                    <td id="cc_tot_close" class="text-red">9059.80</td>
+                </tr>
+                <tr>
+                    <th rowspan="3" class="text-left">MMBPAY</th>
+                    <th colspan="2" class="text-left">Pre-Primary</th>
+                    <td id="mm_reg_pre_open">648.00</td>
+                    <td id="mm_reg_pre_rec">0.00</td>
+                    <td id="mm_reg_pre_exp">189.00</td>
+                    <td id="mm_reg_pre_close">459.00</td>
+                </tr>
+                <tr>
+                    <th colspan="2" class="text-left">Primary</th>
+                    <td id="mm_reg_pri_open">2137.00</td>
+                    <td id="mm_reg_pri_rec">0.00</td>
+                    <td id="mm_reg_pri_exp">952.00</td>
+                    <td id="mm_reg_pri_close">1185.00</td>
+                </tr>
+                <tr>
+                    <th colspan="2" class="text-red text-left">Total</th>
+                    <td id="mm_reg_tot_open" class="text-red">2785.00</td>
+                    <td id="mm_reg_tot_rec" class="text-red">0.00</td>
+                    <td id="mm_reg_tot_exp" class="text-red">1141.00</td>
+                    <td id="mm_reg_tot_close" class="text-red">1644.00</td>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-left">School MME Expenses</th>
+                    <td id="reg_mme_open">0.00</td>
+                    <td id="reg_mme_rec">0.00</td>
+                    <td id="reg_mme_exp">0.00</td>
+                    <td id="reg_mme_close">0.00</td>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-left">LPG Subsidy</th>
+                    <td id="reg_lpg_open">183.00</td>
+                    <td id="reg_lpg_rec">0.00</td>
+                    <td id="reg_lpg_exp">0.00</td>
+                    <td id="reg_lpg_close">183.00</td>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-left">Bank Interest</th>
+                    <td id="reg_bi_open">556.00</td>
+                    <td id="reg_bi_rec">0.00</td>
+                    <td id="reg_bi_exp">0.00</td>
+                    <td id="reg_bi_close">556.00</td>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-left">Transportation</th>
+                    <td id="reg_tr_open">-73.00</td>
+                    <td id="reg_tr_rec">0.00</td>
+                    <td id="reg_tr_exp">35.00</td>
+                    <td id="reg_tr_close">-108.00</td>
+                </tr>
+                <tr>
+                    <th colspan="3" class="text-red text-left">All Total</th>
+                    <td id="reg_all_open" class="text-red">15208.80</td>
+                    <td id="reg_all_rec" class="text-red">0.00</td>
+                    <td id="reg_all_exp" class="text-red">3874.00</td>
+                    <td id="reg_all_close" class="text-red">11334.80</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+    const STORAGE_KEY = 'MDCF_FORM_DATA_V1';
+
+    document.addEventListener('DOMContentLoaded', () => {
+        loadFormData();
+
+        document.body.addEventListener('focus', (e) => {
+            if ((e.target.tagName === 'INPUT' || e.target.tagName === 'SELECT') && !e.target.readOnly) {
+                if (e.target.tagName === 'INPUT') e.target.select();
+            }
+        }, true);
+
+        document.body.addEventListener('blur', (e) => {
+            if (e.target.tagName === 'INPUT' && e.target.type === 'number' && !e.target.readOnly) {
+                let val = parseFloat(e.target.value);
+                if (!isNaN(val)) {
+                    if (e.target.classList.contains('fmt-3')) {
+                        e.target.value = val.toFixed(3);
+                    } else if (e.target.classList.contains('fmt-2')) {
+                        e.target.value = val.toFixed(2);
+                    }
+                }
+            }
+            saveFormData();
+            updateRegisterSummary();
+        }, true);
+
+        document.body.addEventListener('change', (e) => {
+            if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') {
+                saveFormData();
+                updateRegisterSummary();
+            }
+        });
+    });
+
+    function saveFormData() {
+        const inputs = document.querySelectorAll('input, select');
+        const data = {};
+        inputs.forEach(input => {
+            if (input.id) {
+                data[input.id] = input.value;
+            }
+        });
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    function loadFormData() {
+        const savedData = localStorage.getItem(STORAGE_KEY);
+        if (savedData) {
+            try {
+                const data = JSON.parse(savedData);
+                Object.keys(data).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) {
+                        el.value = data[id];
+                    }
+                });
+                recalculateAll();
+            } catch (e) {
+                console.error("Error loading stored form data", e);
+            }
+        }
+        updateRegisterSummary();
+    }
+
+    function recalculateAll() {
+        calcTotals();
+        calcFoodGrains();
+        calcMaterialCost();
+        calcOtherCost('mme');
+        calcOtherCost('bi');
+        calcOtherCost('tr');
+        calcOtherCost('lpg');
+        calcMMBPAY();
+    }
+
+    function num(id) {
+        return parseFloat(document.getElementById(id).value) || 0;
+    }
+
+    function setVal(id, val, decimals = 2) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.value = val.toFixed(decimals);
+        }
+    }
+
+    function calcTotals() {
+        setVal('pre_tot', num('pre_b') + num('pre_g'), 0);
+        setVal('pri_tot', num('pri_b') + num('pri_g'), 0);
+        updateRegisterSummary();
+    }
+
+    function calcFoodGrains() {
+        var preTot = num('fg_pre_open') + num('fg_pre_rec');
+        var preClose = preTot - num('fg_pre_con');
+        setVal('fg_pre_tot', preTot, 3);
+        setVal('fg_pre_close', preClose, 3);
+
+        var priTot = num('fg_pri_open') + num('fg_pri_rec');
+        var priClose = priTot - num('fg_pri_con');
+        setVal('fg_pri_tot', priTot, 3);
+        setVal('fg_pri_close', priClose, 3);
+        updateRegisterSummary();
+    }
+
+    function calcMaterialCost() {
+        var preOpen = num('mc_pre_open');
+        var preRec = num('mc_pre_rec');
+        var preExp = num('mc_pre_exp');
+        var preClose = preOpen + preRec - preExp;
+        setVal('mc_pre_close', preClose, 2);
+
+        var priOpen = num('mc_pri_open');
+        var priRec = num('mc_pri_rec');
+        var priExp = num('mc_pri_exp');
+        var priClose = priOpen + priRec - priExp;
+        setVal('mc_pri_close', priClose, 2);
+
+        setVal('mc_tot_open', preOpen + priOpen, 2);
+        setVal('mc_tot_rec', preRec + priRec, 2);
+        setVal('mc_tot_exp', preExp + priExp, 2);
+        setVal('mc_tot_close', preClose + priClose, 2);
+        updateRegisterSummary();
+    }
+
+    function calcOtherCost(prefix) {
+        var open = num(prefix + '_open');
+        var rec = num(prefix + '_rec');
+        var exp = num(prefix + '_exp');
+        setVal(prefix + '_close', open + rec - exp, 2);
+        updateRegisterSummary();
+    }
+
+    function calcMMBPAY() {
+        var preOpen = num('mm_pre_open');
+        var preRec = num('mm_pre_rec');
+        var preTot = preOpen + preRec;
+        var preExp = num('mm_pre_exp');
+        setVal('mm_pre_tot', preTot, 2);
+        setVal('mm_pre_close', preTot - preExp, 2);
+
+        var priOpen = num('mm_pri_open');
+        var priRec = num('mm_pri_rec');
+        var priTot = priOpen + priRec;
+        var priExp = num('mm_pri_exp');
+        setVal('mm_pri_tot', priTot, 2);
+        setVal('mm_pri_close', priTot - priExp, 2);
+        updateRegisterSummary();
+    }
+
+    function updateRegisterSummary() {
+        // Header info
+        document.getElementById('reg_month').innerText = document.getElementById('select_month').value;
+        document.getElementById('reg_year').innerText = document.getElementById('select_year').value;
+        document.getElementById('reg_days').innerText = document.getElementById('days_pre').value || '22';
+
+        // Rice Table
+        const mealsPre = num('meals_pre');
+        const mealsPri = num('meals_pri');
+        document.getElementById('r_pre_diet').innerText = mealsPre;
+        document.getElementById('r_pri_diet').innerText = mealsPri;
+        document.getElementById('r_tot_diet').innerText = mealsPre + mealsPri;
+
+        const fgPreOpen = num('fg_pre_open');
+        const fgPreRec = num('fg_pre_rec');
+        const fgPreTot = num('fg_pre_tot');
+        const fgPreCon = num('fg_pre_con');
+        const fgPreClose = num('fg_pre_close');
+
+        document.getElementById('r_pre_open').innerText = fgPreOpen.toFixed(3);
+        document.getElementById('r_pre_rec').innerText = fgPreRec.toFixed(3);
+        document.getElementById('r_pre_tot').innerText = fgPreTot.toFixed(3);
+        document.getElementById('r_pre_con').innerText = fgPreCon.toFixed(3);
+        document.getElementById('r_pre_close').innerText = fgPreClose.toFixed(3);
+
+        const fgPriOpen = num('fg_pri_open');
+        const fgPriRec = num('fg_pri_rec');
+        const fgPriTot = num('fg_pri_tot');
+        const fgPriCon = num('fg_pri_con');
+        const fgPriClose = num('fg_pri_close');
+
+        document.getElementById('r_pri_open').innerText = fgPriOpen.toFixed(3);
+        document.getElementById('r_pri_rec').innerText = fgPriRec.toFixed(3);
+        document.getElementById('r_pri_tot').innerText = fgPriTot.toFixed(3);
+        document.getElementById('r_pri_con').innerText = fgPriCon.toFixed(3);
+        document.getElementById('r_pri_close').innerText = fgPriClose.toFixed(3);
+
+        document.getElementById('r_tot_open').innerText = (fgPreOpen + fgPriOpen).toFixed(3);
+        document.getElementById('r_tot_rec').innerText = (fgPreRec + fgPriRec).toFixed(3);
+        document.getElementById('r_tot_tot').innerText = (fgPreTot + fgPriTot).toFixed(3);
+        document.getElementById('r_tot_con').innerText = (fgPreCon + fgPriCon).toFixed(3);
+        document.getElementById('r_tot_close').innerText = (fgPreClose + fgPriClose).toFixed(3);
+
+        // Cooking Cost Table
+        document.getElementById('cc_pre_diet').innerText = mealsPre;
+        document.getElementById('cc_pri_diet').innerText = mealsPri;
+        document.getElementById('cc_tot_diet').innerText = mealsPre + mealsPri;
+
+        const mcPreOpen = num('mc_pre_open');
+        const mcPreRec = num('mc_pre_rec');
+        const mcPreExp = num('mc_pre_exp');
+        const mcPreClose = num('mc_pre_close');
+
+        document.getElementById('cc_pre_open').innerText = mcPreOpen.toFixed(2);
+        document.getElementById('cc_pre_rec').innerText = mcPreRec.toFixed(2);
+        document.getElementById('cc_pre_exp').innerText = mcPreExp.toFixed(2);
+        document.getElementById('cc_pre_close').innerText = mcPreClose.toFixed(2);
+
+        const mcPriOpen = num('mc_pri_open');
+        const mcPriRec = num('mc_pri_rec');
+        const mcPriExp = num('mc_pri_exp');
+        const mcPriClose = num('mc_pri_close');
+
+        document.getElementById('cc_pri_open').innerText = mcPriOpen.toFixed(2);
+        document.getElementById('cc_pri_rec').innerText = mcPriRec.toFixed(2);
+        document.getElementById('cc_pri_exp').innerText = mcPriExp.toFixed(2);
+        document.getElementById('cc_pri_close').innerText = mcPriClose.toFixed(2);
+
+        document.getElementById('cc_tot_open').innerText = num('mc_tot_open').toFixed(2);
+        document.getElementById('cc_tot_rec').innerText = num('mc_tot_rec').toFixed(2);
+        document.getElementById('cc_tot_exp').innerText = num('mc_tot_exp').toFixed(2);
+        document.getElementById('cc_tot_close').innerText = num('mc_tot_close').toFixed(2);
+
+        // MMBPAY
+        const mmPreOpen = num('mm_pre_open');
+        const mmPreRec = num('mm_pre_rec');
+        const mmPreExp = num('mm_pre_exp');
+        const mmPreClose = num('mm_pre_close');
+        document.getElementById('mm_reg_pre_open').innerText = mmPreOpen.toFixed(2);
+        document.getElementById('mm_reg_pre_rec').innerText = mmPreRec.toFixed(2);
+        document.getElementById('mm_reg_pre_exp').innerText = mmPreExp.toFixed(2);
+        document.getElementById('mm_reg_pre_close').innerText = mmPreClose.toFixed(2);
+
+        const mmPriOpen = num('mm_pri_open');
+        const mmPriRec = num('mm_pri_rec');
+        const mmPriExp = num('mm_pri_exp');
+        const mmPriClose = num('mm_pri_close');
+        document.getElementById('mm_reg_pri_open').innerText = mmPriOpen.toFixed(2);
+        document.getElementById('mm_reg_pri_rec').innerText = mmPriRec.toFixed(2);
+        document.getElementById('mm_reg_pri_exp').innerText = mmPriExp.toFixed(2);
+        document.getElementById('mm_reg_pri_close').innerText = mmPriClose.toFixed(2);
+
+        document.getElementById('mm_reg_tot_open').innerText = (mmPreOpen + mmPriOpen).toFixed(2);
+        document.getElementById('mm_reg_tot_rec').innerText = (mmPreRec + mmPriRec).toFixed(2);
+        document.getElementById('mm_reg_tot_exp').innerText = (mmPreExp + mmPriExp).toFixed(2);
+        document.getElementById('mm_reg_tot_close').innerText = (mmPreClose + mmPriClose).toFixed(2);
+
+        // MME
+        const mmeOpen = num('mme_open');
+        const mmeRec = num('mme_rec');
+        const mmeExp = num('mme_exp');
+        const mmeClose = num('mme_close');
+        document.getElementById('reg_mme_open').innerText = mmeOpen.toFixed(2);
+        document.getElementById('reg_mme_rec').innerText = mmeRec.toFixed(2);
+        document.getElementById('reg_mme_exp').innerText = mmeExp.toFixed(2);
+        document.getElementById('reg_mme_close').innerText = mmeClose.toFixed(2);
+
+        // LPG
+        const lpgOpen = num('lpg_open');
+        const lpgRec = num('lpg_rec');
+        const lpgExp = num('lpg_exp');
+        const lpgClose = num('lpg_close');
+        document.getElementById('reg_lpg_open').innerText = lpgOpen.toFixed(2);
+        document.getElementById('reg_lpg_rec').innerText = lpgRec.toFixed(2);
+        document.getElementById('reg_lpg_exp').innerText = lpgExp.toFixed(2);
+        document.getElementById('reg_lpg_close').innerText = lpgClose.toFixed(2);
+
+        // Bank Interest
+        const biOpen = num('bi_open');
+        const biRec = num('bi_rec');
+        const biExp = num('bi_exp');
+        const biClose = num('bi_close');
+        document.getElementById('reg_bi_open').innerText = biOpen.toFixed(2);
+        document.getElementById('reg_bi_rec').innerText = biRec.toFixed(2);
+        document.getElementById('reg_bi_exp').innerText = biExp.toFixed(2);
+        document.getElementById('reg_bi_close').innerText = biClose.toFixed(2);
+
+        // Transportation
+        const trOpen = num('tr_open');
+        const trRec = num('tr_rec');
+        const trExp = num('tr_exp');
+        const trClose = num('tr_close');
+        document.getElementById('reg_tr_open').innerText = trOpen.toFixed(2);
+        document.getElementById('reg_tr_rec').innerText = trRec.toFixed(2);
+        document.getElementById('reg_tr_exp').innerText = trExp.toFixed(2);
+        document.getElementById('reg_tr_close').innerText = trClose.toFixed(2);
+
+        // All Total
+        const allOpen = mcPreOpen + mcPriOpen + mmPreOpen + mmPriOpen + mmeOpen + lpgOpen + biOpen + trOpen;
+        const allRec = mcPreRec + mcPriRec + mmPreRec + mmPriRec + mmeRec + lpgRec + biRec + trRec;
+        const allExp = mcPreExp + mcPriExp + mmPreExp + mmPriExp + mmeExp + lpgExp + biExp + trExp;
+        const allClose = mcPreClose + mcPriClose + mmPreClose + mmPriClose + mmeClose + lpgClose + biClose + trClose;
+
+        document.getElementById('reg_all_open').innerText = allOpen.toFixed(2);
+        document.getElementById('reg_all_rec').innerText = allRec.toFixed(2);
+        document.getElementById('reg_all_exp').innerText = allExp.toFixed(2);
+        document.getElementById('reg_all_close').innerText = allClose.toFixed(2);
+    }
+</script>
+
+</body>
+</html>
