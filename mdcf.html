@@ -888,7 +888,7 @@
         updateRegisterSummary();
     }
 
-    // Function to roll over Closing Balances into Opening Balances for the next month
+    // Function to roll over Closing Balances into Opening Balances for the next month (Single Popup)
     function rollOverBalances() {
         if (!confirm("Are you sure you want to make current Closing Balances as Opening Balances for the next month?")) {
             return;
@@ -912,7 +912,7 @@
         document.getElementById('mm_pre_open').value = document.getElementById('mm_pre_close').value;
         document.getElementById('mm_pri_open').value = document.getElementById('mm_pri_close').value;
 
-        // Reset Received fields to 0.00 / 0.000 for the new month (optional convenience)
+        // Reset Received fields to 0.00 / 0.000 for the new month
         document.getElementById('fg_pre_rec').value = (0).toFixed(3);
         document.getElementById('fg_pri_rec').value = (0).toFixed(3);
         document.getElementById('mc_pre_rec').value = (0).toFixed(2);
@@ -924,10 +924,9 @@
         document.getElementById('mm_pre_rec').value = (0).toFixed(2);
         document.getElementById('mm_pri_rec').value = (0).toFixed(2);
 
-        // Recalculate everything and save
+        // Recalculate everything and save silently
         recalculateAll();
         saveFormData();
-        alert("Closing balances have been successfully transferred to Opening balances!");
     }
 
     function recalculateAll() {
