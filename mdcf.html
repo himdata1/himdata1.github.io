@@ -44,14 +44,6 @@
         background-color: #0056b3;
     }
 
-    .btn-success {
-        background-color: #28a745;
-    }
-
-    .btn-success:hover {
-        background-color: #218838;
-    }
-
     .page {
         background-color: #fff;
         width: 210mm;
@@ -252,7 +244,6 @@
 <body>
 
 <div class="toolbar">
-    <button class="btn btn-success" onclick="rollOverBalances()">Make Closing Balance as Opening Balance</button>
     <button class="btn" onclick="window.print()">Print / Save as PDF</button>
 </div>
 
@@ -277,7 +268,7 @@
                     <th class="text-left">Month/ Year</th>
                     <td class="text-left">
                         <div class="month-year-container">
-                            <select id="select_month">
+                            <select id="select_month" onchange="handleMonthChange(this)">
                                 <option value="April">April</option>
                                 <option value="May">May</option>
                                 <option value="June">June</option>
@@ -291,7 +282,7 @@
                                 <option value="February">February</option>
                                 <option value="March">March</option>
                             </select>
-                            <select id="select_year">
+                            <select id="select_year" onchange="handleYearChange()">
                                 <option value="2026" selected>2026</option>
                                 <option value="2027">2027</option>
                                 <option value="2028">2028</option>
@@ -818,13 +809,16 @@
 
 <script>
     const STORAGE_KEY = 'MDCF_FORM_DATA_V1';
+    const MONTHS = ["April", "May", "June", "July", "August", "September", "October", "November", "December", "January", "February", "March"];
+    let previousMonthIndex = 6; // Default to October index (6)
 
     document.addEventListener('DOMContentLoaded', () => {
         loadFormData();
+        const monthSelect = document.getElementById('select_month');
+        previousMonthIndex = MONTHS.indexOf(monthSelect.value);
 
-        // Automatically update document title before printing so the default PDF filename becomes "MDCF Month Year"
         window.addEventListener('beforeprint', () => {
-            const m = document.getElementById('select_month').value;
+            const m = monthSelect.value;
             const y = document.getElementById('select_year').value;
             document.title = `MDCF ${m} ${y}`;
         });
@@ -851,12 +845,111 @@
         }, true);
 
         document.body.addEventListener('change', (e) => {
-            if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') {
+            if (e.target.tagName === 'INPUT') {
                 saveFormData();
                 updateRegisterSummary();
             }
         });
     });
+
+    // Handle Month Selection Change (Detecting consecutive next month selection)
+    function handleMonthChange(selectElement) {
+        const newMonthIndex = MONTHS.indexOf(selectElement.value);
+        const nextMonthName = selectElement.value;
+        
+        // Check if selected month is strictly the immediate next month (e.g., Oct -> Nov, Dec -> Jan)
+        const isNextMonth = (newMonthIndex === previousMonthIndex + 1) || (previousMonthIndex === 11 && newMonthIndex === 0);
+
+        if (isNextMonth) {
+            // Save current state as history backup before rolling over
+            saveMonthHistory(previousMonthIndex);
+
+            // Polished confirmation prompt
+            const confirmMsg = `Closing Balances will be converted to Opening Balances for ${nextMonthName}. Are you sure you want to proceed?`;
+            
+            if (confirm(confirmMsg)) {
+                applyRolloverBalances();
+            } else {
+                // If user clicks Cancel/No, revert back to previous month selection
+                selectElement.value = MONTHS[previousMonthIndex];
+                return;
+            }
+        } else {
+            // If jumped to non-consecutive month, restore saved history if available
+            restoreMonthHistory(newMonthIndex);
+        }
+
+        previousMonthIndex = newMonthIndex;
+        saveFormData();
+        updateRegisterSummary();
+    }
+
+    function handleYearChange() {
+        saveFormData();
+        updateRegisterSummary();
+    }
+
+    // Save state snapshot for a specific month index
+    function saveMonthHistory(monthIdx) {
+        const inputs = document.querySelectorAll('input, select');
+        const data = {};
+        inputs.forEach(input => {
+            if (input.id) data[input.id] = input.value;
+        });
+        localStorage.setItem(STORAGE_KEY + '_MONTH_' + monthIdx, JSON.stringify(data));
+    }
+
+    // Restore state snapshot if revisiting a previously visited month
+    function restoreMonthHistory(monthIdx) {
+        const historyData = localStorage.getItem(STORAGE_KEY + '_MONTH_' + monthIdx);
+        if (historyData) {
+            try {
+                const data = JSON.parse(historyData);
+                Object.keys(data).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.value = data[id];
+                });
+                recalculateAll();
+            } catch (e) {
+                console.error("Error restoring history", e);
+            }
+        }
+    }
+
+    // Apply closing balances to opening balances & reset received fields to zero
+    function applyRolloverBalances() {
+        // 1. Food Grains
+        document.getElementById('fg_pre_open').value = document.getElementById('fg_pre_close').value;
+        document.getElementById('fg_pri_open').value = document.getElementById('fg_pri_close').value;
+
+        // 2. Material Cost (Cooking Cost)
+        document.getElementById('mc_pre_open').value = document.getElementById('mc_pre_close').value;
+        document.getElementById('mc_pri_open').value = document.getElementById('mc_pri_close').value;
+
+        // 3. Other Expenses
+        document.getElementById('mme_open').value = document.getElementById('mme_close').value;
+        document.getElementById('bi_open').value = document.getElementById('bi_close').value;
+        document.getElementById('tr_open').value = document.getElementById('tr_close').value;
+        document.getElementById('lpg_open').value = document.getElementById('lpg_close').value;
+
+        // 4. MMBPAY
+        document.getElementById('mm_pre_open').value = document.getElementById('mm_pre_close').value;
+        document.getElementById('mm_pri_open').value = document.getElementById('mm_pri_close').value;
+
+        // Reset Received fields for the new month
+        document.getElementById('fg_pre_rec').value = (0).toFixed(3);
+        document.getElementById('fg_pri_rec').value = (0).toFixed(3);
+        document.getElementById('mc_pre_rec').value = (0).toFixed(2);
+        document.getElementById('mc_pri_rec').value = (0).toFixed(2);
+        document.getElementById('mme_rec').value = (0).toFixed(2);
+        document.getElementById('bi_rec').value = (0).toFixed(2);
+        document.getElementById('tr_rec').value = (0).toFixed(2);
+        document.getElementById('lpg_rec').value = (0).toFixed(2);
+        document.getElementById('mm_pre_rec').value = (0).toFixed(2);
+        document.getElementById('mm_pri_rec').value = (0).toFixed(2);
+
+        recalculateAll();
+    }
 
     function saveFormData() {
         const inputs = document.querySelectorAll('input, select');
@@ -886,47 +979,6 @@
             }
         }
         updateRegisterSummary();
-    }
-
-    // Function to roll over Closing Balances into Opening Balances for the next month (Single Popup)
-    function rollOverBalances() {
-        if (!confirm("Are you sure you want to make current Closing Balances as Opening Balances for the next month?")) {
-            return;
-        }
-
-        // 1. Food Grains
-        document.getElementById('fg_pre_open').value = document.getElementById('fg_pre_close').value;
-        document.getElementById('fg_pri_open').value = document.getElementById('fg_pri_close').value;
-
-        // 2. Material Cost (Cooking Cost)
-        document.getElementById('mc_pre_open').value = document.getElementById('mc_pre_close').value;
-        document.getElementById('mc_pri_open').value = document.getElementById('mc_pri_close').value;
-
-        // 3. Other Expenses
-        document.getElementById('mme_open').value = document.getElementById('mme_close').value;
-        document.getElementById('bi_open').value = document.getElementById('bi_close').value;
-        document.getElementById('tr_open').value = document.getElementById('tr_close').value;
-        document.getElementById('lpg_open').value = document.getElementById('lpg_close').value;
-
-        // 4. MMBPAY
-        document.getElementById('mm_pre_open').value = document.getElementById('mm_pre_close').value;
-        document.getElementById('mm_pri_open').value = document.getElementById('mm_pri_close').value;
-
-        // Reset Received fields to 0.00 / 0.000 for the new month
-        document.getElementById('fg_pre_rec').value = (0).toFixed(3);
-        document.getElementById('fg_pri_rec').value = (0).toFixed(3);
-        document.getElementById('mc_pre_rec').value = (0).toFixed(2);
-        document.getElementById('mc_pri_rec').value = (0).toFixed(2);
-        document.getElementById('mme_rec').value = (0).toFixed(2);
-        document.getElementById('bi_rec').value = (0).toFixed(2);
-        document.getElementById('tr_rec').value = (0).toFixed(2);
-        document.getElementById('lpg_rec').value = (0).toFixed(2);
-        document.getElementById('mm_pre_rec').value = (0).toFixed(2);
-        document.getElementById('mm_pri_rec').value = (0).toFixed(2);
-
-        // Recalculate everything and save silently
-        recalculateAll();
-        saveFormData();
     }
 
     function recalculateAll() {
