@@ -44,6 +44,14 @@
         background-color: #0056b3;
     }
 
+    .btn-success {
+        background-color: #28a745;
+    }
+
+    .btn-success:hover {
+        background-color: #218838;
+    }
+
     .page {
         background-color: #fff;
         width: 210mm;
@@ -244,6 +252,7 @@
 <body>
 
 <div class="toolbar">
+    <button class="btn btn-success" onclick="rollOverBalances()">Make Closing Balance as Opening Balance</button>
     <button class="btn" onclick="window.print()">Print / Save as PDF</button>
 </div>
 
@@ -268,7 +277,7 @@
                     <th class="text-left">Month/ Year</th>
                     <td class="text-left">
                         <div class="month-year-container">
-                            <select id="select_month" onchange="handleMonthChange(this)">
+                            <select id="select_month">
                                 <option value="April">April</option>
                                 <option value="May">May</option>
                                 <option value="June">June</option>
@@ -282,7 +291,7 @@
                                 <option value="February">February</option>
                                 <option value="March">March</option>
                             </select>
-                            <select id="select_year" onchange="handleYearChange()">
+                            <select id="select_year">
                                 <option value="2026" selected>2026</option>
                                 <option value="2027">2027</option>
                                 <option value="2028">2028</option>
@@ -319,8 +328,8 @@
                 <tbody>
                     <tr>
                         <td class="text-left">i) Number of School days during the month</td>
-                        <td><input type="number" id="days_pre" value="22" class="text-center"></td>
-                        <td><input type="number" id="days_pri" value="22" class="text-center"></td>
+                        <td><input type="number" id="days_pre" value="22" class="text-center" oninput="calcFoodGrains(); calcMaterialCost();"></td>
+                        <td><input type="number" id="days_pri" value="22" class="text-center" oninput="calcFoodGrains(); calcMaterialCost();"></td>
                     </tr>
                     <tr>
                         <td class="text-left">ii) Actual number of days Mid-Day Meal served</td>
@@ -329,8 +338,8 @@
                     </tr>
                     <tr>
                         <td class="text-left">iii) Total Meals served during the month</td>
-                        <td><input type="number" id="meals_pre" value="66" class="text-center"></td>
-                        <td><input type="number" id="meals_pri" value="332" class="text-center"></td>
+                        <td><input type="number" id="meals_pre" value="66" class="text-center" oninput="calcFoodGrains(); calcMaterialCost();"></td>
+                        <td><input type="number" id="meals_pri" value="332" class="text-center" oninput="calcFoodGrains(); calcMaterialCost();"></td>
                     </tr>
                 </tbody>
             </table>
@@ -361,7 +370,7 @@
                         <td><input type="number" step="0.001" id="fg_pre_open" value="17.500" class="fmt-3" oninput="calcFoodGrains()"></td>
                         <td><input type="number" step="0.001" id="fg_pre_rec" value="30.000" class="fmt-3" oninput="calcFoodGrains()"></td>
                         <td><input type="number" step="0.001" id="fg_pre_tot" class="calc-field" readonly value="47.500"></td>
-                        <td><input type="number" step="0.001" id="fg_pre_con" value="6.600" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pre_con" class="calc-field" readonly value="6.600"></td>
                         <td><input type="number" step="0.001" id="fg_pre_close" class="calc-field" readonly value="40.900"></td>
                     </tr>
                     <tr>
@@ -369,7 +378,7 @@
                         <td><input type="number" step="0.001" id="fg_pri_open" value="14.500" class="fmt-3" oninput="calcFoodGrains()"></td>
                         <td><input type="number" step="0.001" id="fg_pri_rec" value="100.000" class="fmt-3" oninput="calcFoodGrains()"></td>
                         <td><input type="number" step="0.001" id="fg_pri_tot" class="calc-field" readonly value="114.500"></td>
-                        <td><input type="number" step="0.001" id="fg_pri_con" value="33.200" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pri_con" class="calc-field" readonly value="33.200"></td>
                         <td><input type="number" step="0.001" id="fg_pri_close" class="calc-field" readonly value="81.300"></td>
                     </tr>
                 </tbody>
@@ -401,52 +410,52 @@
                         <td>Cooking cost</td>
                         <td><input type="number" step="0.01" id="mc_pre_open" value="3163.00" class="fmt-2" oninput="calcMaterialCost()"></td>
                         <td><input type="number" step="0.01" id="mc_pre_rec" value="0.00" class="fmt-2" oninput="calcMaterialCost()"></td>
-                        <td><input type="number" step="0.01" id="mc_pre_exp" value="447.00" class="fmt-2" oninput="calcMaterialCost()"></td>
-                        <td><input type="number" step="0.01" id="mc_pre_close" class="calc-field" readonly value="2716.00"></td>
+                        <td><input type="number" step="0.01" id="mc_pre_exp" class="calc-field fmt-2" readonly value="447.00"></td>
+                        <td><input type="number" step="0.01" id="mc_pre_close" class="calc-field fmt-2" readonly value="2716.00"></td>
                     </tr>
                     <tr>
                         <td class="text-left">Primary (1st to 5th)</td>
                         <td>Cooking cost</td>
                         <td><input type="number" step="0.01" id="mc_pri_open" value="8594.80" class="fmt-2" oninput="calcMaterialCost()"></td>
                         <td><input type="number" step="0.01" id="mc_pri_rec" value="0.00" class="fmt-2" oninput="calcMaterialCost()"></td>
-                        <td><input type="number" step="0.01" id="mc_pri_exp" value="2251.00" class="fmt-2" oninput="calcMaterialCost()"></td>
-                        <td><input type="number" step="0.01" id="mc_pri_close" class="calc-field" readonly value="6343.80"></td>
+                        <td><input type="number" step="0.01" id="mc_pri_exp" class="calc-field fmt-2" readonly value="2251.00"></td>
+                        <td><input type="number" step="0.01" id="mc_pri_close" class="calc-field fmt-2" readonly value="6343.80"></td>
                     </tr>
                     <tr>
                         <td class="text-left text-red">Total</td>
                         <td class="text-red">Cooking cost</td>
-                        <td><input type="number" step="0.01" id="mc_tot_open" class="calc-field text-red" readonly value="11757.80"></td>
-                        <td><input type="number" step="0.01" id="mc_tot_rec" class="calc-field text-red" readonly value="0.00"></td>
-                        <td><input type="number" step="0.01" id="mc_tot_exp" class="calc-field text-red" readonly value="2698.00"></td>
-                        <td><input type="number" step="0.01" id="mc_tot_close" class="calc-field text-red" readonly value="9059.80"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_open" class="calc-field text-red fmt-2" readonly value="11757.80"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_rec" class="calc-field text-red fmt-2" readonly value="0.00"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_exp" class="calc-field text-red fmt-2" readonly value="2698.00"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_close" class="calc-field text-red fmt-2" readonly value="9059.80"></td>
                     </tr>
                     <tr>
                         <td class="text-left" colspan="2">School MME Expenses</td>
                         <td><input type="number" step="0.01" id="mme_open" value="0.00" class="fmt-2" oninput="calcOtherCost('mme')"></td>
                         <td><input type="number" step="0.01" id="mme_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('mme')"></td>
                         <td><input type="number" step="0.01" id="mme_exp" value="0.00" class="fmt-2" oninput="calcOtherCost('mme')"></td>
-                        <td><input type="number" step="0.01" id="mme_close" class="calc-field" readonly value="0.00"></td>
+                        <td><input type="number" step="0.01" id="mme_close" class="calc-field fmt-2" readonly value="0.00"></td>
                     </tr>
                     <tr>
                         <td class="text-left" colspan="2">Bank Interest</td>
                         <td><input type="number" step="0.01" id="bi_open" value="556.00" class="fmt-2" oninput="calcOtherCost('bi')"></td>
                         <td><input type="number" step="0.01" id="bi_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('bi')"></td>
                         <td><input type="number" step="0.01" id="bi_exp" value="0.00" class="fmt-2" oninput="calcOtherCost('bi')"></td>
-                        <td><input type="number" step="0.01" id="bi_close" class="calc-field" readonly value="556.00"></td>
+                        <td><input type="number" step="0.01" id="bi_close" class="calc-field fmt-2" readonly value="556.00"></td>
                     </tr>
                     <tr>
                         <td class="text-left" colspan="2">Transportation (@ ₹268 per Metric Ton)</td>
                         <td><input type="number" step="0.01" id="tr_open" value="-73.00" class="fmt-2" oninput="calcOtherCost('tr')"></td>
                         <td><input type="number" step="0.01" id="tr_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('tr')"></td>
-                        <td><input type="number" step="0.01" id="tr_exp" value="35.00" class="fmt-2" oninput="calcOtherCost('tr')"></td>
-                        <td><input type="number" step="0.01" id="tr_close" class="calc-field" readonly value="-108.00"></td>
+                        <td><input type="number" step="0.01" id="tr_exp" value="35.00" class="calc-field fmt-2" readonly value="35.00"></td>
+                        <td><input type="number" step="0.01" id="tr_close" class="calc-field fmt-2" readonly value="-108.00"></td>
                     </tr>
                     <tr>
                         <td class="text-left" colspan="2">LPG Subsidy</td>
                         <td><input type="number" step="0.01" id="lpg_open" value="183.00" class="fmt-2" oninput="calcOtherCost('lpg')"></td>
                         <td><input type="number" step="0.01" id="lpg_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('lpg')"></td>
                         <td><input type="number" step="0.01" id="lpg_exp" value="0.00" class="fmt-2" oninput="calcOtherCost('lpg')"></td>
-                        <td><input type="number" step="0.01" id="lpg_close" class="calc-field" readonly value="183.00"></td>
+                        <td><input type="number" step="0.01" id="lpg_close" class="calc-field fmt-2" readonly value="183.00"></td>
                     </tr>
                 </tbody>
             </table>
@@ -473,9 +482,9 @@
                         <td><input type="number" step="0.1" id="mm_wk_pre" value="4.5" class="text-center"></td>
                         <td><input type="number" step="0.01" id="mm_pre_open" value="648.00" class="fmt-2" oninput="calcMMBPAY()"></td>
                         <td><input type="number" step="0.01" id="mm_pre_rec" value="0.00" class="fmt-2" oninput="calcMMBPAY()"></td>
-                        <td><input type="number" step="0.01" id="mm_pre_tot" class="calc-field" readonly value="648.00"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_tot" class="calc-field fmt-2" readonly value="648.00"></td>
                         <td><input type="number" step="0.01" id="mm_pre_exp" value="189.00" class="fmt-2" oninput="calcMMBPAY()"></td>
-                        <td><input type="number" step="0.01" id="mm_pre_close" class="calc-field" readonly value="459.00"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_close" class="calc-field fmt-2" readonly value="459.00"></td>
                     </tr>
                     <tr>
                         <th>Primary</th>
@@ -483,9 +492,9 @@
                         <td><input type="number" step="0.1" id="mm_wk_pri" value="4.5" class="text-center"></td>
                         <td><input type="number" step="0.01" id="mm_pri_open" value="2137.00" class="fmt-2" oninput="calcMMBPAY()"></td>
                         <td><input type="number" step="0.01" id="mm_pri_rec" value="0.00" class="fmt-2" oninput="calcMMBPAY()"></td>
-                        <td><input type="number" step="0.01" id="mm_pri_tot" class="calc-field" readonly value="2137.00"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_tot" class="calc-field fmt-2" readonly value="2137.00"></td>
                         <td><input type="number" step="0.01" id="mm_pri_exp" value="952.00" class="fmt-2" oninput="calcMMBPAY()"></td>
-                        <td><input type="number" step="0.01" id="mm_pri_close" class="calc-field" readonly value="1185.00"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_close" class="calc-field fmt-2" readonly value="1185.00"></td>
                     </tr>
                 </tbody>
             </table>
@@ -731,19 +740,19 @@
                     <th class="text-left">Primary</th>
                     <td id="cc_pri_diet">332</td>
                     <td>Cooking Cost</td>
-                    <td id="cc_pri_open">8594.80</td>
+                    <td id="cc_pri_open">8595.00</td>
                     <td id="cc_pri_rec">0.00</td>
                     <td id="cc_pri_exp">2251.00</td>
-                    <td id="cc_pri_close">6343.80</td>
+                    <td id="cc_pri_close">6344.00</td>
                 </tr>
                 <tr>
                     <th class="text-red text-left">Total</th>
                     <td id="cc_tot_diet" class="text-red">398</td>
                     <td class="text-red">Cooking Cost</td>
-                    <td id="cc_tot_open" class="text-red">11757.80</td>
+                    <td id="cc_tot_open" class="text-red">11758.00</td>
                     <td id="cc_tot_rec" class="text-red">0.00</td>
                     <td id="cc_tot_exp" class="text-red">2698.00</td>
-                    <td id="cc_tot_close" class="text-red">9059.80</td>
+                    <td id="cc_tot_close" class="text-red">9060.00</td>
                 </tr>
                 <tr>
                     <th rowspan="3" class="text-left">MMBPAY</th>
@@ -797,10 +806,10 @@
                 </tr>
                 <tr>
                     <th colspan="3" class="text-red text-left">All Total</th>
-                    <td id="reg_all_open" class="text-red">15208.80</td>
+                    <td id="reg_all_open" class="text-red">15209.00</td>
                     <td id="reg_all_rec" class="text-red">0.00</td>
                     <td id="reg_all_exp" class="text-red">3874.00</td>
-                    <td id="reg_all_close" class="text-red">11334.80</td>
+                    <td id="reg_all_close" class="text-red">11335.00</td>
                 </tr>
             </tbody>
         </table>
@@ -809,16 +818,12 @@
 
 <script>
     const STORAGE_KEY = 'MDCF_FORM_DATA_V1';
-    const MONTHS = ["April", "May", "June", "July", "August", "September", "October", "November", "December", "January", "February", "March"];
-    let previousMonthIndex = 6; // Default to October index (6)
 
     document.addEventListener('DOMContentLoaded', () => {
         loadFormData();
-        const monthSelect = document.getElementById('select_month');
-        previousMonthIndex = MONTHS.indexOf(monthSelect.value);
 
         window.addEventListener('beforeprint', () => {
-            const m = monthSelect.value;
+            const m = document.getElementById('select_month').value;
             const y = document.getElementById('select_year').value;
             document.title = `MDCF ${m} ${y}`;
         });
@@ -845,111 +850,12 @@
         }, true);
 
         document.body.addEventListener('change', (e) => {
-            if (e.target.tagName === 'INPUT') {
+            if (e.target.tagName === 'SELECT' || e.target.tagName === 'INPUT') {
                 saveFormData();
                 updateRegisterSummary();
             }
         });
     });
-
-    // Handle Month Selection Change (Detecting consecutive next month selection)
-    function handleMonthChange(selectElement) {
-        const newMonthIndex = MONTHS.indexOf(selectElement.value);
-        const nextMonthName = selectElement.value;
-        
-        // Check if selected month is strictly the immediate next month (e.g., Oct -> Nov, Dec -> Jan)
-        const isNextMonth = (newMonthIndex === previousMonthIndex + 1) || (previousMonthIndex === 11 && newMonthIndex === 0);
-
-        if (isNextMonth) {
-            // Save current state as history backup before rolling over
-            saveMonthHistory(previousMonthIndex);
-
-            // Polished confirmation prompt
-            const confirmMsg = `Closing Balances will be converted to Opening Balances for ${nextMonthName}. Are you sure you want to proceed?`;
-            
-            if (confirm(confirmMsg)) {
-                applyRolloverBalances();
-            } else {
-                // If user clicks Cancel/No, revert back to previous month selection
-                selectElement.value = MONTHS[previousMonthIndex];
-                return;
-            }
-        } else {
-            // If jumped to non-consecutive month, restore saved history if available
-            restoreMonthHistory(newMonthIndex);
-        }
-
-        previousMonthIndex = newMonthIndex;
-        saveFormData();
-        updateRegisterSummary();
-    }
-
-    function handleYearChange() {
-        saveFormData();
-        updateRegisterSummary();
-    }
-
-    // Save state snapshot for a specific month index
-    function saveMonthHistory(monthIdx) {
-        const inputs = document.querySelectorAll('input, select');
-        const data = {};
-        inputs.forEach(input => {
-            if (input.id) data[input.id] = input.value;
-        });
-        localStorage.setItem(STORAGE_KEY + '_MONTH_' + monthIdx, JSON.stringify(data));
-    }
-
-    // Restore state snapshot if revisiting a previously visited month
-    function restoreMonthHistory(monthIdx) {
-        const historyData = localStorage.getItem(STORAGE_KEY + '_MONTH_' + monthIdx);
-        if (historyData) {
-            try {
-                const data = JSON.parse(historyData);
-                Object.keys(data).forEach(id => {
-                    const el = document.getElementById(id);
-                    if (el) el.value = data[id];
-                });
-                recalculateAll();
-            } catch (e) {
-                console.error("Error restoring history", e);
-            }
-        }
-    }
-
-    // Apply closing balances to opening balances & reset received fields to zero
-    function applyRolloverBalances() {
-        // 1. Food Grains
-        document.getElementById('fg_pre_open').value = document.getElementById('fg_pre_close').value;
-        document.getElementById('fg_pri_open').value = document.getElementById('fg_pri_close').value;
-
-        // 2. Material Cost (Cooking Cost)
-        document.getElementById('mc_pre_open').value = document.getElementById('mc_pre_close').value;
-        document.getElementById('mc_pri_open').value = document.getElementById('mc_pri_close').value;
-
-        // 3. Other Expenses
-        document.getElementById('mme_open').value = document.getElementById('mme_close').value;
-        document.getElementById('bi_open').value = document.getElementById('bi_close').value;
-        document.getElementById('tr_open').value = document.getElementById('tr_close').value;
-        document.getElementById('lpg_open').value = document.getElementById('lpg_close').value;
-
-        // 4. MMBPAY
-        document.getElementById('mm_pre_open').value = document.getElementById('mm_pre_close').value;
-        document.getElementById('mm_pri_open').value = document.getElementById('mm_pri_close').value;
-
-        // Reset Received fields for the new month
-        document.getElementById('fg_pre_rec').value = (0).toFixed(3);
-        document.getElementById('fg_pri_rec').value = (0).toFixed(3);
-        document.getElementById('mc_pre_rec').value = (0).toFixed(2);
-        document.getElementById('mc_pri_rec').value = (0).toFixed(2);
-        document.getElementById('mme_rec').value = (0).toFixed(2);
-        document.getElementById('bi_rec').value = (0).toFixed(2);
-        document.getElementById('tr_rec').value = (0).toFixed(2);
-        document.getElementById('lpg_rec').value = (0).toFixed(2);
-        document.getElementById('mm_pre_rec').value = (0).toFixed(2);
-        document.getElementById('mm_pri_rec').value = (0).toFixed(2);
-
-        recalculateAll();
-    }
 
     function saveFormData() {
         const inputs = document.querySelectorAll('input, select');
@@ -981,6 +887,40 @@
         updateRegisterSummary();
     }
 
+    function rollOverBalances() {
+        if (!confirm("Are you sure you want to make current Closing Balances as Opening Balances for the next month?")) {
+            return;
+        }
+
+        document.getElementById('fg_pre_open').value = document.getElementById('fg_pre_close').value;
+        document.getElementById('fg_pri_open').value = document.getElementById('fg_pri_close').value;
+
+        document.getElementById('mc_pre_open').value = document.getElementById('mc_pre_close').value;
+        document.getElementById('mc_pri_open').value = document.getElementById('mc_pri_close').value;
+
+        document.getElementById('mme_open').value = document.getElementById('mme_close').value;
+        document.getElementById('bi_open').value = document.getElementById('bi_close').value;
+        document.getElementById('tr_open').value = document.getElementById('tr_close').value;
+        document.getElementById('lpg_open').value = document.getElementById('lpg_close').value;
+
+        document.getElementById('mm_pre_open').value = document.getElementById('mm_pre_close').value;
+        document.getElementById('mm_pri_open').value = document.getElementById('mm_pri_close').value;
+
+        document.getElementById('fg_pre_rec').value = (0).toFixed(3);
+        document.getElementById('fg_pri_rec').value = (0).toFixed(3);
+        document.getElementById('mc_pre_rec').value = (0).toFixed(2);
+        document.getElementById('mc_pri_rec').value = (0).toFixed(2);
+        document.getElementById('mme_rec').value = (0).toFixed(2);
+        document.getElementById('bi_rec').value = (0).toFixed(2);
+        document.getElementById('tr_rec').value = (0).toFixed(2);
+        document.getElementById('lpg_rec').value = (0).toFixed(2);
+        document.getElementById('mm_pre_rec').value = (0).toFixed(2);
+        document.getElementById('mm_pri_rec').value = (0).toFixed(2);
+
+        recalculateAll();
+        saveFormData();
+    }
+
     function recalculateAll() {
         calcTotals();
         calcFoodGrains();
@@ -1010,28 +950,53 @@
     }
 
     function calcFoodGrains() {
+        var mealsPre = num('meals_pre');
+        var mealsPri = num('meals_pri');
+        
+        var preCon = mealsPre * 0.100;
+        var priCon = mealsPri * 0.100;
+        
+        setVal('fg_pre_con', preCon, 3);
+        setVal('fg_pri_con', priCon, 3);
+
         var preTot = num('fg_pre_open') + num('fg_pre_rec');
-        var preClose = preTot - num('fg_pre_con');
+        var preClose = preTot - preCon;
         setVal('fg_pre_tot', preTot, 3);
         setVal('fg_pre_close', preClose, 3);
 
         var priTot = num('fg_pri_open') + num('fg_pri_rec');
-        var priClose = priTot - num('fg_pri_con');
+        var priClose = priTot - priCon;
         setVal('fg_pri_tot', priTot, 3);
         setVal('fg_pri_close', priClose, 3);
+
+        // Calculate Transportation Expenditure and Round to nearest integer during calculation, format as 0.00
+        var totalRiceRecKg = num('fg_pre_rec') + num('fg_pri_rec');
+        var totalRiceRecMetricTon = totalRiceRecKg / 1000.0;
+        var trExpVal = Math.round(totalRiceRecMetricTon * 268);
+        setVal('tr_exp', trExpVal, 2);
+        calcOtherCost('tr');
+
         updateRegisterSummary();
     }
 
     function calcMaterialCost() {
+        var mealsPre = num('meals_pre');
+        var mealsPri = num('meals_pri');
+
+        // Calculate Cooking cost and Round to nearest Rupee (Math.round), displayed as 0.00
+        var preExp = Math.round(mealsPre * 6.78);
+        var priExp = Math.round(mealsPri * 6.78);
+
+        setVal('mc_pre_exp', preExp, 2);
+        setVal('mc_pri_exp', priExp, 2);
+
         var preOpen = num('mc_pre_open');
         var preRec = num('mc_pre_rec');
-        var preExp = num('mc_pre_exp');
         var preClose = preOpen + preRec - preExp;
         setVal('mc_pre_close', preClose, 2);
 
         var priOpen = num('mc_pri_open');
         var priRec = num('mc_pri_rec');
-        var priExp = num('mc_pri_exp');
         var priClose = priOpen + priRec - priExp;
         setVal('mc_pri_close', priClose, 2);
 
@@ -1060,7 +1025,7 @@
 
         var priOpen = num('mm_pri_open');
         var priRec = num('mm_pri_rec');
-        var priTot = priOpen + priRec;
+        var priTot = preOpen + preRec;
         var priExp = num('mm_pri_exp');
         setVal('mm_pri_tot', priTot, 2);
         setVal('mm_pri_close', priTot - priExp, 2);
