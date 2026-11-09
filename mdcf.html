@@ -252,7 +252,7 @@
 <body>
 
 <div class="toolbar">
-    <button class="btn btn-success" onclick="rollOverBalances()">Make Closing Balance as Opening Balance</button>
+    <button class="btn btn-success" onclick="rollOverBalances()">Carry Forward Closing Balance as Opening Balance for Next Month</button>
     <button class="btn" onclick="window.print()">Print / Save as PDF</button>
 </div>
 
@@ -888,7 +888,7 @@
     }
 
     function rollOverBalances() {
-        if (!confirm("Are you sure you want to make current Closing Balances as Opening Balances for the next month?")) {
+        if (!confirm("Are you sure you want to carry forward Closing Balance as Opening Balance for next month?")) {
             return;
         }
 
