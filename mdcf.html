@@ -74,9 +74,9 @@
     .page {
         background-color: #fff;
         width: 210mm;
-        min-height: auto;
-        padding: 14mm 12mm 10mm 12mm; /* Pages 1 & 2 top padding */
-        margin: 0 auto 12px auto;
+        min-height: 297mm;
+        padding: 8mm 12mm;
+        margin: 0 auto 20px auto;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
         box-sizing: border-box;
         display: flex;
@@ -85,16 +85,10 @@
         overflow: visible;
     }
 
-    .page:first-of-type {
-        padding-top: 14mm !important;
-        padding-bottom: 10mm !important;
-    }
-
-    /* Page 3 (Register Page) specific top margin reduction */
     .page.register-page {
         height: auto !important;
         min-height: 12.8cm !important;
-        padding: 8mm 10mm 10mm 10mm !important;
+        padding: 6mm 10mm !important;
     }
 
     .page-content {
@@ -107,59 +101,60 @@
         font-size: 21px;
         text-decoration: none;
         margin-top: 0;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
 
     .section-title {
         font-weight: bold;
-        font-size: 13px;
-        margin-top: 12px;
-        margin-bottom: 6px;
+        font-size: 14px;
+        margin-top: 8px;
+        margin-bottom: 4px;
     }
 
-    .page:nth-of-type(2) .section-title {
-        margin-top: 15px;
-        margin-bottom: 8px;
-    }
+    .section-spacing-6 { margin-bottom: 6px !important; }
+    .section-spacing-7 { margin-bottom: 6px !important; }
+    .section-spacing-8 { margin-bottom: 6px !important; }
 
-    table {
+    .page:not(.register-page) table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 12px;
+        margin-bottom: 6px;
         font-size: 14px;
     }
 
-    /* Page 1 cells: Top-Bottom 7px, Left-Right 1px */
-    .page:first-of-type th, 
-    .page:first-of-type td {
+    .page:not(.register-page) th, 
+    .page:not(.register-page) td {
         border: 1px solid #000;
-        padding: 7px 1px; 
+        padding: 6px 5px;
+        text-align: left;
+        vertical-align: middle;
+        line-height: 1.4;
+    }
+
+    .page:not(.register-page) th {
+        font-weight: bold;
+        background-color: #f9f9f9;
+        text-align: left;
+    }
+
+    .register-page table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 14px;
+        margin-bottom: 3px;
+    }
+
+    .register-page th, .register-page td {
+        border: 1px solid #000;
+        padding: 1px 4px; 
         text-align: left;
         vertical-align: middle;
     }
 
-    /* General default cells for other pages */
-    .page:not(:first-of-type) th, 
-    .page:not(:first-of-type) td {
-        border: 1px solid #000;
-        padding: 4px 1px;
-        text-align: center;
-        vertical-align: middle;
-    }
-
-    th {
+    .register-page th {
         font-weight: bold;
         background-color: #f9f9f9;
-    }
-
-    /* Page 3 (Register Page) cell padding reduced for compact look */
-    .register-page table {
-        font-size: 13px;
-        margin-bottom: 6px;
-    }
-
-    .register-page th, .register-page td {
-        padding: 2px 1px !important; 
+        text-align: left;
     }
 
     .register-header {
@@ -167,38 +162,46 @@
         justify-content: space-between;
         font-weight: bold;
         font-size: 13px;
-        margin-bottom: 6px;
+        margin-bottom: 3px;
     }
 
     .register-section-title {
         font-weight: bold;
         font-size: 13px;
-        margin-top: 8px;
-        margin-bottom: 4px;
+        margin-top: 4px;
+        margin-bottom: 2px;
     }
 
     .expand-table th, .expand-table td {
-        padding: 7px 1px;
+        padding: 6px 5px;
     }
     
-    /* Page 2 expand tables */
-    .page:nth-of-type(2) .expand-table-lg th, 
-    .page:nth-of-type(2) .expand-table-lg td {
-        padding: 12px 1px;
-        line-height: 1.6;
+    .expand-table-lg th, .expand-table-lg td {
+        padding: 9px 6px; 
+        line-height: 1.5;
     }
 
-    .page:nth-of-type(2) table:not(.expand-table-lg) th,
-    .page:nth-of-type(2) table:not(.expand-table-lg) td {
-        padding: 10px 1px;
-    }
-
-    input[type="text"], input[type="number"], select {
+    .page:not(.register-page) input[type="text"], 
+    .page:not(.register-page) select {
         width: 100%;
         box-sizing: border-box;
         border: 1px solid #ccc;
         border-radius: 3px;
-        padding: 6px 1px;
+        padding: 5px 4px;
+        font-family: inherit;
+        font-size: 14px;
+        text-align: left;
+        background-color: #fff8dc;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .page:not(.register-page) input[type="number"] {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        padding: 5px 4px;
         font-family: inherit;
         font-size: 14px;
         text-align: center;
@@ -207,23 +210,45 @@
         appearance: none;
     }
 
-    .page:nth-of-type(2) input[type="text"], 
-    .page:nth-of-type(2) input[type="number"], 
-    .page:nth-of-type(2) select {
-        padding: 10px 1px;
+    .register-page input[type="text"], 
+    .register-page select {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        padding: 4px;
+        font-family: inherit;
         font-size: 14px;
+        text-align: left;
+        background-color: #fff8dc;
+        -webkit-appearance: none;
+        appearance: none;
+    }
+
+    .register-page input[type="number"] {
+        width: 100%;
+        box-sizing: border-box;
+        border: 1px solid #ccc;
+        border-radius: 3px;
+        padding: 4px;
+        font-family: inherit;
+        font-size: 14px;
+        text-align: center;
+        background-color: #fff8dc;
+        -webkit-appearance: none;
+        appearance: none;
     }
 
     .month-year-container {
         display: flex;
-        gap: 2px;
+        gap: 4px;
         width: 100%;
     }
 
     .month-year-container select {
         flex: 1;
         cursor: pointer;
-        height: 32px;
+        height: 28px;
     }
 
     input[type="number"] {
@@ -241,13 +266,14 @@
         border: 1px solid #aaa;
     }
 
+    /* Utility Alignment Classes */
     .text-left { text-align: left !important; }
-    .text-center { text-align: center !important; }
+    .text-center, input.text-center { text-align: center !important; }
     .text-right { text-align: right !important; }
     .text-red, input.text-red { color: #d9534f; font-weight: bold; }
 
     .signatures {
-        margin-top: 120px;
+        margin-top: 130px;
         display: flex;
         justify-content: space-between;
         font-size: 14px;
@@ -258,7 +284,7 @@
         width: 45%;
         border-top: 1px dashed #000;
         text-align: center;
-        padding-top: 4px;
+        padding-top: 6px;
     }
 
     @media print {
@@ -280,20 +306,16 @@
             width: 210mm;
             height: 297mm;
             min-height: 297mm;
-            padding: 14mm 12mm 10mm 12mm;
+            padding: 8mm 12mm;
             page-break-after: always;
             page-break-inside: avoid;
             box-sizing: border-box;
             overflow: hidden;
         }
-        .page:first-of-type {
-            padding-top: 14mm !important;
-            padding-bottom: 10mm !important;
-        }
         .page.register-page {
             height: 12.8cm !important;
             min-height: 12.8cm !important;
-            padding: 8mm 10mm 10mm 10mm !important;
+            padding: 6mm 10mm !important;
             page-break-after: always;
             page-break-inside: avoid;
         }
@@ -330,8 +352,8 @@
             <table class="expand-table">
                 <tr>
                     <th class="text-left" style="width: 18%;">School Name</th>
-                    <td class="text-left" style="width: 24%;"><input type="text" id="school_name" value="GPS Abc" class="text-left" style="text-align: left;"></td>
-                    <th class="text-left" style="width: 30%;">Wing</th>
+                    <td class="text-left" style="width: 24%;"><input type="text" id="school_name" value="GPS Abc"></td>
+                    <th class="text-center" style="width: 30%;">Enrollment</th>
                     <th class="text-center" style="width: 9%;">Boys</th>
                     <th class="text-center" style="width: 9%;">Girls</th>
                     <th class="text-center text-red" style="width: 10%;">Total</th>
@@ -364,17 +386,17 @@
                         </div>
                     </td>
                     <th class="text-left">Total Enrollment Pre-Primary</th>
-                    <td class="text-center"><input type="number" id="pre_b" value="0" class="text-center" oninput="calcTotals()"></td>
-                    <td class="text-center"><input type="number" id="pre_g" value="3" class="text-center" oninput="calcTotals()"></td>
-                    <td class="text-center"><input type="number" id="pre_tot" class="calc-field text-red text-center" readonly value="3"></td>
+                    <td><input type="number" id="pre_b" value="0" oninput="calcTotals()"></td>
+                    <td><input type="number" id="pre_g" value="3" oninput="calcTotals()"></td>
+                    <td><input type="number" id="pre_tot" class="calc-field text-red" readonly value="3"></td>
                 </tr>
                 <tr>
                     <th class="text-left">UDISE Code</th>
-                    <td class="text-left"><input type="text" id="udise_code" value="00000000000" class="text-left" style="text-align: left;"></td>
+                    <td class="text-left"><input type="text" id="udise_code" value="00000000000" class="text-center"></td>
                     <th class="text-left">Total Enrollment Primary (1st to 5th)</th>
-                    <td class="text-center"><input type="number" id="pri_b" value="7" class="text-center" oninput="calcTotals()"></td>
-                    <td class="text-center"><input type="number" id="pri_g" value="9" class="text-center" oninput="calcTotals()"></td>
-                    <td class="text-center"><input type="number" id="pri_tot" class="calc-field text-red text-center" readonly value="16"></td>
+                    <td><input type="number" id="pri_b" value="7" oninput="calcTotals()"></td>
+                    <td><input type="number" id="pri_g" value="9" oninput="calcTotals()"></td>
+                    <td><input type="number" id="pri_tot" class="calc-field text-red" readonly value="16"></td>
                 </tr>
             </table>
 
@@ -391,24 +413,24 @@
                 <tbody>
                     <tr>
                         <td class="text-left">i) Number of School days during the month</td>
-                        <td><input type="number" id="days_pre" value="22" class="text-center" oninput="calcFoodGrains(); calcMaterialCost();"></td>
-                        <td><input type="number" id="days_pri" value="22" class="text-center" oninput="calcFoodGrains(); calcMaterialCost();"></td>
+                        <td><input type="number" id="days_pre" value="22" oninput="calcFoodGrains(); calcMaterialCost();"></td>
+                        <td><input type="number" id="days_pri" value="22" oninput="calcFoodGrains(); calcMaterialCost();"></td>
                     </tr>
                     <tr>
                         <td class="text-left">ii) Actual number of days Mid-Day Meal served</td>
-                        <td><input type="number" id="mdm_days_pre" value="22" class="text-center"></td>
-                        <td><input type="number" id="mdm_days_pri" value="22" class="text-center"></td>
+                        <td><input type="number" id="mdm_days_pre" value="22"></td>
+                        <td><input type="number" id="mdm_days_pri" value="22"></td>
                     </tr>
                     <tr>
                         <td class="text-left">iii) Total Meals served during the month</td>
-                        <td><input type="number" id="meals_pre" value="66" class="text-center" oninput="calcFoodGrains(); calcMaterialCost();"></td>
-                        <td><input type="number" id="meals_pri" value="332" class="text-center" oninput="calcFoodGrains(); calcMaterialCost();"></td>
+                        <td><input type="number" id="meals_pre" value="66" oninput="calcFoodGrains(); calcMaterialCost();"></td>
+                        <td><input type="number" id="meals_pri" value="332" oninput="calcFoodGrains(); calcMaterialCost();"></td>
                     </tr>
                 </tbody>
             </table>
 
             <!-- 3. Details of food grains (in Kgs.) -->
-            <table style="margin-top: 8px; margin-bottom: 0;">
+            <table style="margin-top: 6px; margin-bottom: 0;">
                 <thead>
                     <tr>
                         <th class="text-left" style="width: 45%;">3. Details of food grains (in Kgs.)</th>
@@ -430,25 +452,25 @@
                 <tbody>
                     <tr>
                         <th class="text-left">Pre-Primary</th>
-                        <td><input type="number" step="0.001" id="fg_pre_open" value="17.500" class="fmt-3 text-center" oninput="calcFoodGrains()"></td>
-                        <td><input type="number" step="0.001" id="fg_pre_rec" value="30.000" class="fmt-3 text-center" oninput="calcFoodGrains()"></td>
-                        <td><input type="number" step="0.001" id="fg_pre_tot" class="calc-field text-center" readonly value="47.500"></td>
-                        <td><input type="number" step="0.001" id="fg_pre_con" class="calc-field text-center" readonly value="6.600"></td>
-                        <td><input type="number" step="0.001" id="fg_pre_close" class="calc-field text-center" readonly value="40.900"></td>
+                        <td><input type="number" step="0.001" id="fg_pre_open" value="17.500" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pre_rec" value="30.000" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pre_tot" class="calc-field" readonly value="47.500"></td>
+                        <td><input type="number" step="0.001" id="fg_pre_con" class="calc-field" readonly value="6.600"></td>
+                        <td><input type="number" step="0.001" id="fg_pre_close" class="calc-field" readonly value="40.900"></td>
                     </tr>
                     <tr>
                         <th class="text-left">Primary</th>
-                        <td><input type="number" step="0.001" id="fg_pri_open" value="14.500" class="fmt-3 text-center" oninput="calcFoodGrains()"></td>
-                        <td><input type="number" step="0.001" id="fg_pri_rec" value="100.000" class="fmt-3 text-center" oninput="calcFoodGrains()"></td>
-                        <td><input type="number" step="0.001" id="fg_pri_tot" class="calc-field text-center" readonly value="114.500"></td>
-                        <td><input type="number" step="0.001" id="fg_pri_con" class="calc-field text-center" readonly value="33.200"></td>
-                        <td><input type="number" step="0.001" id="fg_pri_close" class="calc-field text-center" readonly value="81.300"></td>
+                        <td><input type="number" step="0.001" id="fg_pri_open" value="14.500" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pri_rec" value="100.000" class="fmt-3" oninput="calcFoodGrains()"></td>
+                        <td><input type="number" step="0.001" id="fg_pri_tot" class="calc-field" readonly value="114.500"></td>
+                        <td><input type="number" step="0.001" id="fg_pri_con" class="calc-field" readonly value="33.200"></td>
+                        <td><input type="number" step="0.001" id="fg_pri_close" class="calc-field" readonly value="81.300"></td>
                     </tr>
                 </tbody>
             </table>
 
             <!-- 4. Material cost Details -->
-            <table style="margin-top: 8px; margin-bottom: 0;">
+            <table style="margin-top: 6px; margin-bottom: 0;">
                 <thead>
                     <tr>
                         <th class="text-left" style="width: 45%;">4. Material cost Details</th>
@@ -471,54 +493,54 @@
                     <tr>
                         <td class="text-left">Pre-Primary</td>
                         <td class="text-left">Cooking cost</td>
-                        <td><input type="number" step="0.01" id="mc_pre_open" value="3163.00" class="fmt-2 text-center" oninput="calcMaterialCost()"></td>
-                        <td><input type="number" step="0.01" id="mc_pre_rec" value="0.00" class="fmt-2 text-center" oninput="calcMaterialCost()"></td>
-                        <td><input type="number" step="0.01" id="mc_pre_exp" class="calc-field fmt-2 text-center" readonly value="447.00"></td>
-                        <td><input type="number" step="0.01" id="mc_pre_close" class="calc-field fmt-2 text-center" readonly value="2716.00"></td>
+                        <td><input type="number" step="0.01" id="mc_pre_open" value="3163.00" class="fmt-2" oninput="calcMaterialCost()"></td>
+                        <td><input type="number" step="0.01" id="mc_pre_rec" value="0.00" class="fmt-2" oninput="calcMaterialCost()"></td>
+                        <td><input type="number" step="0.01" id="mc_pre_exp" class="calc-field fmt-2" readonly value="447.00"></td>
+                        <td><input type="number" step="0.01" id="mc_pre_close" class="calc-field fmt-2" readonly value="2716.00"></td>
                     </tr>
                     <tr>
                         <td class="text-left">Primary (1st to 5th)</td>
                         <td class="text-left">Cooking cost</td>
-                        <td><input type="number" step="0.01" id="mc_pri_open" value="8594.80" class="fmt-2 text-center" oninput="calcMaterialCost()"></td>
-                        <td><input type="number" step="0.01" id="mc_pri_rec" value="0.00" class="fmt-2 text-center" oninput="calcMaterialCost()"></td>
-                        <td><input type="number" step="0.01" id="mc_pri_exp" class="calc-field fmt-2 text-center" readonly value="2251.00"></td>
-                        <td><input type="number" step="0.01" id="mc_pri_close" class="calc-field fmt-2 text-center" readonly value="6343.80"></td>
+                        <td><input type="number" step="0.01" id="mc_pri_open" value="8594.80" class="fmt-2" oninput="calcMaterialCost()"></td>
+                        <td><input type="number" step="0.01" id="mc_pri_rec" value="0.00" class="fmt-2" oninput="calcMaterialCost()"></td>
+                        <td><input type="number" step="0.01" id="mc_pri_exp" class="calc-field fmt-2" readonly value="2251.00"></td>
+                        <td><input type="number" step="0.01" id="mc_pri_close" class="calc-field fmt-2" readonly value="6343.80"></td>
                     </tr>
                     <tr>
                         <td class="text-left text-red">Total</td>
                         <td class="text-left text-red">Cooking cost</td>
-                        <td><input type="number" step="0.01" id="mc_tot_open" class="calc-field text-red text-center" readonly value="11757.80"></td>
-                        <td><input type="number" step="0.01" id="mc_tot_rec" class="calc-field text-red text-center" readonly value="0.00"></td>
-                        <td><input type="number" step="0.01" id="mc_tot_exp" class="calc-field text-red text-center" readonly value="2698.00"></td>
-                        <td><input type="number" step="0.01" id="mc_tot_close" class="calc-field text-red text-center" readonly value="9059.80"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_open" class="calc-field text-red fmt-2" readonly value="11757.80"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_rec" class="calc-field text-red fmt-2" readonly value="0.00"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_exp" class="calc-field text-red fmt-2" readonly value="2698.00"></td>
+                        <td><input type="number" step="0.01" id="mc_tot_close" class="calc-field text-red fmt-2" readonly value="9059.80"></td>
                     </tr>
                     <tr>
                         <td class="text-left" colspan="2">School MME Expenses</td>
-                        <td><input type="number" step="0.01" id="mme_open" value="0.00" class="fmt-2 text-center" oninput="calcOtherCost('mme')"></td>
-                        <td><input type="number" step="0.01" id="mme_rec" value="0.00" class="fmt-2 text-center" oninput="calcOtherCost('mme')"></td>
-                        <td><input type="number" step="0.01" id="mme_exp" value="0.00" class="fmt-2 text-center" oninput="calcOtherCost('mme')"></td>
-                        <td><input type="number" step="0.01" id="mme_close" class="calc-field fmt-2 text-center" readonly value="0.00"></td>
+                        <td><input type="number" step="0.01" id="mme_open" value="0.00" class="fmt-2" oninput="calcOtherCost('mme')"></td>
+                        <td><input type="number" step="0.01" id="mme_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('mme')"></td>
+                        <td><input type="number" step="0.01" id="mme_exp" value="0.00" class="fmt-2" oninput="calcOtherCost('mme')"></td>
+                        <td><input type="number" step="0.01" id="mme_close" class="calc-field fmt-2" readonly value="0.00"></td>
                     </tr>
                     <tr>
                         <td class="text-left" colspan="2">Bank Interest</td>
-                        <td><input type="number" step="0.01" id="bi_open" value="556.00" class="fmt-2 text-center" oninput="calcOtherCost('bi')"></td>
-                        <td><input type="number" step="0.01" id="bi_rec" value="0.00" class="fmt-2 text-center" oninput="calcOtherCost('bi')"></td>
-                        <td><input type="number" step="0.01" id="bi_exp" value="0.00" class="fmt-2 text-center" oninput="calcOtherCost('bi')"></td>
-                        <td><input type="number" step="0.01" id="bi_close" class="calc-field fmt-2 text-center" readonly value="556.00"></td>
+                        <td><input type="number" step="0.01" id="bi_open" value="556.00" class="fmt-2" oninput="calcOtherCost('bi')"></td>
+                        <td><input type="number" step="0.01" id="bi_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('bi')"></td>
+                        <td><input type="number" step="0.01" id="bi_exp" value="0.00" class="fmt-2" oninput="calcOtherCost('bi')"></td>
+                        <td><input type="number" step="0.01" id="bi_close" class="calc-field fmt-2" readonly value="556.00"></td>
                     </tr>
                     <tr>
                         <td class="text-left" colspan="2">Transportation (@ ₹268 per Metric Ton)</td>
-                        <td><input type="number" step="0.01" id="tr_open" value="-73.00" class="fmt-2 text-center" oninput="calcOtherCost('tr')"></td>
-                        <td><input type="number" step="0.01" id="tr_rec" value="0.00" class="fmt-2 text-center" oninput="calcOtherCost('tr')"></td>
-                        <td><input type="number" step="0.01" id="tr_exp" value="35.00" class="calc-field fmt-2 text-center" readonly value="35.00"></td>
-                        <td><input type="number" step="0.01" id="tr_close" class="calc-field fmt-2 text-center" readonly value="-108.00"></td>
+                        <td><input type="number" step="0.01" id="tr_open" value="-73.00" class="fmt-2" oninput="calcOtherCost('tr')"></td>
+                        <td><input type="number" step="0.01" id="tr_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('tr')"></td>
+                        <td><input type="number" step="0.01" id="tr_exp" value="35.00" class="calc-field fmt-2" readonly value="35.00"></td>
+                        <td><input type="number" step="0.01" id="tr_close" class="calc-field fmt-2" readonly value="-108.00"></td>
                     </tr>
                     <tr>
                         <td class="text-left" colspan="2">LPG Subsidy</td>
-                        <td><input type="number" step="0.01" id="lpg_open" value="183.00" class="fmt-2 text-center" oninput="calcOtherCost('lpg')"></td>
-                        <td><input type="number" step="0.01" id="lpg_rec" value="0.00" class="fmt-2 text-center" oninput="calcOtherCost('lpg')"></td>
-                        <td><input type="number" step="0.01" id="lpg_exp" value="0.00" class="fmt-2 text-center" oninput="calcOtherCost('lpg')"></td>
-                        <td><input type="number" step="0.01" id="lpg_close" class="calc-field fmt-2 text-center" readonly value="183.00"></td>
+                        <td><input type="number" step="0.01" id="lpg_open" value="183.00" class="fmt-2" oninput="calcOtherCost('lpg')"></td>
+                        <td><input type="number" step="0.01" id="lpg_rec" value="0.00" class="fmt-2" oninput="calcOtherCost('lpg')"></td>
+                        <td><input type="number" step="0.01" id="lpg_exp" value="0.00" class="fmt-2" oninput="calcOtherCost('lpg')"></td>
+                        <td><input type="number" step="0.01" id="lpg_close" class="calc-field fmt-2" readonly value="183.00"></td>
                     </tr>
                 </tbody>
             </table>
@@ -541,23 +563,23 @@
                 <tbody>
                     <tr>
                         <th class="text-left">Pre-Primary</th>
-                        <td><input type="number" id="mm_stud_pre" value="3" class="text-center"></td>
-                        <td><input type="number" step="0.1" id="mm_wk_pre" value="4.5" class="text-center"></td>
-                        <td><input type="number" step="0.01" id="mm_pre_open" value="648.00" class="fmt-2 text-center" oninput="calcMMBPAY()"></td>
-                        <td><input type="number" step="0.01" id="mm_pre_rec" value="0.00" class="fmt-2 text-center" oninput="calcMMBPAY()"></td>
-                        <td><input type="number" step="0.01" id="mm_pre_tot" class="calc-field fmt-2 text-center" readonly value="648.00"></td>
-                        <td><input type="number" step="0.01" id="mm_pre_exp" value="189.00" class="fmt-2 text-center" oninput="calcMMBPAY()"></td>
-                        <td><input type="number" step="0.01" id="mm_pre_close" class="calc-field fmt-2 text-center" readonly value="459.00"></td>
+                        <td><input type="number" id="mm_stud_pre" value="3"></td>
+                        <td><input type="number" step="0.1" id="mm_wk_pre" value="4.5"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_open" value="648.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_rec" value="0.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_tot" class="calc-field fmt-2" readonly value="648.00"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_exp" value="189.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pre_close" class="calc-field fmt-2" readonly value="459.00"></td>
                     </tr>
                     <tr>
                         <th class="text-left">Primary</th>
-                        <td><input type="number" id="mm_stud_pri" value="16" class="text-center"></td>
-                        <td><input type="number" step="0.1" id="mm_wk_pri" value="4.5" class="text-center"></td>
-                        <td><input type="number" step="0.01" id="mm_pri_open" value="2137.00" class="fmt-2 text-center" oninput="calcMMBPAY()"></td>
-                        <td><input type="number" step="0.01" id="mm_pri_rec" value="0.00" class="fmt-2 text-center" oninput="calcMMBPAY()"></td>
-                        <td><input type="number" step="0.01" id="mm_pri_tot" class="calc-field fmt-2 text-center" readonly value="2137.00"></td>
-                        <td><input type="number" step="0.01" id="mm_pri_exp" value="952.00" class="fmt-2 text-center" oninput="calcMMBPAY()"></td>
-                        <td><input type="number" step="0.01" id="mm_pri_close" class="calc-field fmt-2 text-center" readonly value="1185.00"></td>
+                        <td><input type="number" id="mm_stud_pri" value="16"></td>
+                        <td><input type="number" step="0.1" id="mm_wk_pri" value="4.5"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_open" value="2137.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_rec" value="0.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_tot" class="calc-field fmt-2" readonly value="2137.00"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_exp" value="952.00" class="fmt-2" oninput="calcMMBPAY()"></td>
+                        <td><input type="number" step="0.01" id="mm_pri_close" class="calc-field fmt-2" readonly value="1185.00"></td>
                     </tr>
                 </tbody>
             </table>
@@ -574,34 +596,34 @@
             <table id="cookTable" class="expand-table-lg section-spacing-6">
                 <thead>
                     <tr>
-                        <th style="width: 8%;">Sr. No.</th>
-                        <th style="width: 27%;">Name of Cook</th>
-                        <th style="width: 12%;">Gender<br>M/F</th>
-                        <th style="width: 18%;">Category<br>SC/ ST/ OBC/ Gen.</th>
-                        <th style="width: 18%;">Amount received during the month</th>
-                        <th style="width: 17%;">Payment Mode<br>Cash/ Bank</th>
+                        <th class="text-center" style="width: 8%;">Sr. No.</th>
+                        <th class="text-left" style="width: 27%;">Name of Cook</th>
+                        <th class="text-center" style="width: 12%;">Gender<br>M/F</th>
+                        <th class="text-center" style="width: 18%;">Category<br>SC/ ST/ OBC/ Gen.</th>
+                        <th class="text-center" style="width: 18%;">Amount received during the month</th>
+                        <th class="text-center" style="width: 17%;">Payment Mode<br>Cash/ Bank</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td>1</td>
-                        <td><input type="text" id="cook_1_name" value="Cook Kumari" class="text-center"></td>
+                        <td class="text-center">1</td>
+                        <td><input type="text" id="cook_1_name" value="Cook Kumari" style="text-align: left;"></td>
                         <td><input type="text" id="cook_1_gender" value="F" class="text-center"></td>
                         <td><input type="text" id="cook_1_cat" value="OBC" class="text-center"></td>
                         <td><input type="text" id="cook_1_amt" value="-" class="text-center"></td>
                         <td><input type="text" id="cook_1_mode" value="Bank" class="text-center"></td>
                     </tr>
                     <tr>
-                        <td>2</td>
-                        <td><input type="text" id="cook_2_name" value="" class="text-center"></td>
+                        <td class="text-center">2</td>
+                        <td><input type="text" id="cook_2_name" value="" style="text-align: left;"></td>
                         <td><input type="text" id="cook_2_gender" value="" class="text-center"></td>
                         <td><input type="text" id="cook_2_cat" value="" class="text-center"></td>
                         <td><input type="text" id="cook_2_amt" value="" class="text-center"></td>
                         <td><input type="text" id="cook_2_mode" value="" class="text-center"></td>
                     </tr>
                     <tr>
-                        <td>3</td>
-                        <td><input type="text" id="cook_3_name" value="" class="text-center"></td>
+                        <td class="text-center">3</td>
+                        <td><input type="text" id="cook_3_name" value="" style="text-align: left;"></td>
                         <td><input type="text" id="cook_3_gender" value="" class="text-center"></td>
                         <td><input type="text" id="cook_3_cat" value="" class="text-center"></td>
                         <td><input type="text" id="cook_3_amt" value="" class="text-center"></td>
@@ -615,26 +637,26 @@
             <table class="expand-table-lg section-spacing-7">
                 <thead>
                     <tr>
-                        <th rowspan="2" style="width: 22%;">Inspected by<br>(In numbers)</th>
-                        <th style="width: 18%;">Member of Task Force</th>
-                        <th style="width: 22%;">District Officials</th>
-                        <th style="width: 20%;">Block/ Taluka level officials</th>
-                        <th style="width: 18%;">SMC Members</th>
+                        <th rowspan="2" class="text-left" style="width: 22%;">Inspected by<br>(In numbers)</th>
+                        <th class="text-center" style="width: 18%;">Member of Task Force</th>
+                        <th class="text-center" style="width: 22%;">District Officials</th>
+                        <th class="text-center" style="width: 20%;">Block/ Taluka level officials</th>
+                        <th class="text-center" style="width: 18%;">SMC Members</th>
                     </tr>
                     <tr>
-                        <th></th>
-                        <th></th>
-                        <th></th>
-                        <th>Yes</th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
+                        <th class="text-center"></th>
+                        <th class="text-center">Yes</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td></td>
+                        <td class="text-left"></td>
                         <td><input type="text" id="insp_tf" class="text-center"></td>
                         <td><input type="text" id="insp_dist" class="text-center"></td>
                         <td><input type="text" id="insp_block" class="text-center"></td>
-                        <td><input type="number" id="insp_smc" value="5" class="text-center"></td>
+                        <td><input type="number" id="insp_smc" value="5"></td>
                     </tr>
                 </tbody>
             </table>
@@ -645,13 +667,13 @@
                 <thead>
                     <tr>
                         <th class="text-left" style="width: 40%;">Name of MDM Incharge</th>
-                        <th class="text-left" style="width: 60%;">Contact Number</th>
+                        <th class="text-center" style="width: 60%;">Contact Number</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td class="text-left"><input type="text" id="incharge_name" value="Xyz"></td>
-                        <td class="text-left"><input type="text" id="incharge_contact" value="1234567890"></td>
+                        <td><input type="text" id="incharge_name" value="Xyz" style="text-align: left;"></td>
+                        <td><input type="text" id="incharge_contact" value="1234567890" class="text-center"></td>
                     </tr>
                 </tbody>
             </table>
@@ -661,43 +683,43 @@
             <table class="expand-table-lg">
                 <thead>
                     <tr>
-                        <th rowspan="2" style="width: 12%;">Wing</th>
-                        <th colspan="2" style="width: 18%;">Health checkup carried out<br>(No. of students)</th>
-                        <th rowspan="2" style="width: 18%;">Date of Health Checkup</th>
-                        <th colspan="2" style="width: 16%;">IFA Tablets<br>(No. of students covered)</th>
-                        <th colspan="2" style="width: 18%;">Deworming tablets<br>(No. of students covered)</th>
-                        <th colspan="2" style="width: 18%;">No. of children received Vitamin A supplementation</th>
+                        <th rowspan="2" class="text-left" style="width: 12%;">Wing</th>
+                        <th colspan="2" class="text-center" style="width: 18%;">Health checkup carried out<br>(No. of students)</th>
+                        <th rowspan="2" class="text-center" style="width: 18%;">Date of Health Checkup</th>
+                        <th colspan="2" class="text-center" style="width: 16%;">IFA Tablets<br>(No. of students covered)</th>
+                        <th colspan="2" class="text-center" style="width: 18%;">Deworming tablets<br>(No. of students covered)</th>
+                        <th colspan="2" class="text-center" style="width: 18%;">No. of children received Vitamin A supplementation</th>
                     </tr>
                     <tr>
-                        <th>Boys</th>
-                        <th>Girls</th>
-                        <th>Boys</th>
-                        <th>Girls</th>
-                        <th>Boys</th>
-                        <th>Girls</th>
-                        <th>Boys</th>
-                        <th>Girls</th>
+                        <th class="text-center">Boys</th>
+                        <th class="text-center">Girls</th>
+                        <th class="text-center">Boys</th>
+                        <th class="text-center">Girls</th>
+                        <th class="text-center">Boys</th>
+                        <th class="text-center">Girls</th>
+                        <th class="text-center">Boys</th>
+                        <th class="text-center">Girls</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <th>Pre-Primary</th>
+                        <th class="text-left">Pre-Primary</th>
                         <td><input type="text" id="hc_pre_b" value="-" class="text-center"></td>
                         <td><input type="text" id="hc_pre_g" value="-" class="text-center"></td>
                         <td rowspan="2"><input type="text" id="hc_date" value="-" class="text-center" style="height: 100%;"></td>
-                        <td><input type="number" id="ifa_pre_b" value="0" class="text-center"></td>
-                        <td><input type="number" id="ifa_pre_g" value="1" class="text-center"></td>
+                        <td><input type="number" id="ifa_pre_b" value="0"></td>
+                        <td><input type="number" id="ifa_pre_g" value="1"></td>
                         <td><input type="text" id="dw_pre_b" value="-" class="text-center"></td>
                         <td><input type="text" id="dw_pre_g" value="-" class="text-center"></td>
                         <td><input type="text" id="vit_pre_b" value="-" class="text-center"></td>
                         <td><input type="text" id="vit_pre_g" value="-" class="text-center"></td>
                     </tr>
                     <tr>
-                        <th>Primary</th>
+                        <th class="text-left">Primary</th>
                         <td><input type="text" id="hc_pri_b" value="-" class="text-center"></td>
                         <td><input type="text" id="hc_pri_g" value="-" class="text-center"></td>
-                        <td><input type="number" id="ifa_pri_b" value="7" class="text-center"></td>
-                        <td><input type="number" id="ifa_pri_g" value="9" class="text-center"></td>
+                        <td><input type="number" id="ifa_pri_b" value="7"></td>
+                        <td><input type="number" id="ifa_pri_g" value="9"></td>
                         <td><input type="text" id="dw_pri_b" value="-" class="text-center"></td>
                         <td><input type="text" id="dw_pri_g" value="-" class="text-center"></td>
                         <td><input type="text" id="vit_pri_b" value="-" class="text-center"></td>
@@ -733,42 +755,42 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 16%;">Wing</th>
-                    <th style="width: 12%;">Diets</th>
-                    <th style="width: 14%;">Opening Bal.</th>
-                    <th style="width: 14%;">Received</th>
-                    <th style="width: 14%;">Total</th>
-                    <th style="width: 16%;">Consumption</th>
-                    <th style="width: 14%;">Closing Bal.</th>
+                    <th class="text-left" style="width: 16%;">Wing</th>
+                    <th class="text-center" style="width: 12%;">Diets</th>
+                    <th class="text-center" style="width: 14%;">Opening Bal.</th>
+                    <th class="text-center" style="width: 14%;">Received</th>
+                    <th class="text-center" style="width: 14%;">Total</th>
+                    <th class="text-center" style="width: 16%;">Consumption</th>
+                    <th class="text-center" style="width: 14%;">Closing Bal.</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <th class="text-left">Pre-Primary</th>
-                    <td id="r_pre_diet">66</td>
-                    <td id="r_pre_open">17.500</td>
-                    <td id="r_pre_rec">30.000</td>
-                    <td id="r_pre_tot">47.500</td>
-                    <td id="r_pre_con">6.600</td>
-                    <td id="r_pre_close">40.900</td>
+                    <td id="r_pre_diet" class="text-center">66</td>
+                    <td id="r_pre_open" class="text-center">17.500</td>
+                    <td id="r_pre_rec" class="text-center">30.000</td>
+                    <td id="r_pre_tot" class="text-center">47.500</td>
+                    <td id="r_pre_con" class="text-center">6.600</td>
+                    <td id="r_pre_close" class="text-center">40.900</td>
                 </tr>
                 <tr>
                     <th class="text-left">Primary</th>
-                    <td id="r_pri_diet">332</td>
-                    <td id="r_pri_open">14.500</td>
-                    <td id="r_pri_rec">100.000</td>
-                    <td id="r_pri_tot">114.500</td>
-                    <td id="r_pri_con">33.200</td>
-                    <td id="r_pri_close">81.300</td>
+                    <td id="r_pri_diet" class="text-center">332</td>
+                    <td id="r_pri_open" class="text-center">14.500</td>
+                    <td id="r_pri_rec" class="text-center">100.000</td>
+                    <td id="r_pri_tot" class="text-center">114.500</td>
+                    <td id="r_pri_con" class="text-center">33.200</td>
+                    <td id="r_pri_close" class="text-center">81.300</td>
                 </tr>
                 <tr>
                     <th class="text-red text-left">Total</th>
-                    <td id="r_tot_diet" class="text-red">398</td>
-                    <td id="r_tot_open" class="text-red">32.000</td>
-                    <td id="r_tot_rec" class="text-red">130.000</td>
-                    <td id="r_tot_tot" class="text-red">162.000</td>
-                    <td id="r_tot_con" class="text-red">39.800</td>
-                    <td id="r_tot_close" class="text-red">122.200</td>
+                    <td id="r_tot_diet" class="text-center text-red">398</td>
+                    <td id="r_tot_open" class="text-center text-red">32.000</td>
+                    <td id="r_tot_rec" class="text-center text-red">130.000</td>
+                    <td id="r_tot_tot" class="text-center text-red">162.000</td>
+                    <td id="r_tot_con" class="text-center text-red">39.800</td>
+                    <td id="r_tot_close" class="text-center text-red">122.200</td>
                 </tr>
             </tbody>
         </table>
@@ -780,99 +802,99 @@
         <table>
             <thead>
                 <tr>
-                    <th style="width: 22%;">Wing</th>
-                    <th style="width: 10%;">Diets</th>
-                    <th style="width: 18%;">Category</th>
-                    <th style="width: 12%;">Opening Bal.</th>
-                    <th style="width: 12%;">Received</th>
-                    <th style="width: 14%;">Expenditure</th>
-                    <th style="width: 12%;">Closing Bal.</th>
+                    <th class="text-left" style="width: 22%;">Wing</th>
+                    <th class="text-center" style="width: 10%;">Diets</th>
+                    <th class="text-left" style="width: 18%;">Category</th>
+                    <th class="text-center" style="width: 12%;">Opening Bal.</th>
+                    <th class="text-center" style="width: 12%;">Received</th>
+                    <th class="text-center" style="width: 14%;">Expenditure</th>
+                    <th class="text-center" style="width: 12%;">Closing Bal.</th>
                 </tr>
             </thead>
             <tbody>
                 <tr>
                     <th class="text-left">Pre-Primary</th>
-                    <td id="cc_pre_diet">66</td>
-                    <td>Cooking Cost</td>
-                    <td id="cc_pre_open">3163.00</td>
-                    <td id="cc_pre_rec">0.00</td>
-                    <td id="cc_pre_exp">447.00</td>
-                    <td id="cc_pre_close">2716.00</td>
+                    <td id="cc_pre_diet" class="text-center">66</td>
+                    <td class="text-left">Cooking Cost</td>
+                    <td id="cc_pre_open" class="text-center">3163.00</td>
+                    <td id="cc_pre_rec" class="text-center">0.00</td>
+                    <td id="cc_pre_exp" class="text-center">447.00</td>
+                    <td id="cc_pre_close" class="text-center">2716.00</td>
                 </tr>
                 <tr>
                     <th class="text-left">Primary</th>
-                    <td id="cc_pri_diet">332</td>
-                    <td>Cooking Cost</td>
-                    <td id="cc_pri_open">8595.00</td>
-                    <td id="cc_pri_rec">0.00</td>
-                    <td id="cc_pri_exp">2251.00</td>
-                    <td id="cc_pri_close">6344.00</td>
+                    <td id="cc_pri_diet" class="text-center">332</td>
+                    <td class="text-left">Cooking Cost</td>
+                    <td id="cc_pri_open" class="text-center">8595.00</td>
+                    <td id="cc_pri_rec" class="text-center">0.00</td>
+                    <td id="cc_pri_exp" class="text-center">2251.00</td>
+                    <td id="cc_pri_close" class="text-center">6344.00</td>
                 </tr>
                 <tr>
                     <th class="text-red text-left">Total</th>
-                    <td id="cc_tot_diet" class="text-red">398</td>
-                    <td class="text-red">Cooking Cost</td>
-                    <td id="cc_tot_open" class="text-red">11758.00</td>
-                    <td id="cc_tot_rec" class="text-red">0.00</td>
-                    <td id="cc_tot_exp" class="text-red">2698.00</td>
-                    <td id="cc_tot_close" class="text-red">9060.00</td>
+                    <td id="cc_tot_diet" class="text-center text-red">398</td>
+                    <td class="text-left text-red">Cooking Cost</td>
+                    <td id="cc_tot_open" class="text-center text-red">11758.00</td>
+                    <td id="cc_tot_rec" class="text-center text-red">0.00</td>
+                    <td id="cc_tot_exp" class="text-center text-red">2698.00</td>
+                    <td id="cc_tot_close" class="text-center text-red">9060.00</td>
                 </tr>
                 <tr>
                     <th rowspan="3" class="text-left">MMBPAY</th>
                     <th colspan="2" class="text-left">Pre-Primary</th>
-                    <td id="mm_reg_pre_open">648.00</td>
-                    <td id="mm_reg_pre_rec">0.00</td>
-                    <td id="mm_reg_pre_exp">189.00</td>
-                    <td id="mm_reg_pre_close">459.00</td>
+                    <td id="mm_reg_pre_open" class="text-center">648.00</td>
+                    <td id="mm_reg_pre_rec" class="text-center">0.00</td>
+                    <td id="mm_reg_pre_exp" class="text-center">189.00</td>
+                    <td id="mm_reg_pre_close" class="text-center">459.00</td>
                 </tr>
                 <tr>
                     <th colspan="2" class="text-left">Primary</th>
-                    <td id="mm_reg_pri_open">2137.00</td>
-                    <td id="mm_reg_pri_rec">0.00</td>
-                    <td id="mm_reg_pri_exp">952.00</td>
-                    <td id="mm_reg_pri_close">1185.00</td>
+                    <td id="mm_reg_pri_open" class="text-center">2137.00</td>
+                    <td id="mm_reg_pri_rec" class="text-center">0.00</td>
+                    <td id="mm_reg_pri_exp" class="text-center">952.00</td>
+                    <td id="mm_reg_pri_close" class="text-center">1185.00</td>
                 </tr>
                 <tr>
                     <th colspan="2" class="text-red text-left">Total</th>
-                    <td id="mm_reg_tot_open" class="text-red">2785.00</td>
-                    <td id="mm_reg_tot_rec" class="text-red">0.00</td>
-                    <td id="mm_reg_tot_exp" class="text-red">1141.00</td>
-                    <td id="mm_reg_tot_close" class="text-red">1644.00</td>
+                    <td id="mm_reg_tot_open" class="text-center text-red">2785.00</td>
+                    <td id="mm_reg_tot_rec" class="text-center text-red">0.00</td>
+                    <td id="mm_reg_tot_exp" class="text-center text-red">1141.00</td>
+                    <td id="mm_reg_tot_close" class="text-center text-red">1644.00</td>
                 </tr>
                 <tr>
                     <th colspan="3" class="text-left">School MME Expenses</th>
-                    <td id="reg_mme_open">0.00</td>
-                    <td id="reg_mme_rec">0.00</td>
-                    <td id="reg_mme_exp">0.00</td>
-                    <td id="reg_mme_close">0.00</td>
+                    <td id="reg_mme_open" class="text-center">0.00</td>
+                    <td id="reg_mme_rec" class="text-center">0.00</td>
+                    <td id="reg_mme_exp" class="text-center">0.00</td>
+                    <td id="reg_mme_close" class="text-center">0.00</td>
                 </tr>
                 <tr>
                     <th colspan="3" class="text-left">LPG Subsidy</th>
-                    <td id="reg_lpg_open">183.00</td>
-                    <td id="reg_lpg_rec">0.00</td>
-                    <td id="reg_lpg_exp">0.00</td>
-                    <td id="reg_lpg_close">183.00</td>
+                    <td id="reg_lpg_open" class="text-center">183.00</td>
+                    <td id="reg_lpg_rec" class="text-center">0.00</td>
+                    <td id="reg_lpg_exp" class="text-center">0.00</td>
+                    <td id="reg_lpg_close" class="text-center">183.00</td>
                 </tr>
                 <tr>
                     <th colspan="3" class="text-left">Bank Interest</th>
-                    <td id="reg_bi_open">556.00</td>
-                    <td id="reg_bi_rec">0.00</td>
-                    <td id="reg_bi_exp">0.00</td>
-                    <td id="reg_bi_close">556.00</td>
+                    <td id="reg_bi_open" class="text-center">556.00</td>
+                    <td id="reg_bi_rec" class="text-center">0.00</td>
+                    <td id="reg_bi_exp" class="text-center">0.00</td>
+                    <td id="reg_bi_close" class="text-center">556.00</td>
                 </tr>
                 <tr>
                     <th colspan="3" class="text-left">Transportation</th>
-                    <td id="reg_tr_open">-73.00</td>
-                    <td id="reg_tr_rec">0.00</td>
-                    <td id="reg_tr_exp">35.00</td>
-                    <td id="reg_tr_close">-108.00</td>
+                    <td id="reg_tr_open" class="text-center">-73.00</td>
+                    <td id="reg_tr_rec" class="text-center">0.00</td>
+                    <td id="reg_tr_exp" class="text-center">35.00</td>
+                    <td id="reg_tr_close" class="text-center">-108.00</td>
                 </tr>
                 <tr>
                     <th colspan="3" class="text-red text-left">All Total</th>
-                    <td id="reg_all_open" class="text-red">15209.00</td>
-                    <td id="reg_all_rec" class="text-red">0.00</td>
-                    <td id="reg_all_exp" class="text-red">3874.00</td>
-                    <td id="reg_all_close" class="text-red">11335.00</td>
+                    <td id="reg_all_open" class="text-center text-red">15209.00</td>
+                    <td id="reg_all_rec" class="text-center text-red">0.00</td>
+                    <td id="reg_all_exp" class="text-center text-red">3874.00</td>
+                    <td id="reg_all_close" class="text-center text-red">11335.00</td>
                 </tr>
             </tbody>
         </table>
