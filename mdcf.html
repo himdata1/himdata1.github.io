@@ -8,9 +8,6 @@
 <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23007bff'/><text x='50' y='52' font-size='68' fill='white' font-family='Verdana, sans-serif' font-weight='900' text-anchor='middle' dominant-baseline='central'>M</text></svg>">
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23007bff'/><text x='50' y='52' font-size='68' fill='white' font-family='Verdana, sans-serif' font-weight='900' text-anchor='middle' dominant-baseline='central'>M</text></svg>">
 
-<!-- html2pdf.js Bundle Library for True Vector PDF Generation -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -51,7 +48,7 @@
         justify-content: center;
         white-space: normal;
         line-height: 1.2;
-        flex: 0.7; /* Download aur Print buttons ki width half/compact karne ke liye */
+        flex: 1;
     }
 
     .btn:hover {
@@ -60,21 +57,13 @@
 
     .btn-success {
         background-color: #28a745;
-        flex: 1.9; /* Carry forward button ki length badhayi hai taaki text exact 2 lines mein fit ho */
+        flex: 2;
         font-size: 12px;
         padding: 4px 6px;
     }
 
     .btn-success:hover {
         background-color: #218838;
-    }
-
-    .btn-pdf {
-        background-color: #dc3545;
-    }
-
-    .btn-pdf:hover {
-        background-color: #c82333;
     }
 
     .page-container {
@@ -233,17 +222,6 @@
         padding-top: 6px;
     }
 
-    /* Print and Export Clean-up Styles */
-    body.is-exporting input, body.is-exporting select {
-        border: none !important;
-        background-color: transparent !important;
-        padding: 0 !important;
-        box-shadow: none !important;
-    }
-    body.is-exporting input.calc-field {
-        background-color: transparent !important;
-    }
-
     @media print {
         @page {
             size: A4 portrait;
@@ -294,7 +272,6 @@
 
 <div class="toolbar">
     <button class="btn btn-success" onclick="rollOverBalances()">Carry Forward Closing Balance as Opening Balance for Next Month</button>
-    <button class="btn btn-pdf" onclick="downloadVectorPDF()">Download PDF</button>
     <button class="btn" onclick="window.print()">Print / Save as PDF</button>
 </div>
 
@@ -1212,32 +1189,6 @@
         document.getElementById('reg_all_rec').innerText = allRec.toFixed(2);
         document.getElementById('reg_all_exp').innerText = allExp.toFixed(2);
         document.getElementById('reg_all_close').innerText = allClose.toFixed(2);
-    }
-
-    function downloadVectorPDF() {
-        const month = document.getElementById('select_month').value;
-        const year = document.getElementById('select_year').value;
-        const filename = `MDCF ${month} ${year}.pdf`;
-
-        // Temporarily strip background colors and input styling for clean PDF text output
-        document.body.classList.add('is-exporting');
-
-        const element = document.getElementById('exportContainer');
-        const opt = {
-            margin:       0,
-            filename:     filename,
-            image:        { type: 'jpeg', quality: 0.98 },
-            html2canvas:  { scale: 2, useCORS: true, logging: false },
-            jsPDF:        { unit: 'mm', format: 'a4', orientation: 'portrait' },
-            pagebreak:    { mode: ['css', 'legacy'] }
-        };
-
-        html2pdf().set(opt).from(element).save().then(() => {
-            document.body.classList.remove('is-exporting');
-        }).catch(err => {
-            console.error('PDF export error:', err);
-            document.body.classList.remove('is-exporting');
-        });
     }
 </script>
 
