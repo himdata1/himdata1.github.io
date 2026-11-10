@@ -75,7 +75,7 @@
         background-color: #fff;
         width: 210mm;
         min-height: 297mm;
-        padding: 10mm 12mm;
+        padding: 8mm 12mm;
         margin: 0 auto 20px auto;
         box-shadow: 0 0 10px rgba(0,0,0,0.15);
         box-sizing: border-box;
@@ -98,29 +98,42 @@
 
     h1 {
         text-align: center;
-        font-size: 20px;
+        font-size: 21px;
         text-decoration: none;
         margin-top: 0;
-        margin-bottom: 10px;
+        margin-bottom: 8px;
     }
 
     .section-title {
         font-weight: bold;
-        font-size: 14px;
-        margin-top: 8px;
-        margin-bottom: 4px;
+        font-size: 16px;
+        margin-top: 6px;
+        margin-bottom: 3px;
+    }
+
+    /* Table 6, 7, 8 ke liye bottom gap / margin classes */
+    .section-spacing-6 {
+        margin-bottom: 18px !important;
+    }
+
+    .section-spacing-7 {
+        margin-bottom: 18px !important;
+    }
+
+    .section-spacing-8 {
+        margin-bottom: 18px !important;
     }
 
     table {
         width: 100%;
         border-collapse: collapse;
-        margin-bottom: 6px;
-        font-size: 13px;
+        margin-bottom: 4px;
+        font-size: 16px;
     }
 
     th, td {
         border: 1px solid #000;
-        padding: 6px 6px;
+        padding: 3px 4px;
         text-align: center;
         vertical-align: middle;
     }
@@ -131,45 +144,45 @@
     }
 
     .register-page table {
-        font-size: 11px;
-        margin-bottom: 4px;
+        font-size: 14px;
+        margin-bottom: 3px;
     }
 
     .register-page th, .register-page td {
-        padding: 3.5px 5px;
+        padding: 1px 4px; 
     }
 
     .register-header {
         display: flex;
         justify-content: space-between;
         font-weight: bold;
-        font-size: 12px;
-        margin-bottom: 4px;
+        font-size: 13px;
+        margin-bottom: 3px;
     }
 
     .register-section-title {
         font-weight: bold;
-        font-size: 12px;
-        margin-top: 5px;
-        margin-bottom: 3px;
+        font-size: 13px;
+        margin-top: 4px;
+        margin-bottom: 2px;
     }
 
     .expand-table th, .expand-table td {
-        padding: 10px 6px;
+        padding: 4px 4px;
     }
     
     .expand-table-lg th, .expand-table-lg td {
-        padding: 14px 6px;
+        padding: 5px 4px;
     }
 
     input[type="text"], input[type="number"], select {
         width: 100%;
         box-sizing: border-box;
         border: 1px solid #ccc;
-        border-radius: 4px;
-        padding: 6px 6px;
+        border-radius: 3px;
+        padding: 3px 4px;
         font-family: inherit;
-        font-size: 14px;
+        font-size: 16px;
         text-align: inherit;
         background-color: #fff8dc;
         -webkit-appearance: none;
@@ -185,7 +198,7 @@
     .month-year-container select {
         flex: 1;
         cursor: pointer;
-        height: 32px;
+        height: 28px;
     }
 
     input[type="number"] {
@@ -208,10 +221,10 @@
     .text-red, input.text-red { color: #d9534f; font-weight: bold; }
 
     .signatures {
-        margin-top: 120px;
+        margin-top: 150px;
         display: flex;
         justify-content: space-between;
-        font-size: 12px;
+        font-size: 16px;
         font-weight: bold;
     }
 
@@ -219,7 +232,7 @@
         width: 45%;
         border-top: 1px dashed #000;
         text-align: center;
-        padding-top: 6px;
+        padding-top: 4px;
     }
 
     @media print {
@@ -241,7 +254,7 @@
             width: 210mm;
             height: 297mm;
             min-height: 297mm;
-            padding: 10mm 12mm;
+            padding: 8mm 12mm;
             page-break-after: always;
             page-break-inside: avoid;
             box-sizing: border-box;
@@ -365,7 +378,7 @@
             </table>
 
             <!-- 3. Details of food grains (in Kgs.) -->
-            <table style="margin-top: 8px; margin-bottom: 0;">
+            <table style="margin-top: 4px; margin-bottom: 0;">
                 <thead>
                     <tr>
                         <th class="text-left" style="width: 45%;">3. Details of food grains (in Kgs.)</th>
@@ -405,7 +418,7 @@
             </table>
 
             <!-- 4. Material cost Details -->
-            <table style="margin-top: 8px; margin-bottom: 0;">
+            <table style="margin-top: 4px; margin-bottom: 0;">
                 <thead>
                     <tr>
                         <th class="text-left" style="width: 45%;">4. Material cost Details</th>
@@ -528,7 +541,7 @@
         <div>
             <!-- 6. Cook-cum-Helper payment Details -->
             <div class="section-title">6. Cook-cum-Helper payment Details</div>
-            <table id="cookTable" class="expand-table-lg">
+            <table id="cookTable" class="expand-table-lg section-spacing-6">
                 <thead>
                     <tr>
                         <th style="width: 8%;">Sr. No.</th>
@@ -568,8 +581,8 @@
             </table>
 
             <!-- 7. School Inspection -->
-            <div class="section-title" style="margin-top: 15px;">7. School Inspection</div>
-            <table class="expand-table-lg">
+            <div class="section-title">7. School Inspection</div>
+            <table class="expand-table-lg section-spacing-7">
                 <thead>
                     <tr>
                         <th rowspan="2" style="width: 22%;">Inspected by<br>(In numbers)</th>
@@ -597,8 +610,8 @@
             </table>
 
             <!-- 8. Name of MDM Incharge -->
-            <div class="section-title" style="margin-top: 15px;">8. Name of MDM Incharge</div>
-            <table class="expand-table-lg">
+            <div class="section-title">8. Name of MDM Incharge</div>
+            <table class="expand-table-lg section-spacing-8">
                 <thead>
                     <tr>
                         <th class="text-left" style="width: 40%;">Name of MDM Incharge</th>
@@ -614,7 +627,7 @@
             </table>
 
             <!-- 9. Health Checkup and IFA Tablets Details -->
-            <div class="section-title" style="margin-top: 15px;">9. Health Checkup and IFA Tablets Details</div>
+            <div class="section-title">9. Health Checkup and IFA Tablets Details</div>
             <table class="expand-table">
                 <thead>
                     <tr>
