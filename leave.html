@@ -36,7 +36,7 @@
         /* Editable Wrapping Heading & Subtitle Style */
         .heading-container {
             text-align: center;
-            margin-bottom: 20px;
+            margin-bottom: 15px;
         }
 
         .heading-input {
@@ -71,6 +71,27 @@
             overflow-wrap: break-word;
             margin: 0;
             display: none; /* Hidden by default */
+        }
+
+        .action-button-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .btn-new-leave {
+            background-color: #059669;
+            color: white;
+            border: none;
+            padding: 6px 14px;
+            font-size: 15px;
+            font-weight: 600;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-new-leave:hover {
+            background-color: #047857;
         }
 
         .heading-input:focus, .subtitle-input:focus, .editable-label:focus {
@@ -270,7 +291,7 @@
                 print-color-adjust: exact !important;
             }
 
-            .button-container {
+            .button-container, .action-button-container {
                 display: none !important;
             }
 
@@ -430,6 +451,11 @@
             <input type="text" id="form-subtitle" class="subtitle-input save-storage" value="(In Lieu of Election Duty Performed on Holidays)" spellcheck="false" onfocus="this.select()">
         </div>
         
+        <!-- New Leave Button placed right under the Title -->
+        <div class="action-button-container">
+            <button type="button" id="btn-new-leave" class="btn-new-leave">+ New Leave</button>
+        </div>
+
         <div class="form-row">
             <div class="form-label">Name and Designation of the Applicant</div>
             <div class="colon-separator">:</div>
@@ -590,6 +616,7 @@
         const requiredInput = document.getElementById("required-leaves");
         const balanceInput = document.getElementById("balance-leaves");
         const appDateInput = document.getElementById("app-date-input");
+        const btnNewLeave = document.getElementById("btn-new-leave");
 
         const inchargeLabelSelect = document.getElementById("incharge-label-select");
         const inchargeTextInput = document.getElementById("incharge-text-input");
@@ -639,6 +666,31 @@
             localStorage.setItem("leave_form_available_calc_" + currentLeaveTypeKey, availableInput.value);
             localStorage.setItem("leave_form_balance_calc_" + currentLeaveTypeKey, balanceInput.value);
         }
+
+        // New Leave Button Logic
+        btnNewLeave.addEventListener("click", () => {
+            let total = extractNumber(totalInput.value);
+            let lastBalance = extractNumber(balanceInput.value);
+
+            // Available Leave = Total - Previous Balance
+            let newAvailed = total - lastBalance;
+            let availedSuffix = (Math.abs(newAvailed - 1) < 0.001) ? "day" : "days";
+            availedInput.value = newAvailed + " " + availedSuffix;
+
+            let reqNum = extractNumber(requiredInput.value);
+            if (reqNum <= 0) reqNum = 1;
+            let reqSuffix = (Math.abs(reqNum - 1) < 0.001) ? "day" : "days";
+            requiredInput.value = reqNum + " " + reqSuffix;
+
+            calculateFields();
+
+            let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
+            const fields = document.querySelectorAll(".save-storage");
+            fields.forEach((field, index) => {
+                const storageKey = "leave_form_field_v16_" + currentLeaveTypeKey + "_" + index;
+                localStorage.setItem(storageKey, field.value);
+            });
+        });
 
         function loadFormData() {
             let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
