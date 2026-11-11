@@ -79,7 +79,6 @@
         }
 
         .btn-new-leave {
-            background-color: #059669;
             color: white;
             border: none;
             padding: 6px 14px;
@@ -90,8 +89,20 @@
             transition: background-color 0.2s;
         }
 
-        .btn-new-leave:hover {
+        /* Default state: Green */
+        .btn-new-leave.green {
+            background-color: #059669;
+        }
+        .btn-new-leave.green:hover {
             background-color: #047857;
+        }
+
+        /* Toggled state: Blue */
+        .btn-new-leave.blue {
+            background-color: #2563eb;
+        }
+        .btn-new-leave.blue:hover {
+            background-color: #1d4ed8;
         }
 
         .heading-input:focus, .subtitle-input:focus, .editable-label:focus {
@@ -451,9 +462,9 @@
             <input type="text" id="form-subtitle" class="subtitle-input save-storage" value="(In Lieu of Election Duty Performed on Holidays)" spellcheck="false" onfocus="this.select()">
         </div>
         
-        <!-- New Leave Button placed right under the Title -->
+        <!-- New Leave Button with initial green class -->
         <div class="action-button-container">
-            <button type="button" id="btn-new-leave" class="btn-new-leave">+ New Leave</button>
+            <button type="button" id="btn-new-leave" class="btn-new-leave green">+ New Leave</button>
         </div>
 
         <div class="form-row">
@@ -667,8 +678,17 @@
             localStorage.setItem("leave_form_balance_calc_" + currentLeaveTypeKey, balanceInput.value);
         }
 
-        // New Leave Button Logic
+        // New Leave Button Logic with Green/Blue Color Toggle
         btnNewLeave.addEventListener("click", () => {
+            // Toggle color between green and blue
+            if (btnNewLeave.classList.contains("green")) {
+                btnNewLeave.classList.remove("green");
+                btnNewLeave.classList.add("blue");
+            } else {
+                btnNewLeave.classList.remove("blue");
+                btnNewLeave.classList.add("green");
+            }
+
             let total = extractNumber(totalInput.value);
             let lastBalance = extractNumber(balanceInput.value);
 
