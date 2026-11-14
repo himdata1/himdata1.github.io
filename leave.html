@@ -33,7 +33,6 @@
             container-type: inline-size;
         }
         
-        /* Editable Wrapping Heading & Subtitle Style */
         .heading-container {
             text-align: center;
             margin-bottom: 15px;
@@ -70,7 +69,7 @@
             word-break: break-word;
             overflow-wrap: break-word;
             margin: 0;
-            display: none; /* Hidden by default */
+            display: none;
         }
 
         .action-button-container {
@@ -89,7 +88,6 @@
             transition: background-color 0.2s;
         }
 
-        /* Default state: Green */
         .btn-new-leave.green {
             background-color: #059669;
         }
@@ -97,7 +95,6 @@
             background-color: #047857;
         }
 
-        /* Toggled state: Blue */
         .btn-new-leave.blue {
             background-color: #2563eb;
         }
@@ -110,7 +107,7 @@
             border-radius: 3px;
         }
 
-        #leave-type-select {
+        .leave-type-select {
             cursor: pointer;
             color: #2563eb;
             font-size: inherit;
@@ -126,7 +123,7 @@
             border-radius: 2px;
         }
 
-        #leave-type-select:focus {
+        .leave-type-select:focus {
             background-color: #f3f4f6;
             border-radius: 3px;
         }
@@ -156,7 +153,6 @@
             box-sizing: border-box;
         }
 
-        /* Plain Text Label Dropdown styled blue for interactivity */
         .label-select-plain {
             width: 100%;
             font-weight: 500;
@@ -216,7 +212,6 @@
             box-shadow: none;
         }
         
-        /* Disabled / Non-editable style */
         .form-field input[readonly] {
             background-color: #f9fafb;
             cursor: not-allowed;
@@ -224,7 +219,6 @@
             color: #111827 !important;
         }
 
-        /* Hide signature row completely in web view */
         .print-signature-row {
             display: none !important;
         }
@@ -264,6 +258,140 @@
         }
         .btn:hover {
             background-color: #1d4ed8;
+        }
+
+        /* Earned Leave specific styles */
+        .earned-leave-container {
+            display: none;
+        }
+        .earned-leave-container.active {
+            display: block;
+        }
+
+        .service-code {
+            font-size: 18px;
+            margin-bottom: 20px;
+        }
+
+        .earned-title-container {
+            text-align: center;
+            margin-bottom: 24px;
+        }
+
+        .earned-title {
+            font-size: 20px;
+            font-weight: bold;
+            display: inline;
+        }
+
+        .earned-form-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .earned-form-item {
+            font-size: 20px;
+            margin-bottom: 18px;
+            line-height: 1.4;
+        }
+
+        .earned-label {
+            font-weight: bold;
+            user-select: none;
+            color: #374151;
+        }
+
+        .editable-field {
+            display: inline-block;
+            min-width: 100px;
+            padding: 4px 8px;
+            border: 1px solid #9ca3af;
+            background-color: #ffffff;
+            border-radius: 4px;
+            outline: none;
+            font-weight: normal;
+            font-size: 20px;
+            color: #2563eb;
+            transition: background-color 0.2s, border-color 0.2s;
+        }
+
+        .editable-field:hover {
+            border-color: #2563eb;
+        }
+
+        .editable-field:focus {
+            background-color: #ffffff;
+            border-color: #2563eb;
+            box-shadow: none;
+        }
+
+        .editable-field:empty::before {
+            content: attr(data-placeholder);
+            color: #999;
+            font-style: italic;
+        }
+
+        /* Standard signature & remarks styles for Earned Leave */
+        .signature-block {
+            margin-top: 48px;
+            display: flex;
+            justify-content: flex-end;
+        }
+
+        .signature-box {
+            width: 310px;
+            text-align: left;
+            font-size: 16px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .signature-line {
+            border-top: 2px solid #000;
+            margin-bottom: 6px;
+        }
+
+        .remarks-section {
+            margin-top: 32px;
+            font-size: 16px;
+            font-weight: bold;
+            color: #374151;
+        }
+
+        .remarks-inline {
+            display: flex;
+            align-items: flex-end;
+            gap: 6px;
+            margin-bottom: 22px;
+        }
+
+        .remarks-inline span.earned-label {
+            white-space: nowrap;
+        }
+
+        .fill-line {
+            flex: 1;
+            border-bottom: 2px solid #000;
+            min-height: 22px;
+        }
+
+        .full-line {
+            border-bottom: 2px solid #000;
+            min-height: 22px;
+            margin-bottom: 45px;
+        }
+
+        .estt-section {
+            margin-top: 10px;
+            font-size: 16px;
+            font-weight: bold;
+            text-decoration: underline;
+            color: #374151;
+        }
+
+        .print-only-section {
+            display: none !important;
         }
 
         @media screen and (max-width: 600px) {
@@ -345,7 +473,7 @@
                 line-height: 1.1 !important;
             }
 
-            #leave-type-select {
+            .leave-type-select {
                 color: #000000 !important;
                 background: transparent !important;
             }
@@ -358,7 +486,6 @@
                 page-break-inside: avoid !important;
             }
 
-            /* Show signature row specifically in print/PDF view */
             .print-signature-row {
                 display: flex !important;
             }
@@ -415,7 +542,6 @@
                 appearance: none !important;
             }
 
-            /* Dotted line box for signature in print view */
             .print-signature-line {
                 display: block !important;
                 width: 100%;
@@ -444,6 +570,52 @@
                 padding: 0 !important;
                 background: transparent !important;
             }
+
+            .earned-leave-container {
+                padding: 0 !important;
+            }
+            .earned-title-container {
+                margin-bottom: 16pt !important;
+            }
+            .earned-title {
+                font-size: 20pt !important;
+            }
+            .earned-form-item {
+                font-size: 13pt !important;
+                margin-bottom: 6pt !important;
+            }
+            .editable-field {
+                border: none !important;
+                background-color: transparent !important;
+                padding: 0 !important;
+                color: #000000 !important;
+                font-size: 13pt !important;
+            }
+            .service-code {
+                font-size: 12pt !important;
+                margin-bottom: 10pt !important;
+            }
+            .signature-block {
+                margin-top: 38pt !important;
+            }
+            .signature-box {
+                font-size: 11pt !important;
+            }
+            .remarks-section {
+                margin-top: 12pt !important;
+                font-size: 11pt !important;
+            }
+            .estt-section {
+                margin-top: 8pt !important;
+                font-size: 11pt !important;
+            }
+            .full-line {
+                margin-bottom: 70pt !important;
+            }
+
+            .print-only-section {
+                display: block !important;
+            }
         }
     </style>
 </head>
@@ -451,150 +623,245 @@
 
 <div class="form-container">
     <div>
-        <div class="heading-container">
+        <!-- Heading container wrapper that hides when Earned Leave is active -->
+        <div class="heading-container" id="main-heading-container">
             <h2 class="heading-input" id="form-heading" spellcheck="false">Application for 
-                <select id="leave-type-select">
+                <select class="leave-type-select global-leave-select">
                     <option value="Casual Leave" selected>Casual Leave</option>
                     <option value="Restricted Holiday">Restricted Holiday</option>
                     <option value="Compensatory Leave">Compensatory Leave</option>
+                    <option value="Earned Leave">Earned Leave</option>
                 </select>
             </h2>
             <input type="text" id="form-subtitle" class="subtitle-input save-storage" value="(In Lieu of Election Duty Performed on Holidays)" spellcheck="false" onfocus="this.select()">
         </div>
         
-        <!-- New Leave Button with initial green class -->
-        <div class="action-button-container">
-            <button type="button" id="btn-new-leave" class="btn-new-leave green">+ New Leave</button>
-        </div>
+        <!-- Standard Leave View Container -->
+        <div id="standard-leave-view">
+            <div class="action-button-container">
+                <button type="button" id="btn-new-leave" class="btn-new-leave green">+ New Leave</button>
+            </div>
 
-        <div class="form-row">
-            <div class="form-label">Name and Designation of the Applicant</div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" class="save-storage" value="Abc, JBT" onfocus="this.select()">
+            <div class="form-row">
+                <div class="form-label">Name and Designation of the Applicant</div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" class="save-storage" value="Abc, JBT" onfocus="this.select()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label">Name of the School</div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" class="save-storage" value="GPS " onfocus="this.select()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label">Total No. of <span class="editable-label plural-label">Casual Leaves</span> in the Year</div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" id="total-leaves" class="save-storage calc-trigger" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" value="12" onfocus="this.select()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label"><span class="editable-label plural-label">Casual Leaves</span> already availed</div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" id="availed-leaves" class="save-storage calc-trigger" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" value="4" onfocus="this.select()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label"><span class="editable-label plural-label">Casual Leaves</span> available</div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" id="available-leaves" readonly tabindex="-1" value="8 days">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label" style="font-weight: bold;"><span class="editable-label plural-label">Casual Leaves</span> required</div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" id="required-leaves" class="save-storage calc-trigger" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" value="1" style="font-weight: bold;" onfocus="this.select()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label" style="font-weight: bold;">Date of <span class="editable-label singular-label">Casual Leave</span></div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" class="save-storage" value="21/10/2026" style="font-weight: bold;" onfocus="this.select()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label"><span id="reason-prefix">Reason for </span><span class="editable-label singular-label">Casual Leave</span></div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" class="save-storage" value="Urgent work" onfocus="this.select()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label">Balance of <span class="editable-label plural-label">Casual Leaves</span></div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" id="balance-leaves" readonly tabindex="-1" value="7 days">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label">Whether Station Leave required</div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <select class="save-storage">
+                        <option value="Yes" selected>Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label">Period of Station Leave</div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" class="save-storage" value="21/10/2026" onfocus="this.select()">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label">
+                    <select id="incharge-label-select" class="label-select-plain save-storage">
+                        <option value="Incharge of the School in my absence" selected>Incharge of the School in my absence</option>
+                        <option value="Whether Substitute required">Whether Substitute required</option>
+                    </select>
+                </div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" id="incharge-text-input" class="save-storage" value="Xyz, JBT" onfocus="this.select()">
+                    <select id="substitute-select-input" class="save-storage" style="display: none;">
+                        <option value="Yes" selected>Yes</option>
+                        <option value="No">No</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-label">Date of Application</div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <input type="text" id="app-date-input" class="save-storage" value="" onfocus="this.select()">
+                </div>
+            </div>
+
+            <div class="form-row print-signature-row">
+                <div class="form-label">Signature of the Applicant</div>
+                <div class="colon-separator">:</div>
+                <div class="form-field">
+                    <div class="print-signature-line"></div>
+                </div>
             </div>
         </div>
 
-        <div class="form-row">
-            <div class="form-label">Name of the School</div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" class="save-storage" value="GPS " onfocus="this.select()">
+        <!-- Earned Leave View Container -->
+        <div id="earned-leave-view" class="earned-leave-container">
+            <div class="service-code">
+                <span class="earned-label" style="font-weight: normal;">Service Book Code:</span>
+                <span class="editable-field earned-storage" contenteditable="true" data-placeholder="Code" data-key="service_code">609</span>
             </div>
-        </div>
 
-        <div class="form-row">
-            <div class="form-label">Total No. of <span class="editable-label plural-label">Casual Leaves</span> in the Year</div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" id="total-leaves" class="save-storage calc-trigger" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" value="12" onfocus="this.select()">
+            <div class="earned-title-container">
+                <h1 class="earned-title">Application For 
+                    <select class="leave-type-select global-leave-select" style="font-size: inherit; font-weight: inherit;">
+                        <option value="Casual Leave">Casual Leave</option>
+                        <option value="Restricted Holiday">Restricted Holiday</option>
+                        <option value="Compensatory Leave">Compensatory Leave</option>
+                        <option value="Earned Leave" selected>Earned Leave</option>
+                    </select>
+                </h1>
             </div>
-        </div>
 
-        <div class="form-row">
-            <div class="form-label"><span class="editable-label plural-label">Casual Leaves</span> already availed</div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" id="availed-leaves" class="save-storage calc-trigger" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" value="4" onfocus="this.select()">
-            </div>
-        </div>
+            <div class="earned-form-list">
+                <div class="earned-form-item">
+                    <span class="earned-label">1. Name of the applicant:</span>
+                    <span class="editable-field earned-storage" contenteditable="true" data-placeholder="Enter name" data-key="name">Abc</span>
+                </div>
 
-        <div class="form-row">
-            <div class="form-label"><span class="editable-label plural-label">Casual Leaves</span> available</div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" id="available-leaves" readonly tabindex="-1" value="8 days">
-            </div>
-        </div>
+                <div class="earned-form-item">
+                    <span class="earned-label">2. Present Post held:</span>
+                    <span class="editable-field earned-storage" contenteditable="true" data-placeholder="Enter post" data-key="post">JBT</span>
+                </div>
 
-        <div class="form-row">
-            <div class="form-label" style="font-weight: bold;"><span class="editable-label plural-label">Casual Leaves</span> required</div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" id="required-leaves" class="save-storage calc-trigger" inputmode="decimal" pattern="[0-9]*\.?[0-9]*" value="1" style="font-weight: bold;" onfocus="this.select()">
-            </div>
-        </div>
+                <div class="earned-form-item">
+                    <span class="earned-label">3. Place of posting:</span>
+                    <span class="editable-field earned-storage" contenteditable="true" data-placeholder="Enter school/office" data-key="posting">GPS Abc</span>
+                </div>
 
-        <div class="form-row">
-            <div class="form-label" style="font-weight: bold;">Date of <span class="editable-label singular-label">Casual Leave</span></div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" class="save-storage" value="21/10/2026" style="font-weight: bold;" onfocus="this.select()">
-            </div>
-        </div>
+                <div class="earned-form-item">
+                    <span class="earned-label">4. Present Pay:</span>
+                    <span class="editable-field earned-storage" contenteditable="true" data-placeholder="Enter pay" data-key="pay">55500 (BP) + allowances</span>
+                </div>
 
-        <!-- Reason / Occasion of Leave -->
-        <div class="form-row">
-            <div class="form-label"><span id="reason-prefix">Reason for </span><span class="editable-label singular-label">Casual Leave</span></div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" class="save-storage" value="Urgent work" onfocus="this.select()">
-            </div>
-        </div>
+                <div class="earned-form-item">
+                    <span class="earned-label">5. Nature and period of leave applied for and date from which Required:</span>
+                    <span class="editable-field earned-storage" contenteditable="true" data-placeholder="Enter leave details" data-key="nature_period">Earned Leave w.e.f. 17/03/2026 to 31/03/2026 (15 days)</span>
+                </div>
 
-        <!-- Balance of Leave -->
-        <div class="form-row">
-            <div class="form-label">Balance of <span class="editable-label plural-label">Casual Leaves</span></div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" id="balance-leaves" readonly tabindex="-1" value="7 days">
-            </div>
-        </div>
+                <div class="earned-form-item">
+                    <span class="earned-label">6. Sundays and holidays, if any, proposed to be Prefixed / Suffixed to leave:</span>
+                    <span class="editable-field earned-storage" contenteditable="true" data-placeholder="Yes / No" data-key="sunday_holiday">No</span>
+                </div>
 
-        <div class="form-row">
-            <div class="form-label">Whether Station Leave required</div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <select class="save-storage">
-                    <option value="Yes" selected>Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-        </div>
+                <div class="earned-form-item">
+                    <span class="earned-label">7. Purpose for which leave is required:</span>
+                    <span class="editable-field earned-storage" contenteditable="true" data-placeholder="Enter reason" data-key="purpose">Urgent work at home.</span>
+                </div>
 
-        <div class="form-row">
-            <div class="form-label">Period of Station Leave</div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" class="save-storage" value="21/10/2026" onfocus="this.select()">
-            </div>
-        </div>
+                <div class="earned-form-item">
+                    <span class="earned-label">8. Date of return from last leave:</span>
+                    <span class="editable-field earned-storage" contenteditable="true" data-placeholder="DD/MM/YYYY" data-key="return_date">26/03/2025</span>
+                </div>
 
-        <!-- Blue Colored Plain Text Label Dropdown -->
-        <div class="form-row">
-            <div class="form-label">
-                <select id="incharge-label-select" class="label-select-plain save-storage">
-                    <option value="Incharge of the School in my absence" selected>Incharge of the School in my absence</option>
-                    <option value="Whether Substitute required">Whether Substitute required</option>
-                </select>
-            </div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <!-- Text Input (Default Visible) -->
-                <input type="text" id="incharge-text-input" class="save-storage" value="Xyz, JBT" onfocus="this.select()">
-                
-                <!-- Select Dropdown (Hidden by Default, Yes selected by Default) -->
-                <select id="substitute-select-input" class="save-storage" style="display: none;">
-                    <option value="Yes" selected>Yes</option>
-                    <option value="No">No</option>
-                </select>
-            </div>
-        </div>
+                <div class="earned-form-item">
+                    <span class="earned-label">9. I propose / do not propose to avail myself of leave travel concession for the Block year:</span>
+                    <span class="editable-field earned-storage" contenteditable="true" data-placeholder="Enter LTC status" data-key="ltc">I do not propose to avail LTC.</span>
+                </div>
 
-        <div class="form-row">
-            <div class="form-label">Date of Application</div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <input type="text" id="app-date-input" class="save-storage" value="" onfocus="this.select()">
+                <div class="earned-form-item">
+                    <span class="earned-label">10. Leave address:</span>
+                    <span class="editable-field earned-storage" contenteditable="true" data-placeholder="Enter address" data-key="address">Type address here</span>
+                </div>
             </div>
-        </div>
 
-        <!-- Signature row hidden in web view, visible in print/PDF -->
-        <div class="form-row print-signature-row">
-            <div class="form-label">Signature of the Applicant</div>
-            <div class="colon-separator">:</div>
-            <div class="form-field">
-                <div class="print-signature-line"></div>
+            <!-- Below content hidden on Web View, visible and perfectly styled when printed/PDF -->
+            <div class="print-only-section">
+                <div class="signature-block">
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        Signature of the applicant with date
+                    </div>
+                </div>
+
+                <div class="remarks-section">
+                    <div class="remarks-inline">
+                        <span class="earned-label">Remarks and Recommendation of controlling officer</span>
+                        <div class="fill-line"></div>
+                    </div>
+                    <div class="full-line"></div>
+                </div>
+
+                <div class="signature-block">
+                    <div class="signature-box">
+                        <div class="signature-line"></div>
+                        Signature with date and Designation
+                    </div>
+                </div>
+
+                <div class="estt-section">Estt. Section</div>
             </div>
         </div>
     </div>
@@ -615,11 +882,15 @@
 
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-        const leaveTypeSelect = document.getElementById("leave-type-select");
+        const globalLeaveSelects = document.querySelectorAll(".global-leave-select");
+        const mainHeadingContainer = document.getElementById("main-heading-container");
         const subtitleInput = document.getElementById("form-subtitle");
         const singularLabels = document.querySelectorAll(".singular-label");
         const pluralLabels = document.querySelectorAll(".plural-label");
         const reasonPrefix = document.getElementById("reason-prefix");
+
+        const standardLeaveView = document.getElementById("standard-leave-view");
+        const earnedLeaveView = document.getElementById("earned-leave-view");
 
         const totalInput = document.getElementById("total-leaves");
         const availedInput = document.getElementById("availed-leaves");
@@ -673,14 +944,18 @@
             availableInput.value = available + " " + availSuffix;
             balanceInput.value = balance + " " + balanceSuffix;
 
-            let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
+            let currentLeaveTypeKey = getActiveLeaveType().replace(/\s+/g, '_');
             localStorage.setItem("leave_form_available_calc_" + currentLeaveTypeKey, availableInput.value);
             localStorage.setItem("leave_form_balance_calc_" + currentLeaveTypeKey, balanceInput.value);
         }
 
-        // New Leave Button Logic with Green/Blue Color Toggle
+        function getActiveLeaveType() {
+            // Hamesha page khulte hi Casual Leave se shuru karega
+            let val = localStorage.getItem("leave_form_heading_type");
+            return val ? val : "Casual Leave";
+        }
+
         btnNewLeave.addEventListener("click", () => {
-            // Toggle color between green and blue
             if (btnNewLeave.classList.contains("green")) {
                 btnNewLeave.classList.remove("green");
                 btnNewLeave.classList.add("blue");
@@ -692,7 +967,6 @@
             let total = extractNumber(totalInput.value);
             let lastBalance = extractNumber(balanceInput.value);
 
-            // Available Leave = Total - Previous Balance
             let newAvailed = total - lastBalance;
             let availedSuffix = (Math.abs(newAvailed - 1) < 0.001) ? "day" : "days";
             availedInput.value = newAvailed + " " + availedSuffix;
@@ -704,7 +978,7 @@
 
             calculateFields();
 
-            let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
+            let currentLeaveTypeKey = getActiveLeaveType().replace(/\s+/g, '_');
             const fields = document.querySelectorAll(".save-storage");
             fields.forEach((field, index) => {
                 const storageKey = "leave_form_field_v16_" + currentLeaveTypeKey + "_" + index;
@@ -713,10 +987,35 @@
         });
 
         function loadFormData() {
-            let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
+            let leaveType = getActiveLeaveType();
 
-            let leaveType = leaveTypeSelect.value.trim();
-            if (!leaveType) leaveType = "Casual Leave";
+            // Sync all global selectors
+            globalLeaveSelects.forEach(sel => {
+                sel.value = leaveType;
+            });
+
+            if (leaveType === "Earned Leave") {
+                mainHeadingContainer.style.display = "none";
+                standardLeaveView.style.display = "none";
+                earnedLeaveView.classList.add("active");
+                
+                // Load Earned Leave local storage
+                const earnedFields = document.querySelectorAll(".earned-storage");
+                earnedFields.forEach(field => {
+                    const key = field.getAttribute("data-key");
+                    const saved = localStorage.getItem("earned_leave_field_v1_" + key);
+                    if (saved !== null) {
+                        field.innerText = saved;
+                    }
+                });
+                return;
+            } else {
+                mainHeadingContainer.style.display = "block";
+                standardLeaveView.style.display = "block";
+                earnedLeaveView.classList.remove("active");
+            }
+
+            let currentLeaveTypeKey = leaveType.replace(/\s+/g, '_');
 
             if (leaveType === "Restricted Holiday") {
                 reasonPrefix.innerText = "Occasion of ";
@@ -764,26 +1063,42 @@
             calculateFields();
         }
 
-        const savedHeadingType = localStorage.getItem("leave_form_heading_type");
-        if (savedHeadingType !== null) {
-            leaveTypeSelect.value = savedHeadingType;
-        }
-
+        // Initial load
         loadFormData();
 
-        leaveTypeSelect.addEventListener("change", () => {
-            localStorage.setItem("leave_form_heading_type", leaveTypeSelect.value);
-            loadFormData();
+        // Handle select changes globally
+        globalLeaveSelects.forEach(sel => {
+            sel.addEventListener("change", (e) => {
+                localStorage.setItem("leave_form_heading_type", e.target.value);
+                loadFormData();
+            });
+        });
+
+        // Earned leave storage listener & Auto-Select on Focus
+        const earnedFields = document.querySelectorAll(".earned-storage");
+        earnedFields.forEach(field => {
+            field.addEventListener("input", () => {
+                const key = field.getAttribute("data-key");
+                localStorage.setItem("earned_leave_field_v1_" + key, field.innerText);
+            });
+
+            // Click/Focus karte hi poora text select ho jaye ga
+            field.addEventListener("focus", () => {
+                const range = document.createRange();
+                range.selectNodeContents(field);
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(range);
+            });
         });
 
         const fields = document.querySelectorAll(".save-storage");
         fields.forEach((field, index) => {
             const eventType = field.tagName === "SELECT" ? "change" : "input";
             field.addEventListener(eventType, () => {
-                let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
+                let currentLeaveTypeKey = getActiveLeaveType().replace(/\s+/g, '_');
                 const storageKey = "leave_form_field_v16_" + currentLeaveTypeKey + "_" + index;
 
-                // Strict enforcement for calc-trigger fields: allow only digits and one dot
                 if (field.classList.contains("calc-trigger")) {
                     let cursorPos = field.selectionStart;
                     let val = field.value;
@@ -816,7 +1131,7 @@
                     let num = extractNumber(field.value);
                     let suffix = (Math.abs(num - 1) < 0.001) ? "day" : "days";
                     field.value = num + " " + suffix;
-                    let currentLeaveTypeKey = leaveTypeSelect.value.replace(/\s+/g, '_');
+                    let currentLeaveTypeKey = getActiveLeaveType().replace(/\s+/g, '_');
                     const storageKey = "leave_form_field_v16_" + currentLeaveTypeKey + "_" + index;
                     localStorage.setItem(storageKey, field.value);
                 });
