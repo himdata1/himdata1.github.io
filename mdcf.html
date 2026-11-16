@@ -239,6 +239,19 @@
         appearance: none;
     }
 
+    /* Light Green Background for specific input boxes */
+    #days_pre, #days_pri, 
+    #mdm_days_pre, #mdm_days_pri, 
+    #meals_pre, #meals_pri,
+    #fg_pre_rec, #fg_pri_rec,
+    #mc_pre_rec, #mc_pri_rec,
+    #mme_rec, #bi_rec, #tr_rec, #lpg_rec,
+    #mm_pre_rec, #mm_pri_rec,
+    #mm_wk_pre, #mm_wk_pri,
+    #mm_pre_exp, #mm_pri_exp {
+        background-color: #d4edda !important;
+    }
+
     .month-year-container {
         display: flex;
         gap: 4px;
@@ -966,8 +979,6 @@
             }
         }
         
-        // Yeh line if-else block ke bahar honi chahiye 
-        // taaki default/saved dono hi cases mein calculations run ho jayein.
         recalculateAll();
         updateRegisterSummary();
     }
