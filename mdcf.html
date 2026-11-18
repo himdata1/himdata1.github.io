@@ -111,10 +111,6 @@
         margin-bottom: 4px;
     }
 
-    .section-spacing-6 { margin-bottom: 6px !important; }
-    .section-spacing-7 { margin-bottom: 6px !important; }
-    .section-spacing-8 { margin-bottom: 6px !important; }
-
     .page:not(.register-page) table {
         width: 100%;
         border-collapse: collapse;
@@ -239,7 +235,7 @@
         appearance: none;
     }
 
-    /* Light Green Background for specific input boxes */
+    /* Light Green Background for specific input boxes & dropdowns */
     #days_pre, #days_pri, 
     #mdm_days_pre, #mdm_days_pri, 
     #meals_pre, #meals_pri,
@@ -248,7 +244,8 @@
     #mme_rec, #bi_rec, #tr_rec, #lpg_rec,
     #mm_pre_rec, #mm_pri_rec,
     #mm_wk_pre, #mm_wk_pri,
-    #mm_pre_exp, #mm_pri_exp {
+    #mm_pre_exp, #mm_pri_exp,
+    #select_month, #select_year {
         background-color: #d4edda !important;
     }
 
@@ -481,8 +478,6 @@
                 </tbody>
             </table>
 
-
-
             <!-- 4. Material cost Details -->
             <table class="expand-table" style="margin-top: 20px; margin-bottom: 0; border-bottom: none;">
                 <thead>
@@ -558,7 +553,6 @@
                     </tr>
                 </tbody>
             </table>
-
 
             <!-- 5. Supplementary Nutrition Items -->
             <div class="section-title">5. Supplementary Nutrition Items (Mukhya Mantri Bal Paushtik Aahar Yojna)</div>
@@ -963,7 +957,7 @@
         localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
     }
 
-        function loadFormData() {
+    function loadFormData() {
         const savedData = localStorage.getItem(STORAGE_KEY);
         if (savedData) {
             try {
@@ -982,7 +976,6 @@
         recalculateAll();
         updateRegisterSummary();
     }
-
 
     function rollOverBalances() {
         if (!confirm("Are you sure you want to carry forward Closing Balance as Opening Balance for next month?")) {
