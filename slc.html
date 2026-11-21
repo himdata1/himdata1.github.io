@@ -99,6 +99,12 @@ select.session-select {
   font-size: 13px;
 }
 
+select.gender-select {
+  font-weight: bold;
+  font-size: 13px;
+  min-width: 68px;
+}
+
 /* Date fields */
 
 .date-field {
@@ -236,6 +242,14 @@ select.session-select {
 
 .pupil-details > div {
   margin-bottom: 5px;
+}
+
+.pupil-name-row {
+  display: flex;
+  justify-content: flex-start;
+  align-items: baseline;
+  gap: 18px;
+  flex-wrap: wrap;
 }
 
 /* Certification */
@@ -586,7 +600,7 @@ table.records-table td[contenteditable="true"]:focus {
     border: none;
   }
 
-  select.clean-select:not(.session-select) {
+  select.clean-select:not(.session-select):not(.gender-select) {
     font-weight: normal !important;
   }
 
@@ -705,9 +719,19 @@ table.records-table td[contenteditable="true"]:focus {
 
       <div class="pupil-details">
 
-        <div>
-          Pupil's Name
-          <span id="pupilNameField" class="editable w-xl" contenteditable="true"></span>
+        <div class="pupil-name-row">
+          <div>
+            Pupil's Name
+            <span id="pupilNameField" class="editable w-lg" contenteditable="true"></span>
+          </div>
+
+          <div>
+            Gender
+            <select id="genderSelect" class="clean-select gender-select" aria-label="Gender">
+              <option value="Male" selected>Male</option>
+              <option value="Female">Female</option>
+            </select>
+          </div>
         </div>
 
         <div>
@@ -779,7 +803,7 @@ table.records-table td[contenteditable="true"]:focus {
               role="button"
               aria-label="Attended up-to date"></span>.
 
-        <select class="clean-select" aria-label="Pronoun">
+        <select id="pronounCap1" class="clean-select" aria-label="Pronoun">
           <option value="He">He</option>
           <option value="She">She</option>
         </select>
@@ -787,7 +811,7 @@ table.records-table td[contenteditable="true"]:focus {
         has settled all school dues / library books / free textbooks,
         and was allowed on the above date to withdraw
 
-        <select class="clean-select" aria-label="Possessive">
+        <select id="possessiveLower" class="clean-select" aria-label="Possessive">
           <option value="his">his</option>
           <option value="her">her</option>
         </select>
@@ -810,7 +834,7 @@ table.records-table td[contenteditable="true"]:focus {
 
               <label for="opt1"><strong>1.</strong></label>
 
-              <select class="clean-select" aria-label="Pronoun 1">
+              <select id="pronounCap2" class="clean-select" aria-label="Pronoun 1">
                 <option value="He">He</option>
                 <option value="She">She</option>
               </select>
@@ -833,30 +857,23 @@ table.records-table td[contenteditable="true"]:focus {
 
               <label for="opt2"><strong>2.</strong></label>
 
-              <select class="clean-select" aria-label="Pronoun 2">
+              <select id="pronounCap3" class="clean-select" aria-label="Pronoun 2">
                 <option value="He">He</option>
                 <option value="She">She</option>
               </select>
 
-              was examined in
+              appeared in the Class 5 examination held in
 
               <span class="editable w-md" contenteditable="true">March 2027</span>
 
-              5th class in which
+              and passed.
 
-              <select class="clean-select" aria-label="Pronoun 3">
-                <option value="he">he</option>
-                <option value="she">she</option>
+              <select id="pronounCap4" class="clean-select" aria-label="Pronoun 3">
+                <option value="He">He</option>
+                <option value="She">She</option>
               </select>
 
-              passed and now
-
-              <select class="clean-select" aria-label="Pronoun 4">
-                <option value="he">he</option>
-                <option value="she">she</option>
-              </select>
-
-              is eligible for admission in 6th class.
+              is now eligible for admission to Class 6.
 
             </div>
 
@@ -1078,6 +1095,13 @@ const dateFields = Array.from(
   document.querySelectorAll('.date-field')
 );
 
+const genderSelect = document.getElementById('genderSelect');
+const pronounCap1 = document.getElementById('pronounCap1');
+const pronounCap2 = document.getElementById('pronounCap2');
+const pronounCap3 = document.getElementById('pronounCap3');
+const pronounCap4 = document.getElementById('pronounCap4');
+const possessiveLower = document.getElementById('possessiveLower');
+
 const d1 = document.getElementById('topIssueDate');
 const d2 = document.getElementById('bottomIssueDate');
 
@@ -1103,6 +1127,36 @@ const dpDaysGrid = document.getElementById('dpDaysGrid');
 const dpCloseBtn = document.getElementById('dpCloseBtn');
 
 let activeDateField = null;
+
+/* Sync Pronouns & Possessive from Gender */
+
+function applyGenderToPronouns() {
+
+  if (!genderSelect) {
+    return;
+  }
+
+  const isFemale = genderSelect.value === 'Female';
+
+  const capPronoun = isFemale ? 'She' : 'He';
+  const possPronoun = isFemale ? 'her' : 'his';
+
+  if (pronounCap1) pronounCap1.value = capPronoun;
+  if (pronounCap2) pronounCap2.value = capPronoun;
+  if (pronounCap3) pronounCap3.value = capPronoun;
+  if (pronounCap4) pronounCap4.value = capPronoun;
+  if (possessiveLower) possessiveLower.value = possPronoun;
+}
+
+if (genderSelect) {
+
+  genderSelect.addEventListener('change', () => {
+
+    applyGenderToPronouns();
+
+    saveDraft();
+  });
+}
 
 /* Year Dropdown */
 
@@ -1719,6 +1773,8 @@ function loadDraft() {
 
     if (!raw) {
 
+      applyGenderToPronouns();
+
       updateLeavesTaken();
 
       updateDobWords();
@@ -1803,6 +1859,8 @@ function loadDraft() {
       ensureGpsTrailingSpace(tableSchoolField);
     }
 
+    applyGenderToPronouns();
+
     updateLeavesTaken();
 
     /* Restore DOB in Words Automatically */
@@ -1810,6 +1868,8 @@ function loadDraft() {
     updateDobWords();
 
   } catch (e) {
+
+    applyGenderToPronouns();
 
     updateLeavesTaken();
 
@@ -1839,7 +1899,10 @@ editables.forEach(el => {
 
 selects.forEach(sel => {
 
-  sel.addEventListener('change', saveDraft);
+  if (sel !== genderSelect) {
+
+    sel.addEventListener('change', saveDraft);
+  }
 
 });
 
