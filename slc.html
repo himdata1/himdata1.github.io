@@ -609,7 +609,7 @@ table.records-table td[contenteditable="true"]:focus {
 
       <div class="top-row">
         SLC No.
-        <span class="editable w-md slc-input" contenteditable="true"></span>
+        <span id="slcNoField" class="editable w-md slc-input" contenteditable="true"></span>
       </div>
 
       <!-- Header -->
@@ -1471,17 +1471,23 @@ dateFields.forEach(field => {
 
 });
 
-/* Cursor Position */
+/* Select All Text Helper */
 
-function placeCursorAtEnd(el) {
+function selectAllContent(el) {
 
-  el.focus();
+  if (!el || document.activeElement !== el) {
+    return;
+  }
+
+  const text = el.textContent.replace(/\u00a0/g, ' ').trim();
+
+  if (!text) {
+    return;
+  }
 
   const range = document.createRange();
 
   range.selectNodeContents(el);
-
-  range.collapse(false);
 
   const sel = window.getSelection();
 
@@ -1499,23 +1505,66 @@ function ensureGpsTrailingSpace(el) {
   if (normalized === 'GPS') {
 
     el.innerHTML = 'GPS&nbsp;';
-
-    placeCursorAtEnd(el);
   }
 }
 
-[schoolNameField, tableSchoolField].forEach(el => {
+/* Select Entire Existing Text on Click / Focus for Easy Replacement */
 
-  el.addEventListener('focus', () => {
+editables.forEach(el => {
 
-    ensureGpsTrailingSpace(el);
+  function triggerSelectAll() {
 
-    placeCursorAtEnd(el);
+    if (el === schoolNameField || el === tableSchoolField) {
+      ensureGpsTrailingSpace(el);
+    }
+
+    setTimeout(() => {
+      if (document.activeElement === el) {
+        selectAllContent(el);
+      }
+    }, 0);
+  }
+
+  el.addEventListener('focus', triggerSelectAll);
+
+  el.addEventListener('click', triggerSelectAll);
+
+  /* Prevent accidental line breaks on Enter in single-line fields */
+  el.addEventListener('keydown', (e) => {
+
+    if (e.key === 'Enter') {
+
+      e.preventDefault();
+
+      const idx = editables.indexOf(el);
+
+      if (idx !== -1 && editables[idx + 1]) {
+        editables[idx + 1].focus();
+      } else {
+        el.blur();
+      }
+
+    }
+
   });
 
-  el.addEventListener('click', () => {
+});
 
-    ensureGpsTrailingSpace(el);
+/* Restore '0' if numeric day cells are left empty on blur */
+
+[workingDaysCell, attendanceDaysCell].forEach(cell => {
+
+  cell.addEventListener('blur', () => {
+
+    const cleaned = cell.textContent.replace(/\u00a0/g, ' ').trim();
+
+    if (cleaned === '') {
+      cell.textContent = '0';
+    }
+
+    updateLeavesTaken();
+
+    saveDraft();
   });
 
 });
