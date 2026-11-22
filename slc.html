@@ -61,9 +61,14 @@ body {
 
 .editable:focus {
   background-color: #fff9db;
-  border-bottom: 1.5px solid #1b365d;
+  border-bottom: 1px dotted #000;
 }
 
+.w-xs {
+  min-width: 32px;
+  max-width: 100px;
+  text-align: center;
+}
 .w-sm { min-width: 50px; }
 .w-md { min-width: 105px; }
 .w-lg { min-width: 170px; }
@@ -126,7 +131,7 @@ select.gender-select {
 .date-field:focus,
 .date-field.active-date {
   background-color: #fff9db;
-  border-bottom: 1.5px solid #1b365d;
+  border-bottom: 1px dotted #000;
 }
 
 .date-field.table-date {
@@ -547,7 +552,50 @@ table.records-table td[contenteditable="true"]:focus {
   color: #0f172a;
 }
 
-/* Print Rules */
+/* Print / PDF Export Mode */
+
+body.pdf-export-mode {
+  background: #fff !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  overflow: visible !important;
+}
+
+body.pdf-export-mode .app-wrapper {
+  width: 210mm !important;
+  min-width: 210mm !important;
+}
+
+body.pdf-export-mode .bottom-action,
+body.pdf-export-mode .date-picker-backdrop {
+  display: none !important;
+}
+
+body.pdf-export-mode .page {
+  box-shadow: none !important;
+  width: 210mm !important;
+  min-height: 297mm !important;
+  padding: 8mm !important;
+}
+
+body.pdf-export-mode .outer-border {
+  min-height: 281mm !important;
+}
+
+body.pdf-export-mode .editable {
+  border-bottom: 1px dotted #000 !important;
+  background-color: transparent !important;
+}
+
+body.pdf-export-mode select.clean-select {
+  border-bottom: 1px dotted #000 !important;
+  background-color: transparent !important;
+}
+
+body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
+  border-bottom: 1px dotted #000 !important;
+  background-color: transparent !important;
+}
 
 @media print {
   @page {
@@ -584,7 +632,7 @@ table.records-table td[contenteditable="true"]:focus {
   }
 
   .editable {
-    border-bottom: 1px dotted #000;
+    border-bottom: 1px dotted #000 !important;
     background: transparent !important;
   }
 
@@ -598,15 +646,16 @@ table.records-table td[contenteditable="true"]:focus {
     appearance: none;
     background: transparent !important;
     border: none;
+    border-bottom: 1px dotted #000 !important;
   }
 
   select.clean-select:not(.session-select):not(.gender-select) {
     font-weight: normal !important;
   }
 
-  .date-field {
+  .date-field:not(.table-date):not(.period-date) {
     background: transparent !important;
-    border-bottom: none;
+    border-bottom: 1px dotted #000 !important;
   }
 }
 </style>
@@ -700,7 +749,7 @@ table.records-table td[contenteditable="true"]:focus {
 
         <div>
           File No.
-          <span class="editable w-md" contenteditable="true"></span>
+          <span class="editable w-xs" contenteditable="true"></span>
         </div>
 
         <div>
@@ -1010,7 +1059,7 @@ table.records-table td[contenteditable="true"]:focus {
       <!-- Print Button -->
 
       <div class="bottom-action">
-        <button class="btn-print" onclick="window.print()">
+        <button type="button" id="printPdfBtn" class="btn-print" onclick="triggerPrintOrPdf()">
           Print / Save as PDF
         </button>
       </div>
@@ -1127,6 +1176,47 @@ const dpDaysGrid = document.getElementById('dpDaysGrid');
 const dpCloseBtn = document.getElementById('dpCloseBtn');
 
 let activeDateField = null;
+
+/* Android App PDF / Print Bridge */
+
+function triggerPrintOrPdf() {
+  if (document.activeElement && typeof document.activeElement.blur === 'function') {
+    document.activeElement.blur();
+  }
+  saveDraft();
+
+  const rawName = (pupilNameField ? pupilNameField.textContent : '')
+    .replace(/\u00a0/g, ' ')
+    .trim();
+  const safeStudentName = rawName.replace(/[^a-zA-Z0-9_-]+/g, '_') || 'Student';
+  const fileTitle = `SLC_${safeStudentName}`;
+  const prevTitle = document.title;
+  document.title = fileTitle;
+
+  if (window.AndroidInterface && typeof window.AndroidInterface.printPdf === 'function') {
+    document.body.classList.add('pdf-export-mode');
+    setTimeout(() => {
+      try {
+        window.AndroidInterface.printPdf(fileTitle);
+      } finally {
+        setTimeout(() => {
+          document.body.classList.remove('pdf-export-mode');
+          document.title = prevTitle;
+        }, 800);
+      }
+    }, 100);
+    return;
+  }
+
+  window.print();
+  setTimeout(() => {
+    document.title = prevTitle;
+  }, 500);
+}
+
+window.finishAndroidPdfExport = function () {
+  document.body.classList.remove('pdf-export-mode');
+};
 
 /* Sync Pronouns & Possessive from Gender */
 
