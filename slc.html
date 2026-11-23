@@ -1199,8 +1199,11 @@ function triggerPrintOrPdf() {
   const rawName = (pupilNameField ? pupilNameField.textContent : '')
     .replace(/\u00a0/g, ' ')
     .trim();
-  const safeStudentName = rawName.replace(/[^a-zA-Z0-9_-]+/g, '_') || 'Student';
-  const fileTitle = `SLC_${safeStudentName}`;
+  const safeStudentName = rawName
+    .replace(/[^a-zA-Z0-9 -]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim() || 'Student';
+  const fileTitle = `SLC ${safeStudentName}`;
   const prevTitle = document.title;
   document.title = fileTitle;
 
