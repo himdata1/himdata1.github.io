@@ -1654,6 +1654,37 @@ function selectAllContent(el) {
   sel.addRange(range);
 }
 
+/* Clear Active Selection on 2nd Tap Without Opening Cut/Copy Menu */
+
+function clearSelectionOnSecondTap(el) {
+
+  const sel = window.getSelection();
+
+  if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
+
+    sel.removeAllRanges();
+
+    const range = document.createRange();
+
+    const lastNode = el.lastChild;
+
+    if (lastNode) {
+
+      if (lastNode.nodeType === Node.TEXT_NODE) {
+        range.setStart(lastNode, lastNode.length);
+      } else {
+        range.setStartAfter(lastNode);
+      }
+
+    } else {
+      range.setStart(el, 0);
+    }
+
+    range.collapse(true);
+    sel.addRange(range);
+  }
+}
+
 /* GPS Trailing Space */
 
 function ensureGpsTrailingSpace(el) {
@@ -1666,29 +1697,55 @@ function ensureGpsTrailingSpace(el) {
   }
 }
 
-/* Select Entire Existing Text on Click / Focus for Easy Replacement */
+/* Select Entire Existing Text Only on 1st Focus; Clear Selection on 2nd Tap */
 
 editables.forEach(el => {
 
-  function triggerSelectAll() {
+  let wasAlreadyFocusedOnDown = false;
+
+  el.addEventListener('focus', () => {
 
     if (el === schoolNameField || el === tableSchoolField) {
       ensureGpsTrailingSpace(el);
     }
 
-    setTimeout(() => {
-      if (document.activeElement === el) {
-        selectAllContent(el);
-      }
-    }, 0);
-  }
+    if (!wasAlreadyFocusedOnDown) {
+      setTimeout(() => {
+        if (document.activeElement === el) {
+          selectAllContent(el);
+        }
+      }, 0);
+    }
+  });
 
-  el.addEventListener('focus', triggerSelectAll);
+  el.addEventListener('pointerdown', () => {
+    wasAlreadyFocusedOnDown = (document.activeElement === el);
 
-  el.addEventListener('click', triggerSelectAll);
+    if (wasAlreadyFocusedOnDown) {
+      clearSelectionOnSecondTap(el);
+    }
+  });
+
+  el.addEventListener('click', () => {
+    if (wasAlreadyFocusedOnDown && document.activeElement === el) {
+      clearSelectionOnSecondTap(el);
+      setTimeout(() => {
+        clearSelectionOnSecondTap(el);
+        wasAlreadyFocusedOnDown = false;
+      }, 0);
+    }
+  });
+
+  el.addEventListener('blur', () => {
+    wasAlreadyFocusedOnDown = false;
+  });
 
   /* Prevent accidental line breaks on Enter in single-line fields */
   el.addEventListener('keydown', (e) => {
+
+    if (e.key !== 'Shift' && e.key !== 'Control' && e.key !== 'Alt' && e.key !== 'Meta') {
+      wasAlreadyFocusedOnDown = false;
+    }
 
     if (e.key === 'Enter') {
 
