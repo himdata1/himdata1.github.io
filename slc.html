@@ -94,6 +94,12 @@ select.clean-select,
   outline: none;
 }
 
+/* Remove dotted underline from He / She / His / Her */
+select.clean-select:not(.session-select):not(.gender-select) {
+  border-bottom: none;
+  padding: 0 1px;
+}
+
 select.clean-select::-ms-expand,
 .picker-select::-ms-expand {
   display: none;
@@ -592,6 +598,10 @@ body.pdf-export-mode select.clean-select {
   background-color: transparent !important;
 }
 
+body.pdf-export-mode select.clean-select:not(.session-select):not(.gender-select) {
+  border-bottom: none !important;
+}
+
 body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
   border-bottom: 1px dotted #000 !important;
   background-color: transparent !important;
@@ -651,6 +661,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
   select.clean-select:not(.session-select):not(.gender-select) {
     font-weight: normal !important;
+    border-bottom: none !important;
   }
 
   .date-field:not(.table-date):not(.period-date) {
