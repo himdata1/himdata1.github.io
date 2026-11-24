@@ -132,7 +132,7 @@ select.session-select {
 select.gender-select {
   font-weight: bold;
   font-size: 13px;
-  min-width: 68px;
+  min-width: 60px;
 }
 
 /* Date fields */
@@ -1041,7 +1041,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
                 class="center-num-cell"
                 contenteditable="true">0</td>
 
-            <td id="leavesTakenCell" class="leaves-cell">0</td>
+            <td id="leavesTakenCell" class="leaves-cell">00</td>
 
           </tr>
         </tbody>
@@ -1767,9 +1767,14 @@ editables.forEach(el => {
 
 });
 
-/* Restore '0' if numeric day cells are left empty on blur */
+/* Update leaves on input and restore '0' on blur if empty */
 
 [workingDaysCell, attendanceDaysCell].forEach(cell => {
+
+  cell.addEventListener('input', () => {
+    updateLeavesTaken();
+    saveDraft();
+  });
 
   cell.addEventListener('blur', () => {
 
@@ -1802,9 +1807,9 @@ function updateLeavesTaken() {
 
   const attended = Number.isNaN(attendedRaw) ? 0 : attendedRaw;
 
-  const leaves = Math.max(0, working - attended);
+  const leaves = Math.max(0, Math.round(working - attended));
 
-  leavesTakenCell.textContent = String(leaves);
+  leavesTakenCell.textContent = String(leaves).padStart(2, '0');
 }
 
 /* Single Choice Checkboxes */
@@ -2051,7 +2056,9 @@ editables.forEach(el => {
 
   if (
     el !== schoolNameField &&
-    el !== pupilNameField
+    el !== pupilNameField &&
+    el !== workingDaysCell &&
+    el !== attendanceDaysCell
   ) {
 
     el.addEventListener('input', saveDraft);
