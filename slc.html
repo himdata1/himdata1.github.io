@@ -64,6 +64,17 @@ body {
   border-bottom: 1px dotted #000;
 }
 
+.editable.readonly-synced {
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.editable.readonly-synced:focus {
+  background-color: transparent;
+  border-bottom: 1px dotted #000;
+}
+
 /* Individual Editable Field Widths (Max-width set only where present) */
 .w-school-name { min-width: 100px; } /* School Name (Top) | max-width: none */
 .w-edu-block { min-width: 101px; } /* Education Block | max-width: none */
@@ -351,6 +362,14 @@ table.records-table td {
 /* Only the School Name input box in the table */
 #tableSchoolField {
   text-align: left !important;
+  cursor: default;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+#tableSchoolField:focus {
+  background-color: transparent;
+  outline: none;
 }
 
 table.records-table td.table-date-cell {
@@ -839,8 +858,9 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
         Certified that
 
         <span id="certPupilNameField"
-              class="editable w-cert-pupil"
-              contenteditable="true"></span>
+              class="editable w-cert-pupil readonly-synced"
+              contenteditable="false"
+              aria-readonly="true"></span>
 
         attended this school up-to
 
@@ -963,7 +983,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
         <tbody>
           <tr>
 
-            <td id="tableSchoolField" contenteditable="true">GPS&nbsp;</td>
+            <td id="tableSchoolField" contenteditable="false" aria-readonly="true">GPS&nbsp;</td>
 
             <td class="table-date-cell">
               <span class="date-field table-date"
@@ -1686,7 +1706,7 @@ editables.forEach(el => {
 
   el.addEventListener('focus', () => {
 
-    if (el === schoolNameField || el === tableSchoolField) {
+    if (el === schoolNameField) {
       ensureGpsTrailingSpace(el);
     }
 
@@ -1809,20 +1829,16 @@ singleChoices.forEach(cb => {
 
 });
 
-/* Synchronize School Name */
-
-let tableSchoolManual = false;
+/* Synchronize School Name from Top Field to Table Field */
 
 function syncSchoolNameToTable() {
 
-  if (!tableSchoolManual) {
+  if (schoolNameField && tableSchoolField) {
     tableSchoolField.innerHTML = schoolNameField.innerHTML;
   }
 }
 
 schoolNameField.addEventListener('input', () => {
-
-  tableSchoolManual = false;
 
   syncSchoolNameToTable();
 
@@ -1836,40 +1852,25 @@ schoolNameField.addEventListener('blur', () => {
   saveDraft();
 });
 
-tableSchoolField.addEventListener('input', () => {
+/* Synchronize Pupil Name from Top Field to Certification Field */
 
-  const currentClean = tableSchoolField.textContent
-    .replace(/\u00a0/g, ' ')
-    .trim();
+function syncPupilNameToCert() {
 
-  const topClean = schoolNameField.textContent
-    .replace(/\u00a0/g, ' ')
-    .trim();
-
-  tableSchoolManual =
-    currentClean !== '' &&
-    currentClean !== 'GPS' &&
-    currentClean !== topClean;
-
-  saveDraft();
-});
-
-/* Synchronize Pupil Name */
-
-let certPupilManual = false;
+  if (pupilNameField && certPupilNameField) {
+    certPupilNameField.innerHTML = pupilNameField.innerHTML;
+  }
+}
 
 pupilNameField.addEventListener('input', () => {
 
-  if (!certPupilManual) {
-    certPupilNameField.innerHTML = pupilNameField.innerHTML;
-  }
+  syncPupilNameToCert();
 
   saveDraft();
 });
 
-certPupilNameField.addEventListener('input', () => {
+pupilNameField.addEventListener('blur', () => {
 
-  certPupilManual = true;
+  syncPupilNameToCert();
 
   saveDraft();
 });
@@ -1890,11 +1891,7 @@ function saveDraft() {
 
     dates: dateFields.map(f => (f === bottomIssueDate ? '' : (f.dataset.date || ''))),
 
-    leavesTaken: leavesTakenCell.textContent,
-
-    tableSchoolManual,
-
-    certPupilManual
+    leavesTaken: leavesTakenCell.textContent
   };
 
   try {
@@ -1924,6 +1921,10 @@ function loadDraft() {
     if (!raw) {
 
       initIssueDateToday();
+
+      syncPupilNameToCert();
+
+      syncSchoolNameToTable();
 
       applyGenderToPronouns();
 
@@ -1999,20 +2000,11 @@ function loadDraft() {
 
     initIssueDateToday();
 
-    tableSchoolManual = Boolean(data.tableSchoolManual);
-
-    certPupilManual = Boolean(data.certPupilManual);
+    syncPupilNameToCert();
 
     ensureGpsTrailingSpace(schoolNameField);
 
-    if (!tableSchoolManual) {
-
-      syncSchoolNameToTable();
-
-    } else {
-
-      ensureGpsTrailingSpace(tableSchoolField);
-    }
+    syncSchoolNameToTable();
 
     applyGenderToPronouns();
 
@@ -2025,6 +2017,10 @@ function loadDraft() {
   } catch (e) {
 
     initIssueDateToday();
+
+    syncPupilNameToCert();
+
+    syncSchoolNameToTable();
 
     applyGenderToPronouns();
 
@@ -2040,9 +2036,7 @@ editables.forEach(el => {
 
   if (
     el !== schoolNameField &&
-    el !== tableSchoolField &&
-    el !== pupilNameField &&
-    el !== certPupilNameField
+    el !== pupilNameField
   ) {
 
     el.addEventListener('input', saveDraft);
