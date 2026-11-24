@@ -1170,6 +1170,7 @@ const pronounCap3 = document.getElementById('pronounCap3');
 const pronounCap4 = document.getElementById('pronounCap4');
 const possessiveLower = document.getElementById('possessiveLower');
 
+const withdrawalDate = document.getElementById('withdrawalDate');
 const bottomIssueDate = document.getElementById('bottomIssueDate');
 
 const schoolNameField = document.getElementById('schoolNameField');
@@ -1902,6 +1903,14 @@ function saveDraft() {
 
 }
 
+/* Set Date of Withdrawal to today's current date on open/load */
+
+function initWithdrawalDateToday() {
+  if (withdrawalDate) {
+    setFieldDate(withdrawalDate, getTodayIso(), false);
+  }
+}
+
 /* Always set Date of issue to today's current date on open/load */
 
 function initIssueDateToday() {
@@ -1919,6 +1928,8 @@ function loadDraft() {
     const raw = localStorage.getItem(STORAGE_KEY);
 
     if (!raw) {
+
+      initWithdrawalDateToday();
 
       initIssueDateToday();
 
@@ -1998,6 +2009,8 @@ function loadDraft() {
 
     }
 
+    initWithdrawalDateToday();
+
     initIssueDateToday();
 
     syncPupilNameToCert();
@@ -2015,6 +2028,8 @@ function loadDraft() {
     updateDobWords();
 
   } catch (e) {
+
+    initWithdrawalDateToday();
 
     initIssueDateToday();
 
