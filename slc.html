@@ -90,8 +90,8 @@ body {
 .w-father-name { min-width: 100px; } /* Name of Father | max-width: none */
 .w-mother-name { min-width: 100px; } /* Name of Mother | max-width: none */
 .w-cert-pupil { min-width: 100px; } /* Certified Pupil Name (in certification paragraph) | max-width: none */
-.w-opt1-class { min-width: 25px; } /* Option 1 Class (Mid-session withdrawal) | max-width: none */
-.w-opt2-exam { min-width: 25px; } /* Option 2 Exam Month/Year (March 2027) | max-width: none */
+.w-opt1-class { min-width: 25px; } /* Mid-session withdrawal class | max-width: none */
+.w-opt2-exam { min-width: 25px; } /* Exam Month/Year (March 2027) | max-width: none */
 
 /* Select dropdown */
 
@@ -896,36 +896,13 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
           <li>
 
-            <input type="checkbox" id="opt1" class="single-choice">
-
-            <div class="option-text">
-
-              <label for="opt1"><strong>1.</strong></label>
-
-              <select id="pronounCap2" class="clean-select" aria-label="Pronoun 1">
-                <option value="He">He</option>
-                <option value="She">She</option>
-              </select>
-
-              was studying in
-
-              <span class="editable w-opt1-class" contenteditable="true"></span>
-
-              class (Mid-session withdrawal).
-
-            </div>
-
-          </li>
-
-          <li>
-
             <input type="checkbox" id="opt2" class="single-choice">
 
             <div class="option-text">
 
-              <label for="opt2"><strong>2.</strong></label>
+              <label for="opt2"><strong>1.</strong></label>
 
-              <select id="pronounCap3" class="clean-select" aria-label="Pronoun 2">
+              <select id="pronounCap3" class="clean-select" aria-label="Pronoun 1">
                 <option value="He">He</option>
                 <option value="She">She</option>
               </select>
@@ -936,12 +913,35 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
               and passed.
 
-              <select id="pronounCap4" class="clean-select" aria-label="Pronoun 3">
+              <select id="pronounCap4" class="clean-select" aria-label="Pronoun 2">
                 <option value="He">He</option>
                 <option value="She">She</option>
               </select>
 
               is now eligible for admission to Class 6.
+
+            </div>
+
+          </li>
+
+          <li>
+
+            <input type="checkbox" id="opt1" class="single-choice">
+
+            <div class="option-text">
+
+              <label for="opt1"><strong>2.</strong></label>
+
+              <select id="pronounCap2" class="clean-select" aria-label="Pronoun 3">
+                <option value="He">He</option>
+                <option value="She">She</option>
+              </select>
+
+              was studying in
+
+              <span class="editable w-opt1-class" contenteditable="true"></span>
+
+              class (Mid-session withdrawal).
 
             </div>
 
