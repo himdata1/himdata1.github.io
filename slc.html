@@ -64,15 +64,23 @@ body {
   border-bottom: 1px dotted #000;
 }
 
-.w-xs {
-  min-width: 32px;
-  max-width: 100px;
-  text-align: center;
-}
-.w-sm { min-width: 50px; }
-.w-md { min-width: 105px; }
-.w-lg { min-width: 170px; }
-.w-xl { min-width: 250px; }
+/* Individual Editable Field Widths (Max-width set only where present) */
+.w-school-name { min-width: 100px; } /* School Name (Top) | max-width: none */
+.w-edu-block { min-width: 101px; } /* Education Block | max-width: none */
+.w-district { min-width: 75px; } /* District | max-width: none */
+.w-udise { min-width: 101px; } /* UDISE+ Code | max-width: none */
+.w-file-no { min-width: 25px; max-width: 100px; text-align: center; } /* File No. | min-width: 25px, max-width: 100px */
+.w-slc-no { min-width: 25px; } /* SLC No. | max-width: none */
+.w-pupil-name { min-width: 100px; } /* Pupil's Name | max-width: none */
+.w-dob-words { min-width: 100px; } /* Date of Birth (in words) | max-width: none */
+.w-student-pen { min-width: 99px; } /* Student PEN (UDISE+) | max-width: none */
+.w-apaar-id { min-width: 99px; } /* APAAR ID | max-width: none */
+.w-admission-no { min-width: 50px; } /* Admission no. | max-width: none */
+.w-father-name { min-width: 100px; } /* Name of Father | max-width: none */
+.w-mother-name { min-width: 100px; } /* Name of Mother | max-width: none */
+.w-cert-pupil { min-width: 100px; } /* Certified Pupil Name (in certification paragraph) | max-width: none */
+.w-opt1-class { min-width: 25px; } /* Option 1 Class (Mid-session withdrawal) | max-width: none */
+.w-opt2-exam { min-width: 25px; } /* Option 2 Exam Month/Year (March 2027) | max-width: none */
 
 /* Select dropdown */
 
@@ -171,14 +179,6 @@ select.gender-select {
   background-color: #fff9db;
 }
 
-/* SLC Number */
-
-.top-row {
-  text-align: right;
-  font-size: 13px;
-  margin-bottom: 4px;
-}
-
 .slc-input {
   text-align: left;
 }
@@ -233,7 +233,7 @@ select.gender-select {
   font-weight: bold;
 }
 
-/* File and Issue Row */
+/* File and SLC Row */
 
 .two-col {
   display: flex;
@@ -679,13 +679,6 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
   <div class="page">
     <div class="outer-border">
 
-      <!-- SLC Number -->
-
-      <div class="top-row">
-        SLC No.
-        <span id="slcNoField" class="editable w-md slc-input" contenteditable="true"></span>
-      </div>
-
       <!-- Header -->
 
       <div class="header-center">
@@ -700,24 +693,24 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
         <div>
           <strong>School Name :</strong>
-          <span id="schoolNameField" class="editable w-xl" contenteditable="true">GPS&nbsp;</span>
+          <span id="schoolNameField" class="editable w-school-name" contenteditable="true">GPS&nbsp;</span>
         </div>
 
         <div class="row-split">
 
           <div>
             <strong>Education Block :</strong>
-            <span class="editable w-md" contenteditable="true"></span>
+            <span class="editable w-edu-block" contenteditable="true"></span>
           </div>
 
           <div>
             <strong>District :</strong>
-            <span class="editable w-md" contenteditable="true"></span>
+            <span class="editable w-district" contenteditable="true"></span>
           </div>
 
           <div>
             <strong>UDISE+ Code :</strong>
-            <span class="editable w-md" contenteditable="true"></span>
+            <span class="editable w-udise" contenteditable="true"></span>
           </div>
 
         </div>
@@ -754,23 +747,18 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
         </div>
       </div>
 
-      <!-- File No and Date of Issue -->
+      <!-- File No and SLC No Row -->
 
       <div class="two-col">
 
         <div>
           File No.
-          <span class="editable w-xs" contenteditable="true"></span>
+          <span class="editable w-file-no" contenteditable="true"></span>
         </div>
 
         <div>
-          Date of issue
-          <span class="date-field"
-                id="topIssueDate"
-                data-date=""
-                tabindex="0"
-                role="button"
-                aria-label="Date of issue"></span>
+          SLC No.
+          <span id="slcNoField" class="editable w-slc-no slc-input" contenteditable="true"></span>
         </div>
 
       </div>
@@ -782,7 +770,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
         <div class="pupil-name-row">
           <div>
             Pupil's Name
-            <span id="pupilNameField" class="editable w-lg" contenteditable="true"></span>
+            <span id="pupilNameField" class="editable w-pupil-name" contenteditable="true"></span>
           </div>
 
           <div>
@@ -809,7 +797,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
           (in words)
 
           <span id="dobWordsField"
-                class="editable w-lg"
+                class="editable w-dob-words"
                 contenteditable="true"></span>
         </div>
 
@@ -817,29 +805,29 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
           <div>
             Student PEN (UDISE+)
-            <span class="editable w-md" contenteditable="true"></span>
+            <span class="editable w-student-pen" contenteditable="true"></span>
           </div>
 
           <div>
             APAAR ID
-            <span class="editable w-md" contenteditable="true"></span>
+            <span class="editable w-apaar-id" contenteditable="true"></span>
           </div>
 
           <div>
             Admission no.
-            <span class="editable w-sm" contenteditable="true"></span>
+            <span class="editable w-admission-no" contenteditable="true"></span>
           </div>
 
         </div>
 
         <div>
           Name of Father
-          <span class="editable w-xl" contenteditable="true"></span>
+          <span class="editable w-father-name" contenteditable="true"></span>
         </div>
 
         <div>
           Name of Mother
-          <span class="editable w-xl" contenteditable="true"></span>
+          <span class="editable w-mother-name" contenteditable="true"></span>
         </div>
 
       </div>
@@ -851,7 +839,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
         Certified that
 
         <span id="certPupilNameField"
-              class="editable w-lg"
+              class="editable w-cert-pupil"
               contenteditable="true"></span>
 
         attended this school up-to
@@ -901,7 +889,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
               was studying in
 
-              <span class="editable w-md" contenteditable="true"></span>
+              <span class="editable w-opt1-class" contenteditable="true"></span>
 
               class (Mid-session withdrawal).
 
@@ -924,7 +912,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
               appeared in the Class 5 examination held in
 
-              <span class="editable w-md" contenteditable="true">March 2027</span>
+              <span class="editable w-opt2-exam" contenteditable="true">March 2027</span>
 
               and passed.
 
@@ -1162,8 +1150,7 @@ const pronounCap3 = document.getElementById('pronounCap3');
 const pronounCap4 = document.getElementById('pronounCap4');
 const possessiveLower = document.getElementById('possessiveLower');
 
-const d1 = document.getElementById('topIssueDate');
-const d2 = document.getElementById('bottomIssueDate');
+const bottomIssueDate = document.getElementById('bottomIssueDate');
 
 const schoolNameField = document.getElementById('schoolNameField');
 const tableSchoolField = document.getElementById('tableSchoolField');
@@ -1187,6 +1174,16 @@ const dpDaysGrid = document.getElementById('dpDaysGrid');
 const dpCloseBtn = document.getElementById('dpCloseBtn');
 
 let activeDateField = null;
+
+/* Current Date Helper (YYYY-MM-DD in local timezone) */
+
+function getTodayIso() {
+  const now = new Date();
+  const y = now.getFullYear();
+  const m = String(now.getMonth() + 1).padStart(2, '0');
+  const d = String(now.getDate()).padStart(2, '0');
+  return `${y}-${m}-${d}`;
+}
 
 /* Android App PDF / Print Bridge */
 
@@ -1440,7 +1437,7 @@ function updateDobWords() {
 
 /* Set Date */
 
-function setFieldDate(field, isoStr, syncIssue = true) {
+function setFieldDate(field, isoStr, shouldSave = true) {
 
   const cleanIso = isoStr || '';
 
@@ -1454,25 +1451,9 @@ function setFieldDate(field, isoStr, syncIssue = true) {
     updateDobWords();
   }
 
-  /* Synchronize Issue Dates */
-
-  if (syncIssue) {
-
-    if (field === d1) {
-
-      d2.dataset.date = cleanIso;
-      d2.textContent = formatDisplayDate(cleanIso);
-
-    } else if (field === d2) {
-
-      d1.dataset.date = cleanIso;
-      d1.textContent = formatDisplayDate(cleanIso);
-
-    }
-
+  if (shouldSave && field !== bottomIssueDate) {
+    saveDraft();
   }
-
-  saveDraft();
 }
 
 /* Render Calendar */
@@ -1525,7 +1506,7 @@ function renderDaysGrid() {
       ev.stopPropagation();
 
       if (activeDateField) {
-        setFieldDate(activeDateField, iso, true);
+        setFieldDate(activeDateField, iso);
       }
 
       closeDatePicker();
@@ -1893,7 +1874,7 @@ certPupilNameField.addEventListener('input', () => {
   saveDraft();
 });
 
-/* Save Draft */
+/* Save Draft (excludes bottomIssueDate) */
 
 function saveDraft() {
 
@@ -1907,7 +1888,7 @@ function saveDraft() {
 
     checkboxes: checkboxes.map(cb => cb.checked),
 
-    dates: dateFields.map(f => f.dataset.date || ''),
+    dates: dateFields.map(f => (f === bottomIssueDate ? '' : (f.dataset.date || ''))),
 
     leavesTaken: leavesTakenCell.textContent,
 
@@ -1924,6 +1905,14 @@ function saveDraft() {
 
 }
 
+/* Always set Date of issue to today's current date on open/load */
+
+function initIssueDateToday() {
+  if (bottomIssueDate) {
+    setFieldDate(bottomIssueDate, getTodayIso(), false);
+  }
+}
+
 /* Load Draft */
 
 function loadDraft() {
@@ -1933,6 +1922,8 @@ function loadDraft() {
     const raw = localStorage.getItem(STORAGE_KEY);
 
     if (!raw) {
+
+      initIssueDateToday();
 
       applyGenderToPronouns();
 
@@ -1987,13 +1978,14 @@ function loadDraft() {
 
     }
 
-    /* Restore Dates */
+    /* Restore Dates (except bottomIssueDate, which always uses current date) */
 
     if (Array.isArray(data.dates)) {
 
       data.dates.forEach((val, idx) => {
 
         if (dateFields[idx] !== undefined &&
+            dateFields[idx] !== bottomIssueDate &&
             typeof val === 'string') {
 
           dateFields[idx].dataset.date = val;
@@ -2004,6 +1996,8 @@ function loadDraft() {
       });
 
     }
+
+    initIssueDateToday();
 
     tableSchoolManual = Boolean(data.tableSchoolManual);
 
@@ -2029,6 +2023,8 @@ function loadDraft() {
     updateDobWords();
 
   } catch (e) {
+
+    initIssueDateToday();
 
     applyGenderToPronouns();
 
