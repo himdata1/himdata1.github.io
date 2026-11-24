@@ -463,45 +463,43 @@ table.records-table td[contenteditable="true"]:focus {
   box-shadow: 0 3px 8px rgba(0,0,0,0.18);
 }
 
-/* Date Picker */
+/* Date Picker (Compact ~30% smaller, anchored below clicked date field) */
 
 .date-picker-backdrop {
   display: none;
   position: fixed;
   inset: 0;
-  background: rgba(0,0,0,0.35);
+  background: transparent;
   z-index: 9999;
-  align-items: center;
-  justify-content: center;
-  padding: 14px;
 }
 
 .date-picker-backdrop.open {
-  display: flex;
+  display: block;
 }
 
 .date-picker-card {
+  position: fixed;
   background: #fff;
   border: 1.5px solid #1b365d;
-  border-radius: 8px;
-  width: 100%;
-  max-width: 265px;
-  padding: 9px;
+  border-radius: 7px;
+  width: 185px;
+  padding: 6px 7px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
 }
 
 .dp-header {
   display: flex;
-  gap: 6px;
-  margin-bottom: 8px;
+  gap: 4px;
+  margin-bottom: 5px;
 }
 
 .dp-select {
   flex: 1;
-  padding: 5px 6px;
+  min-width: 0;
+  padding: 3px 4px;
   border: 1px solid #cbd5e1;
-  border-radius: 5px;
-  font-size: 12px;
+  border-radius: 4px;
+  font-size: 10.5px;
   font-weight: bold;
   background: #f8fafc;
   color: #000;
@@ -520,28 +518,29 @@ table.records-table td[contenteditable="true"]:focus {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   text-align: center;
-  font-size: 10px;
+  font-size: 8.5px;
   font-weight: bold;
   color: #475569;
-  margin-bottom: 3px;
+  margin-bottom: 2px;
 }
 
 .dp-days {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
-  gap: 2px;
-  margin-bottom: 8px;
+  gap: 1.5px;
+  margin-bottom: 5px;
 }
 
 .dp-day-btn {
-  height: 28px;
+  height: 20px;
   border: 1px solid transparent;
-  border-radius: 4px;
+  border-radius: 3px;
   background: #f1f5f9;
   color: #000;
-  font-size: 11.5px;
+  font-size: 9.5px;
   font-weight: bold;
   cursor: pointer;
+  padding: 0;
 }
 
 .dp-day-btn:hover {
@@ -564,14 +563,13 @@ table.records-table td[contenteditable="true"]:focus {
 }
 
 .dp-btn {
-  padding: 6px 14px;
+  padding: 4px 10px;
   border: none;
-  border-radius: 5px;
-  font-size: 11.5px;
+  border-radius: 4px;
+  font-size: 9.5px;
   font-weight: bold;
   cursor: pointer;
 }
-
 
 .dp-close {
   background: #e2e8f0;
@@ -1095,7 +1093,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
      id="datePickerModal"
      aria-hidden="true">
 
-  <div class="date-picker-card">
+  <div class="date-picker-card" id="datePickerCard">
 
     <div class="dp-header">
 
@@ -1190,6 +1188,7 @@ const leavesTakenCell = document.getElementById('leavesTakenCell');
 /* Date Picker Elements */
 
 const dpModal = document.getElementById('datePickerModal');
+const dpCard = document.getElementById('datePickerCard');
 const dpMonthSelect = document.getElementById('dpMonthSelect');
 const dpYearSelect = document.getElementById('dpYearSelect');
 const dpDaysGrid = document.getElementById('dpDaysGrid');
@@ -1478,6 +1477,42 @@ function setFieldDate(field, isoStr, shouldSave = true) {
   }
 }
 
+/* Position Date Picker Directly Below Clicked Date Field */
+
+function positionDatePicker(field) {
+
+  if (!field || !dpCard || !dpModal.classList.contains('open')) {
+    return;
+  }
+
+  const gap = 4;
+  const margin = 8;
+  const rect = field.getBoundingClientRect();
+  const cardWidth = dpCard.offsetWidth || 185;
+  const cardHeight = dpCard.offsetHeight || 195;
+
+  let left = rect.left;
+  if (left + cardWidth > window.innerWidth - margin) {
+    left = window.innerWidth - cardWidth - margin;
+  }
+  if (left < margin) {
+    left = margin;
+  }
+
+  let top = rect.bottom + gap;
+  if (top + cardHeight > window.innerHeight - margin) {
+    const aboveTop = rect.top - cardHeight - gap;
+    if (aboveTop >= margin) {
+      top = aboveTop;
+    } else {
+      top = Math.max(margin, window.innerHeight - cardHeight - margin);
+    }
+  }
+
+  dpCard.style.left = `${Math.round(left)}px`;
+  dpCard.style.top = `${Math.round(top)}px`;
+}
+
 /* Render Calendar */
 
 function renderDaysGrid() {
@@ -1537,6 +1572,10 @@ function renderDaysGrid() {
 
     dpDaysGrid.appendChild(btn);
   }
+
+  if (activeDateField) {
+    positionDatePicker(activeDateField);
+  }
 }
 
 /* Open Date Picker */
@@ -1569,11 +1608,11 @@ function openDatePicker(field) {
 
   dpYearSelect.value = String(baseDate.getFullYear());
 
-  renderDaysGrid();
-
   dpModal.classList.add('open');
 
   dpModal.setAttribute('aria-hidden', 'false');
+
+  renderDaysGrid();
 }
 
 /* Close Date Picker */
@@ -1610,6 +1649,18 @@ dpModal.addEventListener('click', (e) => {
     closeDatePicker();
   }
 });
+
+window.addEventListener('resize', () => {
+  if (activeDateField) {
+    positionDatePicker(activeDateField);
+  }
+});
+
+window.addEventListener('scroll', () => {
+  if (activeDateField) {
+    positionDatePicker(activeDateField);
+  }
+}, true);
 
 dateFields.forEach(field => {
 
