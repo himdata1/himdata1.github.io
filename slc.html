@@ -128,21 +128,29 @@ select.gender-select {
   min-width: 40px;
 }
 
+.exam-period-group {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 4px;
+  border-bottom: 1px dotted #000;
+  padding: 0 2px;
+  line-height: 1.15;
+  vertical-align: baseline;
+}
+
 select.exam-month-select,
 select.exam-year-select {
   display: inline-block;
   width: auto;
   min-width: 0;
   max-width: none;
+  border-bottom: none;
   font-weight: bold;
   font-size: 13px;
-  padding: 0 1px;
+  padding: 0;
+  margin-right: 0;
   text-align: center;
   text-align-last: center;
-}
-
-select.exam-month-select {
-  margin-right: 2px;
 }
 
 select.exam-month-select:focus,
@@ -638,6 +646,16 @@ body.pdf-export-mode select.clean-select {
   background-color: transparent !important;
 }
 
+body.pdf-export-mode .exam-period-group {
+  border-bottom: 1px dotted #000 !important;
+  background-color: transparent !important;
+}
+
+body.pdf-export-mode select.exam-month-select,
+body.pdf-export-mode select.exam-year-select {
+  border-bottom: none !important;
+}
+
 body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
   border-bottom: 1px dotted #000 !important;
   background-color: transparent !important;
@@ -693,6 +711,16 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
     background: transparent !important;
     border: none;
     border-bottom: 1px dotted #000 !important;
+  }
+
+  .exam-period-group {
+    border-bottom: 1px dotted #000 !important;
+    background: transparent !important;
+  }
+
+  select.exam-month-select,
+  select.exam-year-select {
+    border-bottom: none !important;
   }
 
   .date-field:not(.table-date):not(.period-date) {
@@ -914,11 +942,11 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
               appeared in the Class 5 examination held in
 
-              <select id="examMonthSelect"
+              <span class="exam-period-group"><select id="examMonthSelect"
                       class="clean-select exam-month-select"
                       aria-label="Examination Month"></select><select id="examYearSelect"
                       class="clean-select exam-year-select"
-                      aria-label="Examination Year"></select>
+                      aria-label="Examination Year"></select></span>
 
               and passed.
 
