@@ -904,7 +904,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
           <li>
 
-            <input type="checkbox" id="opt2" class="single-choice">
+            <input type="checkbox" id="opt2" class="single-choice" checked>
 
             <div class="option-text">
 
@@ -1157,10 +1157,6 @@ const examYearSelect = document.getElementById('examYearSelect');
 
 /* Note: examMonthSelect and examYearSelect are intentionally excluded from localStorage persistence */
 const selects = [sessionSelect, genderSelect].filter(Boolean);
-
-const checkboxes = Array.from(
-  document.querySelectorAll('input[type="checkbox"]')
-);
 
 const singleChoices = Array.from(
   document.querySelectorAll('input[type="checkbox"].single-choice')
@@ -1988,7 +1984,7 @@ function updateLeavesTaken() {
   leavesTakenCell.textContent = String(leaves).padStart(2, '0');
 }
 
-/* Single Choice Checkboxes */
+/* Single Choice Checkboxes (not persisted in localStorage) */
 
 singleChoices.forEach(cb => {
 
@@ -2006,7 +2002,6 @@ singleChoices.forEach(cb => {
 
     }
 
-    saveDraft();
   });
 
 });
@@ -2057,7 +2052,7 @@ pupilNameField.addEventListener('blur', () => {
   saveDraft();
 });
 
-/* Save Draft (excludes bottomIssueDate, attendedUptoDate, withdrawalDate, examMonthSelect, and examYearSelect) */
+/* Save Draft (excludes checkboxes, bottomIssueDate, attendedUptoDate, withdrawalDate, examMonthSelect, and examYearSelect) */
 
 function saveDraft() {
 
@@ -2068,8 +2063,6 @@ function saveDraft() {
     editables: editables.map(el => el.innerHTML),
 
     selects: selects.map(sel => sel.value),
-
-    checkboxes: checkboxes.map(cb => cb.checked),
 
     dates: dateFields.map(f => (
       (f === bottomIssueDate || f === attendedUptoDate || f === withdrawalDate)
@@ -2139,7 +2132,7 @@ function loadDraft() {
 
     const data = JSON.parse(raw);
 
-    /* Remove any legacy saved exam month/year entries if present */
+    /* Remove any legacy saved exam month/year or checkbox entries if present */
     if (data && Object.prototype.hasOwnProperty.call(data, 'examMonthYear')) {
       delete data.examMonthYear;
     }
@@ -2148,6 +2141,9 @@ function loadDraft() {
     }
     if (data && Object.prototype.hasOwnProperty.call(data, 'examYear')) {
       delete data.examYear;
+    }
+    if (data && Object.prototype.hasOwnProperty.call(data, 'checkboxes')) {
+      delete data.checkboxes;
     }
 
     /* Restore Editable Fields */
@@ -2178,20 +2174,6 @@ function loadDraft() {
 
     }
 
-    /* Restore Checkboxes */
-
-    if (Array.isArray(data.checkboxes)) {
-
-      data.checkboxes.forEach((checked, idx) => {
-
-        if (checkboxes[idx] !== undefined) {
-          checkboxes[idx].checked = Boolean(checked);
-        }
-
-      });
-
-    }
-
     /* Restore Dates (except bottomIssueDate, attendedUptoDate, and withdrawalDate) */
 
     if (Array.isArray(data.dates)) {
@@ -2213,7 +2195,7 @@ function loadDraft() {
 
     }
 
-    /* Re-save cleaned draft without any legacy exam month/year data */
+    /* Re-save cleaned draft without any legacy exam month/year or checkbox data */
     saveDraft();
 
     initAttendedUptoDefault();
@@ -2287,17 +2269,6 @@ selects.forEach(sel => {
   if (sel !== genderSelect) {
 
     sel.addEventListener('change', saveDraft);
-  }
-
-});
-
-/* Checkbox Events */
-
-checkboxes.forEach(cb => {
-
-  if (!cb.classList.contains('single-choice')) {
-
-    cb.addEventListener('change', saveDraft);
   }
 
 });
