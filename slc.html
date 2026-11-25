@@ -113,12 +113,6 @@ select.clean-select,
   outline: none;
 }
 
-/* Remove dotted underline from He / She / His / Her */
-select.clean-select:not(.session-select):not(.gender-select) {
-  border-bottom: none;
-  padding: 0 1px;
-}
-
 select.clean-select::-ms-expand,
 .picker-select::-ms-expand {
   display: none;
@@ -616,10 +610,6 @@ body.pdf-export-mode select.clean-select {
   background-color: transparent !important;
 }
 
-body.pdf-export-mode select.clean-select:not(.session-select):not(.gender-select) {
-  border-bottom: none !important;
-}
-
 body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
   border-bottom: 1px dotted #000 !important;
   background-color: transparent !important;
@@ -675,11 +665,6 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
     background: transparent !important;
     border: none;
     border-bottom: 1px dotted #000 !important;
-  }
-
-  select.clean-select:not(.session-select):not(.gender-select) {
-    font-weight: normal !important;
-    border-bottom: none !important;
   }
 
   .date-field:not(.table-date):not(.period-date) {
@@ -743,7 +728,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
         <div class="academic-year">
           ( Academic Session:
 
-          <select class="clean-select session-select" aria-label="Academic Session">
+          <select id="sessionSelect" class="clean-select session-select" aria-label="Academic Session">
             <option value="2026-27" selected>2026-27</option>
             <option value="2027-28">2027-28</option>
             <option value="2028-29">2028-29</option>
@@ -870,18 +855,12 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
               role="button"
               aria-label="Attended up-to date"></span>.
 
-        <select id="pronounCap1" class="clean-select" aria-label="Pronoun">
-          <option value="He">He</option>
-          <option value="She">She</option>
-        </select>
+        <span id="pronounCap1">He</span>
 
         has settled all school dues / library books / free textbooks,
         and was allowed on the above date to withdraw
 
-        <select id="possessiveLower" class="clean-select" aria-label="Possessive">
-          <option value="his">his</option>
-          <option value="her">her</option>
-        </select>
+        <span id="possessiveLower">his</span>
 
         name.
 
@@ -901,10 +880,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
               <label for="opt2"><strong>1.</strong></label>
 
-              <select id="pronounCap3" class="clean-select" aria-label="Pronoun 1">
-                <option value="He">He</option>
-                <option value="She">She</option>
-              </select>
+              <span id="pronounCap3">He</span>
 
               appeared in the Class 5 examination held in
 
@@ -912,10 +888,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
               and passed.
 
-              <select id="pronounCap4" class="clean-select" aria-label="Pronoun 2">
-                <option value="He">He</option>
-                <option value="She">She</option>
-              </select>
+              <span id="pronounCap4">He</span>
 
               is now eligible for admission to Class 6.
 
@@ -931,10 +904,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
               <label for="opt1"><strong>2.</strong></label>
 
-              <select id="pronounCap2" class="clean-select" aria-label="Pronoun 3">
-                <option value="He">He</option>
-                <option value="She">She</option>
-              </select>
+              <span id="pronounCap2">He</span>
 
               was studying in
 
@@ -1146,9 +1116,10 @@ const editables = Array.from(
   document.querySelectorAll('[contenteditable="true"]')
 );
 
-const selects = Array.from(
-  document.querySelectorAll('select.clean-select')
-);
+const sessionSelect = document.getElementById('sessionSelect');
+const genderSelect = document.getElementById('genderSelect');
+
+const selects = [sessionSelect, genderSelect].filter(Boolean);
 
 const checkboxes = Array.from(
   document.querySelectorAll('input[type="checkbox"]')
@@ -1162,7 +1133,6 @@ const dateFields = Array.from(
   document.querySelectorAll('.date-field')
 );
 
-const genderSelect = document.getElementById('genderSelect');
 const pronounCap1 = document.getElementById('pronounCap1');
 const pronounCap2 = document.getElementById('pronounCap2');
 const pronounCap3 = document.getElementById('pronounCap3');
@@ -1271,11 +1241,11 @@ function applyGenderToPronouns() {
   const capPronoun = isFemale ? 'She' : 'He';
   const possPronoun = isFemale ? 'her' : 'his';
 
-  if (pronounCap1) pronounCap1.value = capPronoun;
-  if (pronounCap2) pronounCap2.value = capPronoun;
-  if (pronounCap3) pronounCap3.value = capPronoun;
-  if (pronounCap4) pronounCap4.value = capPronoun;
-  if (possessiveLower) possessiveLower.value = possPronoun;
+  if (pronounCap1) pronounCap1.textContent = capPronoun;
+  if (pronounCap2) pronounCap2.textContent = capPronoun;
+  if (pronounCap3) pronounCap3.textContent = capPronoun;
+  if (pronounCap4) pronounCap4.textContent = capPronoun;
+  if (possessiveLower) possessiveLower.textContent = possPronoun;
 }
 
 if (genderSelect) {
