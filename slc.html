@@ -1191,7 +1191,6 @@ const genderSelect = document.getElementById('genderSelect');
 const examPeriodGroup = document.getElementById('examPeriodGroup');
 const examMonthSelect = document.getElementById('examMonthSelect');
 const examYearSelect = document.getElementById('examYearSelect');
-const opt2Checkbox = document.getElementById('opt2');
 const opt1Checkbox = document.getElementById('opt1');
 
 /* Note: examMonthSelect and examYearSelect are intentionally excluded from localStorage persistence */
@@ -1213,6 +1212,8 @@ const possessiveLower = document.getElementById('possessiveLower');
 
 const attendedUptoDate = document.getElementById('attendedUptoDate');
 const withdrawalDate = document.getElementById('withdrawalDate');
+const periodFromDate = document.getElementById('periodFromDate');
+const periodLastDate = document.getElementById('periodLastDate');
 const bottomIssueDate = document.getElementById('bottomIssueDate');
 
 const schoolNameField = document.getElementById('schoolNameField');
@@ -1254,6 +1255,22 @@ function getTodayIso() {
 function getDefaultWithdrawalIso() {
   const currentYear = new Date().getFullYear();
   return `${currentYear}-03-31`;
+}
+
+/* Default Attendance Period Dates: 01/04/Previous Year to 31/03/Current Year */
+
+function getDefaultPeriodFromIso() {
+  const prevYear = new Date().getFullYear() - 1;
+  return `${prevYear}-04-01`;
+}
+
+function getDefaultPeriodToIso() {
+  const currentYear = new Date().getFullYear();
+  return `${currentYear}-03-31`;
+}
+
+function isAttendancePeriodField(field) {
+  return field === periodFromDate || field === periodLastDate;
 }
 
 /* Auto-Fit Select Width Tightly to Selected Option Text */
@@ -1425,7 +1442,6 @@ window.finishAndroidPdfExport = function () {
 /* Sync Pronouns & Possessive from Gender */
 
 function applyGenderToPronouns() {
-
   if (!genderSelect) {
     return;
   }
@@ -1443,11 +1459,8 @@ function applyGenderToPronouns() {
 }
 
 if (genderSelect) {
-
   genderSelect.addEventListener('change', () => {
-
     applyGenderToPronouns();
-
     saveDraft();
   });
 }
@@ -1455,7 +1468,6 @@ if (genderSelect) {
 /* Year Dropdown */
 
 for (let y = 1995; y <= 2045; y++) {
-
   const opt = document.createElement('option');
 
   opt.value = String(y);
@@ -1467,7 +1479,6 @@ for (let y = 1995; y <= 2045; y++) {
 /* Format Date as DD/MM/YYYY */
 
 function formatDisplayDate(isoStr) {
-
   if (!isoStr || !/^\d{4}-\d{2}-\d{2}$/.test(isoStr)) {
     return '';
   }
@@ -1480,7 +1491,6 @@ function formatDisplayDate(isoStr) {
 /* Number to English Words */
 
 function numberToWords(num) {
-
   const ones = [
     '',
     'One',
@@ -1526,19 +1536,16 @@ function numberToWords(num) {
   }
 
   if (num < 100) {
-
     return tens[Math.floor(num / 10)] +
       (num % 10 ? ' ' + ones[num % 10] : '');
   }
 
   if (num < 1000) {
-
     return ones[Math.floor(num / 100)] + ' Hundred' +
       (num % 100 ? ' ' + numberToWords(num % 100) : '');
   }
 
   if (num < 10000) {
-
     return numberToWords(Math.floor(num / 1000)) +
       ' Thousand' +
       (num % 1000 ? ' ' + numberToWords(num % 1000) : '');
@@ -1550,7 +1557,6 @@ function numberToWords(num) {
 /* Convert Date of Birth into Words */
 
 function convertDateToWords(isoDate) {
-
   if (!isoDate || !/^\d{4}-\d{2}-\d{2}$/.test(isoDate)) {
     return '';
   }
@@ -1607,9 +1613,7 @@ function convertDateToWords(isoDate) {
   };
 
   const dayInWords = dayWords[day];
-
   const monthInWords = months[month - 1];
-
   const yearInWords = numberToWords(year);
 
   return `${dayInWords} ${monthInWords} ${yearInWords}`;
@@ -1618,7 +1622,6 @@ function convertDateToWords(isoDate) {
 /* Automatically Update DOB in Words */
 
 function updateDobWords() {
-
   if (!dobDate || !dobWordsField) {
     return;
   }
@@ -1631,7 +1634,6 @@ function updateDobWords() {
 /* Sync Withdrawal Date from Attended Upto Date */
 
 function syncWithdrawalDateFromAttendedUpto(shouldSave = false) {
-
   if (!attendedUptoDate || !withdrawalDate) {
     return;
   }
@@ -1643,26 +1645,26 @@ function syncWithdrawalDateFromAttendedUpto(shouldSave = false) {
 /* Set Date */
 
 function setFieldDate(field, isoStr, shouldSave = true) {
-
   const cleanIso = isoStr || '';
 
   field.dataset.date = cleanIso;
-
   field.textContent = formatDisplayDate(cleanIso);
-
-  /* Automatically update DOB in words */
 
   if (field === dobDate) {
     updateDobWords();
   }
 
-  /* Sync table Date of Withdrawal when attendedUptoDate changes */
-
   if (field === attendedUptoDate) {
     syncWithdrawalDateFromAttendedUpto(false);
   }
 
-  if (shouldSave && field !== bottomIssueDate && field !== attendedUptoDate && field !== withdrawalDate) {
+  if (
+    shouldSave &&
+    field !== bottomIssueDate &&
+    field !== attendedUptoDate &&
+    field !== withdrawalDate &&
+    !isAttendancePeriodField(field)
+  ) {
     saveDraft();
   }
 }
@@ -1701,7 +1703,6 @@ function getDatePickerScale() {
 /* Position Date Picker Directly Below Clicked Date Field (Accounts for CSS Scale Automatically) */
 
 function positionDatePicker(field) {
-
   if (!field || !dpCard || !dpModal.classList.contains('open')) {
     return;
   }
@@ -1738,15 +1739,11 @@ function positionDatePicker(field) {
 /* Render Calendar */
 
 function renderDaysGrid() {
-
   dpDaysGrid.innerHTML = '';
 
   const year = parseInt(dpYearSelect.value, 10);
-
   const month = parseInt(dpMonthSelect.value, 10);
-
   const firstDay = new Date(year, month, 1).getDay();
-
   const totalDays = new Date(year, month + 1, 0).getDate();
 
   const selectedIso = activeDateField
@@ -1754,34 +1751,24 @@ function renderDaysGrid() {
     : '';
 
   for (let i = 0; i < firstDay; i++) {
-
     const blank = document.createElement('div');
-
     blank.className = 'dp-day-btn empty';
-
     dpDaysGrid.appendChild(blank);
   }
 
   for (let day = 1; day <= totalDays; day++) {
-
     const mm = String(month + 1).padStart(2, '0');
-
     const dd = String(day).padStart(2, '0');
-
     const iso = `${year}-${mm}-${dd}`;
 
     const btn = document.createElement('button');
-
     btn.type = 'button';
-
     btn.className =
       'dp-day-btn' +
       (selectedIso === iso ? ' selected' : '');
-
     btn.textContent = String(day);
 
     btn.addEventListener('click', (ev) => {
-
       ev.stopPropagation();
 
       if (activeDateField) {
@@ -1789,7 +1776,6 @@ function renderDaysGrid() {
       }
 
       closeDatePicker();
-
     });
 
     dpDaysGrid.appendChild(btn);
@@ -1803,7 +1789,6 @@ function renderDaysGrid() {
 /* Open Date Picker */
 
 function openDatePicker(field) {
-
   if (!field) {
     return;
   }
@@ -1820,18 +1805,14 @@ function openDatePicker(field) {
 
   if (field.dataset.date &&
       /^\d{4}-\d{2}-\d{2}$/.test(field.dataset.date)) {
-
     const [y, m, d] = field.dataset.date.split('-').map(Number);
-
     baseDate = new Date(y, m - 1, d);
   }
 
   dpMonthSelect.value = String(baseDate.getMonth());
-
   dpYearSelect.value = String(baseDate.getFullYear());
 
   dpModal.classList.add('open');
-
   dpModal.setAttribute('aria-hidden', 'false');
 
   renderDaysGrid();
@@ -1840,9 +1821,7 @@ function openDatePicker(field) {
 /* Close Date Picker */
 
 function closeDatePicker() {
-
   dpModal.classList.remove('open');
-
   dpModal.setAttribute('aria-hidden', 'true');
 
   dateFields.forEach(f => {
@@ -1855,18 +1834,14 @@ function closeDatePicker() {
 /* Date Picker Events */
 
 dpMonthSelect.addEventListener('change', renderDaysGrid);
-
 dpYearSelect.addEventListener('change', renderDaysGrid);
 
 dpCloseBtn.addEventListener('click', (ev) => {
-
   ev.stopPropagation();
-
   closeDatePicker();
 });
 
 dpModal.addEventListener('click', (e) => {
-
   if (e.target === dpModal) {
     closeDatePicker();
   }
@@ -1885,30 +1860,22 @@ window.addEventListener('scroll', () => {
 }, true);
 
 dateFields.forEach(field => {
-
   field.addEventListener('click', (ev) => {
-
     ev.stopPropagation();
-
     openDatePicker(field);
   });
 
   field.addEventListener('keydown', (e) => {
-
     if (e.key === 'Enter' || e.key === ' ') {
-
       e.preventDefault();
-
       openDatePicker(field);
     }
   });
-
 });
 
 /* Select All Text Helper */
 
 function selectAllContent(el) {
-
   if (!el || document.activeElement !== el) {
     return;
   }
@@ -1920,38 +1887,30 @@ function selectAllContent(el) {
   }
 
   const range = document.createRange();
-
   range.selectNodeContents(el);
 
   const sel = window.getSelection();
-
   sel.removeAllRanges();
-
   sel.addRange(range);
 }
 
 /* Clear Active Selection on 2nd Tap Without Opening Cut/Copy Menu */
 
 function clearSelectionOnSecondTap(el) {
-
   const sel = window.getSelection();
 
   if (sel && sel.rangeCount > 0 && !sel.isCollapsed) {
-
     sel.removeAllRanges();
 
     const range = document.createRange();
-
     const lastNode = el.lastChild;
 
     if (lastNode) {
-
       if (lastNode.nodeType === Node.TEXT_NODE) {
         range.setStart(lastNode, lastNode.length);
       } else {
         range.setStartAfter(lastNode);
       }
-
     } else {
       range.setStart(el, 0);
     }
@@ -1964,11 +1923,9 @@ function clearSelectionOnSecondTap(el) {
 /* GPS Trailing Space */
 
 function ensureGpsTrailingSpace(el) {
-
   const normalized = el.textContent.replace(/\u00a0/g, ' ');
 
   if (normalized === 'GPS') {
-
     el.innerHTML = 'GPS&nbsp;';
   }
 }
@@ -1976,11 +1933,9 @@ function ensureGpsTrailingSpace(el) {
 /* Select Entire Existing Text Only on 1st Focus; Clear Selection on 2nd Tap */
 
 editables.forEach(el => {
-
   let wasAlreadyFocusedOnDown = false;
 
   el.addEventListener('focus', () => {
-
     if (el === schoolNameField) {
       ensureGpsTrailingSpace(el);
     }
@@ -2018,13 +1973,11 @@ editables.forEach(el => {
 
   /* Prevent accidental line breaks on Enter in single-line fields */
   el.addEventListener('keydown', (e) => {
-
     if (e.key !== 'Shift' && e.key !== 'Control' && e.key !== 'Alt' && e.key !== 'Meta') {
       wasAlreadyFocusedOnDown = false;
     }
 
     if (e.key === 'Enter') {
-
       e.preventDefault();
 
       const idx = editables.indexOf(el);
@@ -2034,24 +1987,19 @@ editables.forEach(el => {
       } else {
         el.blur();
       }
-
     }
-
   });
-
 });
 
 /* Update leaves on input and restore '0' on blur if empty */
 
 [workingDaysCell, attendanceDaysCell].forEach(cell => {
-
   cell.addEventListener('input', () => {
     updateLeavesTaken();
     saveDraft();
   });
 
   cell.addEventListener('blur', () => {
-
     const cleaned = cell.textContent.replace(/\u00a0/g, ' ').trim();
 
     if (cleaned === '') {
@@ -2059,16 +2007,13 @@ editables.forEach(el => {
     }
 
     updateLeavesTaken();
-
     saveDraft();
   });
-
 });
 
 /* Calculate Leaves */
 
 function updateLeavesTaken() {
-
   const workingRaw = parseFloat(
     workingDaysCell.textContent.replace(/[^\d.-]/g, '')
   );
@@ -2078,7 +2023,6 @@ function updateLeavesTaken() {
   );
 
   const working = Number.isNaN(workingRaw) ? 0 : workingRaw;
-
   const attended = Number.isNaN(attendedRaw) ? 0 : attendedRaw;
 
   const leaves = Math.max(0, Math.round(working - attended));
@@ -2089,154 +2033,124 @@ function updateLeavesTaken() {
 /* Single Choice Checkboxes (not persisted in localStorage) */
 
 singleChoices.forEach(cb => {
-
   cb.addEventListener('change', () => {
-
     if (cb.checked) {
-
       singleChoices.forEach(other => {
-
         if (other !== cb) {
           other.checked = false;
         }
-
       });
-
     }
 
     syncExamMonthYearVisibility();
-
   });
-
 });
 
 /* Synchronize School Name from Top Field to Table Field */
 
 function syncSchoolNameToTable() {
-
   if (schoolNameField && tableSchoolField) {
     tableSchoolField.innerHTML = schoolNameField.innerHTML;
   }
 }
 
 schoolNameField.addEventListener('input', () => {
-
   syncSchoolNameToTable();
-
   saveDraft();
 });
 
 schoolNameField.addEventListener('blur', () => {
-
   syncSchoolNameToTable();
-
   saveDraft();
 });
 
 /* Synchronize Pupil Name from Top Field to Certification Field */
 
 function syncPupilNameToCert() {
-
   if (pupilNameField && certPupilNameField) {
     certPupilNameField.innerHTML = pupilNameField.innerHTML;
   }
 }
 
 pupilNameField.addEventListener('input', () => {
-
   syncPupilNameToCert();
-
   saveDraft();
 });
 
 pupilNameField.addEventListener('blur', () => {
-
   syncPupilNameToCert();
-
   saveDraft();
 });
 
-/* Save Draft (excludes checkboxes, bottomIssueDate, attendedUptoDate, withdrawalDate, examMonthSelect, and examYearSelect) */
+/* Apply Default Dates for Attended Upto, Withdrawal, Attendance Period, and Issue Date */
 
-function saveDraft() {
-
-  updateLeavesTaken();
-
-  const data = {
-
-    editables: editables.map(el => el.innerHTML),
-
-    selects: selects.map(sel => sel.value),
-
-    dates: dateFields.map(f => (
-      (f === bottomIssueDate || f === attendedUptoDate || f === withdrawalDate)
-        ? ''
-        : (f.dataset.date || '')
-    )),
-
-    leavesTaken: leavesTakenCell.textContent
-  };
-
-  try {
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
-
-  } catch (e) {}
-
-}
-
-/* Always set Attended up-to date to 31 March of current year on open/load */
-
-function initAttendedUptoDefault() {
+function applyDefaultSystemDates() {
   if (attendedUptoDate) {
     setFieldDate(attendedUptoDate, getDefaultWithdrawalIso(), false);
   }
-}
 
-/* Always set Date of issue to today's current date on open/load */
+  syncWithdrawalDateFromAttendedUpto(false);
 
-function initIssueDateToday() {
+  if (periodFromDate) {
+    setFieldDate(periodFromDate, getDefaultPeriodFromIso(), false);
+  }
+
+  if (periodLastDate) {
+    setFieldDate(periodLastDate, getDefaultPeriodToIso(), false);
+  }
+
   if (bottomIssueDate) {
     setFieldDate(bottomIssueDate, getTodayIso(), false);
   }
 }
 
+/* Save Draft (excludes checkboxes, bottomIssueDate, attendedUptoDate, withdrawalDate, attendance period dates, examMonthSelect, and examYearSelect) */
+
+function saveDraft() {
+  updateLeavesTaken();
+
+  const data = {
+    editables: editables.map(el => el.innerHTML),
+    selects: selects.map(sel => sel.value),
+    dates: dateFields.map(f => (
+      (
+        f === bottomIssueDate ||
+        f === attendedUptoDate ||
+        f === withdrawalDate ||
+        isAttendancePeriodField(f)
+      )
+        ? ''
+        : (f.dataset.date || '')
+    )),
+    leavesTaken: leavesTakenCell.textContent
+  };
+
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+  } catch (e) {}
+}
+
 /* Load Draft */
 
 function loadDraft() {
-
   initExamMonthYearDropdowns();
 
   try {
-
     const raw = localStorage.getItem(STORAGE_KEY);
 
     if (!raw) {
-
-      initAttendedUptoDefault();
-
-      syncWithdrawalDateFromAttendedUpto(false);
-
-      initIssueDateToday();
-
+      applyDefaultSystemDates();
       syncPupilNameToCert();
-
       syncSchoolNameToTable();
-
       applyGenderToPronouns();
-
       updateLeavesTaken();
-
       updateDobWords();
-
       syncExamMonthYearVisibility();
-
       return;
     }
 
     const data = JSON.parse(raw);
 
-    /* Remove any legacy saved exam month/year or checkbox entries if present */
     if (data && Object.prototype.hasOwnProperty.call(data, 'examMonthYear')) {
       delete data.examMonthYear;
     }
@@ -2250,100 +2164,56 @@ function loadDraft() {
       delete data.checkboxes;
     }
 
-    /* Restore Editable Fields */
-
     if (Array.isArray(data.editables)) {
-
       data.editables.forEach((html, idx) => {
-
         if (editables[idx] !== undefined) {
           editables[idx].innerHTML = html;
         }
-
       });
-
     }
 
-    /* Restore Selects (examMonthSelect & examYearSelect stay at default "March" and current year) */
-
     if (Array.isArray(data.selects)) {
-
       data.selects.forEach((val, idx) => {
-
         if (selects[idx] !== undefined && val !== undefined) {
           selects[idx].value = val;
         }
-
       });
-
     }
-
-    /* Restore Dates (except bottomIssueDate, attendedUptoDate, and withdrawalDate) */
 
     if (Array.isArray(data.dates)) {
-
       data.dates.forEach((val, idx) => {
-
-        if (dateFields[idx] !== undefined &&
-            dateFields[idx] !== bottomIssueDate &&
-            dateFields[idx] !== attendedUptoDate &&
-            dateFields[idx] !== withdrawalDate &&
-            typeof val === 'string') {
-
-          dateFields[idx].dataset.date = val;
-
-          dateFields[idx].textContent = formatDisplayDate(val);
+        const targetField = dateFields[idx];
+        if (
+          targetField !== undefined &&
+          targetField !== bottomIssueDate &&
+          targetField !== attendedUptoDate &&
+          targetField !== withdrawalDate &&
+          !isAttendancePeriodField(targetField) &&
+          typeof val === 'string'
+        ) {
+          targetField.dataset.date = val;
+          targetField.textContent = formatDisplayDate(val);
         }
-
       });
-
     }
 
-    /* Re-save cleaned draft without any legacy exam month/year or checkbox data */
     saveDraft();
-
-    initAttendedUptoDefault();
-
-    syncWithdrawalDateFromAttendedUpto(false);
-
-    initIssueDateToday();
-
+    applyDefaultSystemDates();
     syncPupilNameToCert();
-
     ensureGpsTrailingSpace(schoolNameField);
-
     syncSchoolNameToTable();
-
     applyGenderToPronouns();
-
     updateLeavesTaken();
-
-    /* Restore DOB in Words Automatically */
-
     updateDobWords();
-
     syncExamMonthYearVisibility();
-
   } catch (e) {
-
     initExamMonthYearDropdowns();
-
-    initAttendedUptoDefault();
-
-    syncWithdrawalDateFromAttendedUpto(false);
-
-    initIssueDateToday();
-
+    applyDefaultSystemDates();
     syncPupilNameToCert();
-
     syncSchoolNameToTable();
-
     applyGenderToPronouns();
-
     updateLeavesTaken();
-
     updateDobWords();
-
     syncExamMonthYearVisibility();
   }
 }
@@ -2351,30 +2221,24 @@ function loadDraft() {
 /* Editable Field Events */
 
 editables.forEach(el => {
-
   if (
     el !== schoolNameField &&
     el !== pupilNameField &&
     el !== workingDaysCell &&
     el !== attendanceDaysCell
   ) {
-
     el.addEventListener('input', saveDraft);
   }
 
   el.addEventListener('blur', saveDraft);
-
 });
 
 /* Select Events */
 
 selects.forEach(sel => {
-
   if (sel !== genderSelect) {
-
     sel.addEventListener('change', saveDraft);
   }
-
 });
 
 /* Load Saved Data */
