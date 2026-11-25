@@ -91,7 +91,6 @@ body {
 .w-mother-name { min-width: 100px; } /* Name of Mother | max-width: none */
 .w-cert-pupil { min-width: 100px; } /* Certified Pupil Name (in certification paragraph) | max-width: none */
 .w-opt1-class { min-width: 25px; } /* Mid-session withdrawal class | max-width: none */
-.w-opt2-exam { min-width: 25px; } /* Exam Month/Year (March 2027) | max-width: none */
 
 /* Select dropdown */
 
@@ -127,6 +126,28 @@ select.gender-select {
   font-weight: bold;
   font-size: 13px;
   min-width: 40px;
+}
+
+select.exam-month-select,
+select.exam-year-select {
+  display: inline-block;
+  width: auto;
+  min-width: 0;
+  max-width: none;
+  font-weight: bold;
+  font-size: 13px;
+  padding: 0 1px;
+  text-align: center;
+  text-align-last: center;
+}
+
+select.exam-month-select {
+  margin-right: 2px;
+}
+
+select.exam-month-select:focus,
+select.exam-year-select:focus {
+  background-color: #fff9db;
 }
 
 /* Date fields */
@@ -893,7 +914,11 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
               appeared in the Class 5 examination held in
 
-              <span class="editable w-opt2-exam" contenteditable="true">March 2027</span>
+              <select id="examMonthSelect"
+                      class="clean-select exam-month-select"
+                      aria-label="Examination Month"></select><select id="examYearSelect"
+                      class="clean-select exam-year-select"
+                      aria-label="Examination Year"></select>
 
               and passed.
 
@@ -1127,7 +1152,10 @@ const editables = Array.from(
 
 const sessionSelect = document.getElementById('sessionSelect');
 const genderSelect = document.getElementById('genderSelect');
+const examMonthSelect = document.getElementById('examMonthSelect');
+const examYearSelect = document.getElementById('examYearSelect');
 
+/* Note: examMonthSelect and examYearSelect are intentionally excluded from localStorage persistence */
 const selects = [sessionSelect, genderSelect].filter(Boolean);
 
 const checkboxes = Array.from(
@@ -1191,6 +1219,97 @@ function getTodayIso() {
 function getDefaultWithdrawalIso() {
   const currentYear = new Date().getFullYear();
   return `${currentYear}-03-31`;
+}
+
+/* Auto-Fit Select Width Tightly to Selected Option Text */
+
+function resizeSelectToContent(selectEl) {
+  if (!selectEl) {
+    return;
+  }
+
+  const selectedOption = selectEl.options[selectEl.selectedIndex];
+  const labelText = selectedOption ? selectedOption.textContent : selectEl.value;
+  const computed = window.getComputedStyle(selectEl);
+
+  const probe = document.createElement('span');
+  probe.style.position = 'fixed';
+  probe.style.visibility = 'hidden';
+  probe.style.pointerEvents = 'none';
+  probe.style.whiteSpace = 'pre';
+  probe.style.fontFamily = computed.fontFamily;
+  probe.style.fontSize = computed.fontSize;
+  probe.style.fontWeight = computed.fontWeight;
+  probe.style.letterSpacing = computed.letterSpacing;
+  probe.textContent = labelText;
+
+  document.body.appendChild(probe);
+  const textWidth = probe.getBoundingClientRect().width;
+  document.body.removeChild(probe);
+
+  selectEl.style.width = `${Math.ceil(textWidth) + 2}px`;
+}
+
+function syncExamDropdownWidths() {
+  resizeSelectToContent(examMonthSelect);
+  resizeSelectToContent(examYearSelect);
+}
+
+/* Populate Separate Exam Month & Year Dropdowns with Default "March" and Current Year */
+
+function initExamMonthYearDropdowns() {
+  const months = [
+    'January',
+    'February',
+    'March',
+    'April',
+    'May',
+    'June',
+    'July',
+    'August',
+    'September',
+    'October',
+    'November',
+    'December'
+  ];
+
+  const currentYear = new Date().getFullYear();
+
+  if (examMonthSelect) {
+    examMonthSelect.innerHTML = '';
+    months.forEach((mName) => {
+      const opt = document.createElement('option');
+      opt.value = mName;
+      opt.textContent = mName;
+      examMonthSelect.appendChild(opt);
+    });
+    examMonthSelect.value = 'March';
+  }
+
+  if (examYearSelect) {
+    examYearSelect.innerHTML = '';
+    for (let y = currentYear - 2; y <= currentYear + 5; y++) {
+      const opt = document.createElement('option');
+      opt.value = String(y);
+      opt.textContent = String(y);
+      examYearSelect.appendChild(opt);
+    }
+    examYearSelect.value = String(currentYear);
+  }
+
+  syncExamDropdownWidths();
+}
+
+if (examMonthSelect) {
+  examMonthSelect.addEventListener('change', () => {
+    resizeSelectToContent(examMonthSelect);
+  });
+}
+
+if (examYearSelect) {
+  examYearSelect.addEventListener('change', () => {
+    resizeSelectToContent(examYearSelect);
+  });
 }
 
 /* Android App PDF / Print Bridge */
@@ -1938,7 +2057,7 @@ pupilNameField.addEventListener('blur', () => {
   saveDraft();
 });
 
-/* Save Draft (excludes bottomIssueDate, attendedUptoDate, and withdrawalDate) */
+/* Save Draft (excludes bottomIssueDate, attendedUptoDate, withdrawalDate, examMonthSelect, and examYearSelect) */
 
 function saveDraft() {
 
@@ -1989,6 +2108,8 @@ function initIssueDateToday() {
 
 function loadDraft() {
 
+  initExamMonthYearDropdowns();
+
   try {
 
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -2011,10 +2132,23 @@ function loadDraft() {
 
       updateDobWords();
 
+      syncExamDropdownWidths();
+
       return;
     }
 
     const data = JSON.parse(raw);
+
+    /* Remove any legacy saved exam month/year entries if present */
+    if (data && Object.prototype.hasOwnProperty.call(data, 'examMonthYear')) {
+      delete data.examMonthYear;
+    }
+    if (data && Object.prototype.hasOwnProperty.call(data, 'examMonth')) {
+      delete data.examMonth;
+    }
+    if (data && Object.prototype.hasOwnProperty.call(data, 'examYear')) {
+      delete data.examYear;
+    }
 
     /* Restore Editable Fields */
 
@@ -2030,7 +2164,7 @@ function loadDraft() {
 
     }
 
-    /* Restore Selects */
+    /* Restore Selects (examMonthSelect & examYearSelect stay at default "March" and current year) */
 
     if (Array.isArray(data.selects)) {
 
@@ -2079,6 +2213,9 @@ function loadDraft() {
 
     }
 
+    /* Re-save cleaned draft without any legacy exam month/year data */
+    saveDraft();
+
     initAttendedUptoDefault();
 
     syncWithdrawalDateFromAttendedUpto(false);
@@ -2099,7 +2236,11 @@ function loadDraft() {
 
     updateDobWords();
 
+    syncExamDropdownWidths();
+
   } catch (e) {
+
+    initExamMonthYearDropdowns();
 
     initAttendedUptoDefault();
 
@@ -2116,6 +2257,8 @@ function loadDraft() {
     updateLeavesTaken();
 
     updateDobWords();
+
+    syncExamDropdownWidths();
   }
 }
 
