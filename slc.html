@@ -1169,6 +1169,7 @@ const pronounCap3 = document.getElementById('pronounCap3');
 const pronounCap4 = document.getElementById('pronounCap4');
 const possessiveLower = document.getElementById('possessiveLower');
 
+const attendedUptoDate = document.getElementById('attendedUptoDate');
 const withdrawalDate = document.getElementById('withdrawalDate');
 const bottomIssueDate = document.getElementById('bottomIssueDate');
 
@@ -1204,6 +1205,13 @@ function getTodayIso() {
   const m = String(now.getMonth() + 1).padStart(2, '0');
   const d = String(now.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
+}
+
+/* Default Withdrawal Date: 31 March of Current Year */
+
+function getDefaultWithdrawalIso() {
+  const currentYear = new Date().getFullYear();
+  return `${currentYear}-03-31`;
 }
 
 /* Android App PDF / Print Bridge */
@@ -1456,6 +1464,18 @@ function updateDobWords() {
   dobWordsField.textContent = convertDateToWords(selectedDate);
 }
 
+/* Sync Withdrawal Date from Attended Upto Date */
+
+function syncWithdrawalDateFromAttendedUpto(shouldSave = false) {
+
+  if (!attendedUptoDate || !withdrawalDate) {
+    return;
+  }
+
+  const uptoIso = attendedUptoDate.dataset.date || getDefaultWithdrawalIso();
+  setFieldDate(withdrawalDate, uptoIso, shouldSave);
+}
+
 /* Set Date */
 
 function setFieldDate(field, isoStr, shouldSave = true) {
@@ -1472,7 +1492,13 @@ function setFieldDate(field, isoStr, shouldSave = true) {
     updateDobWords();
   }
 
-  if (shouldSave && field !== bottomIssueDate) {
+  /* Sync table Date of Withdrawal when attendedUptoDate changes */
+
+  if (field === attendedUptoDate) {
+    syncWithdrawalDateFromAttendedUpto(false);
+  }
+
+  if (shouldSave && field !== bottomIssueDate && field !== attendedUptoDate && field !== withdrawalDate) {
     saveDraft();
   }
 }
@@ -1933,7 +1959,7 @@ pupilNameField.addEventListener('blur', () => {
   saveDraft();
 });
 
-/* Save Draft (excludes bottomIssueDate) */
+/* Save Draft (excludes bottomIssueDate, attendedUptoDate, and withdrawalDate) */
 
 function saveDraft() {
 
@@ -1947,7 +1973,11 @@ function saveDraft() {
 
     checkboxes: checkboxes.map(cb => cb.checked),
 
-    dates: dateFields.map(f => (f === bottomIssueDate ? '' : (f.dataset.date || ''))),
+    dates: dateFields.map(f => (
+      (f === bottomIssueDate || f === attendedUptoDate || f === withdrawalDate)
+        ? ''
+        : (f.dataset.date || '')
+    )),
 
     leavesTaken: leavesTakenCell.textContent
   };
@@ -1960,11 +1990,11 @@ function saveDraft() {
 
 }
 
-/* Set Date of Withdrawal to today's current date on open/load */
+/* Always set Attended up-to date to 31 March of current year on open/load */
 
-function initWithdrawalDateToday() {
-  if (withdrawalDate) {
-    setFieldDate(withdrawalDate, getTodayIso(), false);
+function initAttendedUptoDefault() {
+  if (attendedUptoDate) {
+    setFieldDate(attendedUptoDate, getDefaultWithdrawalIso(), false);
   }
 }
 
@@ -1986,7 +2016,9 @@ function loadDraft() {
 
     if (!raw) {
 
-      initWithdrawalDateToday();
+      initAttendedUptoDefault();
+
+      syncWithdrawalDateFromAttendedUpto(false);
 
       initIssueDateToday();
 
@@ -2047,7 +2079,7 @@ function loadDraft() {
 
     }
 
-    /* Restore Dates (except bottomIssueDate, which always uses current date) */
+    /* Restore Dates (except bottomIssueDate, attendedUptoDate, and withdrawalDate) */
 
     if (Array.isArray(data.dates)) {
 
@@ -2055,6 +2087,8 @@ function loadDraft() {
 
         if (dateFields[idx] !== undefined &&
             dateFields[idx] !== bottomIssueDate &&
+            dateFields[idx] !== attendedUptoDate &&
+            dateFields[idx] !== withdrawalDate &&
             typeof val === 'string') {
 
           dateFields[idx].dataset.date = val;
@@ -2066,7 +2100,9 @@ function loadDraft() {
 
     }
 
-    initWithdrawalDateToday();
+    initAttendedUptoDefault();
+
+    syncWithdrawalDateFromAttendedUpto(false);
 
     initIssueDateToday();
 
@@ -2086,7 +2122,9 @@ function loadDraft() {
 
   } catch (e) {
 
-    initWithdrawalDateToday();
+    initAttendedUptoDefault();
+
+    syncWithdrawalDateFromAttendedUpto(false);
 
     initIssueDateToday();
 
