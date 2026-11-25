@@ -499,7 +499,7 @@ table.records-table td[contenteditable="true"]:focus {
   box-shadow: 0 3px 8px rgba(0,0,0,0.18);
 }
 
-/* Date Picker (Compact ~30% smaller, anchored below clicked date field) */
+/* Date Picker (Change only transform: scale(...) here to resize overall) */
 
 .date-picker-backdrop {
   display: none;
@@ -521,6 +521,8 @@ table.records-table td[contenteditable="true"]:focus {
   width: 185px;
   padding: 6px 7px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  transform: scale(0.8);
+  transform-origin: top left;
 }
 
 .dp-header {
@@ -1665,7 +1667,38 @@ function setFieldDate(field, isoStr, shouldSave = true) {
   }
 }
 
-/* Position Date Picker Directly Below Clicked Date Field */
+/* Read CSS Transform Scale Automatically from .date-picker-card */
+
+function getDatePickerScale() {
+  if (!dpCard) {
+    return 1;
+  }
+
+  const transformVal = window.getComputedStyle(dpCard).transform;
+  if (!transformVal || transformVal === 'none') {
+    return 1;
+  }
+
+  const matrixMatch = transformVal.match(/^matrix\(([^)]+)\)$/);
+  if (matrixMatch) {
+    const firstVal = parseFloat(matrixMatch[1].split(',')[0]);
+    if (!Number.isNaN(firstVal) && firstVal > 0) {
+      return firstVal;
+    }
+  }
+
+  const scaleMatch = transformVal.match(/scale\(([^)]+)\)/);
+  if (scaleMatch) {
+    const parsed = parseFloat(scaleMatch[1]);
+    if (!Number.isNaN(parsed) && parsed > 0) {
+      return parsed;
+    }
+  }
+
+  return 1;
+}
+
+/* Position Date Picker Directly Below Clicked Date Field (Accounts for CSS Scale Automatically) */
 
 function positionDatePicker(field) {
 
@@ -1673,11 +1706,12 @@ function positionDatePicker(field) {
     return;
   }
 
+  const scale = getDatePickerScale();
   const gap = 4;
   const margin = 8;
   const rect = field.getBoundingClientRect();
-  const cardWidth = dpCard.offsetWidth || 185;
-  const cardHeight = dpCard.offsetHeight || 195;
+  const cardWidth = (dpCard.offsetWidth || 185) * scale;
+  const cardHeight = (dpCard.offsetHeight || 195) * scale;
 
   let left = rect.left;
   if (left + cardWidth > window.innerWidth - margin) {
