@@ -131,9 +131,9 @@ select.gender-select {
 .exam-period-group {
   display: inline-flex;
   align-items: baseline;
-  gap: 4px;
+  gap: 5px;
   border-bottom: 1px dotted #000;
-  padding: 0 2px;
+  padding: 0;
   line-height: 1.15;
   vertical-align: baseline;
 }
@@ -168,11 +168,11 @@ select.exam-year-select:focus {
 
 .date-field {
   display: inline-block;
-  min-width: 82px;
+  min-width: 70px;
   min-height: 16px;
   border-bottom: 1px dotted #000;
   font-family: inherit;
-  font-size: 12.5px;
+  font-size: 13px;
   font-weight: bold;
   line-height: 1.15;
   color: #000;
@@ -193,7 +193,7 @@ select.exam-year-select:focus {
   width: 100%;
   min-width: 0;
   min-height: 18px;
-  font-size: 10.5px;
+  font-size: 13px;
   font-weight: normal;
   border-bottom: none;
   text-align: center;
@@ -204,7 +204,7 @@ select.exam-year-select:focus {
   width: 100%;
   min-width: 0;
   min-height: 16px;
-  font-size: 10px;
+  font-size: 13px;
   font-weight: normal;
   border-bottom: none;
   padding: 0;
@@ -370,7 +370,7 @@ select.exam-year-select:focus {
 table.records-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 11.5px;
+  font-size: 13px;
   margin-bottom: 14px;
 }
 
@@ -389,7 +389,7 @@ table.records-table th {
 }
 
 table.records-table td {
-  height: 60px;
+  height: 68px;
   text-align: center;
   vertical-align: top;
   border-bottom: 1px solid #000;
@@ -424,14 +424,14 @@ table.records-table td.period-cell {
   justify-content: flex-start;
   gap: 2px;
   height: 100%;
-  min-height: 54px;
+  min-height: 62px;
 }
 
 .period-row {
   display: flex;
   align-items: flex-start;
   justify-content: center;
-  font-size: 10px;
+  font-size: 13px;
   line-height: 1.15;
 }
 
@@ -1280,7 +1280,7 @@ function resizeSelectToContent(selectEl) {
   const textWidth = probe.getBoundingClientRect().width;
   document.body.removeChild(probe);
 
-  selectEl.style.width = `${Math.ceil(textWidth) + 2}px`;
+  selectEl.style.width = `${Math.ceil(textWidth)}px`;
 }
 
 function syncExamDropdownWidths() {
@@ -1352,7 +1352,7 @@ function initExamMonthYearDropdowns() {
 
   if (examYearSelect) {
     examYearSelect.innerHTML = '';
-    for (let y = currentYear - 2; y <= currentYear + 5; y++) {
+    for (let y = 2025; y <= 2040; y++) {
       const opt = document.createElement('option');
       opt.value = String(y);
       opt.textContent = String(y);
