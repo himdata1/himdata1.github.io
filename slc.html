@@ -557,7 +557,7 @@ table.records-table td.attendance-exceeded {
   width: 185px;
   padding: 6px 7px;
   box-shadow: 0 8px 24px rgba(0,0,0,0.25);
-  transform: scale(0.9);
+  transform: scale(1.0);
   transform-origin: top left;
 }
 
@@ -869,7 +869,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
             <option value="2023-24">2023-24</option>
             <option value="2024-25">2024-25</option>
             <option value="2025-26">2025-26</option>
-            <option value="2026-27" selected>2026-27</option>
+            <option value="2026-27">2026-27</option>
             <option value="2027-28">2027-28</option>
             <option value="2028-29">2028-29</option>
             <option value="2029-30">2029-30</option>
@@ -1281,8 +1281,8 @@ const examMonthSelect = document.getElementById('examMonthSelect');
 const examYearSelect = document.getElementById('examYearSelect');
 const opt1Checkbox = document.getElementById('opt1');
 
-/* Note: examMonthSelect and examYearSelect are intentionally excluded from localStorage persistence */
-const selects = [sessionSelect, genderSelect].filter(Boolean);
+/* Note: sessionSelect, examMonthSelect, and examYearSelect are intentionally excluded from localStorage persistence */
+const selects = [genderSelect].filter(Boolean);
 
 const singleChoices = Array.from(
   document.querySelectorAll('input[type="checkbox"].single-choice')
@@ -1341,6 +1341,47 @@ function getTodayIso() {
   const m = String(now.getMonth() + 1).padStart(2, '0');
   const d = String(now.getDate()).padStart(2, '0');
   return `${y}-${m}-${d}`;
+}
+
+/* Academic Session Helper:
+   - If issue month is April (month === 3): previous session (e.g., April 2027 -> 2026-27)
+   - For any other month: current session (Apr-Dec -> year-(year+1), Jan-Mar -> (year-1)-year) */
+
+function getDefaultSessionValue(isoDateStr) {
+  let refDate = new Date();
+  if (isoDateStr && /^\d{4}-\d{2}-\d{2}$/.test(isoDateStr)) {
+    const [y, m, d] = isoDateStr.split('-').map(Number);
+    refDate = new Date(y, m - 1, d);
+  }
+
+  const year = refDate.getFullYear();
+  const month = refDate.getMonth(); // 0 = Jan, 2 = Mar, 3 = Apr
+
+  const sessionStartYear =
+    month === 3
+      ? year - 1
+      : (month > 3 ? year : year - 1);
+
+  const sessionEndTwoDigit = String((sessionStartYear + 1) % 100).padStart(2, '0');
+
+  return `${sessionStartYear}-${sessionEndTwoDigit}`;
+}
+
+function applyDefaultAcademicSession(isoDateStr) {
+  if (!sessionSelect) {
+    return;
+  }
+
+  const effectiveIso =
+    isoDateStr || (bottomIssueDate ? bottomIssueDate.dataset.date : '') || getTodayIso();
+  const targetVal = getDefaultSessionValue(effectiveIso);
+  const hasOption = Array.from(sessionSelect.options).some(opt => opt.value === targetVal);
+
+  if (hasOption) {
+    sessionSelect.value = targetVal;
+  } else if (sessionSelect.options.length > 0) {
+    sessionSelect.selectedIndex = 0;
+  }
 }
 
 /* Default Withdrawal Date: 31 March of Current Year */
@@ -1751,6 +1792,10 @@ function setFieldDate(field, isoStr, shouldSave = true) {
 
   if (field === attendedUptoDate) {
     syncWithdrawalDateFromAttendedUpto(false);
+  }
+
+  if (field === bottomIssueDate) {
+    applyDefaultAcademicSession(cleanIso);
   }
 
   if (
@@ -2280,7 +2325,7 @@ function applyDefaultSystemDates() {
   }
 }
 
-/* Save Draft (excludes checkboxes, bottomIssueDate, attendedUptoDate, withdrawalDate, attendance period dates, examMonthSelect, and examYearSelect) */
+/* Save Draft (excludes sessionSelect, checkboxes, bottomIssueDate, attendedUptoDate, withdrawalDate, attendance period dates, examMonthSelect, and examYearSelect) */
 
 function saveDraft() {
   updateLeavesTaken();
@@ -2316,6 +2361,7 @@ function loadDraft() {
 
     if (!raw) {
       applyDefaultSystemDates();
+      applyDefaultAcademicSession();
       syncPupilNameToCert();
       syncFatherNameToCert();
       syncSchoolNameToTable();
@@ -2377,6 +2423,7 @@ function loadDraft() {
 
     saveDraft();
     applyDefaultSystemDates();
+    applyDefaultAcademicSession();
     syncPupilNameToCert();
     syncFatherNameToCert();
     ensureGpsTrailingSpace(schoolNameField);
@@ -2389,6 +2436,7 @@ function loadDraft() {
   } catch (e) {
     initExamMonthYearDropdowns();
     applyDefaultSystemDates();
+    applyDefaultAcademicSession();
     syncPupilNameToCert();
     syncFatherNameToCert();
     syncSchoolNameToTable();
