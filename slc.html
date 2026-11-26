@@ -618,6 +618,63 @@ table.records-table td[contenteditable="true"]:focus {
   color: #0f172a;
 }
 
+/* Validation Alert Modal */
+
+.alert-modal-backdrop {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.alert-modal-backdrop.open {
+  display: flex;
+}
+
+.alert-modal-card {
+  background: #fff;
+  border: 2px solid #1b365d;
+  border-radius: 8px;
+  width: 100%;
+  max-width: 340px;
+  padding: 18px 20px;
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.28);
+  text-align: center;
+}
+
+.alert-modal-title {
+  font-size: 16px;
+  font-weight: bold;
+  color: #b91c1c;
+  margin-bottom: 8px;
+}
+
+.alert-modal-msg {
+  font-size: 13.5px;
+  line-height: 1.45;
+  color: #111827;
+  margin-bottom: 16px;
+}
+
+.alert-modal-ok {
+  padding: 8px 26px;
+  border: none;
+  border-radius: 5px;
+  background-color: #1b365d;
+  color: #fff;
+  font-size: 14px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.alert-modal-ok:hover {
+  background-color: #132847;
+}
+
 /* Print / PDF Export Mode */
 
 body.pdf-export-mode * {
@@ -637,7 +694,8 @@ body.pdf-export-mode .app-wrapper {
 }
 
 body.pdf-export-mode .bottom-action,
-body.pdf-export-mode .date-picker-backdrop {
+body.pdf-export-mode .date-picker-backdrop,
+body.pdf-export-mode .alert-modal-backdrop {
   display: none !important;
 }
 
@@ -699,7 +757,8 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
   }
 
   .bottom-action,
-  .date-picker-backdrop {
+  .date-picker-backdrop,
+  .alert-modal-backdrop {
     display: none !important;
   }
 
@@ -1190,6 +1249,27 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
 </div>
 
+<!-- Attendance Validation Popup Modal -->
+
+<div class="alert-modal-backdrop"
+     id="attendanceAlertModal"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="attendanceAlertTitle"
+     aria-hidden="true">
+
+  <div class="alert-modal-card">
+    <div class="alert-modal-title" id="attendanceAlertTitle">Invalid Attendance</div>
+    <div class="alert-modal-msg" id="attendanceAlertMsg">
+      Pupil's attendance cannot be greater than total working days.
+    </div>
+    <button type="button" class="alert-modal-ok" id="attendanceAlertOkBtn">
+      OK
+    </button>
+  </div>
+
+</div>
+
 <script>
 
 const STORAGE_KEY = 'slc_nursery_to_5th_draft_v1';
@@ -1240,6 +1320,12 @@ const dobWordsField = document.getElementById('dobWordsField');
 const workingDaysCell = document.getElementById('workingDaysCell');
 const attendanceDaysCell = document.getElementById('attendanceDaysCell');
 const leavesTakenCell = document.getElementById('leavesTakenCell');
+
+const attendanceAlertModal = document.getElementById('attendanceAlertModal');
+const attendanceAlertMsg = document.getElementById('attendanceAlertMsg');
+const attendanceAlertOkBtn = document.getElementById('attendanceAlertOkBtn');
+
+let lastValidAttendanceText = '0';
 
 /* Date Picker Elements */
 
@@ -2003,39 +2089,138 @@ editables.forEach(el => {
   });
 });
 
+/* Attendance Validation Popup Helpers */
+
+function placeCaretAtEnd(el) {
+  if (!el) return;
+  el.focus();
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  range.collapse(false);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+}
+
+function showAttendanceAlert(workingDays) {
+  if (!attendanceAlertModal) return;
+
+  if (attendanceAlertMsg) {
+    attendanceAlertMsg.textContent =
+      `Pupil's attendance cannot be greater than total working days (${workingDays}).`;
+  }
+
+  attendanceAlertModal.classList.add('open');
+  attendanceAlertModal.setAttribute('aria-hidden', 'false');
+
+  setTimeout(() => {
+    if (attendanceAlertOkBtn) {
+      attendanceAlertOkBtn.focus();
+    }
+  }, 0);
+}
+
+function closeAttendanceAlert() {
+  if (!attendanceAlertModal) return;
+  attendanceAlertModal.classList.remove('open');
+  attendanceAlertModal.setAttribute('aria-hidden', 'true');
+  placeCaretAtEnd(attendanceDaysCell);
+}
+
+if (attendanceAlertOkBtn) {
+  attendanceAlertOkBtn.addEventListener('click', (e) => {
+    e.stopPropagation();
+    closeAttendanceAlert();
+  });
+}
+
+/* Parse Numeric Value from Cell */
+
+function parseCellNumber(cell) {
+  if (!cell) return 0;
+  const raw = parseFloat(cell.textContent.replace(/[^\d.-]/g, ''));
+  return Number.isNaN(raw) ? 0 : raw;
+}
+
+/* Validate Attendance Against Total Working Days */
+
+function validateAttendanceBounds() {
+  const working = Math.max(0, parseCellNumber(workingDaysCell));
+  const attendedClean = attendanceDaysCell.textContent.replace(/\u00a0/g, ' ').trim();
+
+  if (attendedClean === '') {
+    lastValidAttendanceText = '';
+    return true;
+  }
+
+  const attended = parseCellNumber(attendanceDaysCell);
+
+  if (attended > working) {
+    const prevNum = parseFloat(lastValidAttendanceText);
+    const fallbackText =
+      !Number.isNaN(prevNum) && prevNum <= working && lastValidAttendanceText !== ''
+        ? lastValidAttendanceText
+        : String(working);
+
+    attendanceDaysCell.textContent = fallbackText;
+    lastValidAttendanceText = fallbackText;
+    updateLeavesTaken();
+    saveDraft();
+    showAttendanceAlert(working);
+    return false;
+  }
+
+  lastValidAttendanceText = attendedClean;
+  return true;
+}
+
 /* Update leaves on input and restore '0' on blur if empty */
 
-[workingDaysCell, attendanceDaysCell].forEach(cell => {
-  cell.addEventListener('input', () => {
-    updateLeavesTaken();
-    saveDraft();
-  });
+workingDaysCell.addEventListener('input', () => {
+  validateAttendanceBounds();
+  updateLeavesTaken();
+  saveDraft();
+});
 
-  cell.addEventListener('blur', () => {
-    const cleaned = cell.textContent.replace(/\u00a0/g, ' ').trim();
+workingDaysCell.addEventListener('blur', () => {
+  const cleaned = workingDaysCell.textContent.replace(/\u00a0/g, ' ').trim();
 
-    if (cleaned === '') {
-      cell.textContent = '0';
-    }
+  if (cleaned === '') {
+    workingDaysCell.textContent = '0';
+  }
 
-    updateLeavesTaken();
-    saveDraft();
-  });
+  validateAttendanceBounds();
+  updateLeavesTaken();
+  saveDraft();
+});
+
+attendanceDaysCell.addEventListener('input', () => {
+  if (!validateAttendanceBounds()) {
+    return;
+  }
+  updateLeavesTaken();
+  saveDraft();
+});
+
+attendanceDaysCell.addEventListener('blur', () => {
+  const cleaned = attendanceDaysCell.textContent.replace(/\u00a0/g, ' ').trim();
+
+  if (cleaned === '') {
+    attendanceDaysCell.textContent = '0';
+    lastValidAttendanceText = '0';
+  } else {
+    validateAttendanceBounds();
+  }
+
+  updateLeavesTaken();
+  saveDraft();
 });
 
 /* Calculate Leaves */
 
 function updateLeavesTaken() {
-  const workingRaw = parseFloat(
-    workingDaysCell.textContent.replace(/[^\d.-]/g, '')
-  );
-
-  const attendedRaw = parseFloat(
-    attendanceDaysCell.textContent.replace(/[^\d.-]/g, '')
-  );
-
-  const working = Number.isNaN(workingRaw) ? 0 : workingRaw;
-  const attended = Number.isNaN(attendedRaw) ? 0 : attendedRaw;
+  const working = parseCellNumber(workingDaysCell);
+  const attended = parseCellNumber(attendanceDaysCell);
 
   const leaves = Math.max(0, Math.round(working - attended));
 
@@ -2155,6 +2340,7 @@ function loadDraft() {
       syncPupilNameToCert();
       syncSchoolNameToTable();
       applyGenderToPronouns();
+      lastValidAttendanceText = attendanceDaysCell.textContent.trim() || '0';
       updateLeavesTaken();
       updateDobWords();
       syncExamMonthYearVisibility();
@@ -2209,6 +2395,8 @@ function loadDraft() {
       });
     }
 
+    lastValidAttendanceText = attendanceDaysCell.textContent.trim() || '0';
+    validateAttendanceBounds();
     saveDraft();
     applyDefaultSystemDates();
     syncPupilNameToCert();
@@ -2224,6 +2412,7 @@ function loadDraft() {
     syncPupilNameToCert();
     syncSchoolNameToTable();
     applyGenderToPronouns();
+    lastValidAttendanceText = attendanceDaysCell.textContent.trim() || '0';
     updateLeavesTaken();
     updateDobWords();
     syncExamMonthYearVisibility();
