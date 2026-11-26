@@ -8,11 +8,16 @@
 <link rel="apple-touch-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%23007bff'/><text x='50' y='52' font-size='40' fill='white' font-family='Verdana, sans-serif' font-weight='900' text-anchor='middle' dominant-baseline='central'>SLC</text></svg>">
 
 <style>
+/* Single control for entire page (Web View + PDF/Print) */
+:root {
+  --page-letter-spacing: 0.5px;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
-  letter-spacing: 0.5px;
+  letter-spacing: var(--page-letter-spacing);
 }
 
 body {
@@ -241,7 +246,6 @@ select.exam-year-select:focus {
 .header-center .dept {
   font-size: 16.5px;
   font-weight: bold;
-  letter-spacing: 0.25px;
   line-height: 1.25;
 }
 
@@ -272,7 +276,6 @@ select.exam-year-select:focus {
   font-size: 16px;
   font-weight: bold;
   text-decoration: underline;
-  letter-spacing: 0.25px;
   margin-bottom: 4px;
 }
 
@@ -617,6 +620,10 @@ table.records-table td[contenteditable="true"]:focus {
 
 /* Print / PDF Export Mode */
 
+body.pdf-export-mode * {
+  letter-spacing: var(--page-letter-spacing) !important;
+}
+
 body.pdf-export-mode {
   background: #fff !important;
   padding: 0 !important;
@@ -674,6 +681,10 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
   @page {
     size: A4 portrait;
     margin: 0;
+  }
+
+  * {
+    letter-spacing: var(--page-letter-spacing) !important;
   }
 
   body {
