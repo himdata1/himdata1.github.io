@@ -126,14 +126,13 @@ select.clean-select::-ms-expand,
   display: none;
 }
 
-select.copy-type-select {
+.copy-type-label {
   font-weight: bold;
   font-size: 13px;
   line-height: 1.3;
-  border-bottom: none;
   text-align: right;
-  text-align-last: right;
   padding: 0 2px 1px 2px;
+  color: #000;
 }
 
 select.session-select {
@@ -427,14 +426,14 @@ table.records-table td {
 }
 
 /* Only the School Name input box in the table */
-#tableSchoolField {
+.table-school-cell {
   text-align: left !important;
   cursor: default;
   user-select: none;
   -webkit-user-select: none;
 }
 
-#tableSchoolField:focus {
+.table-school-cell:focus {
   background-color: transparent;
   outline: none;
 }
@@ -562,6 +561,11 @@ table.records-table td.attendance-exceeded {
   box-shadow: 0 3px 8px rgba(0,0,0,0.18);
 }
 
+/* Print Container (Hidden in Normal Web View) */
+.print-pages-container {
+  display: none;
+}
+
 /* Date Picker (Change only transform: scale(...) here to resize overall) */
 
 .date-picker-backdrop {
@@ -677,10 +681,76 @@ table.records-table td.attendance-exceeded {
   color: #0f172a;
 }
 
-/* Print / PDF Export Mode */
-
-body.pdf-export-mode * {
+/* Shared Dual-Copy Print / PDF Export Styles */
+body.dual-print-active * {
   letter-spacing: var(--page-letter-spacing) !important;
+}
+
+body.dual-print-active .app-wrapper > .page,
+body.dual-print-active .bottom-action,
+body.dual-print-active .date-picker-backdrop,
+body.dual-print-active .floating-warning-box {
+  display: none !important;
+}
+
+body.dual-print-active .print-pages-container {
+  display: block !important;
+}
+
+body.dual-print-active .print-page {
+  width: 210mm !important;
+  height: 297mm !important;
+  min-height: 297mm !important;
+  padding: 8mm !important;
+  background: #fff !important;
+  box-shadow: none !important;
+  page-break-after: always;
+  break-after: page;
+}
+
+body.dual-print-active .print-page:last-child {
+  page-break-after: auto;
+  break-after: auto;
+}
+
+body.dual-print-active .print-page .outer-border {
+  height: 281mm !important;
+  min-height: 281mm !important;
+}
+
+body.dual-print-active .print-page .editable {
+  border-bottom: 1px dotted #000 !important;
+  background-color: transparent !important;
+}
+
+body.dual-print-active .print-page table.records-table td {
+  border-bottom: 1px solid #000 !important;
+  background: transparent !important;
+  color: #000 !important;
+}
+
+body.dual-print-active .print-page select.clean-select {
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  background: transparent !important;
+  border: none;
+  border-bottom: 1px dotted #000 !important;
+}
+
+body.dual-print-active .print-page .exam-period-group {
+  border-bottom: 1px dotted #000 !important;
+  background-color: transparent !important;
+}
+
+body.dual-print-active .print-page select.exam-month-select,
+body.dual-print-active .print-page select.exam-year-select {
+  border-bottom: none !important;
+}
+
+body.dual-print-active .print-page .date-field:not(.table-date):not(.period-date) {
+  background: transparent !important;
+  border-bottom: 1px dotted #000 !important;
 }
 
 body.pdf-export-mode {
@@ -693,52 +763,6 @@ body.pdf-export-mode {
 body.pdf-export-mode .app-wrapper {
   width: 210mm !important;
   min-width: 210mm !important;
-}
-
-body.pdf-export-mode .bottom-action,
-body.pdf-export-mode .date-picker-backdrop,
-body.pdf-export-mode .floating-warning-box {
-  display: none !important;
-}
-
-body.pdf-export-mode .page {
-  box-shadow: none !important;
-  width: 210mm !important;
-  min-height: 297mm !important;
-  padding: 8mm !important;
-}
-
-body.pdf-export-mode .outer-border {
-  min-height: 281mm !important;
-}
-
-body.pdf-export-mode .editable {
-  border-bottom: 1px dotted #000 !important;
-  background-color: transparent !important;
-}
-
-body.pdf-export-mode select.clean-select {
-  border-bottom: 1px dotted #000 !important;
-  background-color: transparent !important;
-}
-
-body.pdf-export-mode select.copy-type-select {
-  border-bottom: none !important;
-}
-
-body.pdf-export-mode .exam-period-group {
-  border-bottom: 1px dotted #000 !important;
-  background-color: transparent !important;
-}
-
-body.pdf-export-mode select.exam-month-select,
-body.pdf-export-mode select.exam-year-select {
-  border-bottom: none !important;
-}
-
-body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
-  border-bottom: 1px dotted #000 !important;
-  background-color: transparent !important;
 }
 
 @media print {
@@ -754,6 +778,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
   body {
     background: #fff;
     padding: 0;
+    margin: 0;
     overflow: visible;
   }
 
@@ -762,36 +787,50 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
     min-width: 210mm;
   }
 
+  .app-wrapper > .page,
   .bottom-action,
   .date-picker-backdrop,
   .floating-warning-box {
     display: none !important;
   }
 
-  .page {
-    box-shadow: none;
-    width: 210mm;
-    height: 297mm;
-    padding: 8mm;
+  .print-pages-container {
+    display: block !important;
   }
 
-  .outer-border {
-    min-height: 281mm;
+  .print-page {
+    box-shadow: none !important;
+    width: 210mm !important;
+    height: 297mm !important;
+    min-height: 297mm !important;
+    padding: 8mm !important;
+    page-break-after: always;
+    break-after: page;
+  }
+
+  .print-page:last-child {
+    page-break-after: auto;
+    break-after: auto;
+  }
+
+  .print-page .outer-border {
+    height: 281mm !important;
+    min-height: 281mm !important;
     justify-content: flex-start;
   }
 
-  .editable {
+  .print-page .editable {
     border-bottom: 1px dotted #000 !important;
     background: transparent !important;
   }
 
-  table.records-table td {
+  .print-page table.records-table td {
     border-bottom: 1px solid #000 !important;
     background: transparent !important;
     color: #000 !important;
   }
 
-  select.clean-select {
+  .print-page select.clean-select {
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
@@ -800,21 +839,17 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
     border-bottom: 1px dotted #000 !important;
   }
 
-  select.copy-type-select {
-    border-bottom: none !important;
-  }
-
-  .exam-period-group {
+  .print-page .exam-period-group {
     border-bottom: 1px dotted #000 !important;
     background: transparent !important;
   }
 
-  select.exam-month-select,
-  select.exam-year-select {
+  .print-page select.exam-month-select,
+  .print-page select.exam-year-select {
     border-bottom: none !important;
   }
 
-  .date-field:not(.table-date):not(.period-date) {
+  .print-page .date-field:not(.table-date):not(.period-date) {
     background: transparent !important;
     border-bottom: 1px dotted #000 !important;
   }
@@ -826,16 +861,11 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
 <div class="app-wrapper">
 
-  <div class="page">
+  <div class="page" id="sourcePage">
     <div class="outer-border">
 
       <div class="top-note-row">
         <div class="duplicate-note">To be issued in duplicate</div>
-        <select id="copyTypeSelect" class="clean-select copy-type-select" aria-label="Copy Type">
-        <option value=""></option>
-          <option value="Office Copy">Office Copy</option>
-          <option value="Student Copy">Student Copy</option>
-        </select>
       </div>
 
       <!-- Header -->
@@ -1145,7 +1175,7 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
         <tbody>
           <tr>
 
-            <td id="tableSchoolField" contenteditable="false" aria-readonly="true">GPS&nbsp;</td>
+            <td id="tableSchoolField" class="table-school-cell" contenteditable="false" aria-readonly="true">GPS&nbsp;</td>
 
             <td class="table-date-cell">
               <span class="date-field table-date"
@@ -1248,6 +1278,9 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
     </div>
   </div>
 
+  <!-- Generated Only During Print / PDF Export -->
+  <div id="printPagesContainer" class="print-pages-container" aria-hidden="true"></div>
+
 </div>
 
 <!-- Floating Wrapped Warning Box (No OK Button) -->
@@ -1313,10 +1346,11 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 const STORAGE_KEY = 'slc_nursery_to_5th_draft_v1';
 
 const editables = Array.from(
-  document.querySelectorAll('[contenteditable="true"]')
+  document.querySelectorAll('#sourcePage [contenteditable="true"]')
 );
 
-const copyTypeSelect = document.getElementById('copyTypeSelect');
+const sourcePage = document.getElementById('sourcePage');
+const printPagesContainer = document.getElementById('printPagesContainer');
 const sessionSelect = document.getElementById('sessionSelect');
 const genderSelect = document.getElementById('genderSelect');
 const attendedUptoDate = document.getElementById('attendedUptoDate');
@@ -1325,15 +1359,15 @@ const examMonthSelect = document.getElementById('examMonthSelect');
 const examYearSelect = document.getElementById('examYearSelect');
 const opt1Checkbox = document.getElementById('opt1');
 
-/* Note: copyTypeSelect, sessionSelect, examMonthSelect, and examYearSelect are intentionally excluded from localStorage persistence */
+/* Note: sessionSelect, examMonthSelect, and examYearSelect are intentionally excluded from localStorage persistence */
 const selects = [genderSelect].filter(Boolean);
 
 const singleChoices = Array.from(
-  document.querySelectorAll('input[type="checkbox"].single-choice')
+  document.querySelectorAll('#sourcePage input[type="checkbox"].single-choice')
 );
 
 const dateFields = Array.from(
-  document.querySelectorAll('.date-field')
+  document.querySelectorAll('#sourcePage .date-field')
 );
 
 const relationText = document.getElementById('relationText');
@@ -1375,6 +1409,8 @@ const dpDaysGrid = document.getElementById('dpDaysGrid');
 const dpCloseBtn = document.getElementById('dpCloseBtn');
 
 let activeDateField = null;
+let prevDocumentTitle = document.title;
+let isPreparingDualPrint = false;
 
 const MONTH_NAMES = [
   'January',
@@ -1511,14 +1547,6 @@ function resizeSelectToContent(selectEl, exactToText = false) {
   selectEl.style.width = `${Math.max(24, Math.ceil(textWidth) + 8)}px`;
 }
 
-function syncCopyTypeWidth() {
-  resizeSelectToContent(copyTypeSelect);
-}
-
-if (copyTypeSelect) {
-  copyTypeSelect.addEventListener('change', syncCopyTypeWidth);
-}
-
 function syncExamDropdownWidths() {
   resizeSelectToContent(examMonthSelect, true);
   resizeSelectToContent(examYearSelect, true);
@@ -1631,7 +1659,6 @@ function initMonthYearDropdowns() {
 
   populateMonthYearSelects(examMonthSelect, examYearSelect, 'March', endYear);
 
-  syncCopyTypeWidth();
   syncExamMonthYearVisibility();
 }
 
@@ -1653,6 +1680,80 @@ if (sessionSelect) {
   });
 }
 
+/* Build Two Certificate Pages (Office Copy & Student Copy) for Print / PDF */
+
+function buildDualPrintPages() {
+  if (!sourcePage || !printPagesContainer) {
+    return;
+  }
+
+  const origSelects = Array.from(sourcePage.querySelectorAll('select'));
+  const origCheckboxes = Array.from(sourcePage.querySelectorAll('input[type="checkbox"]'));
+  const copyLabels = ['Office Copy', 'Student Copy'];
+
+  printPagesContainer.innerHTML = '';
+
+  copyLabels.forEach((copyTitle, pageIdx) => {
+    const clonePage = sourcePage.cloneNode(true);
+    clonePage.id = `printCopyPage_${pageIdx + 1}`;
+    clonePage.classList.add('print-page');
+
+    clonePage.querySelectorAll('[id]').forEach((el) => {
+      el.removeAttribute('id');
+    });
+    clonePage.querySelectorAll('[contenteditable]').forEach((el) => {
+      el.setAttribute('contenteditable', 'false');
+    });
+    clonePage.querySelectorAll('.bottom-action').forEach((el) => {
+      el.remove();
+    });
+
+    const cloneSelects = Array.from(clonePage.querySelectorAll('select'));
+    cloneSelects.forEach((cSel, idx) => {
+      if (origSelects[idx]) {
+        cSel.value = origSelects[idx].value;
+      }
+    });
+
+    const cloneCheckboxes = Array.from(clonePage.querySelectorAll('input[type="checkbox"]'));
+    cloneCheckboxes.forEach((cCb, idx) => {
+      if (origCheckboxes[idx]) {
+        cCb.checked = origCheckboxes[idx].checked;
+      }
+    });
+
+    const topNoteRow = clonePage.querySelector('.top-note-row');
+    if (topNoteRow) {
+      const labelSpan = document.createElement('span');
+      labelSpan.className = 'copy-type-label';
+      labelSpan.textContent = copyTitle;
+      topNoteRow.appendChild(labelSpan);
+    }
+
+    printPagesContainer.appendChild(clonePage);
+  });
+
+  document.body.classList.add('dual-print-active');
+}
+
+function cleanupDualPrintPages() {
+  document.body.classList.remove('dual-print-active');
+  if (printPagesContainer) {
+    printPagesContainer.innerHTML = '';
+  }
+  document.title = prevDocumentTitle;
+}
+
+window.addEventListener('beforeprint', () => {
+  if (!isPreparingDualPrint) {
+    buildDualPrintPages();
+  }
+});
+
+window.addEventListener('afterprint', () => {
+  cleanupDualPrintPages();
+});
+
 /* Android App PDF / Print Bridge */
 
 function triggerPrintOrPdf() {
@@ -1668,12 +1769,12 @@ function triggerPrintOrPdf() {
     .replace(/[^a-zA-Z0-9 -]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim() || 'Student';
-  const copySuffix = (copyTypeSelect && copyTypeSelect.value)
-    ? ` (${copyTypeSelect.value})`
-    : '';
-  const fileTitle = `SLC ${safeStudentName}${copySuffix}`;
-  const prevTitle = document.title;
+  const fileTitle = `SLC ${safeStudentName} (Office & Student Copy)`;
+  prevDocumentTitle = document.title;
   document.title = fileTitle;
+
+  isPreparingDualPrint = true;
+  buildDualPrintPages();
 
   if (window.AndroidInterface && typeof window.AndroidInterface.printPdf === 'function') {
     document.body.classList.add('pdf-export-mode');
@@ -1683,7 +1784,8 @@ function triggerPrintOrPdf() {
       } finally {
         setTimeout(() => {
           document.body.classList.remove('pdf-export-mode');
-          document.title = prevTitle;
+          cleanupDualPrintPages();
+          isPreparingDualPrint = false;
         }, 800);
       }
     }, 100);
@@ -1692,12 +1794,15 @@ function triggerPrintOrPdf() {
 
   window.print();
   setTimeout(() => {
-    document.title = prevTitle;
+    cleanupDualPrintPages();
+    isPreparingDualPrint = false;
   }, 500);
 }
 
 window.finishAndroidPdfExport = function () {
   document.body.classList.remove('pdf-export-mode');
+  cleanupDualPrintPages();
+  isPreparingDualPrint = false;
 };
 
 /* Sync Pronouns, Possessive & Relation (son of / daughter of) from Gender */
@@ -2421,7 +2526,7 @@ function applyDefaultSystemDates() {
   applySessionBasedDates(false);
 }
 
-/* Save Draft (excludes copyTypeSelect, sessionSelect, checkboxes, bottomIssueDate, withdrawalDate, attendance period dates, attendedUptoDate, examMonthSelect, and examYearSelect) */
+/* Save Draft (excludes sessionSelect, checkboxes, bottomIssueDate, withdrawalDate, attendance period dates, attendedUptoDate, examMonthSelect, and examYearSelect) */
 
 function saveDraft() {
   updateLeavesTaken();
