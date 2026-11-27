@@ -1131,7 +1131,7 @@ body.pdf-export-mode .app-wrapper {
 
               was studying in
 
-              <span class="editable w-opt1-class" contenteditable="true"></span>
+              <span id="opt1ClassField" class="editable w-opt1-class" contenteditable="true"></span>
 
               class (Mid-session withdrawal).
 
@@ -1357,9 +1357,11 @@ const attendedUptoDate = document.getElementById('attendedUptoDate');
 const examPeriodGroup = document.getElementById('examPeriodGroup');
 const examMonthSelect = document.getElementById('examMonthSelect');
 const examYearSelect = document.getElementById('examYearSelect');
+const opt2Checkbox = document.getElementById('opt2');
 const opt1Checkbox = document.getElementById('opt1');
+const opt1ClassField = document.getElementById('opt1ClassField');
 
-/* Note: sessionSelect, examMonthSelect, and examYearSelect are intentionally excluded from localStorage persistence */
+/* Note: sessionSelect, examMonthSelect, examYearSelect, and opt1ClassField are intentionally excluded from localStorage persistence */
 const selects = [genderSelect].filter(Boolean);
 
 const singleChoices = Array.from(
@@ -1607,6 +1609,28 @@ function applySessionBasedDates(shouldSave = false) {
 
 function isAttendancePeriodField(field) {
   return field === periodFromDate || field === periodLastDate;
+}
+
+/* Toggle Class Field Editability & Clear When 1st Checkbox Is Selected */
+
+function syncOpt1ClassEditableState() {
+  if (!opt1ClassField) {
+    return;
+  }
+
+  const isFirstChecked = Boolean(opt2Checkbox && opt2Checkbox.checked);
+
+  if (isFirstChecked) {
+    opt1ClassField.innerHTML = '';
+    opt1ClassField.setAttribute('contenteditable', 'false');
+    opt1ClassField.setAttribute('aria-readonly', 'true');
+    if (document.activeElement === opt1ClassField) {
+      opt1ClassField.blur();
+    }
+  } else {
+    opt1ClassField.setAttribute('contenteditable', 'true');
+    opt1ClassField.removeAttribute('aria-readonly');
+  }
 }
 
 /* Hide Month & Year When 2nd Checkbox Is Selected, Leaving Only Dotted Underline */
@@ -2295,6 +2319,10 @@ editables.forEach(el => {
   let wasAlreadyFocusedOnDown = false;
 
   el.addEventListener('focus', () => {
+    if (el.getAttribute('contenteditable') !== 'true') {
+      return;
+    }
+
     if (el === schoolNameField) {
       ensureGpsTrailingSpace(el);
     }
@@ -2458,6 +2486,7 @@ singleChoices.forEach(cb => {
       });
     }
 
+    syncOpt1ClassEditableState();
     syncExamMonthYearVisibility();
   });
 });
@@ -2526,13 +2555,13 @@ function applyDefaultSystemDates() {
   applySessionBasedDates(false);
 }
 
-/* Save Draft (excludes sessionSelect, checkboxes, bottomIssueDate, withdrawalDate, attendance period dates, attendedUptoDate, examMonthSelect, and examYearSelect) */
+/* Save Draft (excludes sessionSelect, checkboxes, opt1ClassField, bottomIssueDate, withdrawalDate, attendance period dates, attendedUptoDate, examMonthSelect, and examYearSelect) */
 
 function saveDraft() {
   updateLeavesTaken();
 
   const data = {
-    editables: editables.map(el => el.innerHTML),
+    editables: editables.map(el => (el === opt1ClassField ? '' : el.innerHTML)),
     selects: selects.map(sel => sel.value),
     dates: dateFields.map(f => (
       (
@@ -2561,6 +2590,9 @@ function loadDraft() {
     const raw = localStorage.getItem(STORAGE_KEY);
 
     if (!raw) {
+      if (opt1ClassField) {
+        opt1ClassField.innerHTML = '';
+      }
       applyDefaultSystemDates();
       applyDefaultAcademicSession();
       applySessionBasedDates(false);
@@ -2571,6 +2603,7 @@ function loadDraft() {
       syncAttendanceWarning();
       updateLeavesTaken();
       updateDobWords();
+      syncOpt1ClassEditableState();
       syncExamMonthYearVisibility();
       return;
     }
@@ -2593,9 +2626,13 @@ function loadDraft() {
     if (Array.isArray(data.editables)) {
       data.editables.forEach((html, idx) => {
         if (editables[idx] !== undefined) {
-          editables[idx].innerHTML = html;
+          editables[idx].innerHTML = (editables[idx] === opt1ClassField) ? '' : html;
         }
       });
+    }
+
+    if (opt1ClassField) {
+      opt1ClassField.innerHTML = '';
     }
 
     if (Array.isArray(data.selects)) {
@@ -2635,8 +2672,12 @@ function loadDraft() {
     syncAttendanceWarning();
     updateLeavesTaken();
     updateDobWords();
+    syncOpt1ClassEditableState();
     syncExamMonthYearVisibility();
   } catch (e) {
+    if (opt1ClassField) {
+      opt1ClassField.innerHTML = '';
+    }
     initMonthYearDropdowns();
     applyDefaultSystemDates();
     applyDefaultAcademicSession();
@@ -2648,6 +2689,7 @@ function loadDraft() {
     syncAttendanceWarning();
     updateLeavesTaken();
     updateDobWords();
+    syncOpt1ClassEditableState();
     syncExamMonthYearVisibility();
   }
 }
@@ -2660,12 +2702,15 @@ editables.forEach(el => {
     el !== pupilNameField &&
     el !== fatherNameField &&
     el !== workingDaysCell &&
-    el !== attendanceDaysCell
+    el !== attendanceDaysCell &&
+    el !== opt1ClassField
   ) {
     el.addEventListener('input', saveDraft);
   }
 
-  el.addEventListener('blur', saveDraft);
+  if (el !== opt1ClassField) {
+    el.addEventListener('blur', saveDraft);
+  }
 });
 
 /* Select Events */
