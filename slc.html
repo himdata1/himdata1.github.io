@@ -1891,9 +1891,15 @@ function setFieldDate(field, isoStr, shouldSave = true) {
     updateDobWords();
   }
 
-  if (field === attendedUptoDate && withdrawalDate) {
-    withdrawalDate.dataset.date = cleanIso;
-    withdrawalDate.textContent = formatDisplayDate(cleanIso);
+  if (field === attendedUptoDate) {
+    if (withdrawalDate) {
+      withdrawalDate.dataset.date = cleanIso;
+      withdrawalDate.textContent = formatDisplayDate(cleanIso);
+    }
+    if (periodLastDate) {
+      periodLastDate.dataset.date = cleanIso;
+      periodLastDate.textContent = formatDisplayDate(cleanIso);
+    }
   }
 
   if (field === bottomIssueDate) {
