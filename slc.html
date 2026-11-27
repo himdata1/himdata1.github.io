@@ -96,6 +96,7 @@ body {
 .w-father-name { min-width: 100px; } /* Name of Father | max-width: none */
 .w-mother-name { min-width: 100px; } /* Name of Mother | max-width: none */
 .w-cert-pupil { min-width: 100px; } /* Certified Pupil Name (in certification paragraph) | max-width: none */
+.w-attended-upto { min-width: 98px; text-align: center; } /* Attended school up-to Month Year | max-width: none */
 .w-opt1-class { min-width: 25px; } /* Mid-session withdrawal class | max-width: none */
 
 /* Select dropdown */
@@ -995,12 +996,11 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
         attended this school up-to
 
-        <span class="date-field"
+        <span class="editable w-attended-upto"
               id="attendedUptoDate"
               data-date=""
-              tabindex="0"
-              role="button"
-              aria-label="Attended up-to date"></span>.
+              contenteditable="true"
+              aria-label="Attended up-to month and year"></span>.
 
         <span id="pronounCap1">He</span>
 
@@ -1343,6 +1343,17 @@ function getTodayIso() {
   return `${y}-${m}-${d}`;
 }
 
+/* Parse Start and End Year from Session String (e.g., "2026-27" -> { startYear: 2026, endYear: 2027 }) */
+
+function getSessionYears(sessionVal) {
+  const fallbackStart = new Date().getFullYear() - 1;
+  if (!sessionVal || !/^\d{4}-\d{2}$/.test(sessionVal)) {
+    return { startYear: fallbackStart, endYear: fallbackStart + 1 };
+  }
+  const startYear = parseInt(sessionVal.split('-')[0], 10);
+  return { startYear, endYear: startYear + 1 };
+}
+
 /* Academic Session Helper:
    - If issue month is April (month === 3): previous session (e.g., April 2027 -> 2026-27)
    - For any other month: current session (Apr-Dec -> year-(year+1), Jan-Mar -> (year-1)-year) */
@@ -1384,23 +1395,31 @@ function applyDefaultAcademicSession(isoDateStr) {
   }
 }
 
-/* Default Withdrawal Date: 31 March of Current Year */
+/* Apply Attended Up-To ("March <endYear>") and Attendance Period ("01/04/<startYear>" to "31/03/<endYear>") from Session */
 
-function getDefaultWithdrawalIso() {
-  const currentYear = new Date().getFullYear();
-  return `${currentYear}-03-31`;
-}
+function applySessionBasedDates(shouldSave = false) {
+  const { startYear, endYear } = getSessionYears(sessionSelect ? sessionSelect.value : '');
 
-/* Default Attendance Period Dates: 01/04/Previous Year to 31/03/Current Year */
+  if (attendedUptoDate) {
+    attendedUptoDate.textContent = `March ${endYear}`;
+    attendedUptoDate.dataset.date = `${endYear}-03-31`;
+  }
 
-function getDefaultPeriodFromIso() {
-  const prevYear = new Date().getFullYear() - 1;
-  return `${prevYear}-04-01`;
-}
+  if (withdrawalDate) {
+    setFieldDate(withdrawalDate, `${endYear}-03-31`, false);
+  }
 
-function getDefaultPeriodToIso() {
-  const currentYear = new Date().getFullYear();
-  return `${currentYear}-03-31`;
+  if (periodFromDate) {
+    setFieldDate(periodFromDate, `${startYear}-04-01`, false);
+  }
+
+  if (periodLastDate) {
+    setFieldDate(periodLastDate, `${endYear}-03-31`, false);
+  }
+
+  if (shouldSave) {
+    saveDraft();
+  }
 }
 
 function isAttendancePeriodField(field) {
@@ -1526,6 +1545,12 @@ if (examMonthSelect) {
 if (examYearSelect) {
   examYearSelect.addEventListener('change', () => {
     syncExamDropdownWidths();
+  });
+}
+
+if (sessionSelect) {
+  sessionSelect.addEventListener('change', () => {
+    applySessionBasedDates(true);
   });
 }
 
@@ -1767,15 +1792,17 @@ function updateDobWords() {
   dobWordsField.textContent = convertDateToWords(selectedDate);
 }
 
-/* Sync Withdrawal Date from Attended Upto Date */
+/* Sync Withdrawal Date from Attended Upto Date if a valid ISO date is stored */
 
 function syncWithdrawalDateFromAttendedUpto(shouldSave = false) {
   if (!attendedUptoDate || !withdrawalDate) {
     return;
   }
 
-  const uptoIso = attendedUptoDate.dataset.date || getDefaultWithdrawalIso();
-  setFieldDate(withdrawalDate, uptoIso, shouldSave);
+  const uptoIso = attendedUptoDate.dataset.date || '';
+  if (/^\d{4}-\d{2}-\d{2}$/.test(uptoIso)) {
+    setFieldDate(withdrawalDate, uptoIso, shouldSave);
+  }
 }
 
 /* Set Date */
@@ -1790,10 +1817,6 @@ function setFieldDate(field, isoStr, shouldSave = true) {
     updateDobWords();
   }
 
-  if (field === attendedUptoDate) {
-    syncWithdrawalDateFromAttendedUpto(false);
-  }
-
   if (field === bottomIssueDate) {
     applyDefaultAcademicSession(cleanIso);
   }
@@ -1801,7 +1824,6 @@ function setFieldDate(field, isoStr, shouldSave = true) {
   if (
     shouldSave &&
     field !== bottomIssueDate &&
-    field !== attendedUptoDate &&
     field !== withdrawalDate &&
     !isAttendancePeriodField(field)
   ) {
@@ -2137,6 +2159,21 @@ editables.forEach(el => {
   });
 });
 
+/* Sync DD/MM/YYYY if typed directly into attendedUptoDate */
+
+if (attendedUptoDate) {
+  attendedUptoDate.addEventListener('blur', () => {
+    const raw = attendedUptoDate.textContent.replace(/\u00a0/g, ' ').trim();
+    const dmyMatch = raw.match(/^(\d{2})\/(\d{2})\/(\d{4})$/);
+    if (dmyMatch) {
+      const [, dd, mm, yyyy] = dmyMatch;
+      attendedUptoDate.dataset.date = `${yyyy}-${mm}-${dd}`;
+      syncWithdrawalDateFromAttendedUpto(false);
+    }
+    saveDraft();
+  });
+}
+
 /* Parse Numeric Value from Cell */
 
 function parseCellNumber(cell) {
@@ -2303,40 +2340,27 @@ fatherNameField.addEventListener('blur', () => {
   saveDraft();
 });
 
-/* Apply Default Dates for Attended Upto, Withdrawal, Attendance Period, and Issue Date */
+/* Apply Default Issue Date and Session-Based Dates */
 
 function applyDefaultSystemDates() {
-  if (attendedUptoDate) {
-    setFieldDate(attendedUptoDate, getDefaultWithdrawalIso(), false);
-  }
-
-  syncWithdrawalDateFromAttendedUpto(false);
-
-  if (periodFromDate) {
-    setFieldDate(periodFromDate, getDefaultPeriodFromIso(), false);
-  }
-
-  if (periodLastDate) {
-    setFieldDate(periodLastDate, getDefaultPeriodToIso(), false);
-  }
-
   if (bottomIssueDate) {
     setFieldDate(bottomIssueDate, getTodayIso(), false);
   }
+
+  applySessionBasedDates(false);
 }
 
-/* Save Draft (excludes sessionSelect, checkboxes, bottomIssueDate, attendedUptoDate, withdrawalDate, attendance period dates, examMonthSelect, and examYearSelect) */
+/* Save Draft (excludes sessionSelect, checkboxes, bottomIssueDate, withdrawalDate, attendance period dates, examMonthSelect, and examYearSelect) */
 
 function saveDraft() {
   updateLeavesTaken();
 
   const data = {
-    editables: editables.map(el => el.innerHTML),
+    editables: editables.map(el => (el === attendedUptoDate ? '' : el.innerHTML)),
     selects: selects.map(sel => sel.value),
     dates: dateFields.map(f => (
       (
         f === bottomIssueDate ||
-        f === attendedUptoDate ||
         f === withdrawalDate ||
         isAttendancePeriodField(f)
       )
@@ -2362,6 +2386,7 @@ function loadDraft() {
     if (!raw) {
       applyDefaultSystemDates();
       applyDefaultAcademicSession();
+      applySessionBasedDates(false);
       syncPupilNameToCert();
       syncFatherNameToCert();
       syncSchoolNameToTable();
@@ -2390,7 +2415,7 @@ function loadDraft() {
 
     if (Array.isArray(data.editables)) {
       data.editables.forEach((html, idx) => {
-        if (editables[idx] !== undefined) {
+        if (editables[idx] !== undefined && editables[idx] !== attendedUptoDate) {
           editables[idx].innerHTML = html;
         }
       });
@@ -2410,7 +2435,6 @@ function loadDraft() {
         if (
           targetField !== undefined &&
           targetField !== bottomIssueDate &&
-          targetField !== attendedUptoDate &&
           targetField !== withdrawalDate &&
           !isAttendancePeriodField(targetField) &&
           typeof val === 'string'
@@ -2421,9 +2445,10 @@ function loadDraft() {
       });
     }
 
-    saveDraft();
     applyDefaultSystemDates();
     applyDefaultAcademicSession();
+    applySessionBasedDates(false);
+    saveDraft();
     syncPupilNameToCert();
     syncFatherNameToCert();
     ensureGpsTrailingSpace(schoolNameField);
@@ -2437,6 +2462,7 @@ function loadDraft() {
     initExamMonthYearDropdowns();
     applyDefaultSystemDates();
     applyDefaultAcademicSession();
+    applySessionBasedDates(false);
     syncPupilNameToCert();
     syncFatherNameToCert();
     syncSchoolNameToTable();
@@ -2456,7 +2482,8 @@ editables.forEach(el => {
     el !== pupilNameField &&
     el !== fatherNameField &&
     el !== workingDaysCell &&
-    el !== attendanceDaysCell
+    el !== attendanceDaysCell &&
+    el !== attendedUptoDate
   ) {
     el.addEventListener('input', saveDraft);
   }
