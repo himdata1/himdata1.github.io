@@ -1359,7 +1359,7 @@ function getTodayIso() {
   return `${y}-${m}-${d}`;
 }
 
-/* Parse Start and End Year from Session String (e.g., "2026-27" -> { startYear: 2026, endYear: 2027 }) */
+/* Parse Start and End Year from Session String (e.g., "2040-41" -> { startYear: 2040, endYear: 2041 }) */
 
 function getSessionYears(sessionVal) {
   const fallbackStart = new Date().getFullYear() - 1;
@@ -1368,6 +1368,23 @@ function getSessionYears(sessionVal) {
   }
   const startYear = parseInt(sessionVal.split('-')[0], 10);
   return { startYear, endYear: startYear + 1 };
+}
+
+/* Match Select Value by Value or Option Text */
+
+function setSelectValueByText(selectEl, targetVal) {
+  if (!selectEl) {
+    return false;
+  }
+  const strVal = String(targetVal);
+  const matchedOption = Array.from(selectEl.options).find(
+    opt => opt.value === strVal || opt.textContent.trim() === strVal
+  );
+  if (matchedOption) {
+    selectEl.value = matchedOption.value;
+    return true;
+  }
+  return false;
 }
 
 /* Academic Session Helper:
@@ -1470,11 +1487,11 @@ function syncExamDropdownWidths() {
 
 function syncExamMonthYearFromAttendedUpto() {
   if (attendedMonthSelect && examMonthSelect) {
-    examMonthSelect.value = attendedMonthSelect.value;
+    setSelectValueByText(examMonthSelect, attendedMonthSelect.value);
   }
 
   if (attendedYearSelect && examYearSelect) {
-    examYearSelect.value = attendedYearSelect.value;
+    setSelectValueByText(examYearSelect, attendedYearSelect.value);
   }
 
   syncExamDropdownWidths();
@@ -1485,12 +1502,8 @@ function syncExamMonthYearFromAttendedUpto() {
 function applySessionBasedDates(shouldSave = false) {
   const { startYear, endYear } = getSessionYears(sessionSelect ? sessionSelect.value : '');
 
-  if (attendedMonthSelect) {
-    attendedMonthSelect.value = 'March';
-  }
-  if (attendedYearSelect && Array.from(attendedYearSelect.options).some(opt => opt.value === String(endYear))) {
-    attendedYearSelect.value = String(endYear);
-  }
+  setSelectValueByText(attendedMonthSelect, 'March');
+  setSelectValueByText(attendedYearSelect, endYear);
   syncAttendedDropdownWidths();
 
   syncExamMonthYearFromAttendedUpto();
@@ -1550,18 +1563,18 @@ function populateMonthYearSelects(monthEl, yearEl, defaultMonth, defaultYear) {
       opt.textContent = mName;
       monthEl.appendChild(opt);
     });
-    monthEl.value = defaultMonth;
+    setSelectValueByText(monthEl, defaultMonth);
   }
 
   if (yearEl) {
     yearEl.innerHTML = '';
-    for (let y = 2000; y <= 2040; y++) {
+    for (let y = 2000; y <= 2045; y++) {
       const opt = document.createElement('option');
       opt.value = String(y);
       opt.textContent = String(y);
       yearEl.appendChild(opt);
     }
-    yearEl.value = String(defaultYear);
+    setSelectValueByText(yearEl, defaultYear);
   }
 }
 
