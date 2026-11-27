@@ -55,9 +55,11 @@ body {
 
 .editable {
   display: inline-block;
+  width: fit-content;
+  max-width: 100%;
   min-width: 65px;
   border-bottom: 1px dotted #000;
-  padding: 0 3px;
+  padding: 0;
   line-height: 1.15;
   vertical-align: baseline;
   font-weight: bold;
@@ -124,6 +126,16 @@ select.clean-select::-ms-expand,
   display: none;
 }
 
+select.copy-type-select {
+  font-weight: bold;
+  font-size: 13px;
+  line-height: 1.3;
+  border-bottom: none;
+  text-align: right;
+  text-align-last: right;
+  padding: 0 2px 1px 2px;
+}
+
 select.session-select {
   font-weight: bold;
   font-size: var(--page-font-size);
@@ -138,13 +150,15 @@ select.gender-select {
 .exam-period-group {
   display: inline-flex;
   align-items: baseline;
-  gap: 5px;
+  gap: 2px;
   border-bottom: 1px dotted #000;
   padding: 0;
   line-height: 1.15;
   vertical-align: baseline;
 }
 
+.exam-period-group select.exam-month-select,
+.exam-period-group select.exam-year-select,
 select.exam-month-select,
 select.exam-year-select {
   display: inline-block;
@@ -154,7 +168,10 @@ select.exam-year-select {
   border-bottom: none;
   font-weight: bold;
   font-size: var(--page-font-size);
-  padding: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  padding-left: 0;
+  padding-right: 0;
   margin-right: 0;
   text-align: center;
   text-align-last: center;
@@ -175,6 +192,8 @@ select.exam-year-select:focus {
 
 .date-field {
   display: inline-block;
+  width: fit-content;
+  max-width: 100%;
   min-width: 70px;
   min-height: 16px;
   border-bottom: 1px dotted #000;
@@ -183,7 +202,7 @@ select.exam-year-select:focus {
   font-weight: bold;
   line-height: 1.15;
   color: #000;
-  padding: 0 2px;
+  padding: 0;
   cursor: pointer;
   outline: none;
   text-align: center;
@@ -232,11 +251,18 @@ select.exam-year-select:focus {
 
 /* School Header */
 
+.top-note-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+
 .duplicate-note {
   font-size: 13px;
   font-weight: bold;
   text-align: left;
-  margin-bottom: 4px;
 }
 
 .header-center {
@@ -320,7 +346,7 @@ select.exam-year-select:focus {
 .cert-text {
   font-size: var(--page-font-size);
   line-height: 1.55;
-  text-align: justify;
+  text-align: left;
   margin-bottom: 12px;
 }
 
@@ -696,6 +722,10 @@ body.pdf-export-mode select.clean-select {
   background-color: transparent !important;
 }
 
+body.pdf-export-mode select.copy-type-select {
+  border-bottom: none !important;
+}
+
 body.pdf-export-mode .exam-period-group {
   border-bottom: 1px dotted #000 !important;
   background-color: transparent !important;
@@ -770,6 +800,10 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
     border-bottom: 1px dotted #000 !important;
   }
 
+  select.copy-type-select {
+    border-bottom: none !important;
+  }
+
   .exam-period-group {
     border-bottom: 1px dotted #000 !important;
     background: transparent !important;
@@ -795,7 +829,14 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
   <div class="page">
     <div class="outer-border">
 
-      <div class="duplicate-note">To be issued in duplicate</div>
+      <div class="top-note-row">
+        <div class="duplicate-note">To be issued in duplicate</div>
+        <select id="copyTypeSelect" class="clean-select copy-type-select" aria-label="Copy Type">
+          <option value="Office Copy">Office Copy</option>
+          <option value="Student Copy">Student Copy</option>
+          <option value=""></option>
+        </select>
+      </div>
 
       <!-- Header -->
 
@@ -996,11 +1037,12 @@ body.pdf-export-mode .date-field:not(.table-date):not(.period-date) {
 
         attended this school up-to
 
-        <span class="exam-period-group" id="attendedPeriodGroup"><select id="attendedMonthSelect"
-                class="clean-select exam-month-select"
-                aria-label="Attended up-to Month"></select><select id="attendedYearSelect"
-                class="clean-select exam-year-select"
-                aria-label="Attended up-to Year"></select></span>.
+        <span class="date-field"
+              id="attendedUptoDate"
+              data-date=""
+              tabindex="0"
+              role="button"
+              aria-label="Attended this school up-to Date"></span>.
 
         <span id="pronounCap1">He</span>
 
@@ -1274,17 +1316,16 @@ const editables = Array.from(
   document.querySelectorAll('[contenteditable="true"]')
 );
 
+const copyTypeSelect = document.getElementById('copyTypeSelect');
 const sessionSelect = document.getElementById('sessionSelect');
 const genderSelect = document.getElementById('genderSelect');
-const attendedPeriodGroup = document.getElementById('attendedPeriodGroup');
-const attendedMonthSelect = document.getElementById('attendedMonthSelect');
-const attendedYearSelect = document.getElementById('attendedYearSelect');
+const attendedUptoDate = document.getElementById('attendedUptoDate');
 const examPeriodGroup = document.getElementById('examPeriodGroup');
 const examMonthSelect = document.getElementById('examMonthSelect');
 const examYearSelect = document.getElementById('examYearSelect');
 const opt1Checkbox = document.getElementById('opt1');
 
-/* Note: sessionSelect, attendedMonthSelect, attendedYearSelect, examMonthSelect, and examYearSelect are intentionally excluded from localStorage persistence */
+/* Note: copyTypeSelect, sessionSelect, examMonthSelect, and examYearSelect are intentionally excluded from localStorage persistence */
 const selects = [genderSelect].filter(Boolean);
 
 const singleChoices = Array.from(
@@ -1429,13 +1470,9 @@ function applyDefaultAcademicSession(isoDateStr) {
   }
 }
 
-/* Auto-Fit Select Width Tightly to Selected Option Text */
+/* Measure Exact Text Width of Selected Option */
 
-function resizeSelectToContent(selectEl) {
-  if (!selectEl) {
-    return;
-  }
-
+function measureOptionTextWidth(selectEl) {
   const selectedOption = selectEl.options[selectEl.selectedIndex];
   const labelText = selectedOption ? selectedOption.textContent : selectEl.value;
   const computed = window.getComputedStyle(selectEl);
@@ -1449,69 +1486,83 @@ function resizeSelectToContent(selectEl) {
   probe.style.fontSize = computed.fontSize;
   probe.style.fontWeight = computed.fontWeight;
   probe.style.letterSpacing = computed.letterSpacing;
-  probe.textContent = labelText;
+  probe.textContent = labelText || '';
 
   document.body.appendChild(probe);
   const textWidth = probe.getBoundingClientRect().width;
   document.body.removeChild(probe);
 
-  selectEl.style.width = `${Math.ceil(textWidth)}px`;
+  return textWidth;
 }
 
-function syncAttendedDropdownWidths() {
-  resizeSelectToContent(attendedMonthSelect);
-  resizeSelectToContent(attendedYearSelect);
+/* Auto-Fit Select Width Tightly to Selected Option Text */
 
-  if (attendedPeriodGroup) {
-    attendedPeriodGroup.style.width = '';
-    const groupWidth = Math.ceil(attendedPeriodGroup.getBoundingClientRect().width);
-    if (groupWidth > 0) {
-      attendedPeriodGroup.style.width = `${groupWidth}px`;
-    }
+function resizeSelectToContent(selectEl, exactToText = false) {
+  if (!selectEl) {
+    return;
   }
+
+  const textWidth = measureOptionTextWidth(selectEl);
+  if (exactToText) {
+    selectEl.style.width = `${Math.ceil(textWidth)}px`;
+    return;
+  }
+
+  selectEl.style.width = `${Math.max(24, Math.ceil(textWidth) + 8)}px`;
+}
+
+function syncCopyTypeWidth() {
+  resizeSelectToContent(copyTypeSelect);
+}
+
+if (copyTypeSelect) {
+  copyTypeSelect.addEventListener('change', syncCopyTypeWidth);
 }
 
 function syncExamDropdownWidths() {
-  resizeSelectToContent(examMonthSelect);
-  resizeSelectToContent(examYearSelect);
+  resizeSelectToContent(examMonthSelect, true);
+  resizeSelectToContent(examYearSelect, true);
 
   if (examPeriodGroup && !examPeriodGroup.classList.contains('hidden-period')) {
-    examPeriodGroup.style.width = '';
-    const groupWidth = Math.ceil(examPeriodGroup.getBoundingClientRect().width);
-    if (groupWidth > 0) {
-      examPeriodGroup.style.width = `${groupWidth}px`;
-    }
+    const monthWidth = measureOptionTextWidth(examMonthSelect);
+    const yearWidth = measureOptionTextWidth(examYearSelect);
+    const groupGap = parseFloat(window.getComputedStyle(examPeriodGroup).gap) || 2;
+    const totalExactWidth = Math.ceil(monthWidth + groupGap + yearWidth);
+    examPeriodGroup.style.width = `${totalExactWidth}px`;
   }
 }
 
-/* Sync Examination Month & Year Dropdowns Default from "attended this school up-to" Dropdowns */
+/* Sync Examination Month & Year Dropdowns Default from Session End Year ("March" + endYear) */
 
-function syncExamMonthYearFromAttendedUpto() {
-  if (attendedMonthSelect && examMonthSelect) {
-    setSelectValueByText(examMonthSelect, attendedMonthSelect.value);
-  }
+function syncExamMonthYearFromSession() {
+  const { endYear } = getSessionYears(sessionSelect ? sessionSelect.value : '');
 
-  if (attendedYearSelect && examYearSelect) {
-    setSelectValueByText(examYearSelect, attendedYearSelect.value);
-  }
+  setSelectValueByText(examMonthSelect, 'March');
+  setSelectValueByText(examYearSelect, endYear);
 
   syncExamDropdownWidths();
 }
 
-/* Apply Attended Up-To ("March" + endYear), Exam Month/Year, and Attendance Period ("01/04/<startYear>" to "31/03/<endYear>") from Session */
+/* Sync Date of Withdrawal from Attended Up-To Date */
+
+function syncWithdrawalDateFromAttendedUpto(shouldSave = false) {
+  if (!attendedUptoDate || !withdrawalDate) {
+    return;
+  }
+  setFieldDate(withdrawalDate, attendedUptoDate.dataset.date || '', shouldSave);
+}
+
+/* Apply Attended Up-To ("31/03/<endYear>"), Withdrawal Date, Exam Month/Year, and Attendance Period ("01/04/<startYear>" to "31/03/<endYear>") from Session */
 
 function applySessionBasedDates(shouldSave = false) {
   const { startYear, endYear } = getSessionYears(sessionSelect ? sessionSelect.value : '');
 
-  setSelectValueByText(attendedMonthSelect, 'March');
-  setSelectValueByText(attendedYearSelect, endYear);
-  syncAttendedDropdownWidths();
-
-  syncExamMonthYearFromAttendedUpto();
-
-  if (withdrawalDate) {
-    setFieldDate(withdrawalDate, `${endYear}-03-31`, false);
+  if (attendedUptoDate) {
+    setFieldDate(attendedUptoDate, `${endYear}-03-31`, false);
   }
+
+  syncWithdrawalDateFromAttendedUpto(false);
+  syncExamMonthYearFromSession();
 
   if (periodFromDate) {
     setFieldDate(periodFromDate, `${startYear}-04-01`, false);
@@ -1545,15 +1596,11 @@ function syncExamMonthYearVisibility() {
     return;
   }
 
-  examPeriodGroup.style.width = '';
-  const currentWidth = Math.ceil(examPeriodGroup.getBoundingClientRect().width);
-  if (currentWidth > 0) {
-    examPeriodGroup.style.width = `${currentWidth}px`;
-  }
+  syncExamDropdownWidths();
   examPeriodGroup.classList.add('hidden-period');
 }
 
-/* Populate Month & Year Dropdowns for Attended Up-To and Exam Period */
+/* Populate Month & Year Dropdowns for Exam Period */
 
 function populateMonthYearSelects(monthEl, yearEl, defaultMonth, defaultYear) {
   if (monthEl) {
@@ -1582,25 +1629,10 @@ function populateMonthYearSelects(monthEl, yearEl, defaultMonth, defaultYear) {
 function initMonthYearDropdowns() {
   const { endYear } = getSessionYears(sessionSelect ? sessionSelect.value : '');
 
-  populateMonthYearSelects(attendedMonthSelect, attendedYearSelect, 'March', endYear);
   populateMonthYearSelects(examMonthSelect, examYearSelect, 'March', endYear);
 
-  syncAttendedDropdownWidths();
+  syncCopyTypeWidth();
   syncExamMonthYearVisibility();
-}
-
-if (attendedMonthSelect) {
-  attendedMonthSelect.addEventListener('change', () => {
-    syncAttendedDropdownWidths();
-    syncExamMonthYearFromAttendedUpto();
-  });
-}
-
-if (attendedYearSelect) {
-  attendedYearSelect.addEventListener('change', () => {
-    syncAttendedDropdownWidths();
-    syncExamMonthYearFromAttendedUpto();
-  });
 }
 
 if (examMonthSelect) {
@@ -1636,7 +1668,10 @@ function triggerPrintOrPdf() {
     .replace(/[^a-zA-Z0-9 -]+/g, ' ')
     .replace(/\s+/g, ' ')
     .trim() || 'Student';
-  const fileTitle = `SLC ${safeStudentName}`;
+  const copySuffix = (copyTypeSelect && copyTypeSelect.value)
+    ? ` (${copyTypeSelect.value})`
+    : '';
+  const fileTitle = `SLC ${safeStudentName}${copySuffix}`;
   const prevTitle = document.title;
   document.title = fileTitle;
 
@@ -1856,6 +1891,11 @@ function setFieldDate(field, isoStr, shouldSave = true) {
     updateDobWords();
   }
 
+  if (field === attendedUptoDate && withdrawalDate) {
+    withdrawalDate.dataset.date = cleanIso;
+    withdrawalDate.textContent = formatDisplayDate(cleanIso);
+  }
+
   if (field === bottomIssueDate) {
     applyDefaultAcademicSession(cleanIso);
   }
@@ -1864,6 +1904,7 @@ function setFieldDate(field, isoStr, shouldSave = true) {
     shouldSave &&
     field !== bottomIssueDate &&
     field !== withdrawalDate &&
+    field !== attendedUptoDate &&
     !isAttendancePeriodField(field)
   ) {
     saveDraft();
@@ -2374,7 +2415,7 @@ function applyDefaultSystemDates() {
   applySessionBasedDates(false);
 }
 
-/* Save Draft (excludes sessionSelect, checkboxes, bottomIssueDate, withdrawalDate, attendance period dates, attendedMonthSelect, attendedYearSelect, examMonthSelect, and examYearSelect) */
+/* Save Draft (excludes copyTypeSelect, sessionSelect, checkboxes, bottomIssueDate, withdrawalDate, attendance period dates, attendedUptoDate, examMonthSelect, and examYearSelect) */
 
 function saveDraft() {
   updateLeavesTaken();
@@ -2386,6 +2427,7 @@ function saveDraft() {
       (
         f === bottomIssueDate ||
         f === withdrawalDate ||
+        f === attendedUptoDate ||
         isAttendancePeriodField(f)
       )
         ? ''
@@ -2460,6 +2502,7 @@ function loadDraft() {
           targetField !== undefined &&
           targetField !== bottomIssueDate &&
           targetField !== withdrawalDate &&
+          targetField !== attendedUptoDate &&
           !isAttendancePeriodField(targetField) &&
           typeof val === 'string'
         ) {
