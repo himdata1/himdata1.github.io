@@ -1439,6 +1439,20 @@ function getTodayIso() {
   return `${y}-${m}-${d}`;
 }
 
+/* First Date (01/04/YYYY) of the Session Containing Current Date */
+
+function getCurrentSessionFirstDateIso(isoDateStr) {
+  let refDate = new Date();
+  if (isoDateStr && /^\d{4}-\d{2}-\d{2}$/.test(isoDateStr)) {
+    const [y, m, d] = isoDateStr.split('-').map(Number);
+    refDate = new Date(y, m - 1, d);
+  }
+  const year = refDate.getFullYear();
+  const month = refDate.getMonth(); // 0 = Jan, 2 = Mar, 3 = Apr
+  const sessionStartYear = month >= 3 ? year : year - 1;
+  return `${sessionStartYear}-04-01`;
+}
+
 /* Parse Start and End Year from Session String (e.g., "2040-41" -> { startYear: 2040, endYear: 2041 }) */
 
 function getSessionYears(sessionVal) {
@@ -1607,6 +1621,29 @@ function applySessionBasedDates(shouldSave = false) {
   }
 }
 
+/* When Mid-Session Withdrawal (2nd checkbox, #opt1) Is Selected */
+
+function applyMidSessionWithdrawalDates() {
+  if (!opt1Checkbox || !opt1Checkbox.checked) {
+    return;
+  }
+
+  const todayIso = getTodayIso();
+  const sessionFirstIso = getCurrentSessionFirstDateIso(todayIso);
+
+  if (attendedUptoDate) {
+    setFieldDate(attendedUptoDate, todayIso, false);
+  }
+
+  if (periodFromDate) {
+    setFieldDate(periodFromDate, sessionFirstIso, false);
+  }
+
+  if (periodLastDate) {
+    setFieldDate(periodLastDate, todayIso, false);
+  }
+}
+
 function isAttendancePeriodField(field) {
   return field === periodFromDate || field === periodLastDate;
 }
@@ -1701,6 +1738,7 @@ if (examYearSelect) {
 if (sessionSelect) {
   sessionSelect.addEventListener('change', () => {
     applySessionBasedDates(true);
+    applyMidSessionWithdrawalDates();
   });
 }
 
@@ -2488,6 +2526,12 @@ singleChoices.forEach(cb => {
 
     syncOpt1ClassEditableState();
     syncExamMonthYearVisibility();
+
+    if (opt1Checkbox && opt1Checkbox.checked) {
+      applyMidSessionWithdrawalDates();
+    } else {
+      applySessionBasedDates(false);
+    }
   });
 });
 
@@ -2553,6 +2597,7 @@ function applyDefaultSystemDates() {
   }
 
   applySessionBasedDates(false);
+  applyMidSessionWithdrawalDates();
 }
 
 /* Save Draft (excludes sessionSelect, checkboxes, opt1ClassField, bottomIssueDate, withdrawalDate, attendance period dates, attendedUptoDate, examMonthSelect, and examYearSelect) */
@@ -2596,6 +2641,7 @@ function loadDraft() {
       applyDefaultSystemDates();
       applyDefaultAcademicSession();
       applySessionBasedDates(false);
+      applyMidSessionWithdrawalDates();
       syncPupilNameToCert();
       syncFatherNameToCert();
       syncSchoolNameToTable();
@@ -2663,6 +2709,7 @@ function loadDraft() {
     applyDefaultSystemDates();
     applyDefaultAcademicSession();
     applySessionBasedDates(false);
+    applyMidSessionWithdrawalDates();
     saveDraft();
     syncPupilNameToCert();
     syncFatherNameToCert();
@@ -2682,6 +2729,7 @@ function loadDraft() {
     applyDefaultSystemDates();
     applyDefaultAcademicSession();
     applySessionBasedDates(false);
+    applyMidSessionWithdrawalDates();
     syncPupilNameToCert();
     syncFatherNameToCert();
     syncSchoolNameToTable();
